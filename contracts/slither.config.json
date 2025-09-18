@@ -1,0 +1,57 @@
+{
+  "filter_paths": {
+    "exclude": [
+      "test/**",
+      "scripts/**",
+      "node_modules/**"
+    ]
+  },
+  "detectors_to_exclude": [
+    "low-level-calls",
+    "external-function",
+    "timestamp"
+  ],
+  "compilation_unit_selection": ["all"],
+  "detectors_to_run": [
+    "reentrancy-eth",
+    "reentrancy-no-eth",
+    "uninitialized-state",
+    "uninitialized-storage",
+    "arbitrary-send",
+    "controlled-delegatecall",
+    "weak-prng",
+    "suicidal",
+    "assembly",
+    "assert-state-change",
+    "boolean-equal",
+    "dangerous-unary",
+    "deprecated-standards",
+    "divide-before-multiply",
+    "enum-conversion",
+    "erc20-interface",
+    "erc721-interface",
+    "incorrect-equality",
+    "locked-ether",
+    "mapping-deletion",
+    "shadowing-abstract",
+    "shadowing-builtin",
+    "shadowing-local",
+    "shadowing-state",
+    "calls-loop",
+    "costly-loop",
+    "dead-code",
+    "reentrancy-benign",
+    "reentrancy-events",
+    "similar-names",
+    "solc-version",
+    "unimplemented-functions",
+    "unused-return",
+    "unused-state",
+    "tx-origin",
+    "unchecked-lowlevel",
+    "unchecked-send",
+    "unprotected-upgrade",
+    "variable-scope",
+    "void-cst"
+  ]
+}

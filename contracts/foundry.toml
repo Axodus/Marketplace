@@ -1,0 +1,31 @@
+[profile.default]
+src = "src"
+out = "forge-out"
+libs = ["node_modules"]
+test = "test"
+cache_path = "forge-cache"
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
+
+[profile.default.optimizer]
+enabled = true
+runs = 200
+
+[profile.default.model_checker]
+contracts = { "/path/to/project/src/Contract.sol" = [ "Contract" ] }
+engine = "chc"
+timeout = 10000
+targets = [ "assert", "underflow", "overflow", "divByZero", "constantCondition", "popEmptyArray", "outOfBounds" ]
+
+[rpc_endpoints]
+ethereum = "https://mainnet.infura.io/v3/${INFURA_KEY}"
+bnb = "https://bsc-dataseed.binance.org"
+arbitrum = "https://arb1.arbitrum.io/rpc"
+harmony = "https://api.harmony.one"
+polygon = "https://polygon-rpc.com"
+
+[etherscan]
+ethereum = { key = "${ETHERSCAN_API_KEY}" }
+bnb = { key = "${BSCSCAN_API_KEY}" }
+arbitrum = { key = "${ARBISCAN_API_KEY}" }
+polygon = { key = "${POLYGONSCAN_API_KEY}" }

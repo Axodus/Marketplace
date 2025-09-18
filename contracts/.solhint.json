@@ -1,0 +1,21 @@
+{
+  "extends": "@solhint/solhint:recommended",
+  "rules": {
+    "code-complexity": ["error", 8],
+    "function-max-lines": ["error", 50],
+    "max-line-length": ["error", 120],
+    "not-rely-on-time": "off",
+    "avoid-suicide": "error",
+    "avoid-sha3": "error",
+    "bracket-align": "error",
+    "quotes": ["error", "double"],
+    "semicolon": ["error", "always"],
+    "func-name-mixedcase": "error",
+    "var-name-mixedcase": "error",
+    "modifier-name-mixedcase": "error",
+    "contract-name-camelcase": "error",
+    "event-name-camelcase": "error",
+    "private-vars-leading-underscore": "error",
+    "func-param-name-mixedcase": "error"
+  }
+}

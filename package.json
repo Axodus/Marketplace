@@ -1,0 +1,43 @@
+{
+  "name": "axodus-marketplace",
+  "version": "1.0.0",
+  "description": "Axodus NFT Marketplace - Monorepo",
+  "private": true,
+  "workspaces": [
+    "contracts",
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "dev": "pnpm -r --parallel dev",
+    "clean": "pnpm -r clean",
+    "bootstrap": "./bootstrap_scaffold.sh",
+    "setup:contracts": "./setup-contracts.sh"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Axodus/Marketplace.git"
+  },
+  "keywords": [
+    "nft",
+    "marketplace",
+    "ethereum",
+    "polygon",
+    "bnb",
+    "arbitrum",
+    "harmony",
+    "layerzero",
+    "defi"
+  ],
+  "license": "MIT"
+}
