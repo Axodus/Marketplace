@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import "@layerzerolabs/solidity-examples/contracts/token/oft/v2/OFTCoreV2.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../libs/AccessControlLib.sol";
 
 /**
@@ -67,7 +67,6 @@ contract OFTAdapter is OFTCoreV2, AccessControlLib, ReentrancyGuard {
         require(admin != address(0), "OFTAdapter: Invalid admin");
         _initializeAccessControl(admin);
         _grantRole(PAUSER_ROLE, admin);
-        _transferOwnership(admin);
     }
 
     /**

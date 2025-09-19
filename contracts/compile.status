@@ -1,0 +1,12 @@
+ERROR
+HardhatError: HH600: Compilation failed
+    at SimpleTaskDefinition.action (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/hardhat/src/builtin-tasks/compile.ts:504:15)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Environment._runTaskDefinition (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at async OverriddenTaskDefinition._action (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/@typechain/hardhat/src/index.ts:28:30)
+    at async Environment._runTaskDefinition (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at async Environment.run (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/hardhat/src/internal/core/runtime-environment.ts:184:14)
+    at async SimpleTaskDefinition.action (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/hardhat/src/builtin-tasks/compile.ts:1433:63)
+    at async Environment._runTaskDefinition (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/hardhat/src/internal/core/runtime-environment.ts:351:14)
+    at async Environment.run (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/hardhat/src/internal/core/runtime-environment.ts:184:14)
+    at async SimpleTaskDefinition.action (/mnt/d/Rede/Github/Axodus/Marketplace/Marketplace/node_modules/hardhat/src/builtin-tasks/compile.ts:1513:7)

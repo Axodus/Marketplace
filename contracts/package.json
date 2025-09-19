@@ -4,15 +4,15 @@
   "description": "Smart contracts for Axodus NFT Marketplace",
   "main": "index.js",
   "scripts": {
-    "build": "hardhat compile",
-    "test": "hardhat test",
-    "deploy": "hardhat run scripts/deploy.ts",
-    "verify": "hardhat verify",
-    "size": "hardhat size-contracts",
+    "build": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.ts",
+    "verify": "npx hardhat verify",
+    "size": "npx hardhat size-contracts",
     "lint": "solhint 'src/**/*.sol'",
     "lint:fix": "solhint 'src/**/*.sol' --fix",
-    "coverage": "hardhat coverage",
-    "typechain": "hardhat typechain",
+    "coverage": "npx hardhat coverage",
+    "typechain": "npx hardhat typechain",
     "export:abi": "node scripts/export-abi.js"
   },
   "devDependencies": {
@@ -27,7 +27,8 @@
     "@types/mocha": ">=9.1.0",
     "@types/node": ">=18.0.0",
     "chai": "^4.2.0",
-    "ethers": "^6.4.0",
+  "ethers": "^6.4.0",
+  "dotenv": "^16.4.5",
     "hardhat": "^2.19.0",
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-gas-reporter": "^1.0.8",
@@ -39,7 +40,7 @@
   },
   "dependencies": {
     "@layerzerolabs/solidity-examples": "^1.1.0",
-    "@openzeppelin/contracts": "^5.0.0",
-    "@openzeppelin/contracts-upgradeable": "^5.0.0"
+    "@openzeppelin/contracts": "^4.9.6",
+    "@openzeppelin/contracts-upgradeable": "^4.9.6"
   }
 }

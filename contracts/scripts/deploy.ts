@@ -1,4 +1,6 @@
 import { ethers } from "hardhat";
+import * as dotenv from "dotenv";
+dotenv.config();
 import { Contract } from "ethers";
 
 interface DeploymentRecord {
@@ -147,18 +149,28 @@ async function main() {
     };
     console.log("DutchAuction deployed to:", await dutchAuction.getAddress());
 
-    // Note: OFTAdapter deployment is commented out as it requires LayerZero endpoint
-    // which may not be available on all test networks
-    /*
-    console.log("\n6. Deploying OFTAdapter...");
-    const OFTAdapter = await ethers.getContractFactory("OFTAdapter");
-    const oftAdapter = await OFTAdapter.deploy(
-      "0x...", // LayerZero endpoint address (chain specific)
-      deployer.address
-    );
-    await oftAdapter.waitForDeployment();
-    console.log("OFTAdapter deployed to:", await oftAdapter.getAddress());
-    */
+    // Optional: Deploy OFTAdapter if env vars provided
+    const lzEndpoint = process.env.LZ_ENDPOINT;
+    const oftAdmin = process.env.OFT_ADMIN || deployer.address;
+    if (lzEndpoint) {
+      console.log("\n6. Deploying OFTAdapter...");
+      const OFTAdapter = await ethers.getContractFactory("OFTAdapter");
+      const oftAdapter = await OFTAdapter.deploy(lzEndpoint, oftAdmin);
+      await oftAdapter.waitForDeployment();
+      const oftAddress = await oftAdapter.getAddress();
+      console.log("OFTAdapter deployed to:", oftAddress);
+      const oftReceipt = await oftAdapter.deploymentTransaction()?.wait();
+      deployments["OFTAdapter"] = {
+        contractName: "OFTAdapter",
+        address: oftAddress,
+        chainId,
+        blockNumber: oftReceipt?.blockNumber || 0,
+        transactionHash: oftReceipt?.hash || "",
+        timestamp: Date.now()
+      };
+    } else {
+      console.log("\n6. Skipping OFTAdapter deployment (LZ_ENDPOINT not set)");
+    }
 
     // Setup initial permissions and configurations
     console.log("\n6. Setting up initial configurations...");

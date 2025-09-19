@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "../libs/AccessControlLib.sol";
 import "../libs/RoyaltyLib.sol";
 
@@ -249,12 +250,14 @@ contract ERC1155Neurons is
     }
 
     // Override functions for multiple inheritance
-    function _update(
+    function _beforeTokenTransfer(
+        address operator,
         address from,
         address to,
         uint256[] memory ids,
-        uint256[] memory values
+        uint256[] memory amounts,
+        bytes memory data
     ) internal override(ERC1155, ERC1155Pausable, ERC1155Supply) {
-        super._update(from, to, ids, values);
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 }
