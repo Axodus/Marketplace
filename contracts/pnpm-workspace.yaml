@@ -1,5 +1,0 @@
-onlyBuiltDependencies:
-  - keccak
-  - node-hid
-  - secp256k1
-  - usb
