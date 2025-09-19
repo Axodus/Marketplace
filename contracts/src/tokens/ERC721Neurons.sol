@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
+import "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "../libs/AccessControlLib.sol";
 
@@ -72,7 +73,7 @@ contract ERC721Neurons is
      */
     function mint(
         address to,
-        string memory tokenURI,
+        string memory uri,
         address royaltyRecipient,
         uint96 royaltyFee
     ) external payable onlyAllowedMinter nonReentrant whenNotPaused {
@@ -83,14 +84,14 @@ contract ERC721Neurons is
         
         uint256 tokenId = _nextTokenId++;
         
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, tokenURI);
+    _safeMint(to, tokenId);
+    _setTokenURI(tokenId, uri);
         
         if (royaltyRecipient != address(0) && royaltyFee > 0) {
             _setTokenRoyalty(tokenId, royaltyRecipient, royaltyFee);
         }
         
-        emit TokenMinted(tokenId, to, tokenURI, royaltyRecipient, royaltyFee);
+    emit TokenMinted(tokenId, to, uri, royaltyRecipient, royaltyFee);
     }
 
     /**
@@ -198,7 +199,7 @@ contract ERC721Neurons is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721URIStorage, ERC721Royalty, AccessControl)
+        override(ERC721, ERC721URIStorage, ERC721Royalty, AccessControlEnumerable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
