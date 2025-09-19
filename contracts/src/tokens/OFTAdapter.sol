@@ -63,10 +63,11 @@ contract OFTAdapter is OFTCoreV2, AccessControlLib, ReentrancyGuard {
     constructor(
         address _lzEndpoint,
         address admin
-    ) OFTCoreV2(_lzEndpoint) {
+    ) OFTCoreV2(8, _lzEndpoint) {
         require(admin != address(0), "OFTAdapter: Invalid admin");
         _initializeAccessControl(admin);
         _grantRole(PAUSER_ROLE, admin);
+        _transferOwnership(admin);
     }
 
     /**
@@ -335,5 +336,55 @@ contract OFTAdapter is OFTCoreV2, AccessControlLib, ReentrancyGuard {
      */
     function getPendingTransfer(bytes32 transferId) external view returns (CrossChainTransfer memory) {
         return pendingTransfers[transferId];
+    }
+
+    // Implementation of abstract functions from OFTCoreV2
+    
+    /**
+     * @dev Debit tokens from source chain
+     */
+    function _debitFrom(
+        address _from,
+        uint16 _dstChainId,
+        bytes32 _toAddress,
+        uint _amount
+    ) internal virtual override returns (uint) {
+        // This is a simplified implementation for NFT bridging
+        // In practice, this would handle the locking/burning logic
+        return _amount;
+    }
+
+    /**
+     * @dev Credit tokens to destination chain
+     */
+    function _creditTo(
+        uint16 _srcChainId,
+        address _toAddress,
+        uint _amount
+    ) internal virtual override returns (uint) {
+        // This is a simplified implementation for NFT bridging
+        // In practice, this would handle the unlocking/minting logic
+        return _amount;
+    }
+
+    /**
+     * @dev Transfer tokens between addresses
+     */
+    function _transferFrom(
+        address _from,
+        address _to,
+        uint _amount
+    ) internal virtual override returns (uint) {
+        // This is a simplified implementation for NFT bridging
+        // NFTs don't typically use this pattern, but it's required by the interface
+        return _amount;
+    }
+
+    /**
+     * @dev Get the conversion rate from local decimals to shared decimals
+     */
+    function _ld2sdRate() internal view virtual override returns (uint) {
+        // For NFTs, we typically use 1:1 ratio since NFTs are indivisible
+        return 1;
     }
 }

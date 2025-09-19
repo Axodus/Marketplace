@@ -67,7 +67,7 @@ contract ERC721Neurons is
     /**
      * @dev Mint a new token with royalty information
      * @param to Address to mint the token to
-     * @param tokenURI Metadata URI for the token
+     * @param uri Metadata URI for the token
      * @param royaltyRecipient Address to receive royalties
      * @param royaltyFee Royalty fee in basis points (max 1000 = 10%)
      */

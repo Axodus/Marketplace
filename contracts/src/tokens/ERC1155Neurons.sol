@@ -242,7 +242,7 @@ contract ERC1155Neurons is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC1155, AccessControlEnumerable)
+        override(ERC1155, AccessControlEnumerable, IERC165)
         returns (bool)
     {
         return interfaceId == type(IERC2981).interfaceId || super.supportsInterface(interfaceId);
