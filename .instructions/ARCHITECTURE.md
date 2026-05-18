@@ -148,6 +148,30 @@ Frontend responsibilities:
 
 Business logic should remain outside frontend state whenever possible.
 
+## Phase 1 Web App Architecture
+
+The MVP web app is React + Vite and mock-first.
+
+The Marketplace web module lives under `src/modules/marketplace` and owns:
+- product, seller, license and purchase types
+- marketplace service/query helpers
+- mock contract, royalty, auction, storage and bridge adapters
+- marketplace pages and components
+
+Centralized mock data lives in `src/data/mock/marketplace.mock.js`.
+
+The frontend must keep NFT marketplace primitives explicit:
+- ERC721/1155
+- EIP-2981 royalties
+- fixed listings
+- english/dutch auctions
+- bids
+- buy-now
+- item detail pages
+- create/sell adapter boundaries
+
+No Phase 1 UI flow may execute live payments, wallet signatures, contract writes, bridge transfers or treasury routing.
+
 ---
 
 # Governance Integration

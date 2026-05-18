@@ -117,3 +117,34 @@ Marketplace systems must remain:
 - governance-aware
 - treasury-compatible
 - operationally transparent
+
+---
+
+# Current Implementation Task — Mock-First NFT Marketplace MVP
+
+Status: IN PROGRESS
+
+Objectives:
+- implement React/Vite Marketplace web app
+- preserve NFT marketplace core semantics
+- expose governance-aware product and seller standing
+- consume centralized mock data from `src/data/mock/marketplace.mock.js`
+- prepare Phase 2 boundaries without executing settlement
+
+Deliverables:
+- marketplace routes and layout
+- product explorer and detail pages
+- seller profile page
+- governance validation page
+- license viewer
+- operational dashboard
+- mock buy-now and bid modal
+- adapters for MarketplaceContractAdapter, RoyaltyService, AuctionService, StorageAccessService and LayerZeroBridgeService
+- Reown AppKit wallet state mock
+
+Constraints:
+- no real payment execution
+- no production contract addresses
+- no live blockchain settlement
+- no treasury routing
+- no bridge execution

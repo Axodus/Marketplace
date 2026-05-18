@@ -100,6 +100,30 @@ CONFIRMED
 
 ---
 
+## Marketplace MVP Execution Model
+
+Decision:
+Phase 1 Marketplace is a governance-aware NFT marketplace MVP using React, Vite, Tailwind, React Router and TanStack Query.
+
+The original NFT marketplace nucleus remains explicit:
+- ERC721/1155 assets
+- EIP-2981 royalty previews
+- fixed listings
+- english/dutch auctions
+- bids
+- buy-now previews
+- item pages
+- create/sell contract boundaries
+
+Products, licenses, Academy assets, MCP services and DAO utilities extend the NFT marketplace model.
+
+No real settlement, production contract addresses, wallet signatures, bridge execution or treasury routing are enabled in Phase 1.
+
+Status:
+CONFIRMED
+
+---
+
 ## Operational Transparency
 
 Decision:
