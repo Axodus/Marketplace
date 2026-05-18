@@ -133,6 +133,29 @@ export interface PurchaseRecord {
   signedUrlPreview?: string;
 }
 
+export interface DraftListingInput {
+  title: string;
+  category: ProductCategory;
+  tokenStandard: TokenStandard;
+  listingType: ListingType;
+  chain: Chain;
+  price: number;
+  currency: string;
+  royaltyBps: number;
+  deliveryType: DeliveryType;
+  governanceReviewRequired: boolean;
+  description: string;
+}
+
+export interface DraftListingPreview {
+  id: string;
+  input: DraftListingInput;
+  status: "draft-created" | "requires-governance-review";
+  contractAdapterAction: "createListing";
+  royaltyPreviewAmount: number;
+  txPreview: string;
+}
+
 export interface MarketplaceBoundaryStatus {
   id: string;
   label: string;

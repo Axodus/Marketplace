@@ -1,5 +1,5 @@
-import type { Product } from "../types/marketplace";
-import { issueMockPurchase } from "./marketplaceService";
+import type { DraftListingInput, Product } from "../types/marketplace";
+import { createDraftListingPreview, issueMockPurchase } from "./marketplaceService";
 
 export const ReownWalletStateMock = {
   connected: true,
@@ -34,6 +34,13 @@ export const MarketplaceContractAdapter = {
       action: "createListing",
       tokenStandard: product.tokenStandard,
       txPreview: `mock-tx:${product.id}:create-listing`
+    };
+  },
+  async createDraftListing(input: DraftListingInput) {
+    return {
+      mode: "mock-contract-call",
+      action: "createListing",
+      preview: createDraftListingPreview(input)
     };
   }
 };

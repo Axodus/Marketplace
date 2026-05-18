@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getProductBySlug, issueMockPurchase, listProducts } from "./marketplaceService";
+import { createDraftListingPreview, getProductByItemRef, getProductBySlug, issueMockPurchase, listProducts } from "./marketplaceService";
 
 describe("marketplaceService", () => {
   it("filters products by chain and governance standing", () => {
@@ -26,5 +26,32 @@ describe("marketplaceService", () => {
     expect(purchase.currency).toBe("USDC");
     expect(purchase.licenseIssued).toBe("license-personal-nft");
     expect(purchase.signedUrlPreview).toContain("greenfield.mock.axodus.local");
+  });
+
+  it("resolves legacy NFT item references", () => {
+    const product = getProductByItemRef("polygon", "mock:governance-dashboard-access", "AXD-GOV-001");
+
+    expect(product?.slug).toBe("governance-dashboard-nft-access");
+  });
+
+  it("creates draft listing previews without mutating products", () => {
+    const before = listProducts().length;
+    const preview = createDraftListingPreview({
+      title: "Mock ERC721 Listing",
+      category: "Digital Assets",
+      tokenStandard: "ERC721",
+      listingType: "fixed",
+      chain: "Polygon",
+      price: 100,
+      currency: "USDC",
+      royaltyBps: 500,
+      deliveryType: "Signed URL",
+      governanceReviewRequired: true,
+      description: "Mock listing preview"
+    });
+
+    expect(preview.status).toBe("requires-governance-review");
+    expect(preview.royaltyPreviewAmount).toBe(5);
+    expect(listProducts()).toHaveLength(before);
   });
 });

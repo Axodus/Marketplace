@@ -1,10 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
-import { Box, Gavel, LayoutDashboard, ShieldCheck, Tags, WalletCards } from "lucide-react";
+import { Box, FilePlus2, Gavel, LayoutDashboard, ShieldCheck, Tags, WalletCards } from "lucide-react";
 import { ReownWalletStateMock } from "../modules/marketplace/services/boundaryAdapters";
 
 const links = [
   { to: "/marketplace", label: "Home", icon: Box },
   { to: "/marketplace/explore", label: "Explore", icon: Tags },
+  { to: "/marketplace/create", label: "Create/Sell", icon: FilePlus2 },
   { to: "/marketplace/governance", label: "Governance", icon: ShieldCheck },
   { to: "/marketplace/licenses", label: "Licenses", icon: WalletCards },
   { to: "/marketplace/dashboard", label: "Dashboard", icon: LayoutDashboard }

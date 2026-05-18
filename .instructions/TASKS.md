@@ -139,6 +139,8 @@ Deliverables:
 - license viewer
 - operational dashboard
 - mock buy-now and bid modal
+- mock create/sell listing preview
+- legacy NFT item route compatibility
 - adapters for MarketplaceContractAdapter, RoyaltyService, AuctionService, StorageAccessService and LayerZeroBridgeService
 - Reown AppKit wallet state mock
 

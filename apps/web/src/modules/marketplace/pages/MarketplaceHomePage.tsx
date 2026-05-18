@@ -25,6 +25,9 @@ export function MarketplaceHomePage() {
             <Link to="/marketplace/explore" className="rounded bg-slate-950 px-4 py-2 text-sm font-semibold text-white">
               Explore listings
             </Link>
+            <Link to="/marketplace/create" className="rounded border border-slate-300 px-4 py-2 text-sm font-semibold">
+              Create / sell preview
+            </Link>
             <Link to="/marketplace/dashboard" className="rounded border border-slate-300 px-4 py-2 text-sm font-semibold">
               View dashboard
             </Link>

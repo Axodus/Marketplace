@@ -4,6 +4,7 @@ import type { ProductFilters } from "../services/marketplaceService";
 import {
   calculateDashboardMetrics,
   getProductBySlug,
+  getProductByItemRef,
   getSellerById,
   listBoundaries,
   listLicenses,
@@ -49,6 +50,18 @@ export function useProduct(slug?: string) {
     queryFn: () => {
       const product = getProductBySlug(slug ?? "");
       if (!product) throw new Error("Product not found");
+      return { product, seller: getSellerById(product.sellerId) };
+    }
+  });
+}
+
+export function useProductByItemRef(chain?: string, contract?: string, tokenId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-item-ref", chain, contract, tokenId],
+    enabled: Boolean(chain && contract && tokenId),
+    queryFn: () => {
+      const product = getProductByItemRef(chain ?? "", contract ?? "", tokenId ?? "");
+      if (!product) throw new Error("Item not found");
       return { product, seller: getSellerById(product.sellerId) };
     }
   });

@@ -48,12 +48,15 @@ src/
 
 - `/marketplace`
 - `/marketplace/explore`
+- `/marketplace/create`
+- `/marketplace/sell`
 - `/marketplace/products/:slug`
 - `/marketplace/sellers/:sellerId`
 - `/marketplace/categories`
 - `/marketplace/governance`
 - `/marketplace/licenses`
 - `/marketplace/dashboard`
+- `/item/:chain/:contract/:id` redirects legacy NFT item references to registered product pages when present in mock data.
 
 ## Testing
 

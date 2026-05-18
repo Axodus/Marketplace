@@ -6,6 +6,8 @@ import {
 } from "../../../data/mock/marketplace.mock";
 import type {
   Chain,
+  DraftListingInput,
+  DraftListingPreview,
   License,
   MarketplaceBoundaryStatus,
   Product,
@@ -56,6 +58,16 @@ export function listProducts(filters: ProductFilters = {}) {
 
 export function getProductBySlug(slug: string) {
   return products.find((product) => product.slug === slug);
+}
+
+export function getProductByItemRef(chain: string, contract: string, tokenId: string) {
+  return products.find((product) => {
+    return (
+      product.supportedChains.some((supportedChain) => supportedChain.toLowerCase() === chain.toLowerCase()) &&
+      product.contractAddress?.toLowerCase() === contract.toLowerCase() &&
+      product.tokenId?.toLowerCase() === tokenId.toLowerCase()
+    );
+  });
 }
 
 export function listSellers() {
@@ -114,5 +126,18 @@ export function issueMockPurchase(product: Product, buyer = "0xMockBuyer...A11C"
     signedUrlPreview: product.signedUrlPreviewAvailable
       ? `https://greenfield.mock.axodus.local/access/${product.slug}?signature=preview`
       : undefined
+  };
+}
+
+export function createDraftListingPreview(input: DraftListingInput): DraftListingPreview {
+  const royaltyPreviewAmount = Number(((input.price * input.royaltyBps) / 10_000).toFixed(4));
+
+  return {
+    id: `draft-listing-${Date.now()}`,
+    input,
+    status: input.governanceReviewRequired ? "requires-governance-review" : "draft-created",
+    contractAdapterAction: "createListing",
+    royaltyPreviewAmount,
+    txPreview: `mock-tx:create-listing:${input.tokenStandard}:${input.listingType}:${input.chain}`
   };
 }
