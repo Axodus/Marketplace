@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CheckCircle2, FilePlus2 } from "lucide-react";
+import { apiClient } from "../../../services/apiClient";
 import { MarketplaceContractAdapter } from "../services/boundaryAdapters";
 import type { DraftListingInput, DraftListingPreview } from "../types/marketplace";
 
@@ -20,11 +21,14 @@ const initialInput: DraftListingInput = {
 export function CreateSellPage() {
   const [input, setInput] = useState<DraftListingInput>(initialInput);
   const [preview, setPreview] = useState<DraftListingPreview | null>(null);
+  const [persistentDraftId, setPersistentDraftId] = useState<string | null>(null);
 
   async function submitPreview(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const result = await MarketplaceContractAdapter.createDraftListing(input);
+    const persistentDraft = await apiClient.createDraftListing(input);
     setPreview(result.preview);
+    setPersistentDraftId(typeof persistentDraft.id === "string" ? persistentDraft.id : result.preview.id);
   }
 
   return (
@@ -163,6 +167,7 @@ export function CreateSellPage() {
               </div>
               <dl className="mt-3 space-y-2">
                 <Row label="Draft ID" value={preview.id} />
+                {persistentDraftId && <Row label="Persistent runtime ID" value={persistentDraftId} />}
                 <Row label="Action" value={preview.contractAdapterAction} />
                 <Row label="Tx preview" value={preview.txPreview} />
                 <Row label="Royalty preview" value={`${preview.royaltyPreviewAmount} ${input.currency}`} />

@@ -17,11 +17,11 @@ const sellerStyles: Record<SellerStanding, string> = {
 };
 
 export function ProductStandingBadge({ status }: { status: ProductStanding }) {
-  return <span className={`rounded border px-2 py-1 text-xs font-semibold ${productStyles[status]}`}>{status}</span>;
+  return <span className={`rounded border px-2 py-1 text-xs font-semibold ${productStyles[status]}`} aria-label={`Product standing: ${status}`}>{status}</span>;
 }
 
 export function SellerStandingBadge({ status }: { status: SellerStanding }) {
-  return <span className={`rounded border px-2 py-1 text-xs font-semibold ${sellerStyles[status]}`}>{status}</span>;
+  return <span className={`rounded border px-2 py-1 text-xs font-semibold ${sellerStyles[status]}`} aria-label={`Seller standing: ${status}`}>{status}</span>;
 }
 
 export function NeutralBadge({ children }: { children: React.ReactNode }) {

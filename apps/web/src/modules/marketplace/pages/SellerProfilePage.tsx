@@ -1,5 +1,7 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ProductCard } from "../components/ProductCard";
+import { GovernanceAuthorityPanel } from "../components/GovernanceAuthorityPanel";
+import { GovernanceEnforcementPanel } from "../components/GovernanceEnforcementPanel";
 import { SellerStandingBadge } from "../components/StatusBadge";
 import { useSeller } from "../hooks/useMarketplace";
 
@@ -27,10 +29,34 @@ export function SellerProfilePage() {
           <Stat label="Products" value={data.seller.productsPublished} />
           <Stat label="Treasury linked" value={data.seller.treasuryLinked ? "yes" : "no"} />
         </div>
+        {data.seller.registeredDAOs.length > 0 && (
+          <div className="mt-5 rounded border border-slate-200 bg-slate-50 p-4 text-sm">
+            <p className="font-semibold text-slate-700">Tenant relationship</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {data.seller.registeredDAOs.map((dao) => (
+                <span key={dao} className="rounded border border-slate-300 bg-white px-3 py-1 font-medium text-slate-700">
+                  {dao}
+                </span>
+              ))}
+            </div>
+            <Link to="/marketplace/tenants/tenant-axodus-dao" className="mt-3 inline-flex text-sm font-semibold text-teal-700">
+              Open DAO storefront preview
+            </Link>
+          </div>
+        )}
+      </section>
+      <section className="grid gap-4 lg:grid-cols-2">
+        <GovernanceAuthorityPanel authority={data.authority} />
+        <GovernanceEnforcementPanel enforcement={data.enforcement} />
       </section>
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {data.products.map((product) => (
-          <ProductCard key={product.id} product={product} seller={data.seller} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            seller={data.seller}
+            enforcement={data.governanceEnforcement.records.find((record) => record.entityId === product.id)}
+          />
         ))}
       </section>
     </div>

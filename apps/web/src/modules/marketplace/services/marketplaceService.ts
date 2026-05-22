@@ -16,6 +16,7 @@ import type {
   PurchaseRecord,
   Seller
 } from "../types/marketplace";
+import { getDeliveryTelemetrySummary } from "./deliveryRuntime";
 
 export interface ProductFilters {
   category?: ProductCategory | "all";
@@ -96,6 +97,8 @@ export function calculateDashboardMetrics() {
     return acc;
   }, {});
 
+  const deliveryTelemetry = getDeliveryTelemetrySummary(products);
+
   return {
     totalProducts: products.length,
     activeListings: products.filter((product) => product.status === "listed").length,
@@ -104,7 +107,13 @@ export function calculateDashboardMetrics() {
     restrictedProducts: products.filter((product) => product.governanceStatus === "restricted").length,
     verifiedSellers: sellers.filter((seller) => seller.governanceStanding === "verified").length,
     royaltyPreview: products.reduce((sum, product) => sum + product.royaltyModel.previewAmount, 0),
-    categories
+    categories,
+    protectedAssets: products.filter((product) => product.visibility !== "public" || product.accessModel !== "public").length,
+    signedUrlPreviews: products.filter((product) => product.signedUrlPreviewAvailable).length,
+    entitlementChecks: deliveryTelemetry.entitlementChecks,
+    deliveryRevocations: deliveryTelemetry.revocations,
+    deliveryPreviewIssuance: deliveryTelemetry.previewIssuance,
+    deliveryBlockedEvents: deliveryTelemetry.blockedEvents
   };
 }
 

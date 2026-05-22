@@ -1,9 +1,18 @@
 import { Link } from "react-router-dom";
 import { Clock, Layers, ShieldCheck } from "lucide-react";
 import type { Product, Seller } from "../types/marketplace";
+import type { GovernanceEnforcementRecord } from "../../../services/apiClient";
 import { ProductStandingBadge, SellerStandingBadge } from "./StatusBadge";
 
-export function ProductCard({ product, seller }: { product: Product; seller?: Seller }) {
+export function ProductCard({
+  product,
+  seller,
+  enforcement
+}: {
+  product: Product;
+  seller?: Seller;
+  enforcement?: GovernanceEnforcementRecord;
+}) {
   return (
     <article className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
       <img src={product.images[0]} alt="" className="h-44 w-full object-cover" />
@@ -16,10 +25,15 @@ export function ProductCard({ product, seller }: { product: Product; seller?: Se
           <span className="rounded border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700">
             {product.listingType}
           </span>
+          {enforcement && enforcement.visibility.effectiveState !== "visible" && (
+            <span className="rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-800">
+              {enforcement.visibility.effectiveState}
+            </span>
+          )}
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{product.category}</p>
-          <Link to={`/marketplace/products/${product.slug}`} className="mt-1 block text-lg font-semibold hover:text-teal-700">
+          <Link to={`/marketplace/products/${product.slug}`} className="mt-1 block text-lg font-semibold hover:text-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
             {product.title}
           </Link>
           <p className="mt-2 text-sm leading-6 text-slate-600">{product.shortDescription}</p>
@@ -49,9 +63,14 @@ export function ProductCard({ product, seller }: { product: Product; seller?: Se
             </span>
           )}
         </div>
+        {enforcement && enforcement.commerce.purchasePreviewAllowed === false && (
+          <div className="rounded border border-amber-200 bg-amber-50 p-3 text-xs font-medium text-amber-900">
+            Purchase preview restricted by governance. No settlement or contract write attempted.
+          </div>
+        )}
         {seller && (
           <div className="flex items-center justify-between border-t border-slate-100 pt-3">
-            <Link to={`/marketplace/sellers/${seller.id}`} className="text-sm font-medium text-slate-700 hover:text-teal-700">
+            <Link to={`/marketplace/sellers/${seller.id}`} className="text-sm font-medium text-slate-700 hover:text-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
               {seller.name}
             </Link>
             <SellerStandingBadge status={seller.governanceStanding} />

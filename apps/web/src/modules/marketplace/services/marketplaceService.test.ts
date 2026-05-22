@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createDraftListingPreview, getProductByItemRef, getProductBySlug, issueMockPurchase, listProducts } from "./marketplaceService";
+import { StorageAccessService, GreenfieldAccessAdapter } from "./boundaryAdapters";
 
 describe("marketplaceService", () => {
   it("filters products by chain and governance standing", () => {
@@ -26,6 +27,20 @@ describe("marketplaceService", () => {
     expect(purchase.currency).toBe("USDC");
     expect(purchase.licenseIssued).toBe("license-personal-nft");
     expect(purchase.signedUrlPreview).toContain("greenfield.mock.axodus.local");
+  });
+
+  it("previews Greenfield access lifecycle without production delivery", () => {
+    const product = getProductBySlug("governance-dashboard-nft-access");
+    expect(product).toBeDefined();
+
+    const access = StorageAccessService.getAccessModel(product!);
+    const signedUrl = GreenfieldAccessAdapter.requestSignedUrlPreview(product!);
+
+    expect(access.signedUrlLifecycle).toBe("preview");
+    expect(access.productionGreenfieldEnabled).toBe(false);
+    expect(access.deliveryExecutionEnabled).toBe(false);
+    expect(signedUrl.signedUrl).toContain("greenfield.mock.axodus.local");
+    expect(signedUrl.deliveryExecutionEnabled).toBe(false);
   });
 
   it("resolves legacy NFT item references", () => {

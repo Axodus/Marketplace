@@ -1,5 +1,7 @@
 import type { DraftListingInput, Product } from "../types/marketplace";
 import { createDraftListingPreview, issueMockPurchase } from "./marketplaceService";
+import { createSignedUrlPreview, getDeliveryRuntime } from "./deliveryRuntime";
+import { traceAdapterCall } from "./runtimeTelemetry";
 
 export const ReownWalletStateMock = {
   connected: true,
@@ -10,6 +12,7 @@ export const ReownWalletStateMock = {
 
 export const MarketplaceContractAdapter = {
   async buyNow(product: Product) {
+    traceAdapterCall("MarketplaceContractAdapter.buyNow", "started", { productId: product.id, settlementEnabled: false });
     return {
       mode: "mock-contract-call",
       action: "buyNow",
@@ -20,6 +23,7 @@ export const MarketplaceContractAdapter = {
     };
   },
   async placeBid(product: Product, amount: number) {
+    traceAdapterCall("MarketplaceContractAdapter.placeBid", "started", { productId: product.id, amount, settlementEnabled: false });
     return {
       mode: "mock-contract-call",
       action: "placeBid",
@@ -29,6 +33,7 @@ export const MarketplaceContractAdapter = {
     };
   },
   async createListing(product: Product) {
+    traceAdapterCall("MarketplaceContractAdapter.createListing", "started", { productId: product.id, contractWriteEnabled: false });
     return {
       mode: "mock-contract-call",
       action: "createListing",
@@ -37,6 +42,7 @@ export const MarketplaceContractAdapter = {
     };
   },
   async createDraftListing(input: DraftListingInput) {
+    traceAdapterCall("MarketplaceContractAdapter.createDraftListing", "started", { listingType: input.listingType, contractWriteEnabled: false });
     return {
       mode: "mock-contract-call",
       action: "createListing",
@@ -47,6 +53,7 @@ export const MarketplaceContractAdapter = {
 
 export const RoyaltyService = {
   preview(product: Product) {
+    traceAdapterCall("RoyaltyService.preview", "observed", { productId: product.id, settlementEnabled: false });
     return {
       standard: product.royaltyModel.standard,
       bps: product.royaltyModel.bps,
@@ -69,13 +76,39 @@ export const AuctionService = {
 
 export const StorageAccessService = {
   previewSignedUrl(product: Product) {
-    if (!product.signedUrlPreviewAvailable) return null;
-    return `https://greenfield.mock.axodus.local/access/${product.slug}?signature=preview`;
+    traceAdapterCall("StorageAccessService.previewSignedUrl", "observed", { productId: product.id, productionGreenfieldEnabled: false });
+    return createSignedUrlPreview(product).signedUrl;
+  },
+  getAccessModel(product: Product) {
+    traceAdapterCall("StorageAccessService.getAccessModel", "observed", { productId: product.id, deliveryExecutionEnabled: false });
+    const runtime = getDeliveryRuntime(product);
+    const signedUrl = createSignedUrlPreview(product);
+
+    return {
+      service: "StorageAccessService",
+      deliveryType: product.deliveryType,
+      bucket: product.greenfieldBucket ?? null,
+      signedUrlLifecycle: signedUrl.lifecycle,
+      signedUrlPreviewAvailable: Boolean(signedUrl.signedUrl),
+      authorizationState: runtime.authorizationState,
+      protectedAsset: runtime.protectedAsset,
+      entitlementRequired: runtime.entitlementRequired,
+      productionGreenfieldEnabled: false,
+      deliveryExecutionEnabled: false
+    };
+  }
+};
+
+export const GreenfieldAccessAdapter = {
+  requestSignedUrlPreview(product: Product) {
+    traceAdapterCall("GreenfieldAccessAdapter.requestSignedUrlPreview", "observed", { productId: product.id, productionGreenfieldEnabled: false });
+    return createSignedUrlPreview(product);
   }
 };
 
 export const LayerZeroBridgeService = {
   readiness(product: Product) {
+    traceAdapterCall("LayerZeroBridgeService.readiness", "observed", { productId: product.id, bridgeExecutionEnabled: false });
     return product.bridgeReadiness;
   }
 };

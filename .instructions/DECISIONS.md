@@ -140,6 +140,298 @@ CONFIRMED
 
 ---
 
+## Sprint 04 Delivery Runtime Execution Model
+
+Decision:
+Marketplace may expose delivery runtime, entitlement checks, signed URL lifecycle, revocation state and telemetry before production delivery exists.
+
+Approved:
+- delivery runtime models for downloadable, protected, streamed, ACS, educational and enterprise assets
+- Greenfield signed URL preview lifecycle
+- entitlement enforcement preview for ownership, subscription, license, DAO and governance restrictions
+- delivery telemetry preview for checks, attempts, revocations and preview issuance
+- protected asset and entitlement-required UX labels
+
+Deferred:
+- production Greenfield execution
+- production signed URL issuance
+- real file download authorization
+- live stream delivery
+- ACS runtime provisioning
+- live ownership validation
+- real subscription/license/DAO entitlement enforcement
+- access revocation execution
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 05 Runtime Hardening Before Settlement
+
+Decision:
+Marketplace runtime must be performance-hardened, observable, accessible and route-stable before real execution or settlement is introduced.
+
+Approved:
+- route-level lazy loading
+- dashboard chunk isolation
+- product detail chunk isolation
+- wallet mock isolation from the global layout
+- in-memory lifecycle and adapter tracing
+- route/runtime error instrumentation
+- bounded query retry defaults
+- loading and empty state improvements
+- accessible dialog, badge, table, filter and navigation affordances
+
+Deferred:
+- external telemetry export
+- production monitoring backend
+- live contract tracing
+- live settlement observability
+- wallet execution
+- production Greenfield execution
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 06 Backend-Owned Mock Persistence
+
+Decision:
+Marketplace runtime state may move from frontend-only snapshots into a backend-owned mock persistence layer before production settlement exists.
+
+Approved:
+- HTTP API routes under `/api/marketplace`
+- file-backed repository persistence in `.runtime/marketplace-store.json`
+- repository boundaries for products, sellers, tenants, licenses, purchases, subscriptions, billing previews, governance validations, draft listings, delivery previews and events
+- frontend API hydration through `apiClient`
+- fallback to frontend mock services when the API runtime is offline
+- preview-only persistence for listings, purchases, invoices, subscriptions and delivery access
+
+Deferred:
+- production DB migration strategy
+- indexer reconciliation
+- real wallet execution
+- contract writes
+- NFT minting or settlement
+- real Greenfield signed URL issuance
+- treasury settlement
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 07 Canonical Registry Read Models
+
+Decision:
+Marketplace product, seller and tenant ownership must be represented as canonical registry read models before public storefront activation or real settlement is introduced.
+
+Approved:
+- derived product registry records
+- derived seller registry records
+- derived tenant/DAO registry records
+- DAO and seller storefront preview records
+- tenant-scoped product ownership
+- seller-to-tenant relationship normalization
+- read-only governance standing, warnings, restrictions and federation tier visibility
+- archival and deprecation state in product registry versioning
+
+Deferred:
+- public storefront activation
+- storefront publishing workflow
+- real sanctions enforcement
+- reputation scoring engine
+- governance write actions
+- production registry database/indexer reconciliation
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 08 Backend Entitlement Lifecycle
+
+Decision:
+Marketplace entitlement, license and subscription lifecycle state must be persisted in the backend runtime before real payment, NFT settlement or production access enforcement is introduced.
+
+Approved:
+- issued license runtime records
+- license lifecycle transitions for preview, issued, active, suspended, expired and revoked
+- subscription lifecycle transitions for active, paused, renewal due, pending, cancelled and expired
+- entitlement aggregation snapshots by holder
+- governance and tenant restriction visibility
+- delivery permission previews
+- access enforcement readiness metadata with real blocking disabled
+- future NFT and wallet ownership merge readiness
+
+Deferred:
+- real payment execution
+- NFT minting, transfer or settlement
+- production ownership validation
+- production access blocking
+- real subscription billing
+- production revocation enforcement
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 09 Non-Settlement Accounting Runtime
+
+Decision:
+Marketplace may persist invoice, billing, royalty and treasury preview accounting before any real payment or treasury execution exists.
+
+Approved:
+- invoice preview persistence
+- invoice lifecycle states
+- line item accounting
+- EIP-2981 royalty preview accounting
+- creator split preview
+- platform fee preview
+- ecosystem fee preview
+- treasury routing preview
+- tax placeholder boundaries
+- accounting telemetry
+- reconciliation preview state
+
+Deferred:
+- payment execution
+- real treasury movement
+- royalty distribution
+- production tax calculation
+- external payment reconciliation
+- accounting export integration
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 10 Audit And Reconciliation Readiness
+
+Decision:
+Marketplace must persist operational audit logs and replay-safe runtime events before live indexer, blockchain reconciliation or production settlement is introduced.
+
+Approved:
+- audit log persistence
+- runtime event categorization
+- replay-safe event metadata
+- correlation IDs
+- reconciliation preview snapshots
+- indexer readiness snapshots
+- ownership merge readiness metadata
+- NFT event ingestion readiness metadata
+- operational traceability dashboard
+
+Deferred:
+- live blockchain reads
+- queue publishing
+- production indexer ingestion
+- treasury verification
+- settlement verification
+- ownership verification
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 11 Governance Runtime Authority
+
+Decision:
+Marketplace must consume Governance-compatible runtime authority as read-only first-class data before any governance write, settlement or public enforcement phase is introduced.
+
+Approved:
+- GovernanceRuntimeAuthorityAdapter boundary
+- governance authority snapshot endpoint
+- entity authority lookup endpoint
+- product, seller and tenant authority hydration
+- constitutional standing hydration
+- federation tier hydration
+- warning and sanction visibility
+- operational approval visibility
+- emergency and restriction state visibility
+- product, seller, tenant, entitlement and billing context panels
+
+Deferred:
+- governance writes
+- sanctions mutation
+- approval execution
+- emergency action execution
+- live Governance API dependency as a hard requirement
+- Marketplace-side authority override
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 12 Governance Enforcement Boundaries
+
+Decision:
+Marketplace visibility, storefront, commerce preview and entitlement preview flows must react to Governance authority through explicit enforcement boundaries before hard blocking is introduced.
+
+Approved:
+- governance enforcement snapshot
+- entity-level enforcement lookup
+- product visibility preview
+- seller storefront restriction preview
+- tenant storefront restriction preview
+- purchase, bid and listing preview allowance flags
+- entitlement invalidation preview
+- subscription restriction preview
+- license restriction preview
+- governance override visibility
+- review queue routing metadata
+- reason codes for restricted, hidden, warning and review-required states
+
+Deferred:
+- destructive product hiding
+- live entitlement revocation
+- live subscription cancellation
+- live license suspension
+- seller or tenant freeze execution
+- governance write execution
+- hard blocking of runtime access
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 13 DAO Federation Runtime
+
+Decision:
+Marketplace must expose DAO storefront runtime, tenant-scoped boundaries and constitutional inheritance as first-class read models before public storefront activation or real tenant enforcement is introduced.
+
+Approved:
+- DAO federation runtime snapshot
+- tenant runtime lookup
+- DAO storefront activation state
+- storefront operational status
+- storefront governance visibility
+- tenant-scoped product, seller, invoice, license, subscription and entitlement boundaries
+- constitutional inheritance records
+- inherited restrictions and visibility rules
+- federation health metrics
+- storefront telemetry and operational visibility
+
+Deferred:
+- public storefront activation
+- production tenant isolation enforcement
+- cross-tenant settlement
+- constitutional write execution
+- destructive tenant freeze
+- public DAO storefront publishing workflow
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation
