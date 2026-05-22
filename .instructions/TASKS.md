@@ -707,3 +707,30 @@ Still deferred:
 - entitlement enforcement mutation
 - settlement reconciliation execution
 - wallet execution
+
+---
+
+# Sprint 23 — Billing/Treasury Reconciliation
+
+Status: IMPLEMENTED PERSISTENT RUNTIME
+
+Delivered:
+- treasury reconciliation runtime service
+- royalty reconciliation against persisted invoice previews
+- treasury split verification
+- creator split verification
+- platform and ecosystem fee consistency checks
+- accounting consistency readiness flags
+- settlement preview readiness flags
+- persisted treasury reconciliation snapshots
+- runtime event and audit trace for treasury reconciliation snapshots
+- API endpoints for creating and listing treasury reconciliation snapshots
+- repository and controller tests for royalty, treasury and accounting reconciliation
+
+Still deferred:
+- real treasury movement
+- royalty distribution
+- payment settlement
+- external accounting reconciliation
+- contract writes
+- wallet execution

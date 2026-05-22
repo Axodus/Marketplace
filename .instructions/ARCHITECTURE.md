@@ -787,6 +787,33 @@ Current boundaries:
 - no settlement reconciliation execution
 - no wallet execution
 
+## Sprint 23 Billing/Treasury Reconciliation Runtime
+
+Sprint 23 adds backend-owned treasury and accounting reconciliation previews over persisted invoice runtime.
+
+The API now supports:
+- royalty reconciliation against product royalty metadata
+- treasury split verification
+- platform fee consistency checks
+- ecosystem fee consistency checks
+- creator split verification
+- invoice accounting consistency visibility
+- mismatch reason codes and aggregate metrics
+
+Endpoints:
+- `POST /api/marketplace/reconciliation/treasury`
+- `GET /api/marketplace/reconciliation/treasury`
+
+Treasury reconciliation compares persisted invoice previews with deterministic product pricing, EIP-2981 royalty metadata and Axodus fee policy previews. It persists reconciliation snapshots and records audit/runtime events categorized as treasury preview.
+
+Current boundaries:
+- no real treasury movement
+- no royalty distribution
+- no payment settlement
+- no external accounting reconciliation
+- no contract write
+- no wallet execution
+
 ---
 
 # Governance Integration

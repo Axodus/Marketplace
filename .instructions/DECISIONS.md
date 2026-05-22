@@ -699,6 +699,35 @@ CONFIRMED
 
 ---
 
+# Sprint 23 Billing/Treasury Reconciliation Runtime
+
+Decision:
+Marketplace may persist treasury and accounting reconciliation preview snapshots before any real treasury movement, royalty distribution or payment settlement exists.
+
+Approved:
+- royalty reconciliation against persisted invoice previews
+- treasury split verification
+- creator split verification
+- platform and ecosystem fee consistency checks
+- accounting consistency readiness flags
+- settlement preview readiness flags
+- persisted treasury reconciliation snapshots
+- reconciliation API endpoints
+- treasury preview runtime/audit event category
+
+Deferred:
+- real treasury movement
+- royalty distribution
+- payment settlement
+- external accounting reconciliation
+- contract writes
+- wallet execution
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation

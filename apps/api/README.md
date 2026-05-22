@@ -61,6 +61,7 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `GET /api/marketplace/audit-logs`
 - `GET /api/marketplace/reconciliation`
 - `GET /api/marketplace/reconciliation/ownership`
+- `GET /api/marketplace/reconciliation/treasury`
 - `GET /api/marketplace/indexer-snapshots`
 - `GET /api/marketplace/indexer/runtime`
 - `GET /api/marketplace/indexer/events`
@@ -90,6 +91,7 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `POST /api/marketplace/delivery-previews`
 - `POST /api/marketplace/reconciliation/snapshot`
 - `POST /api/marketplace/reconciliation/ownership`
+- `POST /api/marketplace/reconciliation/treasury`
 - `POST /api/marketplace/indexer-snapshots`
 - `POST /api/marketplace/indexer/events`
 
@@ -223,6 +225,17 @@ Sprint 22 ownership reconciliation persists:
 - invalid NFT asset visibility
 
 Ownership reconciliation compares NFT-bound products against persisted ownership snapshots and expected holders from purchase/license runtime. It does not execute live chain reads, mutate ownership, enforce entitlements or perform settlement reconciliation.
+
+Sprint 23 billing/treasury reconciliation persists:
+
+- royalty reconciliation previews
+- treasury split verification
+- creator split verification
+- platform/ecosystem fee consistency checks
+- accounting telemetry readiness flags
+- settlement preview readiness flags
+
+Treasury reconciliation compares persisted invoice previews against deterministic product pricing, EIP-2981 royalty metadata and Axodus fee policy previews. It records mismatch reason codes and metrics, but does not execute treasury movement, royalty distribution, payment settlement or external reconciliation.
 
 Every response is wrapped in an envelope that declares:
 
