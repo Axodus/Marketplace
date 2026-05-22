@@ -539,3 +539,88 @@ Still deferred:
 - contract writes
 - settlement execution
 - production Reown project configuration hard dependency
+
+---
+
+# Sprint 17 — NFT Ownership Reads
+
+Status: IMPLEMENTED READONLY
+
+Delivered:
+- readonly NFT ownership runtime service
+- ERC721 `ownerOf` read encoding and verification
+- ERC1155 `balanceOf` read encoding and verification
+- governance NFT classification
+- license/access NFT classification
+- disconnected wallet ownership state
+- unsupported/restricted chain ownership state
+- ownership mismatch state
+- unreadable mock contract state for non-production contract references
+- product detail NFT ownership panel
+- ownership read and rendering tests
+
+Still deferred:
+- mint execution
+- transfer execution
+- approval execution
+- wallet signatures
+- contract writes
+- production ownership-to-entitlement enforcement
+
+---
+
+# Sprint 18 — Marketplace Listing Runtime Real
+
+Status: IMPLEMENTED READONLY
+
+Delivered:
+- readonly listing runtime service
+- fixed listing state hydration through `eth_call`
+- english auction state hydration through `eth_call`
+- dutch auction state hydration through `eth_call`
+- bid count and highest bid hydration
+- expiration state hydration
+- EIP-2981 royalty info hydration
+- marketplace contract read boundary
+- auction contract read boundary
+- royalty/NFT contract read boundary
+- product detail listing runtime panel
+- listing, auction, royalty and hydration tests
+
+Still deferred:
+- buy execution
+- bid placement
+- auction settlement
+- listing cancellation
+- contract writes
+- wallet signatures
+- production marketplace ABI hard dependency
+
+---
+
+# Sprint 19 — Signature Preparation Runtime
+
+Status: IMPLEMENTED PREVIEW-ONLY
+
+Delivered:
+- signature intent runtime service
+- transaction payload preview
+- calldata preview for buy-now intents
+- calldata preview for bid intents
+- calldata preview for create-listing intents
+- optional gas estimation preview through `eth_estimateGas`
+- contract visibility
+- wallet and chain visibility
+- permission visibility
+- warning and risk visibility
+- product detail signature intent panel
+- signature runtime, calldata and UX tests
+
+Still deferred:
+- `eth_sendTransaction`
+- `personal_sign`
+- `eth_signTypedData`
+- wallet signature requests
+- transaction submission
+- contract writes
+- settlement execution

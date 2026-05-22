@@ -519,6 +519,97 @@ CONFIRMED
 
 ---
 
+## Sprint 17 Readonly NFT Ownership Reads
+
+Decision:
+Marketplace may perform readonly NFT ownership verification through wallet/provider reads before ownership enforcement, minting, transfer or settlement is enabled.
+
+Approved:
+- ERC721 `ownerOf` readonly reads
+- ERC1155 `balanceOf` readonly reads
+- governance NFT ownership classification
+- license/access NFT ownership classification
+- disconnected wallet state rendering
+- unsupported chain state rendering
+- ownership mismatch rendering
+- unreadable mock contract rendering
+- product detail ownership visibility
+
+Deferred:
+- NFT minting
+- NFT transfer
+- approval execution
+- wallet signatures
+- contract writes
+- production entitlement enforcement from ownership reads
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 18 Readonly Marketplace Listing Runtime
+
+Decision:
+Marketplace may hydrate listing, auction, bid, expiration and royalty state through readonly contract calls before settlement or listing writes are enabled.
+
+Approved:
+- fixed listing readonly hydration
+- english auction readonly hydration
+- dutch auction readonly hydration
+- bid count and highest bid hydration
+- expiration state hydration
+- EIP-2981 royalty info hydration
+- marketplace contract read adapter boundary
+- auction contract read adapter boundary
+- royalty/NFT contract read adapter boundary
+- product detail listing runtime visibility
+
+Deferred:
+- buy execution
+- bid placement
+- auction settlement
+- listing cancellation
+- contract writes
+- wallet signatures
+- production marketplace ABI hard dependency
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 19 Signature Preparation Runtime
+
+Decision:
+Marketplace may expose transaction payload, calldata, gas estimate and signature intent previews before any wallet signature or transaction execution is enabled.
+
+Approved:
+- transaction payload preview
+- buy-now calldata preview
+- bid calldata preview
+- create-listing calldata preview
+- optional `eth_estimateGas` preview
+- contract visibility
+- wallet and chain visibility
+- permission visibility
+- risk and warning visibility
+- confirmation preview UI
+
+Deferred:
+- `eth_sendTransaction`
+- `personal_sign`
+- `eth_signTypedData`
+- wallet signature request
+- transaction submission
+- contract writes
+- settlement execution
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation

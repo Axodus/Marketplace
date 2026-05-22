@@ -612,6 +612,94 @@ This layer is strictly readonly for Marketplace commerce:
 
 If a Reown/AppKit package/runtime is available, Marketplace uses its wallet provider. If not, Marketplace falls back to the injected EIP-1193 wallet provider while preserving the same readonly state contract.
 
+## Sprint 17 Readonly NFT Ownership Runtime
+
+Sprint 17 adds readonly NFT ownership verification on top of the wallet runtime.
+
+The web runtime now supports:
+- ERC721 `ownerOf` reads through `eth_call`
+- ERC1155 `balanceOf` reads through `eth_call`
+- governance NFT classification
+- license/access NFT classification
+- disconnected wallet visibility
+- unsupported or restricted chain visibility
+- ownership mismatch visibility
+- unreadable mock/offchain contract visibility
+
+Ownership reads are implemented under `apps/web/src/modules/marketplace/services/nftOwnershipRuntime.ts`.
+
+Product detail pages expose ownership state through a dedicated NFT ownership panel. The panel reports read method, wallet, chain, contract, token, owner/balance when available and explicit no-write labels.
+
+Current boundaries:
+- no mint
+- no transfer
+- no approval
+- no wallet signature
+- no contract write
+- no settlement
+- no entitlement mutation
+
+## Sprint 18 Readonly Listing Runtime
+
+Sprint 18 adds live-read listing hydration boundaries for Marketplace contracts.
+
+The web runtime now supports:
+- fixed listing readonly state hydration
+- english auction readonly state hydration
+- dutch auction readonly state hydration
+- bid count and highest bid hydration
+- expiration state hydration
+- EIP-2981 `royaltyInfo` readonly hydration
+- marketplace contract read adapter boundaries
+- auction contract read adapter boundaries
+- royalty/NFT contract read adapter boundaries
+
+Listing runtime lives in `apps/web/src/modules/marketplace/services/listingRuntime.ts` and is surfaced on product detail pages through a dedicated listing runtime panel.
+
+The current model requires production-shaped contract metadata before live reads execute:
+- `marketplaceContractAddress`
+- `listingId`
+- optional `auctionContractAddress`
+- optional `royaltyContractAddress`
+- numeric `tokenId` for EIP-2981 reads
+
+Mock products without those fields remain visible as readiness-only.
+
+Current boundaries:
+- no buy execution
+- no bid placement
+- no auction settlement
+- no listing cancellation
+- no contract write
+- no wallet signature
+- no treasury movement
+
+## Sprint 19 Signature Preparation Runtime
+
+Sprint 19 adds safe transaction/signature preparation infrastructure without enabling signing or sending.
+
+The web runtime now supports:
+- transaction payload preview
+- calldata preview for buy-now, bid and create-listing intents
+- optional gas estimation preview through `eth_estimateGas`
+- contract visibility
+- wallet and chain visibility
+- permission visibility
+- risk and warning visibility
+- confirmation preview UI
+
+Signature intent runtime lives in `apps/web/src/modules/marketplace/services/signatureRuntime.ts` and is surfaced through a product detail signature intent panel.
+
+Current boundaries:
+- no `eth_sendTransaction`
+- no `personal_sign`
+- no `eth_signTypedData`
+- no wallet signature request
+- no transaction submission
+- no contract write
+- no settlement
+- no treasury movement
+
 ---
 
 # Governance Integration

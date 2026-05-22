@@ -56,6 +56,90 @@ Still disabled:
 
 The runtime uses Reown/AppKit when an AppKit provider is available. Without a configured Reown package/runtime, it falls back to the browser-injected EIP-1193 provider while preserving the same readonly state contract.
 
+## NFT Ownership Runtime
+
+Sprint 17 adds readonly NFT ownership verification.
+
+Implemented:
+
+- ERC721 `ownerOf` readonly reads through `eth_call`
+- ERC1155 `balanceOf` readonly reads through `eth_call`
+- governance NFT classification
+- license/access NFT classification
+- disconnected wallet state
+- unsupported/restricted chain state
+- ownership mismatch state
+- unreadable mock/offchain contract state
+- product detail ownership panel
+
+Still disabled:
+
+- minting
+- transfers
+- approvals
+- wallet signatures
+- contract writes
+- settlement
+- production entitlement mutation from ownership reads
+
+Current mock products still use symbolic `mock:` contract references, so the UI reports readiness/unreadable contract for those items. Production-shaped EVM addresses and numeric token IDs are required before `ownerOf` or `balanceOf` reads execute.
+
+## Listing Runtime
+
+Sprint 18 adds readonly listing runtime hydration.
+
+Implemented:
+
+- fixed listing state reads through `eth_call`
+- english auction state reads through `eth_call`
+- dutch auction state reads through `eth_call`
+- bid count and highest bid hydration
+- expiration state hydration
+- EIP-2981 `royaltyInfo` hydration
+- marketplace contract read boundary
+- auction contract read boundary
+- royalty/NFT contract read boundary
+- product detail listing runtime panel
+
+Still disabled:
+
+- buy execution
+- bid placement
+- listing cancellation
+- auction settlement
+- contract writes
+- wallet signatures
+- treasury movement
+
+Live listing reads require production-shaped `marketplaceContractAddress` and `listingId`. Mock products without those fields render readiness-only listing state.
+
+## Signature Preparation Runtime
+
+Sprint 19 adds safe transaction/signature preview infrastructure.
+
+Implemented:
+
+- transaction payload preview
+- calldata preview for buy-now, bid and create-listing intents
+- optional gas estimate preview through `eth_estimateGas`
+- contract visibility
+- wallet and chain visibility
+- permission visibility
+- risk and warning visibility
+- product detail signature intent panel
+
+Still disabled:
+
+- `eth_sendTransaction`
+- `personal_sign`
+- `eth_signTypedData`
+- wallet signature request
+- transaction submission
+- contract writes
+- settlement execution
+
+The runtime may call `eth_estimateGas` when a provider and production-shaped contract metadata are available. It never calls send/sign methods.
+
 ## Delivery Runtime
 
 Sprint 04 prepares entitlement-aware delivery without production execution.
@@ -327,4 +411,7 @@ src/
 - API client tests cover governance workflow runtime hydration.
 - API client tests cover governance observability and emergency controls.
 - Wallet runtime tests cover readonly session hydration, connection, chain switching and disconnect handling.
+- NFT ownership tests cover ERC721 reads, ERC1155 reads, disconnected wallet rendering, unsupported chain handling and ownership mismatch rendering.
+- Listing runtime tests cover fixed listing reads, auction reads, bid state, expiration state, royalty hydration and readiness-only rendering.
+- Signature runtime tests cover transaction payload previews, calldata previews, gas preview, permission visibility, risk UX and absence of send/sign calls.
 - Future visual/E2E tests should cover wallet connect UI, buy-now preview, bid preview, and signed URL preview after mock purchase.

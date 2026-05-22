@@ -85,6 +85,10 @@ export interface Product {
   tokenStandard: TokenStandard;
   contractAddress?: string;
   tokenId?: string;
+  marketplaceContractAddress?: string;
+  auctionContractAddress?: string;
+  royaltyContractAddress?: string;
+  listingId?: string;
   listingType: ListingType;
   auction?: AuctionState;
   bridgeReadiness: BridgeReadiness;

@@ -4,9 +4,15 @@ import { ExternalLink, FileCheck, Gavel, Link2, PackageCheck, ShieldCheck } from
 import { PurchaseModal } from "../components/PurchaseModal";
 import { GovernanceAuthorityPanel } from "../components/GovernanceAuthorityPanel";
 import { GovernanceEnforcementPanel } from "../components/GovernanceEnforcementPanel";
+import { ListingRuntimePanel } from "../components/ListingRuntimePanel";
+import { NftOwnershipPanel } from "../components/NftOwnershipPanel";
+import { SignatureIntentPanel } from "../components/SignatureIntentPanel";
 import { NeutralBadge, ProductStandingBadge, SellerStandingBadge } from "../components/StatusBadge";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
+import { useListingRuntime } from "../hooks/useListingRuntime";
+import { useNftOwnership } from "../hooks/useNftOwnership";
 import { useProduct } from "../hooks/useMarketplace";
+import { useSignatureIntent } from "../hooks/useSignatureIntent";
 import { LayerZeroBridgeService, RoyaltyService, StorageAccessService } from "../services/boundaryAdapters";
 import {
   createSignedUrlPreview,
@@ -17,6 +23,9 @@ import {
 export function ProductDetailPage() {
   const { slug } = useParams();
   const { data, error } = useProduct(slug);
+  const ownership = useNftOwnership(data?.product);
+  const listingRuntime = useListingRuntime(data?.product);
+  const signatureIntent = useSignatureIntent(data?.product, data?.product.listingType === "fixed" ? "buy-now" : "place-bid", data?.product.auction?.highestBid);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   useMarketplaceTelemetry("product-detail-page", { slug: slug ?? null });
 
@@ -79,6 +88,9 @@ export function ProductDetailPage() {
       <section className="grid gap-4 lg:grid-cols-3">
         <GovernanceAuthorityPanel authority={authority} />
         <GovernanceEnforcementPanel enforcement={enforcement} />
+        <NftOwnershipPanel snapshot={ownership.data} loading={ownership.isLoading} />
+        <ListingRuntimePanel snapshot={listingRuntime.data} loading={listingRuntime.isLoading} />
+        <SignatureIntentPanel snapshot={signatureIntent.data} loading={signatureIntent.isLoading} />
         <Panel icon={<ShieldCheck />} title="Governance validation">
           <p>Product standing: {product.governanceStatus}</p>
           <p>Constitutional standing: {product.constitutionalStanding}</p>
