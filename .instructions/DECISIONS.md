@@ -176,7 +176,7 @@ Approved:
 - route-level lazy loading
 - dashboard chunk isolation
 - product detail chunk isolation
-- wallet mock isolation from the global layout
+- wallet runtime isolation from the global layout
 - in-memory lifecycle and adapter tracing
 - route/runtime error instrumentation
 - bounded query retry defaults
@@ -483,6 +483,36 @@ Deferred:
 - live license suspension
 - live entitlement revocation
 - live settlement intervention
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 16 Reown/AppKit Readonly Wallet Runtime
+
+Decision:
+Marketplace may replace wallet mock state with a real readonly wallet session runtime before settlement or ownership execution is enabled.
+
+Approved:
+- Reown/AppKit provider discovery boundary
+- injected EIP-1193 provider fallback
+- account session hydration with `eth_accounts`
+- user connection with `eth_requestAccounts`
+- chain state hydration with `eth_chainId`
+- chain switching with `wallet_switchEthereumChain`
+- local session persistence
+- account, chain and disconnect event handling
+- supported and restricted chain visibility
+- Marketplace layout wallet visibility
+
+Deferred:
+- wallet signatures
+- transaction execution
+- NFT transfer
+- contract writes
+- settlement execution
+- production Reown project enforcement
 
 Status:
 CONFIRMED

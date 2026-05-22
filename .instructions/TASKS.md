@@ -142,12 +142,14 @@ Deliverables:
 - mock create/sell listing preview
 - legacy NFT item route compatibility
 - adapters for MarketplaceContractAdapter, RoyaltyService, AuctionService, StorageAccessService and LayerZeroBridgeService
-- Reown AppKit wallet state mock
+- readonly Reown/AppKit wallet runtime boundary
 
 Constraints:
 - no real payment execution
 - no production contract addresses
 - no live blockchain settlement
+- no wallet signatures
+- no transaction execution
 - no treasury routing
 - no bridge execution
 
@@ -508,3 +510,32 @@ Still deferred:
 - live license suspension
 - live entitlement revocation
 - live settlement intervention
+
+---
+
+# Sprint 16 — Reown/AppKit Runtime Real
+
+Status: IMPLEMENTED READONLY
+
+Delivered:
+- real readonly wallet runtime service
+- Reown/AppKit provider discovery boundary
+- EIP-1193 injected wallet fallback
+- wallet session hydration through `eth_accounts`
+- active chain hydration through `eth_chainId`
+- wallet connection through `eth_requestAccounts`
+- chain switching through `wallet_switchEthereumChain`
+- disconnect handling
+- local wallet session persistence
+- provider event handling for account, chain and disconnect changes
+- supported chain and restricted chain visibility
+- Marketplace layout wallet status and connect/disconnect controls
+- wallet runtime tests for hydration, connection, chain switching and disconnect
+
+Still deferred:
+- wallet signatures
+- transaction execution
+- NFT transfer
+- contract writes
+- settlement execution
+- production Reown project configuration hard dependency

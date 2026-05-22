@@ -24,9 +24,37 @@ Products, licenses, Academy assets, MCP services and DAO utilities extend the ma
 - `GreenfieldAccessAdapter`: mock signed URL lifecycle, authorization, expiration and revocation previews.
 - `DeliveryRuntime`: mock protected asset, entitlement and delivery telemetry runtime.
 - `LayerZeroBridgeService`: chain/bridge readiness metadata only.
-- `ReownWalletStateMock`: wallet connection and chain state mock.
+- `WalletRuntime`: readonly Reown/AppKit provider discovery, injected EIP-1193 fallback, account session hydration and chain state.
 
-No real payment, contract settlement, wallet signature, bridge action or treasury routing is executed in Phase 1.
+No real payment, contract settlement, wallet signature, transaction, bridge action or treasury routing is executed in Phase 1.
+
+## Wallet Runtime
+
+Sprint 16 replaces the wallet mock with a readonly wallet runtime.
+
+Implemented:
+
+- Reown/AppKit provider discovery boundary
+- injected EIP-1193 wallet fallback
+- session hydration through `eth_accounts`
+- account connection through `eth_requestAccounts`
+- active chain hydration through `eth_chainId`
+- chain switching through `wallet_switchEthereumChain`
+- disconnect handling
+- local wallet session persistence
+- supported chain and restricted chain visibility
+- Marketplace layout wallet status and connect/disconnect controls
+
+Still disabled:
+
+- wallet signatures
+- transaction execution
+- contract writes
+- NFT transfer
+- settlement execution
+- treasury movement
+
+The runtime uses Reown/AppKit when an AppKit provider is available. Without a configured Reown package/runtime, it falls back to the browser-injected EIP-1193 provider while preserving the same readonly state contract.
 
 ## Delivery Runtime
 
@@ -298,4 +326,5 @@ src/
 - API client tests cover DAO federation runtime hydration.
 - API client tests cover governance workflow runtime hydration.
 - API client tests cover governance observability and emergency controls.
-- Future visual/E2E tests should cover wallet mock state, buy-now preview, bid preview, and signed URL preview after mock purchase.
+- Wallet runtime tests cover readonly session hydration, connection, chain switching and disconnect handling.
+- Future visual/E2E tests should cover wallet connect UI, buy-now preview, bid preview, and signed URL preview after mock purchase.

@@ -216,7 +216,7 @@ Sprint 05 hardens the web runtime before any real settlement phase.
 Runtime hardening includes:
 - route-level code splitting through `React.lazy` and `Suspense`
 - isolated dashboard and product detail chunks
-- wallet mock isolation from the global layout chunk
+- wallet runtime isolation from the global layout chunk
 - QueryClient defaults for bounded retry and stable refetch behavior
 - route loading fallback states
 - in-memory Marketplace runtime telemetry
@@ -577,6 +577,40 @@ The operator console reports:
 - telemetry counters and records
 
 Emergency controls are preview-only. They do not execute live Governance writes, product removals, seller/tenant freezes, license suspensions, entitlement revocations or settlement actions.
+
+## Sprint 16 Reown/AppKit Readonly Wallet Runtime
+
+Sprint 16 replaces the Marketplace wallet mock with a real readonly wallet runtime.
+
+The web runtime now owns:
+- Reown/AppKit provider discovery through an isolated adapter boundary
+- EIP-1193 browser provider fallback
+- wallet session hydration with `eth_accounts`
+- account connection with `eth_requestAccounts`
+- chain hydration with `eth_chainId`
+- chain switching with `wallet_switchEthereumChain`
+- disconnect handling
+- local wallet session persistence
+- provider event handling for account, chain and disconnect changes
+
+Wallet visibility exposes:
+- connected and disconnected state
+- active account
+- active chain
+- supported chain state
+- restricted or unsupported chain state
+- provider source
+- readonly execution flags
+
+This layer is strictly readonly for Marketplace commerce:
+- no transaction execution
+- no contract write
+- no wallet signature request
+- no NFT transfer
+- no settlement
+- no treasury movement
+
+If a Reown/AppKit package/runtime is available, Marketplace uses its wallet provider. If not, Marketplace falls back to the injected EIP-1193 wallet provider while preserving the same readonly state contract.
 
 ---
 
