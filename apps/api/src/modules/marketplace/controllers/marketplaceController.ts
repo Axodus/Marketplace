@@ -68,6 +68,8 @@ export class MarketplaceController {
       }
       if (req.method === "GET" && route === "/purchases") return send(res, await this.service.listPurchases());
       if (req.method === "GET" && route === "/settlements") return send(res, await this.service.getSettlementSnapshot());
+      if (req.method === "GET" && route === "/royalties/distributions") return send(res, await this.service.getRoyaltyDistributionSnapshot());
+      if (req.method === "GET" && route === "/auctions") return send(res, await this.service.getAuctionRuntimeSnapshot());
       if (req.method === "GET" && route === "/subscriptions") return send(res, await this.service.listSubscriptions());
       if (req.method === "GET" && route === "/billing-previews") return send(res, await this.service.listBillingPreviews());
       if (req.method === "GET" && route === "/invoices") return send(res, await this.service.listInvoices());
@@ -115,6 +117,12 @@ export class MarketplaceController {
       if (req.method === "POST" && route === "/draft-listings") return send(res, await this.service.createDraftListing(await readJson(req)), 201);
       if (req.method === "POST" && route === "/purchases/preview") return send(res, await this.service.createPurchasePreview(await readJson(req)), 201);
       if (req.method === "POST" && route === "/settlements/execute") return send(res, await this.service.executeSettlement(await readJson(req)), 201);
+      if (req.method === "POST" && route === "/royalties/distributions") {
+        return send(res, await this.service.allocateRoyaltyDistribution(await readJson(req)), 201);
+      }
+      if (req.method === "POST" && route === "/auctions/bids") return send(res, await this.service.placeAuctionBid(await readJson(req)), 201);
+      if (req.method === "POST" && route === "/auctions/settle") return send(res, await this.service.settleAuction(await readJson(req)), 201);
+      if (req.method === "POST" && route === "/auctions/expire") return send(res, await this.service.expireAuction(await readJson(req)), 201);
       if (req.method === "POST" && route === "/entitlements/enforce") return send(res, await this.service.evaluateEntitlementEnforcement(await readJson(req)), 201);
       if (req.method === "POST" && route === "/billing-previews") return send(res, await this.service.createBillingPreview(await readJson(req)), 201);
       if (req.method === "POST" && route === "/invoices/preview") return send(res, await this.service.createInvoicePreview(await readJson(req)), 201);

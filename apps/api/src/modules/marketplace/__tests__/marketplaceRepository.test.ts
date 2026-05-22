@@ -602,6 +602,124 @@ describe("FileMarketplaceRepository", () => {
     expect(events.map((event) => event.type)).toEqual(expect.arrayContaining(["settlement.executed", "settlement.blocked"]));
   });
 
+  it("allocates EIP-2981 royalties, creator payouts and treasury splits from confirmed settlements", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    const settlement = await repository.executeSettlement({
+      productId: "product-governance-dashboard-nft",
+      buyer: "0xRoyaltyBuyer",
+      controlledRollout: true
+    });
+    const blocked = await repository.allocateRoyaltyDistribution({ settlementId: settlement.id });
+    const allocated = await repository.allocateRoyaltyDistribution({ settlementId: settlement.id, controlledRollout: true });
+    const snapshot = await repository.getRoyaltyDistributionSnapshot();
+    const events = await repository.listEvents();
+
+    expect(blocked.status).toBe("blocked");
+    expect(blocked.reasonCodes).toContain("controlled-rollout-required");
+    expect(allocated.status).toBe("allocated");
+    expect(allocated.eip2981).toMatchObject({
+      standard: "EIP-2981",
+      bps: 500,
+      recipient: "Axodus Treasury",
+      royaltyAmount: 6,
+      settlementReady: true
+    });
+    expect(allocated.creatorPayout).toMatchObject({ recipient: "seller-axodus-core", amount: 109.8, payoutExecutionEnabled: false });
+    expect(allocated.treasuryAllocation).toMatchObject({
+      platformFee: 3,
+      ecosystemFee: 1.2,
+      treasuryAmount: 4.2,
+      treasuryMovementEnabled: false
+    });
+    expect(allocated.externalPayoutEnabled).toBe(false);
+    expect(allocated.contractExecutionEnabled).toBe(false);
+    expect(allocated.treasuryMovementEnabled).toBe(false);
+    expect(snapshot.metrics).toMatchObject({
+      allocated: 1,
+      blocked: 1,
+      grossVolume: 120,
+      royaltyTotal: 6,
+      creatorPayoutTotal: 109.8,
+      treasuryTotal: 4.2
+    });
+    expect(snapshot.eip2981SettlementReady).toBe(true);
+    expect(events.map((event) => event.type)).toEqual(
+      expect.arrayContaining(["royalty.distribution_allocated", "royalty.distribution_blocked"])
+    );
+    expect(events[0].category).toBe("treasury_preview");
+  });
+
+  it("places live auction bids, settles winning bids and executes auction expiration", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    const lowBid = await repository.placeAuctionBid({
+      productId: "product-academy-cert-bundle",
+      bidder: "0xAuctionBidder",
+      amount: 50
+    });
+    const acceptedBid = await repository.placeAuctionBid({
+      productId: "product-academy-cert-bundle",
+      bidder: "0xAuctionBidder",
+      amount: 95
+    });
+    const rejectedBid = await repository.placeAuctionBid({
+      productId: "product-academy-cert-bundle",
+      bidder: "0xSecondBidder",
+      amount: 90
+    });
+    const blockedSettlement = await repository.settleAuction({ auctionId: acceptedBid.auctionId });
+    const settled = await repository.settleAuction({ auctionId: acceptedBid.auctionId, controlledRollout: true });
+
+    const expirationBid = await repository.placeAuctionBid({
+      productId: "product-trading-strategy-pass",
+      bidder: "0xExpiryBidder",
+      amount: 225
+    });
+    const expired = await repository.expireAuction({ auctionId: expirationBid.auctionId, controlledRollout: true });
+    const snapshot = await repository.getAuctionRuntimeSnapshot();
+    const purchases = await repository.listPurchases();
+    const events = await repository.listEvents();
+
+    expect(lowBid.status).toBe("rejected");
+    expect(lowBid.reasonCodes).toContain("bid-below-reserve");
+    expect(acceptedBid.status).toBe("accepted");
+    expect(acceptedBid.liveBidRuntimeEnabled).toBe(true);
+    expect(acceptedBid.walletExecutionEnabled).toBe(false);
+    expect(rejectedBid.status).toBe("rejected");
+    expect(rejectedBid.reasonCodes).toContain("bid-not-higher-than-current");
+    expect(blockedSettlement.status).toBe("blocked");
+    expect(blockedSettlement.reasonCodes).toContain("controlled-rollout-required");
+    expect(settled.status).toBe("settled");
+    expect(settled.settlement).toMatchObject({
+      status: "settled",
+      buyer: "0xAuctionBidder",
+      amount: 95
+    });
+    expect(settled.settlement.confirmationId).toContain("auction-confirmation-");
+    expect(settled.walletExecutionEnabled).toBe(false);
+    expect(settled.blockchainWritesEnabled).toBe(false);
+    expect(settled.contractSettlementEnabled).toBe(false);
+    expect(purchases.some((purchase) => purchase.id === settled.settlement.purchaseId)).toBe(true);
+    expect(expired.status).toBe("expired");
+    expect(expired.expiration.status).toBe("executed");
+    expect(snapshot.metrics).toMatchObject({
+      settled: 1,
+      expired: 1,
+      bids: 4,
+      acceptedBids: 2,
+      rejectedBids: 2,
+      totalBidVolume: 320
+    });
+    expect(snapshot.auctionSettlementEnabled).toBe(true);
+    expect(snapshot.contractSettlementEnabled).toBe(false);
+    expect(events.map((event) => event.type)).toEqual(
+      expect.arrayContaining(["auction.bid_placed", "auction.bid_rejected", "auction.settled", "auction.expired", "auction.blocked"])
+    );
+  });
+
   it("reconciles ownership snapshots with mismatch and stale visibility", async () => {
     const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
     await repository.init();

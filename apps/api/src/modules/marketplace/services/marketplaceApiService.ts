@@ -1,5 +1,8 @@
 import type { MarketplaceRepository } from "../repositories/marketplaceRepository.js";
 import {
+  validateAuctionBidRequest,
+  validateAuctionExpirationRequest,
+  validateAuctionSettlementRequest,
   validateBillingPreviewRequest,
   validateChainIngestionEventRequest,
   validateDeliveryTelemetryRequest,
@@ -11,6 +14,7 @@ import {
   validateInvoicePreviewRequest,
   validateLicenseLifecycleRequest,
   validateProductActionRequest,
+  validateRoyaltyDistributionRequest,
   validateSecureDeliveryRequest,
   validateSettlementExecutionRequest,
   validateSignedUrlIssueRequest,
@@ -108,6 +112,30 @@ export class MarketplaceApiService {
 
   getSettlementSnapshot() {
     return this.repository.getSettlementSnapshot();
+  }
+
+  allocateRoyaltyDistribution(input: Record<string, unknown>) {
+    return this.repository.allocateRoyaltyDistribution(validateRoyaltyDistributionRequest(input));
+  }
+
+  getRoyaltyDistributionSnapshot() {
+    return this.repository.getRoyaltyDistributionSnapshot();
+  }
+
+  placeAuctionBid(input: Record<string, unknown>) {
+    return this.repository.placeAuctionBid(validateAuctionBidRequest(input));
+  }
+
+  settleAuction(input: Record<string, unknown>) {
+    return this.repository.settleAuction(validateAuctionSettlementRequest(input));
+  }
+
+  expireAuction(input: Record<string, unknown>) {
+    return this.repository.expireAuction(validateAuctionExpirationRequest(input));
+  }
+
+  getAuctionRuntimeSnapshot() {
+    return this.repository.getAuctionRuntimeSnapshot();
   }
 
   listSubscriptions() {

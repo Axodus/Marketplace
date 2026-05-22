@@ -952,3 +952,51 @@ Still deferred:
 - treasury movement
 - fiat checkout
 - contract settlement
+
+---
+
+# Sprint 32 — Royalty Distribution Runtime
+
+Status: IMPLEMENTED OPERATIONAL RUNTIME
+
+Delivered:
+- EIP-2981 royalty distribution runtime
+- creator payout allocation records
+- platform fee allocation records
+- ecosystem fee allocation records
+- treasury split allocation records
+- royalty distribution snapshot metrics
+- royalty distribution audit/event records
+- API endpoints for allocation and snapshot reads
+- repository tests for royalty, payout and accounting allocation
+- controller tests for royalty distribution endpoints
+
+Still deferred:
+- external creator payout execution
+- treasury movement
+- contract royalty settlement
+- wallet transaction execution
+- blockchain writes
+
+---
+
+# Sprint 33 — Auction & Bid Runtime
+
+Status: IMPLEMENTED OPERATIONAL RUNTIME
+
+Delivered:
+- live auction bid placement runtime
+- accepted and rejected bid records
+- controlled auction settlement runtime
+- auction expiration execution runtime
+- purchase and license issuance from winning bid settlement
+- auction runtime snapshot metrics
+- auction runtime audit/event records
+- repository tests for bids, settlement and expiration
+- controller tests for auction endpoints
+
+Still deferred:
+- contract auction settlement
+- wallet transaction execution
+- blockchain writes
+- external treasury movement

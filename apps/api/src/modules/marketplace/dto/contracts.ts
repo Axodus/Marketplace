@@ -690,6 +690,166 @@ export interface RoyaltyDistributionSnapshot {
   generatedAt: string;
 }
 
+export interface AuctionBidRequest {
+  productId: string;
+  bidder?: string;
+  amount: number;
+}
+
+export interface AuctionSettlementRequest {
+  auctionId: string;
+  controlledRollout?: boolean;
+}
+
+export interface AuctionExpirationRequest {
+  auctionId: string;
+  controlledRollout?: boolean;
+}
+
+export interface AuctionBidRuntime {
+  id: string;
+  auctionId: string;
+  productId: string;
+  bidder: string;
+  amount: number;
+  currency: string;
+  status: "accepted" | "rejected";
+  reasonCodes: string[];
+  placedAt: string;
+  liveBidRuntimeEnabled: true;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+}
+
+export interface AuctionRuntime {
+  id: string;
+  productId: string;
+  sellerId: string;
+  tenantId: string;
+  type: "english-auction" | "dutch-auction" | "reserve-auction";
+  status: "active" | "settled" | "expired" | "blocked";
+  currency: string;
+  reservePrice: number;
+  highestBidId: string | null;
+  highestBidder: string | null;
+  highestBidAmount: number;
+  bidCount: number;
+  expiresAt: string | null;
+  reasonCodes: string[];
+  settlement: {
+    status: "not-settled" | "settled" | "blocked";
+    buyer: string | null;
+    amount: number;
+    purchaseId: string | null;
+    confirmationId: string | null;
+    settledAt: string | null;
+  };
+  expiration: {
+    status: "pending" | "executed" | "blocked";
+    expiredAt: string | null;
+    reasonCodes: string[];
+  };
+  liveBidRuntimeEnabled: true;
+  auctionSettlementEnabled: true;
+  expirationExecutionEnabled: true;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  contractSettlementEnabled: false;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AuctionRuntimeSnapshot {
+  id: string;
+  auctions: AuctionRuntime[];
+  bids: AuctionBidRuntime[];
+  metrics: {
+    active: number;
+    settled: number;
+    expired: number;
+    blocked: number;
+    bids: number;
+    acceptedBids: number;
+    rejectedBids: number;
+    totalBidVolume: number;
+  };
+  liveBidRuntimeEnabled: true;
+  auctionSettlementEnabled: true;
+  expirationExecutionEnabled: true;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  contractSettlementEnabled: false;
+  generatedAt: string;
+}
+
+export interface TreasuryExecutionRequest {
+  royaltyDistributionId: string;
+  controlledRollout?: boolean;
+}
+
+export type TreasuryRouteType = "creator_royalty" | "dao_treasury" | "ecosystem_fee" | "platform_fee";
+
+export interface TreasuryExecutionRoute {
+  id: string;
+  type: TreasuryRouteType;
+  recipient: string;
+  amount: number;
+  currency: string;
+  status: "executed" | "blocked";
+  reasonCodes: string[];
+}
+
+export interface TreasuryExecutionRuntime {
+  id: string;
+  royaltyDistributionId: string;
+  settlementId: string;
+  productId: string;
+  tenantId: string;
+  currency: string;
+  status: "executed" | "blocked";
+  governance: {
+    standing: string;
+    authority: string;
+    executionAllowed: boolean;
+    reasonCodes: string[];
+  };
+  routes: TreasuryExecutionRoute[];
+  reconciliation: {
+    status: "reconciled" | "blocked" | "mismatch";
+    expectedRoyaltyAmount: number;
+    routedRoyaltyAmount: number;
+    expectedTreasuryAmount: number;
+    routedTreasuryAmount: number;
+    mismatchAmount: number;
+    reasonCodes: string[];
+  };
+  treasuryExecutionEnabled: true;
+  governanceAwareExecution: true;
+  externalTreasuryMovementEnabled: false;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  createdAt: string;
+}
+
+export interface TreasuryExecutionSnapshot {
+  id: string;
+  records: TreasuryExecutionRuntime[];
+  metrics: {
+    executed: number;
+    blocked: number;
+    routesExecuted: number;
+    royaltyRoutedTotal: number;
+    treasuryRoutedTotal: number;
+    mismatchTotal: number;
+  };
+  treasuryExecutionEnabled: true;
+  governanceAwareExecution: true;
+  externalTreasuryMovementEnabled: false;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  generatedAt: string;
+}
+
 export interface SubscriptionEntity {
   id: string;
   productId: string;
@@ -1318,6 +1478,15 @@ export interface MarketplaceRuntimeEventEntity {
     | "purchase.preview_issued"
     | "settlement.executed"
     | "settlement.blocked"
+    | "royalty.distribution_allocated"
+    | "royalty.distribution_blocked"
+    | "auction.bid_placed"
+    | "auction.bid_rejected"
+    | "auction.settled"
+    | "auction.expired"
+    | "auction.blocked"
+    | "treasury.execution_completed"
+    | "treasury.execution_blocked"
     | "license.preview_issued"
     | "license.lifecycle_updated"
     | "subscription.preview_updated"
@@ -1458,6 +1627,11 @@ export interface MarketplaceStore {
   settlementSnapshots?: SettlementRuntimeSnapshot[];
   royaltyDistributions?: RoyaltyDistributionRuntime[];
   royaltyDistributionSnapshots?: RoyaltyDistributionSnapshot[];
+  auctionRuntimes?: AuctionRuntime[];
+  auctionBids?: AuctionBidRuntime[];
+  auctionSnapshots?: AuctionRuntimeSnapshot[];
+  treasuryExecutions?: TreasuryExecutionRuntime[];
+  treasuryExecutionSnapshots?: TreasuryExecutionSnapshot[];
   subscriptions: SubscriptionEntity[];
   billingPreviews: BillingPreviewEntity[];
   invoices?: InvoicePreviewEntity[];

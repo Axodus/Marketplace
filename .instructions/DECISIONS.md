@@ -952,6 +952,57 @@ CONFIRMED
 
 ---
 
+# Sprint 32 Royalty Distribution Runtime
+
+Decision:
+Marketplace may allocate operational royalty distribution records from confirmed controlled settlements when `controlledRollout: true` is provided, while external payouts, contract royalty settlement and treasury movement remain disabled.
+
+Approved:
+- EIP-2981 royalty allocation
+- creator payout allocation records
+- platform fee allocation records
+- ecosystem fee allocation records
+- treasury split allocation records
+- royalty distribution snapshot metrics
+- royalty distribution audit/event records
+
+Deferred:
+- external creator payout execution
+- treasury movement
+- contract royalty settlement
+- wallet transaction execution
+- blockchain writes
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 33 Auction & Bid Runtime
+
+Decision:
+Marketplace may run operational auction bid placement, controlled auction settlement and auction expiration inside the backend runtime, while contract settlement, wallet transactions, chain writes and external treasury movement remain disabled.
+
+Approved:
+- live bid placement records
+- bid acceptance/rejection rules
+- controlled auction settlement records
+- auction expiration execution records
+- purchase and license issuance from winning bid settlement
+- auction runtime snapshot metrics
+- auction runtime audit/event records
+
+Deferred:
+- contract auction settlement
+- wallet transaction execution
+- blockchain writes
+- external treasury movement
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation

@@ -3,6 +3,12 @@ import path from "node:path";
 import { createMarketplaceSeed } from "../adapters/mockMarketplaceSeed.js";
 import type {
   AssetDeliveryPreviewEntity,
+  AuctionBidRequest,
+  AuctionBidRuntime,
+  AuctionExpirationRequest,
+  AuctionRuntime,
+  AuctionRuntimeSnapshot,
+  AuctionSettlementRequest,
   ChainIngestionEventEntity,
   ChainIngestionEventRequest,
   ChainSnapshotEntity,
@@ -73,6 +79,9 @@ import type {
   SubscriptionPreviewRequest,
   TenantRegistryRecord,
   TenantEntity,
+  TreasuryExecutionRequest,
+  TreasuryExecutionRuntime,
+  TreasuryExecutionSnapshot,
   TreasuryReconciliationSnapshot
 } from "../dto/contracts.js";
 import { withRegistryReadModels } from "../services/registryReadModels.js";
@@ -96,6 +105,8 @@ import { buildSecureDeliveryRuntime, buildSecureDeliverySnapshot } from "../serv
 import { buildDeliveryObservabilitySnapshot, buildDeliveryTelemetryRecord } from "../services/deliveryObservabilityRuntime.js";
 import { buildSettlementRuntime, buildSettlementRuntimeSnapshot } from "../services/settlementRuntime.js";
 import { buildRoyaltyDistributionRuntime, buildRoyaltyDistributionSnapshot } from "../services/royaltyDistributionRuntime.js";
+import { buildAuctionRuntimeSnapshot, expireAuctionRuntime, placeAuctionBidRuntime, settleAuctionRuntime } from "../services/auctionRuntime.js";
+import { buildTreasuryExecutionSnapshot, executeTreasuryRuntime } from "../services/treasuryExecutionRuntime.js";
 
 export function getDefaultMarketplaceStorePath() {
   return process.env.MARKETPLACE_STORE_PATH ?? path.resolve(process.cwd(), ".runtime/marketplace-store.json");
@@ -127,6 +138,12 @@ export interface MarketplaceRepository {
   getSettlementSnapshot(): Promise<SettlementRuntimeSnapshot>;
   allocateRoyaltyDistribution(input: RoyaltyDistributionRequest): Promise<RoyaltyDistributionRuntime>;
   getRoyaltyDistributionSnapshot(): Promise<RoyaltyDistributionSnapshot>;
+  placeAuctionBid(input: AuctionBidRequest): Promise<AuctionBidRuntime>;
+  settleAuction(input: AuctionSettlementRequest): Promise<AuctionRuntime>;
+  expireAuction(input: AuctionExpirationRequest): Promise<AuctionRuntime>;
+  getAuctionRuntimeSnapshot(): Promise<AuctionRuntimeSnapshot>;
+  executeTreasury(input: TreasuryExecutionRequest): Promise<TreasuryExecutionRuntime>;
+  getTreasuryExecutionSnapshot(): Promise<TreasuryExecutionSnapshot>;
   listSubscriptions(): Promise<SubscriptionEntity[]>;
   updateSubscriptionLifecycle(input: SubscriptionLifecycleRequest): Promise<SubscriptionEntity>;
   listBillingPreviews(): Promise<BillingPreviewEntity[]>;
@@ -358,6 +375,121 @@ export class FileMarketplaceRepository implements MarketplaceRepository {
     const store = await this.readStore();
     const snapshot = buildSettlementRuntimeSnapshot(store.settlements ?? []);
     store.settlementSnapshots = [snapshot, ...(store.settlementSnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async allocateRoyaltyDistribution(input: RoyaltyDistributionRequest) {
+    const store = await this.readStore();
+    const distribution = buildRoyaltyDistributionRuntime(store, input);
+    store.royaltyDistributions = [distribution, ...(store.royaltyDistributions ?? [])].slice(0, 100);
+    recordTrace(
+      store,
+      createEvent(
+        distribution.status === "allocated" ? "royalty.distribution_allocated" : "royalty.distribution_blocked",
+        distribution.id,
+        "royaltyDistribution",
+        distribution
+      ),
+      {
+        actor: "marketplace-royalty-runtime",
+        tenant: getProductTenant(store, distribution.productId),
+        action: distribution.status === "allocated" ? "royalty.distribution_allocated" : "royalty.distribution_blocked",
+        governanceStanding: distribution.status,
+        restrictions: distribution.reasonCodes
+      }
+    );
+    await this.writeStore(store);
+    return distribution;
+  }
+
+  async getRoyaltyDistributionSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildRoyaltyDistributionSnapshot(store.royaltyDistributions ?? []);
+    store.royaltyDistributionSnapshots = [snapshot, ...(store.royaltyDistributionSnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async placeAuctionBid(input: AuctionBidRequest) {
+    const store = await this.readStore();
+    const { auction, bid } = placeAuctionBidRuntime(store, input);
+    store.auctionBids = [bid, ...(store.auctionBids ?? [])].slice(0, 200);
+    recordTrace(store, createEvent(bid.status === "accepted" ? "auction.bid_placed" : "auction.bid_rejected", bid.id, "auctionBid", bid), {
+      actor: bid.bidder,
+      tenant: auction.tenantId,
+      action: bid.status === "accepted" ? "auction.bid_placed" : "auction.bid_rejected",
+      governanceStanding: bid.status,
+      restrictions: bid.reasonCodes
+    });
+    await this.writeStore(store);
+    return bid;
+  }
+
+  async settleAuction(input: AuctionSettlementRequest) {
+    const store = await this.readStore();
+    const auction = settleAuctionRuntime(store, input);
+    if (auction.status === "settled" && auction.settlement.buyer) {
+      const product = findProductOrThrow(store, auction.productId);
+      const license = findLicenseForProduct(store, product);
+      const purchase: PurchaseEntity = {
+        id: newRuntimeId("purchase"),
+        buyer: auction.settlement.buyer,
+        productId: product.id,
+        sellerId: product.sellerId,
+        timestamp: new Date().toISOString(),
+        amount: auction.settlement.amount,
+        currency: auction.currency,
+        licenseIssued: license.id,
+        status: "mock-issued",
+        governanceReviewRequired: Boolean(product.governanceRequired),
+        signedUrlPreview: product.signedUrlPreviewAvailable ? `https://greenfield.mock.axodus.local/access/${product.slug}?signature=auction-settlement` : undefined,
+        settlementEnabled: false,
+        walletExecutionEnabled: false,
+        blockchainWritesEnabled: false
+      };
+      auction.settlement.purchaseId = purchase.id;
+      store.purchases.unshift(purchase);
+      store.licenseRuntimes = [
+        createLicenseRuntime({
+          product,
+          license,
+          holder: auction.settlement.buyer,
+          purchaseId: purchase.id,
+          state: "issued"
+        }),
+        ...(store.licenseRuntimes ?? [])
+      ];
+    }
+    recordTrace(store, createEvent(auction.status === "settled" ? "auction.settled" : "auction.blocked", auction.id, "auctionRuntime", auction), {
+      actor: auction.settlement.buyer ?? "marketplace-auction-runtime",
+      tenant: auction.tenantId,
+      action: auction.status === "settled" ? "auction.settled" : "auction.blocked",
+      governanceStanding: auction.status,
+      restrictions: auction.reasonCodes
+    });
+    await this.writeStore(store);
+    return auction;
+  }
+
+  async expireAuction(input: AuctionExpirationRequest) {
+    const store = await this.readStore();
+    const auction = expireAuctionRuntime(store, input);
+    recordTrace(store, createEvent(auction.status === "expired" ? "auction.expired" : "auction.blocked", auction.id, "auctionRuntime", auction), {
+      actor: "marketplace-auction-runtime",
+      tenant: auction.tenantId,
+      action: auction.status === "expired" ? "auction.expired" : "auction.blocked",
+      governanceStanding: auction.status,
+      restrictions: [...auction.reasonCodes, ...auction.expiration.reasonCodes]
+    });
+    await this.writeStore(store);
+    return auction;
+  }
+
+  async getAuctionRuntimeSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildAuctionRuntimeSnapshot(store);
+    store.auctionSnapshots = [snapshot, ...(store.auctionSnapshots ?? [])].slice(0, 20);
     await this.writeStore(store);
     return snapshot;
   }
@@ -1034,6 +1166,11 @@ function findProductOrThrow(store: MarketplaceStore, idOrSlug: string) {
   const product = store.products.find((item) => item.id === idOrSlug || item.slug === idOrSlug);
   if (!product) throw new Error(`Marketplace product not found: ${idOrSlug}`);
   return product;
+}
+
+function getProductTenant(store: MarketplaceStore, productId: string) {
+  const product = store.products.find((item) => item.id === productId || item.slug === productId);
+  return product && typeof product.tenantId === "string" ? product.tenantId : "tenant-axodus-dao";
 }
 
 function findLicenseForProduct(store: MarketplaceStore, product: ProductEntity) {

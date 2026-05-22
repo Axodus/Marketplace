@@ -1,5 +1,8 @@
 import type {
   BillingPreviewRequest,
+  AuctionBidRequest,
+  AuctionExpirationRequest,
+  AuctionSettlementRequest,
   ChainIngestionEventKind,
   ChainIngestionEventRequest,
   DeliveryTelemetryRequest,
@@ -14,6 +17,7 @@ import type {
   LicenseLifecycleRequest,
   LicenseLifecycleState,
   PurchasePreviewRequest,
+  RoyaltyDistributionRequest,
   SecureDeliveryRequest,
   SettlementExecutionRequest,
   SignedUrlIssueRequest,
@@ -101,6 +105,35 @@ export function validateSettlementExecutionRequest(input: Record<string, unknown
   return {
     productId: assertString(input.productId, "productId"),
     buyer: typeof input.buyer === "string" && input.buyer.trim() ? input.buyer.trim() : undefined,
+    controlledRollout: input.controlledRollout === true
+  };
+}
+
+export function validateRoyaltyDistributionRequest(input: Record<string, unknown>): RoyaltyDistributionRequest {
+  return {
+    settlementId: assertString(input.settlementId, "settlementId"),
+    controlledRollout: input.controlledRollout === true
+  };
+}
+
+export function validateAuctionBidRequest(input: Record<string, unknown>): AuctionBidRequest {
+  return {
+    productId: assertString(input.productId, "productId"),
+    bidder: typeof input.bidder === "string" && input.bidder.trim() ? input.bidder.trim() : undefined,
+    amount: assertNumber(input.amount, "amount")
+  };
+}
+
+export function validateAuctionSettlementRequest(input: Record<string, unknown>): AuctionSettlementRequest {
+  return {
+    auctionId: assertString(input.auctionId, "auctionId"),
+    controlledRollout: input.controlledRollout === true
+  };
+}
+
+export function validateAuctionExpirationRequest(input: Record<string, unknown>): AuctionExpirationRequest {
+  return {
+    auctionId: assertString(input.auctionId, "auctionId"),
     controlledRollout: input.controlledRollout === true
   };
 }

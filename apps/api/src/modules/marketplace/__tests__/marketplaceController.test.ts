@@ -667,4 +667,105 @@ describe("MarketplaceController", () => {
     expect(snapshotPayload.data.metrics.blocked).toBe(1);
     expect(snapshotPayload.data.controlledRollout).toBe(true);
   });
+
+  it("serves royalty distribution runtime for confirmed settlements", async () => {
+    const settlementResponse = await fetch(`${baseUrl}/api/marketplace/settlements/execute`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: "product-governance-dashboard-nft", buyer: "0xRouteRoyalty", controlledRollout: true })
+    });
+    const settlementPayload = await settlementResponse.json();
+    const blockedResponse = await fetch(`${baseUrl}/api/marketplace/royalties/distributions`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ settlementId: settlementPayload.data.id })
+    });
+    const blockedPayload = await blockedResponse.json();
+    const allocatedResponse = await fetch(`${baseUrl}/api/marketplace/royalties/distributions`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ settlementId: settlementPayload.data.id, controlledRollout: true })
+    });
+    const allocatedPayload = await allocatedResponse.json();
+    const snapshotResponse = await fetch(`${baseUrl}/api/marketplace/royalties/distributions`);
+    const snapshotPayload = await snapshotResponse.json();
+
+    expect(blockedResponse.status).toBe(201);
+    expect(blockedPayload.data.status).toBe("blocked");
+    expect(blockedPayload.data.reasonCodes).toContain("controlled-rollout-required");
+    expect(allocatedResponse.status).toBe(201);
+    expect(allocatedPayload.data.status).toBe("allocated");
+    expect(allocatedPayload.data.eip2981.royaltyAmount).toBe(6);
+    expect(allocatedPayload.data.creatorPayout.amount).toBe(109.8);
+    expect(allocatedPayload.data.treasuryAllocation.treasuryAmount).toBe(4.2);
+    expect(allocatedPayload.data.externalPayoutEnabled).toBe(false);
+    expect(allocatedPayload.data.contractExecutionEnabled).toBe(false);
+    expect(snapshotResponse.status).toBe(200);
+    expect(snapshotPayload.data.metrics.allocated).toBe(1);
+    expect(snapshotPayload.data.metrics.blocked).toBe(1);
+    expect(snapshotPayload.data.externalPayoutEnabled).toBe(false);
+  });
+
+  it("serves auction bid placement, settlement and expiration runtime", async () => {
+    const bidResponse = await fetch(`${baseUrl}/api/marketplace/auctions/bids`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: "product-academy-cert-bundle", bidder: "0xRouteBidder", amount: 96 })
+    });
+    const bidPayload = await bidResponse.json();
+    const rejectedResponse = await fetch(`${baseUrl}/api/marketplace/auctions/bids`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: "product-academy-cert-bundle", bidder: "0xRouteSecondBidder", amount: 91 })
+    });
+    const rejectedPayload = await rejectedResponse.json();
+    const blockedSettleResponse = await fetch(`${baseUrl}/api/marketplace/auctions/settle`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ auctionId: bidPayload.data.auctionId })
+    });
+    const blockedSettlePayload = await blockedSettleResponse.json();
+    const settleResponse = await fetch(`${baseUrl}/api/marketplace/auctions/settle`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ auctionId: bidPayload.data.auctionId, controlledRollout: true })
+    });
+    const settlePayload = await settleResponse.json();
+    const expirationBidResponse = await fetch(`${baseUrl}/api/marketplace/auctions/bids`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: "product-trading-strategy-pass", bidder: "0xRouteExpiry", amount: 225 })
+    });
+    const expirationBidPayload = await expirationBidResponse.json();
+    const expireResponse = await fetch(`${baseUrl}/api/marketplace/auctions/expire`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ auctionId: expirationBidPayload.data.auctionId, controlledRollout: true })
+    });
+    const expirePayload = await expireResponse.json();
+    const snapshotResponse = await fetch(`${baseUrl}/api/marketplace/auctions`);
+    const snapshotPayload = await snapshotResponse.json();
+
+    expect(bidResponse.status).toBe(201);
+    expect(bidPayload.data.status).toBe("accepted");
+    expect(bidPayload.data.liveBidRuntimeEnabled).toBe(true);
+    expect(bidPayload.data.walletExecutionEnabled).toBe(false);
+    expect(rejectedResponse.status).toBe(201);
+    expect(rejectedPayload.data.status).toBe("rejected");
+    expect(rejectedPayload.data.reasonCodes).toContain("bid-not-higher-than-current");
+    expect(blockedSettleResponse.status).toBe(201);
+    expect(blockedSettlePayload.data.status).toBe("blocked");
+    expect(blockedSettlePayload.data.reasonCodes).toContain("controlled-rollout-required");
+    expect(settleResponse.status).toBe(201);
+    expect(settlePayload.data.status).toBe("settled");
+    expect(settlePayload.data.settlement.buyer).toBe("0xRouteBidder");
+    expect(settlePayload.data.contractSettlementEnabled).toBe(false);
+    expect(expireResponse.status).toBe(201);
+    expect(expirePayload.data.status).toBe("expired");
+    expect(snapshotResponse.status).toBe(200);
+    expect(snapshotPayload.data.metrics.settled).toBe(1);
+    expect(snapshotPayload.data.metrics.expired).toBe(1);
+    expect(snapshotPayload.data.metrics.acceptedBids).toBe(2);
+    expect(snapshotPayload.data.contractSettlementEnabled).toBe(false);
+  });
 });

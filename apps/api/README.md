@@ -56,6 +56,8 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `GET /api/marketplace/entitlements/enforcement`
 - `GET /api/marketplace/purchases`
 - `GET /api/marketplace/settlements`
+- `GET /api/marketplace/royalties/distributions`
+- `GET /api/marketplace/auctions`
 - `GET /api/marketplace/subscriptions`
 - `GET /api/marketplace/billing-previews`
 - `GET /api/marketplace/invoices`
@@ -92,6 +94,10 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `POST /api/marketplace/draft-listings`
 - `POST /api/marketplace/purchases/preview`
 - `POST /api/marketplace/settlements/execute`
+- `POST /api/marketplace/royalties/distributions`
+- `POST /api/marketplace/auctions/bids`
+- `POST /api/marketplace/auctions/settle`
+- `POST /api/marketplace/auctions/expire`
 - `POST /api/marketplace/entitlements/enforce`
 - `POST /api/marketplace/billing-previews`
 - `POST /api/marketplace/invoices/preview`
@@ -341,6 +347,27 @@ Sprint 31 settlement runtime exposes controlled economic activation:
 - settlement snapshot metrics
 
 Settlement execution requires `controlledRollout: true`. The runtime confirms Marketplace-internal settlement records only. It does not execute wallet transactions, chain writes, external payment gateway calls, treasury movement, fiat checkout, or contract settlement.
+
+Sprint 32 royalty distribution runtime exposes operational accounting allocation:
+
+- EIP-2981 royalty allocation
+- creator payout allocation
+- platform fee allocation
+- ecosystem fee allocation
+- treasury split allocation
+- royalty distribution snapshot metrics
+
+Royalty distribution requires `controlledRollout: true` and a confirmed Marketplace settlement. The runtime allocates internal accounting records only. It does not execute external creator payouts, treasury movement, contract royalty settlement, wallet transactions or blockchain writes.
+
+Sprint 33 auction runtime exposes operational auction execution:
+
+- live bid placement
+- accepted/rejected bid records
+- controlled auction settlement
+- auction expiration execution
+- auction runtime snapshot metrics
+
+Auction settlement and expiration require `controlledRollout: true`. The runtime can issue Marketplace purchase/license records for a winning bid, but it does not execute contract auction settlement, wallet transactions, chain writes or external treasury movement.
 
 Every response is wrapped in an envelope that declares:
 

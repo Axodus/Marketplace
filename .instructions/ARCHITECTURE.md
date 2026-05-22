@@ -1026,6 +1026,56 @@ Current boundaries:
 - no fiat checkout
 - no contract settlement
 
+## Sprint 32 Royalty Distribution Runtime
+
+Sprint 32 makes royalty distribution operational inside Marketplace accounting after controlled settlement confirmation.
+
+The API now supports:
+- EIP-2981 royalty allocation
+- creator payout allocation
+- platform fee allocation
+- ecosystem fee allocation
+- treasury split allocation
+- royalty distribution snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/royalties/distributions`
+- `GET /api/marketplace/royalties/distributions`
+
+Royalty distribution requires `controlledRollout: true` and a confirmed Marketplace settlement. The runtime allocates internal accounting records from product royalty metadata and Axodus fee policy.
+
+Current boundaries:
+- no external creator payout
+- no treasury movement
+- no contract royalty settlement
+- no wallet transaction
+- no blockchain write
+
+## Sprint 33 Auction & Bid Runtime
+
+Sprint 33 activates operational auction runtime inside the Marketplace API.
+
+The API now supports:
+- live bid placement
+- accepted and rejected bid records
+- controlled auction settlement
+- auction expiration execution
+- auction runtime snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/auctions/bids`
+- `POST /api/marketplace/auctions/settle`
+- `POST /api/marketplace/auctions/expire`
+- `GET /api/marketplace/auctions`
+
+Auction settlement and expiration require `controlledRollout: true`. Settlement can issue Marketplace-owned purchase and license records from the winning bid.
+
+Current boundaries:
+- no contract auction settlement
+- no wallet transaction
+- no blockchain write
+- no external treasury movement
+
 ---
 
 # Governance Integration
