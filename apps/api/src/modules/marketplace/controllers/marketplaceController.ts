@@ -90,7 +90,14 @@ export class MarketplaceController {
       if (req.method === "GET" && route === "/events") return send(res, await this.service.listEvents());
       if (req.method === "GET" && route === "/audit-logs") return send(res, await this.service.listAuditLogs());
       if (req.method === "GET" && route === "/reconciliation") return send(res, await this.service.listReconciliationSnapshots());
+      if (req.method === "GET" && route === "/reconciliation/ownership") return send(res, await this.service.listOwnershipReconciliationSnapshots());
+      if (req.method === "GET" && route === "/reconciliation/treasury") return send(res, await this.service.listTreasuryReconciliationSnapshots());
       if (req.method === "GET" && route === "/indexer-snapshots") return send(res, await this.service.listIndexerSnapshots());
+      if (req.method === "GET" && route === "/indexer/runtime") return send(res, await this.service.getMarketplaceIndexerRuntime());
+      if (req.method === "GET" && route === "/indexer/events") return send(res, await this.service.listChainIngestionEvents());
+      if (req.method === "GET" && route === "/indexer/chain-snapshots") return send(res, await this.service.listChainSnapshots());
+      if (req.method === "GET" && route === "/indexer/ownership-snapshots") return send(res, await this.service.listOwnershipSnapshots());
+      if (req.method === "GET" && route === "/indexer/listing-snapshots") return send(res, await this.service.listListingSnapshots());
 
       if (req.method === "POST" && route === "/draft-listings") return send(res, await this.service.createDraftListing(await readJson(req)), 201);
       if (req.method === "POST" && route === "/purchases/preview") return send(res, await this.service.createPurchasePreview(await readJson(req)), 201);
@@ -107,7 +114,10 @@ export class MarketplaceController {
       }
       if (req.method === "POST" && route === "/delivery-previews") return send(res, await this.service.createDeliveryPreview(await readJson(req)), 201);
       if (req.method === "POST" && route === "/reconciliation/snapshot") return send(res, await this.service.createReconciliationSnapshot(), 201);
+      if (req.method === "POST" && route === "/reconciliation/ownership") return send(res, await this.service.createOwnershipReconciliationSnapshot(), 201);
+      if (req.method === "POST" && route === "/reconciliation/treasury") return send(res, await this.service.createTreasuryReconciliationSnapshot(), 201);
       if (req.method === "POST" && route === "/indexer-snapshots") return send(res, await this.service.createIndexerSnapshot(), 201);
+      if (req.method === "POST" && route === "/indexer/events") return send(res, await this.service.ingestChainEvent(await readJson(req)), 201);
 
       return sendError(res, 404, "MARKETPLACE_ROUTE_NOT_FOUND", "Marketplace API route was not found.");
     } catch (error) {

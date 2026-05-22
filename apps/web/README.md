@@ -140,6 +140,35 @@ Still disabled:
 
 The runtime may call `eth_estimateGas` when a provider and production-shaped contract metadata are available. It never calls send/sign methods.
 
+## Wallet Security Runtime
+
+Sprint 20 hardens wallet and ownership visibility.
+
+Implemented:
+
+- unsupported chain protection visibility
+- chain mismatch warning state
+- malicious/suspicious contract warning state
+- symbolic mock contract warning state
+- invalid NFT runtime visibility
+- readonly `isApprovedForAll` approval visibility
+- dangerous operator permission warnings
+- fake ownership detection from ownership mismatch state
+- stale ownership visibility
+- purchase and bid permission visibility
+- product detail wallet security panel
+
+Still disabled:
+
+- approval revocation
+- transaction blocking execution
+- ownership mutation
+- wallet signatures
+- transaction submission
+- contract writes
+
+Approval visibility is readonly only. It can warn when a Marketplace or auction operator has approval-for-all, but it never revokes or changes permissions.
+
 ## Delivery Runtime
 
 Sprint 04 prepares entitlement-aware delivery without production execution.
@@ -414,4 +443,5 @@ src/
 - NFT ownership tests cover ERC721 reads, ERC1155 reads, disconnected wallet rendering, unsupported chain handling and ownership mismatch rendering.
 - Listing runtime tests cover fixed listing reads, auction reads, bid state, expiration state, royalty hydration and readiness-only rendering.
 - Signature runtime tests cover transaction payload previews, calldata previews, gas preview, permission visibility, risk UX and absence of send/sign calls.
+- Wallet security tests cover chain mismatch protection, approval visibility, dangerous permission warnings, invalid NFT runtime and fake ownership detection.
 - Future visual/E2E tests should cover wallet connect UI, buy-now preview, bid preview, and signed URL preview after mock purchase.

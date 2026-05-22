@@ -214,6 +214,143 @@ describe("FileMarketplaceRepository", () => {
     expect(indexer.contracts[0].liveIngestionEnabled).toBe(false);
   });
 
+  it("persists chain ingestion events and runtime snapshots", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    const event = await repository.ingestChainEvent({
+      chain: "Polygon",
+      blockNumber: 12345,
+      blockHash: "0xblock",
+      transactionHash: "0xtx",
+      logIndex: 1,
+      eventKind: "nft.transfer",
+      contractAddress: "mock:governance-dashboard-access",
+      tokenStandard: "ERC721",
+      tokenId: "AXD-GOV-001",
+      owner: "0xOwner"
+    });
+    await repository.ingestChainEvent({
+      chain: "Polygon",
+      blockNumber: 12346,
+      blockHash: "0xblock2",
+      transactionHash: "0xtx2",
+      logIndex: 2,
+      eventKind: "listing.created",
+      contractAddress: "mock:governance-dashboard-access",
+      tokenStandard: "ERC721",
+      tokenId: "AXD-GOV-001",
+      listingId: "listing-1",
+      seller: "0xSeller",
+      price: "120000000",
+      expiration: "2026-06-01T00:00:00.000Z"
+    });
+    await repository.ingestChainEvent({
+      chain: "Polygon",
+      blockNumber: 12347,
+      blockHash: "0xblock3",
+      transactionHash: "0xtx3",
+      logIndex: 3,
+      eventKind: "bid.placed",
+      contractAddress: "mock:governance-dashboard-access",
+      tokenStandard: "ERC721",
+      tokenId: "AXD-GOV-001",
+      listingId: "listing-1",
+      bidder: "0xBidder",
+      amount: "125000000"
+    });
+
+    const chainSnapshots = await repository.listChainSnapshots();
+    const ownershipSnapshots = await repository.listOwnershipSnapshots();
+    const listingSnapshots = await repository.listListingSnapshots();
+    const runtime = await repository.getMarketplaceIndexerRuntime();
+    const events = await repository.listEvents();
+
+    expect(event.productId).toBe("product-governance-dashboard-nft");
+    expect(event.liveSettlementEnabled).toBe(false);
+    expect(chainSnapshots[0].latestBlockNumber).toBe(12347);
+    expect(chainSnapshots[0].eventsIngested).toBe(3);
+    expect(ownershipSnapshots[0]).toMatchObject({ owner: "0xOwner", stale: false });
+    expect(listingSnapshots[0]).toMatchObject({ listingId: "listing-1", highestBid: "125000000", bidCount: 1 });
+    expect(runtime.metrics).toMatchObject({ events: 3, nftEvents: 1, listingEvents: 1, bidEvents: 1, chains: 1 });
+    expect(runtime.settlementEnabled).toBe(false);
+    expect(events.map((item) => item.type)).toEqual(expect.arrayContaining(["indexer.event_ingested", "indexer.chain_snapshot_persisted"]));
+  });
+
+  it("reconciles ownership snapshots with mismatch and stale visibility", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+    await repository.createPurchasePreview({ productId: "product-governance-dashboard-nft", buyer: "0xExpectedOwner" });
+
+    await repository.ingestChainEvent({
+      chain: "Polygon",
+      blockNumber: 100,
+      blockHash: "0xblock100",
+      transactionHash: "0xowner-mismatch",
+      logIndex: 1,
+      eventKind: "nft.transfer",
+      contractAddress: "mock:governance-dashboard-access",
+      tokenStandard: "ERC721",
+      tokenId: "AXD-GOV-001",
+      owner: "0xDifferentOwner"
+    });
+    await repository.ingestChainEvent({
+      chain: "Polygon",
+      blockNumber: 250,
+      blockHash: "0xblock250",
+      transactionHash: "0xlisting-advance-block",
+      logIndex: 2,
+      eventKind: "listing.updated",
+      contractAddress: "mock:governance-dashboard-access",
+      tokenStandard: "ERC721",
+      tokenId: "AXD-GOV-001",
+      listingId: "listing-1",
+      price: "120000000"
+    });
+
+    const reconciliation = await repository.createOwnershipReconciliationSnapshot();
+    const persisted = await repository.listOwnershipReconciliationSnapshots();
+    const record = reconciliation.records.find((item) => item.productId === "product-governance-dashboard-nft");
+
+    expect(record?.status).toBe("mismatch");
+    expect(record?.stale).toBe(true);
+    expect(record?.blockLag).toBe(150);
+    expect(record?.expectedHolders).toContain("0xExpectedOwner");
+    expect(record?.observedOwner).toBe("0xDifferentOwner");
+    expect(reconciliation.metrics.stale).toBeGreaterThan(0);
+    expect(reconciliation.metrics.mismatches).toBeGreaterThan(0);
+    expect(reconciliation.enforcementEnabled).toBe(false);
+    expect(reconciliation.chainReadsEnabled).toBe(false);
+    expect(persisted[0].id).toBe(reconciliation.id);
+  });
+
+  it("reconciles royalty, treasury split and accounting previews", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+    const invoice = await repository.createInvoicePreview({ buyer: "0xTreasury", productIds: ["product-governance-dashboard-nft"] });
+
+    const pending = await repository.createTreasuryReconciliationSnapshot();
+    await repository.updateInvoiceLifecycle({ invoiceId: invoice.id, state: "mock_paid", reason: "treasury-preview-paid" });
+    const reconciled = await repository.createTreasuryReconciliationSnapshot();
+    const persisted = await repository.listTreasuryReconciliationSnapshots();
+
+    expect(pending.records[0]).toMatchObject({
+      expectedRoyalty: 6,
+      observedRoyalty: 6,
+      expectedTreasurySplit: 4.2,
+      observedTreasurySplit: 4.2,
+      status: "pending_preview",
+      mismatchAmount: 0
+    });
+    expect(reconciled.records[0].status).toBe("reconciled");
+    expect(reconciled.metrics.reconciled).toBe(1);
+    expect(reconciled.metrics.totalMismatchAmount).toBe(0);
+    expect(reconciled.accountingConsistency.invoiceTelemetryLinked).toBe(true);
+    expect(reconciled.treasuryExecutionEnabled).toBe(false);
+    expect(reconciled.settlementEnabled).toBe(false);
+    expect(persisted[0].id).toBe(reconciled.id);
+  });
+
   it("hydrates governance runtime authority for products, sellers and tenants", async () => {
     const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
     await repository.init();

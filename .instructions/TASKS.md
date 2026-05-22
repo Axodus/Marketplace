@@ -624,3 +624,86 @@ Still deferred:
 - transaction submission
 - contract writes
 - settlement execution
+
+---
+
+# Sprint 20 — Wallet Security Hardening
+
+Status: IMPLEMENTED READONLY
+
+Delivered:
+- wallet security runtime service
+- unsupported chain protection visibility
+- chain mismatch warning state
+- malicious/suspicious contract warning state
+- symbolic mock contract warning state
+- invalid NFT runtime visibility
+- readonly `isApprovedForAll` approval visibility
+- dangerous operator permission warnings
+- fake ownership detection from mismatch state
+- stale ownership visibility
+- purchase and bid permission visibility
+- product detail wallet security panel
+- security runtime, approval visibility and warning tests
+
+Still deferred:
+- approval revocation execution
+- transaction blocking execution
+- ownership mutation
+- wallet signatures
+- transaction submission
+- contract writes
+
+---
+
+# Sprint 21 — Marketplace Indexer Runtime
+
+Status: IMPLEMENTED PERSISTENT RUNTIME
+
+Delivered:
+- Marketplace chain ingestion runtime service
+- NFT event ingestion records
+- listing event ingestion records
+- auction event ingestion records
+- bid event ingestion records
+- ownership event ingestion records
+- chain snapshot persistence
+- ownership snapshot persistence
+- listing snapshot persistence
+- aggregate indexer runtime snapshot
+- API endpoints for ingesting and reading indexer runtime data
+- replay-safe dedupe key by chain, transaction hash, log index and event kind
+- repository and controller tests for ingestion and snapshots
+
+Still deferred:
+- live node subscriptions
+- production queue publishing
+- production indexer workers
+- settlement reconciliation execution
+- treasury verification execution
+- ownership enforcement mutation
+
+---
+
+# Sprint 22 — Ownership Reconciliation
+
+Status: IMPLEMENTED PERSISTENT RUNTIME
+
+Delivered:
+- ownership reconciliation runtime service
+- ownership verification against runtime holders
+- stale ownership detection by block lag
+- mismatch visibility
+- missing ownership snapshot visibility
+- invalid NFT asset visibility
+- consistency checks across ownership snapshots, purchases and license runtime
+- persisted ownership reconciliation snapshots
+- API endpoints for creating and listing ownership reconciliation snapshots
+- repository and controller tests for mismatch and stale detection
+
+Still deferred:
+- live chain reads during reconciliation
+- ownership mutation
+- entitlement enforcement mutation
+- settlement reconciliation execution
+- wallet execution

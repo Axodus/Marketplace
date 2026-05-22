@@ -60,7 +60,13 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `GET /api/marketplace/accounting-telemetry`
 - `GET /api/marketplace/audit-logs`
 - `GET /api/marketplace/reconciliation`
+- `GET /api/marketplace/reconciliation/ownership`
 - `GET /api/marketplace/indexer-snapshots`
+- `GET /api/marketplace/indexer/runtime`
+- `GET /api/marketplace/indexer/events`
+- `GET /api/marketplace/indexer/chain-snapshots`
+- `GET /api/marketplace/indexer/ownership-snapshots`
+- `GET /api/marketplace/indexer/listing-snapshots`
 - `GET /api/marketplace/governance-authority`
 - `GET /api/marketplace/governance-authority/:entityId`
 - `GET /api/marketplace/governance-enforcement`
@@ -83,7 +89,9 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `POST /api/marketplace/governance-workflow/actions`
 - `POST /api/marketplace/delivery-previews`
 - `POST /api/marketplace/reconciliation/snapshot`
+- `POST /api/marketplace/reconciliation/ownership`
 - `POST /api/marketplace/indexer-snapshots`
+- `POST /api/marketplace/indexer/events`
 
 ## Boundaries
 
@@ -190,6 +198,31 @@ Sprint 15 governance observability runtime exposes:
 - federation visibility
 
 Emergency controls are preview-only. Responses declare `executionEnabled: false` and `liveControlsEnabled: false`.
+
+Sprint 21 indexer runtime persists Marketplace chain ingestion state:
+
+- NFT event ingestion
+- listing event ingestion
+- auction event ingestion
+- bid event ingestion
+- ownership event ingestion
+- chain snapshots
+- ownership snapshots
+- listing snapshots
+- aggregate indexer runtime snapshot
+
+Indexer ingestion records are replay-safe and deduplicated by chain, transaction hash, log index and event kind. The runtime persists local snapshots only. It does not run live node subscriptions, production queues, settlement reconciliation, treasury verification or ownership enforcement mutation.
+
+Sprint 22 ownership reconciliation persists:
+
+- ownership verification records
+- stale ownership state by block lag
+- runtime consistency checks
+- holder mismatch visibility
+- missing ownership snapshot visibility
+- invalid NFT asset visibility
+
+Ownership reconciliation compares NFT-bound products against persisted ownership snapshots and expected holders from purchase/license runtime. It does not execute live chain reads, mutate ownership, enforce entitlements or perform settlement reconciliation.
 
 Every response is wrapped in an envelope that declares:
 

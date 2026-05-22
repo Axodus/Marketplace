@@ -606,7 +606,8 @@ export type RuntimeEventCategory =
   | "entitlement"
   | "delivery"
   | "storefront"
-  | "treasury_preview";
+  | "treasury_preview"
+  | "indexer";
 
 export interface AuditLogEntity {
   id: string;
@@ -666,6 +667,51 @@ export interface ReconciliationSnapshotEntity {
   generatedAt: string;
 }
 
+export interface TreasuryReconciliationRecord {
+  invoiceId: string;
+  buyer: string;
+  currency: string;
+  expectedRoyalty: number;
+  observedRoyalty: number;
+  expectedPlatformFee: number;
+  observedPlatformFee: number;
+  expectedEcosystemFee: number;
+  observedEcosystemFee: number;
+  expectedTreasurySplit: number;
+  observedTreasurySplit: number;
+  expectedCreatorSplit: number;
+  observedCreatorSplit: number;
+  expectedTotal: number;
+  observedTotal: number;
+  status: "reconciled" | "mismatch" | "pending_preview";
+  mismatchAmount: number;
+  reasonCodes: string[];
+}
+
+export interface TreasuryReconciliationSnapshot {
+  id: string;
+  records: TreasuryReconciliationRecord[];
+  metrics: {
+    invoicesChecked: number;
+    reconciled: number;
+    mismatches: number;
+    pendingPreviews: number;
+    royaltyMismatchTotal: number;
+    treasuryMismatchTotal: number;
+    totalMismatchAmount: number;
+  };
+  accountingConsistency: {
+    telemetryRecords: number;
+    invoiceTelemetryLinked: boolean;
+    royaltyAccountingReady: true;
+    treasuryPreviewReady: true;
+    settlementPreviewReady: true;
+  };
+  treasuryExecutionEnabled: false;
+  settlementEnabled: false;
+  generatedAt: string;
+}
+
 export interface IndexerSnapshotEntity {
   id: string;
   entitySync: {
@@ -688,6 +734,152 @@ export interface IndexerSnapshotEntity {
     ownershipMergeReady: true;
     nftEventIngestionReady: true;
   };
+  generatedAt: string;
+}
+
+export type ChainIngestionEventKind =
+  | "nft.transfer"
+  | "nft.approval"
+  | "listing.created"
+  | "listing.updated"
+  | "listing.cancelled"
+  | "auction.created"
+  | "auction.settled"
+  | "bid.placed"
+  | "ownership.verified";
+
+export interface ChainIngestionEventRequest {
+  chain: string;
+  blockNumber: number;
+  blockHash: string;
+  transactionHash: string;
+  logIndex: number;
+  eventKind: ChainIngestionEventKind;
+  contractAddress: string;
+  tokenStandard?: string;
+  tokenId?: string;
+  listingId?: string;
+  seller?: string;
+  buyer?: string;
+  bidder?: string;
+  owner?: string;
+  amount?: string;
+  price?: string;
+  expiration?: string;
+  raw?: Record<string, unknown>;
+}
+
+export interface ChainIngestionEventEntity extends ChainIngestionEventRequest {
+  id: string;
+  productId: string | null;
+  tenantId: string;
+  ingestedAt: string;
+  replaySafe: true;
+  dedupeKey: string;
+  liveSettlementEnabled: false;
+  chainWriteEnabled: false;
+}
+
+export interface ChainSnapshotEntity {
+  id: string;
+  chain: string;
+  latestBlockNumber: number;
+  latestBlockHash: string;
+  eventsIngested: number;
+  contractsObserved: string[];
+  lastIngestedAt: string;
+  persistenceEnabled: true;
+}
+
+export interface OwnershipSnapshotEntity {
+  id: string;
+  chain: string;
+  productId: string | null;
+  contractAddress: string;
+  tokenStandard: string;
+  tokenId: string | null;
+  owner: string | null;
+  balance: string | null;
+  sourceEventId: string;
+  blockNumber: number;
+  stale: false;
+  persistedAt: string;
+}
+
+export interface ListingSnapshotEntity {
+  id: string;
+  chain: string;
+  productId: string | null;
+  listingId: string | null;
+  contractAddress: string;
+  status: "active" | "updated" | "cancelled" | "settled" | "bid-active" | "unknown";
+  seller: string | null;
+  bidder: string | null;
+  price: string | null;
+  highestBid: string | null;
+  bidCount: number;
+  expiration: string | null;
+  sourceEventId: string;
+  blockNumber: number;
+  persistedAt: string;
+}
+
+export interface MarketplaceIndexerRuntimeSnapshot {
+  id: string;
+  chainSnapshots: ChainSnapshotEntity[];
+  ownershipSnapshots: OwnershipSnapshotEntity[];
+  listingSnapshots: ListingSnapshotEntity[];
+  metrics: {
+    events: number;
+    nftEvents: number;
+    listingEvents: number;
+    auctionEvents: number;
+    bidEvents: number;
+    ownershipEvents: number;
+    chains: number;
+  };
+  ingestionEnabled: true;
+  settlementEnabled: false;
+  chainWritesEnabled: false;
+  generatedAt: string;
+}
+
+export interface OwnershipReconciliationRecord {
+  productId: string;
+  chain: string | null;
+  contractAddress: string | null;
+  tokenId: string | null;
+  expectedHolders: string[];
+  observedOwner: string | null;
+  observedBalance: string | null;
+  sourceOwnershipSnapshotId: string | null;
+  sourceBlockNumber: number | null;
+  latestChainBlockNumber: number | null;
+  status: "verified" | "mismatch" | "missing_snapshot" | "stale" | "invalid_asset";
+  stale: boolean;
+  blockLag: number | null;
+  reasonCodes: string[];
+}
+
+export interface OwnershipReconciliationSnapshot {
+  id: string;
+  records: OwnershipReconciliationRecord[];
+  metrics: {
+    productsChecked: number;
+    verified: number;
+    mismatches: number;
+    stale: number;
+    missingSnapshots: number;
+    invalidAssets: number;
+  };
+  consistencyChecks: {
+    ownershipSnapshotsAvailable: boolean;
+    licenseRuntimeCompared: boolean;
+    purchaseRuntimeCompared: boolean;
+    staleThresholdBlocks: number;
+  };
+  enforcementEnabled: false;
+  chainReadsEnabled: false;
   generatedAt: string;
 }
 
@@ -749,7 +941,11 @@ export interface MarketplaceRuntimeEventEntity {
     | "accounting.preview_generated"
     | "audit.recorded"
     | "reconciliation.snapshot_generated"
+    | "reconciliation.ownership_snapshot_generated"
+    | "reconciliation.treasury_snapshot_generated"
     | "indexer.snapshot_generated"
+    | "indexer.event_ingested"
+    | "indexer.chain_snapshot_persisted"
     | "delivery.preview_issued"
     | "entitlement.snapshot_generated";
   entityId: string;
@@ -784,7 +980,14 @@ export interface MarketplaceStore {
   accountingTelemetry?: AccountingTelemetryEntity[];
   auditLogs?: AuditLogEntity[];
   reconciliationSnapshots?: ReconciliationSnapshotEntity[];
+  ownershipReconciliationSnapshots?: OwnershipReconciliationSnapshot[];
+  treasuryReconciliationSnapshots?: TreasuryReconciliationSnapshot[];
   indexerSnapshots?: IndexerSnapshotEntity[];
+  chainIngestionEvents?: ChainIngestionEventEntity[];
+  chainSnapshots?: ChainSnapshotEntity[];
+  ownershipSnapshots?: OwnershipSnapshotEntity[];
+  listingSnapshots?: ListingSnapshotEntity[];
+  indexerRuntime?: MarketplaceIndexerRuntimeSnapshot;
   governanceValidations: GovernanceValidationEntity[];
   draftListings: DraftListingEntity[];
   deliveryPreviews: AssetDeliveryPreviewEntity[];

@@ -7,12 +7,14 @@ import { GovernanceEnforcementPanel } from "../components/GovernanceEnforcementP
 import { ListingRuntimePanel } from "../components/ListingRuntimePanel";
 import { NftOwnershipPanel } from "../components/NftOwnershipPanel";
 import { SignatureIntentPanel } from "../components/SignatureIntentPanel";
+import { WalletSecurityPanel } from "../components/WalletSecurityPanel";
 import { NeutralBadge, ProductStandingBadge, SellerStandingBadge } from "../components/StatusBadge";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import { useListingRuntime } from "../hooks/useListingRuntime";
 import { useNftOwnership } from "../hooks/useNftOwnership";
 import { useProduct } from "../hooks/useMarketplace";
 import { useSignatureIntent } from "../hooks/useSignatureIntent";
+import { useWalletSecurity } from "../hooks/useWalletSecurity";
 import { LayerZeroBridgeService, RoyaltyService, StorageAccessService } from "../services/boundaryAdapters";
 import {
   createSignedUrlPreview,
@@ -26,6 +28,7 @@ export function ProductDetailPage() {
   const ownership = useNftOwnership(data?.product);
   const listingRuntime = useListingRuntime(data?.product);
   const signatureIntent = useSignatureIntent(data?.product, data?.product.listingType === "fixed" ? "buy-now" : "place-bid", data?.product.auction?.highestBid);
+  const walletSecurity = useWalletSecurity(data?.product, ownership.data);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   useMarketplaceTelemetry("product-detail-page", { slug: slug ?? null });
 
@@ -91,6 +94,7 @@ export function ProductDetailPage() {
         <NftOwnershipPanel snapshot={ownership.data} loading={ownership.isLoading} />
         <ListingRuntimePanel snapshot={listingRuntime.data} loading={listingRuntime.isLoading} />
         <SignatureIntentPanel snapshot={signatureIntent.data} loading={signatureIntent.isLoading} />
+        <WalletSecurityPanel snapshot={walletSecurity.data} loading={walletSecurity.isLoading} />
         <Panel icon={<ShieldCheck />} title="Governance validation">
           <p>Product standing: {product.governanceStatus}</p>
           <p>Constitutional standing: {product.constitutionalStanding}</p>

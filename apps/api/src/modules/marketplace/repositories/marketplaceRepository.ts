@@ -3,6 +3,9 @@ import path from "node:path";
 import { createMarketplaceSeed } from "../adapters/mockMarketplaceSeed.js";
 import type {
   AssetDeliveryPreviewEntity,
+  ChainIngestionEventEntity,
+  ChainIngestionEventRequest,
+  ChainSnapshotEntity,
   DAOFederationRuntimeSnapshot,
   AccountingTelemetryEntity,
   AuditLogEntity,
@@ -28,7 +31,11 @@ import type {
   LicenseEntity,
   LicenseRuntimeEntity,
   MarketplaceRuntimeEventEntity,
+  MarketplaceIndexerRuntimeSnapshot,
   MarketplaceStore,
+  OwnershipSnapshotEntity,
+  OwnershipReconciliationSnapshot,
+  ListingSnapshotEntity,
   ProductEntity,
   ProductRegistryRecord,
   PurchaseEntity,
@@ -41,7 +48,8 @@ import type {
   SubscriptionLifecycleRequest,
   SubscriptionPreviewRequest,
   TenantRegistryRecord,
-  TenantEntity
+  TenantEntity,
+  TreasuryReconciliationSnapshot
 } from "../dto/contracts.js";
 import { withRegistryReadModels } from "../services/registryReadModels.js";
 import { buildEntitlementSnapshot } from "../services/entitlementRuntime.js";
@@ -52,6 +60,9 @@ import { withGovernanceEnforcement } from "../services/governanceEnforcementRunt
 import { withDAOFederationRuntime } from "../services/daoFederationRuntime.js";
 import { createGovernanceWorkflowAction, withGovernanceWorkflow } from "../services/governanceWorkflowRuntime.js";
 import { withGovernanceObservability } from "../services/governanceObservabilityRuntime.js";
+import { buildMarketplaceIndexerRuntimeSnapshot, ingestChainEvent } from "../services/indexerRuntime.js";
+import { buildOwnershipReconciliationSnapshot } from "../services/ownershipReconciliationRuntime.js";
+import { buildTreasuryReconciliationSnapshot } from "../services/treasuryReconciliationRuntime.js";
 
 export function getDefaultMarketplaceStorePath() {
   return process.env.MARKETPLACE_STORE_PATH ?? path.resolve(process.cwd(), ".runtime/marketplace-store.json");
@@ -99,8 +110,18 @@ export interface MarketplaceRepository {
   listAuditLogs(): Promise<AuditLogEntity[]>;
   createReconciliationSnapshot(): Promise<ReconciliationSnapshotEntity>;
   listReconciliationSnapshots(): Promise<ReconciliationSnapshotEntity[]>;
+  createOwnershipReconciliationSnapshot(): Promise<OwnershipReconciliationSnapshot>;
+  listOwnershipReconciliationSnapshots(): Promise<OwnershipReconciliationSnapshot[]>;
+  createTreasuryReconciliationSnapshot(): Promise<TreasuryReconciliationSnapshot>;
+  listTreasuryReconciliationSnapshots(): Promise<TreasuryReconciliationSnapshot[]>;
   createIndexerSnapshot(): Promise<IndexerSnapshotEntity>;
   listIndexerSnapshots(): Promise<IndexerSnapshotEntity[]>;
+  ingestChainEvent(input: ChainIngestionEventRequest): Promise<ChainIngestionEventEntity>;
+  listChainIngestionEvents(): Promise<ChainIngestionEventEntity[]>;
+  listChainSnapshots(): Promise<ChainSnapshotEntity[]>;
+  listOwnershipSnapshots(): Promise<OwnershipSnapshotEntity[]>;
+  listListingSnapshots(): Promise<ListingSnapshotEntity[]>;
+  getMarketplaceIndexerRuntime(): Promise<MarketplaceIndexerRuntimeSnapshot>;
   createDraftListing(input: DraftListingRequest): Promise<DraftListingEntity>;
   createPurchasePreview(input: PurchasePreviewRequest): Promise<PurchaseEntity>;
   createBillingPreview(input: BillingPreviewRequest): Promise<BillingPreviewEntity>;
@@ -297,6 +318,42 @@ export class FileMarketplaceRepository implements MarketplaceRepository {
     return (await this.readStore()).reconciliationSnapshots ?? [];
   }
 
+  async createOwnershipReconciliationSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildOwnershipReconciliationSnapshot(store);
+    store.ownershipReconciliationSnapshots = [snapshot, ...(store.ownershipReconciliationSnapshots ?? [])];
+    recordTrace(store, createEvent("reconciliation.ownership_snapshot_generated", snapshot.id, "ownershipReconciliationSnapshot", snapshot), {
+      actor: "marketplace-reconciliation",
+      tenant: "tenant-axodus-dao",
+      action: "reconciliation.ownership_snapshot_generated",
+      governanceStanding: "readonly-reconciliation"
+    });
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async listOwnershipReconciliationSnapshots() {
+    return (await this.readStore()).ownershipReconciliationSnapshots ?? [];
+  }
+
+  async createTreasuryReconciliationSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildTreasuryReconciliationSnapshot(store);
+    store.treasuryReconciliationSnapshots = [snapshot, ...(store.treasuryReconciliationSnapshots ?? [])];
+    recordTrace(store, createEvent("reconciliation.treasury_snapshot_generated", snapshot.id, "treasuryReconciliationSnapshot", snapshot), {
+      actor: "marketplace-reconciliation",
+      tenant: "tenant-axodus-dao",
+      action: "reconciliation.treasury_snapshot_generated",
+      governanceStanding: "treasury-preview"
+    });
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async listTreasuryReconciliationSnapshots() {
+    return (await this.readStore()).treasuryReconciliationSnapshots ?? [];
+  }
+
   async createIndexerSnapshot() {
     const store = await this.readStore();
     const snapshot = buildIndexerSnapshot(store);
@@ -313,6 +370,49 @@ export class FileMarketplaceRepository implements MarketplaceRepository {
 
   async listIndexerSnapshots() {
     return (await this.readStore()).indexerSnapshots ?? [];
+  }
+
+  async ingestChainEvent(input: ChainIngestionEventRequest) {
+    const store = await this.readStore();
+    const event = ingestChainEvent(store, input);
+    recordTrace(store, createEvent("indexer.event_ingested", event.id, "chainIngestionEvent", event), {
+      actor: "marketplace-indexer",
+      tenant: event.tenantId,
+      action: "indexer.event_ingested",
+      governanceStanding: "indexed-readonly"
+    });
+    recordTrace(store, createEvent("indexer.chain_snapshot_persisted", `${event.chain}:${event.blockNumber}`, "chainSnapshot", store.chainSnapshots?.[0] ?? {}), {
+      actor: "marketplace-indexer",
+      tenant: event.tenantId,
+      action: "indexer.chain_snapshot_persisted",
+      governanceStanding: "indexed-readonly"
+    });
+    await this.writeStore(store);
+    return event;
+  }
+
+  async listChainIngestionEvents() {
+    return (await this.readStore()).chainIngestionEvents ?? [];
+  }
+
+  async listChainSnapshots() {
+    return (await this.readStore()).chainSnapshots ?? [];
+  }
+
+  async listOwnershipSnapshots() {
+    return (await this.readStore()).ownershipSnapshots ?? [];
+  }
+
+  async listListingSnapshots() {
+    return (await this.readStore()).listingSnapshots ?? [];
+  }
+
+  async getMarketplaceIndexerRuntime() {
+    const store = await this.readStore();
+    const snapshot = buildMarketplaceIndexerRuntimeSnapshot(store);
+    store.indexerRuntime = snapshot;
+    await this.writeStore(store);
+    return snapshot;
   }
 
   async createDraftListing(input: DraftListingRequest) {

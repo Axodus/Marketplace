@@ -132,6 +132,125 @@ describe("MarketplaceController", () => {
     expect(indexerPayload.data.runtimeSnapshot.nftEventIngestionReady).toBe(true);
   });
 
+  it("serves Marketplace indexer ingestion runtime and persisted snapshots", async () => {
+    const ingestResponse = await fetch(`${baseUrl}/api/marketplace/indexer/events`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        chain: "Polygon",
+        blockNumber: 333,
+        blockHash: "0xblock",
+        transactionHash: "0xindexer",
+        logIndex: 7,
+        eventKind: "bid.placed",
+        contractAddress: "mock:governance-dashboard-access",
+        tokenStandard: "ERC721",
+        tokenId: "AXD-GOV-001",
+        listingId: "listing-route-1",
+        bidder: "0xBidder",
+        amount: "130000000"
+      })
+    });
+    const ingestPayload = await ingestResponse.json();
+    const runtimeResponse = await fetch(`${baseUrl}/api/marketplace/indexer/runtime`);
+    const runtimePayload = await runtimeResponse.json();
+    const chainResponse = await fetch(`${baseUrl}/api/marketplace/indexer/chain-snapshots`);
+    const chainPayload = await chainResponse.json();
+    const listingResponse = await fetch(`${baseUrl}/api/marketplace/indexer/listing-snapshots`);
+    const listingPayload = await listingResponse.json();
+
+    expect(ingestResponse.status).toBe(201);
+    expect(ingestPayload.data.chainWriteEnabled).toBe(false);
+    expect(runtimeResponse.status).toBe(200);
+    expect(runtimePayload.data.ingestionEnabled).toBe(true);
+    expect(runtimePayload.data.settlementEnabled).toBe(false);
+    expect(runtimePayload.data.metrics.bidEvents).toBe(1);
+    expect(chainPayload.data[0].latestBlockNumber).toBe(333);
+    expect(listingPayload.data[0].highestBid).toBe("130000000");
+  });
+
+  it("serves ownership reconciliation snapshots with stale and mismatch visibility", async () => {
+    await fetch(`${baseUrl}/api/marketplace/purchases/preview`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: "product-governance-dashboard-nft", buyer: "0xExpectedOwner" })
+    });
+    await fetch(`${baseUrl}/api/marketplace/indexer/events`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        chain: "Polygon",
+        blockNumber: 10,
+        blockHash: "0xblock10",
+        transactionHash: "0xowner",
+        logIndex: 1,
+        eventKind: "nft.transfer",
+        contractAddress: "mock:governance-dashboard-access",
+        tokenStandard: "ERC721",
+        tokenId: "AXD-GOV-001",
+        owner: "0xDifferentOwner"
+      })
+    });
+    await fetch(`${baseUrl}/api/marketplace/indexer/events`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        chain: "Polygon",
+        blockNumber: 150,
+        blockHash: "0xblock150",
+        transactionHash: "0xadvance",
+        logIndex: 2,
+        eventKind: "listing.updated",
+        contractAddress: "mock:governance-dashboard-access",
+        tokenStandard: "ERC721",
+        tokenId: "AXD-GOV-001",
+        listingId: "listing-route-2"
+      })
+    });
+
+    const createResponse = await fetch(`${baseUrl}/api/marketplace/reconciliation/ownership`, { method: "POST" });
+    const createPayload = await createResponse.json();
+    const listResponse = await fetch(`${baseUrl}/api/marketplace/reconciliation/ownership`);
+    const listPayload = await listResponse.json();
+
+    expect(createResponse.status).toBe(201);
+    expect(createPayload.data.metrics.mismatches).toBeGreaterThan(0);
+    expect(createPayload.data.metrics.stale).toBeGreaterThan(0);
+    expect(createPayload.data.records.find((record: { productId: string }) => record.productId === "product-governance-dashboard-nft").status).toBe("mismatch");
+    expect(createPayload.data.enforcementEnabled).toBe(false);
+    expect(createPayload.data.chainReadsEnabled).toBe(false);
+    expect(listResponse.status).toBe(200);
+    expect(listPayload.data[0].id).toBe(createPayload.data.id);
+  });
+
+  it("serves treasury reconciliation previews without treasury execution", async () => {
+    const invoiceResponse = await fetch(`${baseUrl}/api/marketplace/invoices/preview`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ buyer: "0xTreasury", productIds: ["product-governance-dashboard-nft"] })
+    });
+    const invoicePayload = await invoiceResponse.json();
+    await fetch(`${baseUrl}/api/marketplace/invoices/lifecycle`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ invoiceId: invoicePayload.data.id, state: "mock_paid", reason: "route-treasury-preview" })
+    });
+
+    const createResponse = await fetch(`${baseUrl}/api/marketplace/reconciliation/treasury`, { method: "POST" });
+    const createPayload = await createResponse.json();
+    const listResponse = await fetch(`${baseUrl}/api/marketplace/reconciliation/treasury`);
+    const listPayload = await listResponse.json();
+
+    expect(createResponse.status).toBe(201);
+    expect(createPayload.data.records[0].expectedRoyalty).toBe(6);
+    expect(createPayload.data.records[0].expectedTreasurySplit).toBe(4.2);
+    expect(createPayload.data.records[0].status).toBe("reconciled");
+    expect(createPayload.data.treasuryExecutionEnabled).toBe(false);
+    expect(createPayload.data.settlementEnabled).toBe(false);
+    expect(listResponse.status).toBe(200);
+    expect(listPayload.data[0].id).toBe(createPayload.data.id);
+  });
+
   it("serves governance runtime authority read models", async () => {
     const snapshotResponse = await fetch(`${baseUrl}/api/marketplace/governance-authority`);
     const snapshotPayload = await snapshotResponse.json();

@@ -700,6 +700,93 @@ Current boundaries:
 - no settlement
 - no treasury movement
 
+## Sprint 20 Wallet Security Hardening
+
+Sprint 20 adds wallet and ownership security awareness on top of readonly wallet, ownership, listing and signature runtimes.
+
+The web runtime now supports:
+- chain mismatch protection visibility
+- restricted/unsupported chain protection visibility
+- suspicious or malformed asset metadata warnings
+- symbolic mock contract warnings
+- invalid NFT runtime visibility
+- readonly `isApprovedForAll` approval visibility
+- dangerous operator permission warnings
+- fake ownership suspicion from ownership mismatch state
+- stale ownership visibility when ownership cannot be verified
+- permission visibility for purchase/bid previews
+
+Wallet security runtime lives in `apps/web/src/modules/marketplace/services/walletSecurityRuntime.ts` and is surfaced on product detail pages through a dedicated wallet security panel.
+
+Current boundaries:
+- no approval revocation
+- no transaction blocking execution
+- no ownership mutation
+- no wallet signature request
+- no transaction submission
+- no contract write
+
+## Sprint 21 Marketplace Indexer Runtime
+
+Sprint 21 adds backend-owned Marketplace chain ingestion runtime.
+
+The API now supports persistent ingestion for:
+- NFT events
+- listing events
+- auction events
+- bid events
+- ownership events
+
+The runtime persists:
+- chain ingestion events
+- chain snapshots
+- ownership snapshots
+- listing snapshots
+- aggregate Marketplace indexer runtime snapshots
+
+Endpoints:
+- `POST /api/marketplace/indexer/events`
+- `GET /api/marketplace/indexer/events`
+- `GET /api/marketplace/indexer/runtime`
+- `GET /api/marketplace/indexer/chain-snapshots`
+- `GET /api/marketplace/indexer/ownership-snapshots`
+- `GET /api/marketplace/indexer/listing-snapshots`
+
+Ingestion records are replay-safe and deduplicated by chain, transaction hash, log index and event kind.
+
+Current boundaries:
+- no live node subscription
+- no production queue
+- no contract write
+- no settlement reconciliation
+- no treasury execution
+- no ownership enforcement mutation
+
+## Sprint 22 Ownership Reconciliation Runtime
+
+Sprint 22 adds backend-owned ownership reconciliation over persisted indexer snapshots.
+
+The API now supports:
+- ownership verification against runtime holders
+- stale ownership detection by block lag
+- runtime consistency checks across ownership snapshots, purchases and license runtime
+- mismatch visibility
+- missing snapshot visibility
+- invalid asset visibility
+
+Endpoints:
+- `POST /api/marketplace/reconciliation/ownership`
+- `GET /api/marketplace/reconciliation/ownership`
+
+Ownership reconciliation compares NFT-bound products against the latest ownership snapshots and expected holders derived from purchase/license runtime. It persists reconciliation snapshots and records audit/runtime events.
+
+Current boundaries:
+- no live chain reads
+- no ownership mutation
+- no entitlement enforcement mutation
+- no settlement reconciliation execution
+- no wallet execution
+
 ---
 
 # Governance Integration

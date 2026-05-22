@@ -1,5 +1,7 @@
 import type {
   BillingPreviewRequest,
+  ChainIngestionEventKind,
+  ChainIngestionEventRequest,
   DraftListingRequest,
   GovernanceApprovalLifecycleState,
   GovernanceReviewQueueName,
@@ -137,5 +139,46 @@ export function validateGovernanceWorkflowActionRequest(input: Record<string, un
     action: action as GovernanceApprovalLifecycleState,
     reasonCode: assertString(input.reasonCode, "reasonCode"),
     notes: typeof input.notes === "string" && input.notes.trim() ? input.notes.trim() : undefined
+  };
+}
+
+export function validateChainIngestionEventRequest(input: Record<string, unknown>): ChainIngestionEventRequest {
+  const eventKind = assertString(input.eventKind, "eventKind");
+  if (
+    ![
+      "nft.transfer",
+      "nft.approval",
+      "listing.created",
+      "listing.updated",
+      "listing.cancelled",
+      "auction.created",
+      "auction.settled",
+      "bid.placed",
+      "ownership.verified"
+    ].includes(eventKind)
+  ) {
+    throw new ValidationError("eventKind is not a valid Marketplace chain ingestion event");
+  }
+
+  const raw = input.raw && typeof input.raw === "object" && !Array.isArray(input.raw) ? (input.raw as Record<string, unknown>) : undefined;
+  return {
+    chain: assertString(input.chain, "chain"),
+    blockNumber: assertNumber(input.blockNumber, "blockNumber"),
+    blockHash: assertString(input.blockHash, "blockHash"),
+    transactionHash: assertString(input.transactionHash, "transactionHash"),
+    logIndex: assertNumber(input.logIndex, "logIndex"),
+    eventKind: eventKind as ChainIngestionEventKind,
+    contractAddress: assertString(input.contractAddress, "contractAddress"),
+    tokenStandard: typeof input.tokenStandard === "string" && input.tokenStandard.trim() ? input.tokenStandard.trim() : undefined,
+    tokenId: typeof input.tokenId === "string" && input.tokenId.trim() ? input.tokenId.trim() : undefined,
+    listingId: typeof input.listingId === "string" && input.listingId.trim() ? input.listingId.trim() : undefined,
+    seller: typeof input.seller === "string" && input.seller.trim() ? input.seller.trim() : undefined,
+    buyer: typeof input.buyer === "string" && input.buyer.trim() ? input.buyer.trim() : undefined,
+    bidder: typeof input.bidder === "string" && input.bidder.trim() ? input.bidder.trim() : undefined,
+    owner: typeof input.owner === "string" && input.owner.trim() ? input.owner.trim() : undefined,
+    amount: typeof input.amount === "string" && input.amount.trim() ? input.amount.trim() : undefined,
+    price: typeof input.price === "string" && input.price.trim() ? input.price.trim() : undefined,
+    expiration: typeof input.expiration === "string" && input.expiration.trim() ? input.expiration.trim() : undefined,
+    raw
   };
 }

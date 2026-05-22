@@ -1,6 +1,7 @@
 import type { MarketplaceRepository } from "../repositories/marketplaceRepository.js";
 import {
   validateBillingPreviewRequest,
+  validateChainIngestionEventRequest,
   validateDraftListingRequest,
   validateGovernanceWorkflowActionRequest,
   validateInvoiceLifecycleRequest,
@@ -162,12 +163,52 @@ export class MarketplaceApiService {
     return this.repository.listReconciliationSnapshots();
   }
 
+  createOwnershipReconciliationSnapshot() {
+    return this.repository.createOwnershipReconciliationSnapshot();
+  }
+
+  listOwnershipReconciliationSnapshots() {
+    return this.repository.listOwnershipReconciliationSnapshots();
+  }
+
+  createTreasuryReconciliationSnapshot() {
+    return this.repository.createTreasuryReconciliationSnapshot();
+  }
+
+  listTreasuryReconciliationSnapshots() {
+    return this.repository.listTreasuryReconciliationSnapshots();
+  }
+
   createIndexerSnapshot() {
     return this.repository.createIndexerSnapshot();
   }
 
   listIndexerSnapshots() {
     return this.repository.listIndexerSnapshots();
+  }
+
+  ingestChainEvent(input: Record<string, unknown>) {
+    return this.repository.ingestChainEvent(validateChainIngestionEventRequest(input));
+  }
+
+  listChainIngestionEvents() {
+    return this.repository.listChainIngestionEvents();
+  }
+
+  listChainSnapshots() {
+    return this.repository.listChainSnapshots();
+  }
+
+  listOwnershipSnapshots() {
+    return this.repository.listOwnershipSnapshots();
+  }
+
+  listListingSnapshots() {
+    return this.repository.listListingSnapshots();
+  }
+
+  getMarketplaceIndexerRuntime() {
+    return this.repository.getMarketplaceIndexerRuntime();
   }
 
   createDraftListing(input: Record<string, unknown>) {

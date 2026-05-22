@@ -610,6 +610,95 @@ CONFIRMED
 
 ---
 
+## Sprint 20 Wallet Security Hardening
+
+Decision:
+Marketplace wallet and ownership runtime must expose security warnings and permission visibility before any approval revocation, transaction blocking or settlement execution exists.
+
+Approved:
+- unsupported chain protection visibility
+- chain mismatch warnings
+- suspicious contract warnings
+- symbolic mock contract warnings
+- invalid NFT runtime visibility
+- readonly `isApprovedForAll` approval visibility
+- dangerous operator permission warnings
+- fake ownership suspicion from mismatch state
+- stale ownership visibility
+- purchase and bid permission visibility
+- product detail wallet security panel
+
+Deferred:
+- approval revocation execution
+- transaction blocking execution
+- ownership mutation
+- wallet signatures
+- transaction submission
+- contract writes
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 21 Marketplace Indexer Runtime
+
+Decision:
+Marketplace may persist chain ingestion events and derived snapshots before live node subscriptions or production reconciliation are enabled.
+
+Approved:
+- NFT event ingestion records
+- listing event ingestion records
+- auction event ingestion records
+- bid event ingestion records
+- ownership event ingestion records
+- chain snapshot persistence
+- ownership snapshot persistence
+- listing snapshot persistence
+- aggregate indexer runtime snapshot
+- replay-safe ingestion dedupe keys
+- indexer API endpoints
+
+Deferred:
+- live node subscriptions
+- production queue publishing
+- production indexer workers
+- settlement reconciliation execution
+- treasury verification execution
+- ownership enforcement mutation
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 22 Ownership Reconciliation Runtime
+
+Decision:
+Marketplace may reconcile ownership using persisted indexer snapshots and runtime holder records before live chain reads or enforcement mutation are enabled.
+
+Approved:
+- ownership verification against purchase/license holders
+- stale ownership detection by block lag
+- mismatch visibility
+- missing snapshot visibility
+- invalid asset visibility
+- consistency checks across ownership snapshots, purchases and license runtime
+- persisted ownership reconciliation snapshots
+- reconciliation API endpoints
+
+Deferred:
+- live chain reads during reconciliation
+- ownership mutation
+- entitlement enforcement mutation
+- settlement reconciliation execution
+- wallet execution
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation
