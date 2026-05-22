@@ -2,16 +2,22 @@ import type {
   BillingPreviewRequest,
   ChainIngestionEventKind,
   ChainIngestionEventRequest,
+  DeliveryTelemetryRequest,
   DraftListingRequest,
   GovernanceApprovalLifecycleState,
   GovernanceReviewQueueName,
   GovernanceWorkflowActionRequest,
+  GreenfieldAuthRequest,
   InvoiceLifecycleRequest,
   InvoicePreviewRequest,
   InvoiceState,
   LicenseLifecycleRequest,
   LicenseLifecycleState,
   PurchasePreviewRequest,
+  SecureDeliveryRequest,
+  SettlementExecutionRequest,
+  SignedUrlIssueRequest,
+  SignedUrlRevokeRequest,
   SubscriptionLifecycleRequest,
   SubscriptionLifecycleState,
   SubscriptionPreviewRequest
@@ -91,10 +97,76 @@ export function validateBillingPreviewRequest(input: Record<string, unknown>): B
   return validateProductActionRequest(input);
 }
 
+export function validateSettlementExecutionRequest(input: Record<string, unknown>): SettlementExecutionRequest {
+  return {
+    productId: assertString(input.productId, "productId"),
+    buyer: typeof input.buyer === "string" && input.buyer.trim() ? input.buyer.trim() : undefined,
+    controlledRollout: input.controlledRollout === true
+  };
+}
+
 export function validateSubscriptionPreviewRequest(input: Record<string, unknown>): SubscriptionPreviewRequest {
   return {
     productId: assertString(input.productId, "productId"),
     holder: typeof input.holder === "string" && input.holder.trim() ? input.holder.trim() : undefined
+  };
+}
+
+export function validateGreenfieldAuthRequest(input: Record<string, unknown>): GreenfieldAuthRequest {
+  return {
+    productId: assertString(input.productId, "productId"),
+    holder: typeof input.holder === "string" && input.holder.trim() ? input.holder.trim() : undefined,
+    daoId: typeof input.daoId === "string" && input.daoId.trim() ? input.daoId.trim() : undefined
+  };
+}
+
+export function validateSignedUrlIssueRequest(input: Record<string, unknown>): SignedUrlIssueRequest {
+  const ttlSeconds = input.ttlSeconds === undefined ? undefined : assertNumber(input.ttlSeconds, "ttlSeconds");
+  return {
+    productId: assertString(input.productId, "productId"),
+    holder: typeof input.holder === "string" && input.holder.trim() ? input.holder.trim() : undefined,
+    daoId: typeof input.daoId === "string" && input.daoId.trim() ? input.daoId.trim() : undefined,
+    ttlSeconds
+  };
+}
+
+export function validateEntitlementEnforcementRequest(input: Record<string, unknown>) {
+  return {
+    productId: assertString(input.productId, "productId"),
+    holder: typeof input.holder === "string" && input.holder.trim() ? input.holder.trim() : undefined,
+    daoId: typeof input.daoId === "string" && input.daoId.trim() ? input.daoId.trim() : undefined
+  };
+}
+
+export function validateSecureDeliveryRequest(input: Record<string, unknown>): SecureDeliveryRequest {
+  const mode = typeof input.mode === "string" && input.mode.trim() ? input.mode.trim() : undefined;
+  if (mode && !["encrypted_download", "secure_stream", "acs_package"].includes(mode)) {
+    throw new ValidationError("mode is not a valid secure delivery mode");
+  }
+  return {
+    productId: assertString(input.productId, "productId"),
+    holder: typeof input.holder === "string" && input.holder.trim() ? input.holder.trim() : undefined,
+    daoId: typeof input.daoId === "string" && input.daoId.trim() ? input.daoId.trim() : undefined,
+    mode: mode as SecureDeliveryRequest["mode"]
+  };
+}
+
+export function validateDeliveryTelemetryRequest(input: Record<string, unknown>): DeliveryTelemetryRequest {
+  const event = assertString(input.event, "event");
+  if (!["download_requested", "stream_started", "acs_package_requested", "access_denied", "delivery_completed"].includes(event)) {
+    throw new ValidationError("event is not a valid delivery telemetry event");
+  }
+  return {
+    deliveryId: assertString(input.deliveryId, "deliveryId"),
+    event: event as DeliveryTelemetryRequest["event"],
+    actor: typeof input.actor === "string" && input.actor.trim() ? input.actor.trim() : undefined
+  };
+}
+
+export function validateSignedUrlRevokeRequest(input: Record<string, unknown>): SignedUrlRevokeRequest {
+  return {
+    signedUrlId: assertString(input.signedUrlId, "signedUrlId"),
+    reason: typeof input.reason === "string" && input.reason.trim() ? input.reason.trim() : undefined
   };
 }
 

@@ -6,6 +6,9 @@ import type {
   ChainIngestionEventEntity,
   ChainIngestionEventRequest,
   ChainSnapshotEntity,
+  DeliveryObservabilitySnapshot,
+  DeliveryTelemetryRecord,
+  DeliveryTelemetryRequest,
   DAOFederationRuntimeSnapshot,
   AccountingTelemetryEntity,
   AuditLogEntity,
@@ -14,6 +17,9 @@ import type {
   DraftListingEntity,
   DraftListingRequest,
   EntitlementSnapshotEntity,
+  EntitlementEnforcementRecord,
+  EntitlementEnforcementRequest,
+  EntitlementEnforcementSnapshot,
   GovernanceValidationEntity,
   GovernanceAuthorityRecord,
   GovernanceAuthoritySnapshot,
@@ -23,6 +29,9 @@ import type {
   GovernanceWorkflowActionRecord,
   GovernanceWorkflowActionRequest,
   GovernanceWorkflowSnapshot,
+  GreenfieldAuthRequest,
+  GreenfieldAuthRuntime,
+  GreenfieldAuthRuntimeSnapshot,
   InvoiceLifecycleRequest,
   InvoicePreviewEntity,
   InvoicePreviewRequest,
@@ -31,6 +40,8 @@ import type {
   LicenseEntity,
   LicenseRuntimeEntity,
   MarketplaceRuntimeEventEntity,
+  MarketplaceRealtimeSnapshot,
+  MarketplaceOperationalResilienceSnapshot,
   MarketplaceIndexerRuntimeSnapshot,
   MarketplaceStore,
   OwnershipSnapshotEntity,
@@ -41,8 +52,21 @@ import type {
   PurchaseEntity,
   PurchasePreviewRequest,
   ReconciliationSnapshotEntity,
+  RoyaltyDistributionRequest,
+  RoyaltyDistributionRuntime,
+  RoyaltyDistributionSnapshot,
   SellerEntity,
   SellerRegistryRecord,
+  SecureDeliveryRequest,
+  SecureDeliveryRuntime,
+  SecureDeliverySnapshot,
+  SignedUrlIssueRequest,
+  SignedUrlRevokeRequest,
+  SignedUrlRuntime,
+  SignedUrlRuntimeSnapshot,
+  SettlementExecutionRequest,
+  SettlementRuntime,
+  SettlementRuntimeSnapshot,
   StorefrontViewEntity,
   SubscriptionEntity,
   SubscriptionLifecycleRequest,
@@ -63,6 +87,15 @@ import { withGovernanceObservability } from "../services/governanceObservability
 import { buildMarketplaceIndexerRuntimeSnapshot, ingestChainEvent } from "../services/indexerRuntime.js";
 import { buildOwnershipReconciliationSnapshot } from "../services/ownershipReconciliationRuntime.js";
 import { buildTreasuryReconciliationSnapshot } from "../services/treasuryReconciliationRuntime.js";
+import { buildMarketplaceRealtimeSnapshot } from "../services/realtimeRuntime.js";
+import { buildOperationalResilienceSnapshot } from "../services/operationalResilienceRuntime.js";
+import { buildGreenfieldAuthRuntime, buildGreenfieldAuthSnapshot } from "../services/greenfieldAuthRuntime.js";
+import { buildSignedUrlSnapshot, issueSignedUrlRuntime, revokeSignedUrlRuntime } from "../services/signedUrlRuntime.js";
+import { buildEntitlementEnforcementSnapshot, evaluateEntitlementEnforcement } from "../services/entitlementEnforcementRuntime.js";
+import { buildSecureDeliveryRuntime, buildSecureDeliverySnapshot } from "../services/secureDeliveryRuntime.js";
+import { buildDeliveryObservabilitySnapshot, buildDeliveryTelemetryRecord } from "../services/deliveryObservabilityRuntime.js";
+import { buildSettlementRuntime, buildSettlementRuntimeSnapshot } from "../services/settlementRuntime.js";
+import { buildRoyaltyDistributionRuntime, buildRoyaltyDistributionSnapshot } from "../services/royaltyDistributionRuntime.js";
 
 export function getDefaultMarketplaceStorePath() {
   return process.env.MARKETPLACE_STORE_PATH ?? path.resolve(process.cwd(), ".runtime/marketplace-store.json");
@@ -86,8 +119,14 @@ export interface MarketplaceRepository {
   listLicenseRuntimes(): Promise<LicenseRuntimeEntity[]>;
   listEntitlementSnapshots(): Promise<EntitlementSnapshotEntity[]>;
   getEntitlementSnapshot(holder: string): Promise<EntitlementSnapshotEntity>;
+  evaluateEntitlementEnforcement(input: EntitlementEnforcementRequest): Promise<EntitlementEnforcementRecord>;
+  getEntitlementEnforcementSnapshot(): Promise<EntitlementEnforcementSnapshot>;
   updateLicenseLifecycle(input: LicenseLifecycleRequest): Promise<LicenseRuntimeEntity>;
   listPurchases(): Promise<PurchaseEntity[]>;
+  executeSettlement(input: SettlementExecutionRequest): Promise<SettlementRuntime>;
+  getSettlementSnapshot(): Promise<SettlementRuntimeSnapshot>;
+  allocateRoyaltyDistribution(input: RoyaltyDistributionRequest): Promise<RoyaltyDistributionRuntime>;
+  getRoyaltyDistributionSnapshot(): Promise<RoyaltyDistributionSnapshot>;
   listSubscriptions(): Promise<SubscriptionEntity[]>;
   updateSubscriptionLifecycle(input: SubscriptionLifecycleRequest): Promise<SubscriptionEntity>;
   listBillingPreviews(): Promise<BillingPreviewEntity[]>;
@@ -106,7 +145,18 @@ export interface MarketplaceRepository {
   createGovernanceWorkflowAction(input: GovernanceWorkflowActionRequest): Promise<GovernanceWorkflowActionRecord>;
   getGovernanceObservabilitySnapshot(): Promise<GovernanceOperatorConsoleSnapshot>;
   listDeliveryPreviews(): Promise<AssetDeliveryPreviewEntity[]>;
+  createGreenfieldAuthRuntime(input: GreenfieldAuthRequest): Promise<GreenfieldAuthRuntime>;
+  getGreenfieldAuthSnapshot(): Promise<GreenfieldAuthRuntimeSnapshot>;
+  issueSignedUrl(input: SignedUrlIssueRequest): Promise<SignedUrlRuntime>;
+  revokeSignedUrl(input: SignedUrlRevokeRequest): Promise<SignedUrlRuntime>;
+  getSignedUrlSnapshot(): Promise<SignedUrlRuntimeSnapshot>;
+  createSecureDelivery(input: SecureDeliveryRequest): Promise<SecureDeliveryRuntime>;
+  getSecureDeliverySnapshot(): Promise<SecureDeliverySnapshot>;
+  recordDeliveryTelemetry(input: DeliveryTelemetryRequest): Promise<DeliveryTelemetryRecord>;
+  getDeliveryObservabilitySnapshot(): Promise<DeliveryObservabilitySnapshot>;
   listEvents(): Promise<MarketplaceRuntimeEventEntity[]>;
+  getRealtimeSnapshot(): Promise<MarketplaceRealtimeSnapshot>;
+  getOperationalResilienceSnapshot(): Promise<MarketplaceOperationalResilienceSnapshot>;
   listAuditLogs(): Promise<AuditLogEntity[]>;
   createReconciliationSnapshot(): Promise<ReconciliationSnapshotEntity>;
   listReconciliationSnapshots(): Promise<ReconciliationSnapshotEntity[]>;
@@ -224,8 +274,92 @@ export class FileMarketplaceRepository implements MarketplaceRepository {
     return snapshot;
   }
 
+  async evaluateEntitlementEnforcement(input: EntitlementEnforcementRequest) {
+    const store = await this.readStore();
+    const record = evaluateEntitlementEnforcement(store, input);
+    store.entitlementEnforcements = [record, ...(store.entitlementEnforcements ?? [])].slice(0, 100);
+    recordTrace(store, createEvent("entitlement.enforcement_evaluated", record.id, "entitlementEnforcement", record), {
+      actor: record.holder,
+      tenant: record.checks.dao.tenantId ?? "tenant-axodus-dao",
+      action: "entitlement.enforcement_evaluated",
+      governanceStanding: record.decision,
+      restrictions: record.decision === "allowed" ? [] : Object.values(record.checks).flatMap((check) => check.reasonCodes)
+    });
+    await this.writeStore(store);
+    return record;
+  }
+
+  async getEntitlementEnforcementSnapshot() {
+    const store = await this.readStore();
+    const records = store.entitlementEnforcements ?? [];
+    const snapshot = buildEntitlementEnforcementSnapshot(records);
+    store.entitlementEnforcementSnapshots = [snapshot, ...(store.entitlementEnforcementSnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
   async listPurchases() {
     return (await this.readStore()).purchases;
+  }
+
+  async executeSettlement(input: SettlementExecutionRequest) {
+    const store = await this.readStore();
+    const product = store.products.find((item) => item.id === input.productId || item.slug === input.productId);
+    const buyer = input.buyer ?? "0xControlledBuyer...A11C";
+    let purchaseId: string | null = null;
+
+    if (product && input.controlledRollout === true && product.governanceStatus !== "restricted" && product.governanceStatus !== "suspended") {
+      const license = findLicenseForProduct(store, product);
+      const pricing = getPricing(product);
+      const purchase: PurchaseEntity = {
+        id: newRuntimeId("purchase"),
+        buyer,
+        productId: product.id,
+        sellerId: product.sellerId,
+        timestamp: new Date().toISOString(),
+        amount: pricing.amount,
+        currency: pricing.currency,
+        licenseIssued: license.id,
+        status: "mock-issued",
+        governanceReviewRequired: Boolean(product.governanceRequired),
+        signedUrlPreview: product.signedUrlPreviewAvailable ? `https://greenfield.mock.axodus.local/access/${product.slug}?signature=settlement-preview` : undefined,
+        settlementEnabled: false,
+        walletExecutionEnabled: false,
+        blockchainWritesEnabled: false
+      };
+      purchaseId = purchase.id;
+      store.purchases.unshift(purchase);
+      store.licenseRuntimes = [
+        createLicenseRuntime({
+          product,
+          license,
+          holder: buyer,
+          purchaseId: purchase.id,
+          state: "issued"
+        }),
+        ...(store.licenseRuntimes ?? [])
+      ];
+    }
+
+    const settlement = buildSettlementRuntime({ store, product, buyer, purchaseId, controlledRollout: input.controlledRollout });
+    store.settlements = [settlement, ...(store.settlements ?? [])].slice(0, 100);
+    recordTrace(store, createEvent(settlement.status === "confirmed" ? "settlement.executed" : "settlement.blocked", settlement.id, "settlementRuntime", settlement), {
+      actor: buyer,
+      tenant: product && typeof product.tenantId === "string" ? product.tenantId : "tenant-axodus-dao",
+      action: settlement.status === "confirmed" ? "settlement.executed" : "settlement.blocked",
+      governanceStanding: settlement.status,
+      restrictions: settlement.status === "blocked" ? settlement.transaction.reasonCodes : []
+    });
+    await this.writeStore(store);
+    return settlement;
+  }
+
+  async getSettlementSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildSettlementRuntimeSnapshot(store.settlements ?? []);
+    store.settlementSnapshots = [snapshot, ...(store.settlementSnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
   }
 
   async listSubscriptions() {
@@ -292,8 +426,147 @@ export class FileMarketplaceRepository implements MarketplaceRepository {
     return (await this.readStore()).deliveryPreviews;
   }
 
+  async createGreenfieldAuthRuntime(input: GreenfieldAuthRequest) {
+    const store = await this.readStore();
+    const runtime = buildGreenfieldAuthRuntime(store, input.productId, input.holder, input.daoId);
+    store.greenfieldAuthRuntimes = [runtime, ...(store.greenfieldAuthRuntimes ?? [])].slice(0, 50);
+    recordTrace(store, createEvent("greenfield.auth_verified", runtime.id, "greenfieldAuthRuntime", runtime), {
+      actor: runtime.holder,
+      tenant: "tenant-axodus-dao",
+      action: "greenfield.auth_verified",
+      governanceStanding: runtime.accessVerification.status,
+      restrictions: runtime.accessVerification.status === "blocked-preview" ? runtime.accessVerification.reasons : []
+    });
+    await this.writeStore(store);
+    return runtime;
+  }
+
+  async getGreenfieldAuthSnapshot() {
+    const store = await this.readStore();
+    const existing = store.greenfieldAuthRuntimes ?? [];
+    const seedRecords = existing.length > 0 ? existing : store.products.map((product) => buildGreenfieldAuthRuntime(store, product.id));
+    const snapshot = buildGreenfieldAuthSnapshot(seedRecords);
+    store.greenfieldAuthSnapshots = [snapshot, ...(store.greenfieldAuthSnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async issueSignedUrl(input: SignedUrlIssueRequest) {
+    const store = await this.readStore();
+    const signedUrl = issueSignedUrlRuntime(store, input.productId, input.holder, input.ttlSeconds, input.daoId);
+    store.signedUrlRuntimes = [signedUrl, ...(store.signedUrlRuntimes ?? [])].slice(0, 100);
+    recordTrace(store, createEvent("signed_url.issued", signedUrl.id, "signedUrlRuntime", signedUrl), {
+      actor: signedUrl.holder,
+      tenant: "tenant-axodus-dao",
+      action: "signed_url.issued",
+      governanceStanding: signedUrl.status,
+      restrictions: signedUrl.status === "blocked" ? ["signed-url-access-blocked"] : []
+    });
+    await this.writeStore(store);
+    return signedUrl;
+  }
+
+  async revokeSignedUrl(input: SignedUrlRevokeRequest) {
+    const store = await this.readStore();
+    const current = (store.signedUrlRuntimes ?? []).find((record) => record.id === input.signedUrlId);
+    if (!current) throw new Error(`Signed URL runtime not found: ${input.signedUrlId}`);
+    const revoked = revokeSignedUrlRuntime(current, input.reason);
+    store.signedUrlRuntimes = [revoked, ...(store.signedUrlRuntimes ?? []).filter((record) => record.id !== input.signedUrlId)];
+    recordTrace(store, createEvent("signed_url.revoked", revoked.id, "signedUrlRuntime", revoked), {
+      actor: revoked.holder,
+      tenant: "tenant-axodus-dao",
+      action: "signed_url.revoked",
+      governanceStanding: "revoked",
+      restrictions: [revoked.revocationReason ?? "manual-preview-revocation"]
+    });
+    await this.writeStore(store);
+    return revoked;
+  }
+
+  async getSignedUrlSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildSignedUrlSnapshot(store.signedUrlRuntimes ?? []);
+    store.signedUrlSnapshots = [snapshot, ...(store.signedUrlSnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async createSecureDelivery(input: SecureDeliveryRequest) {
+    const store = await this.readStore();
+    const delivery = buildSecureDeliveryRuntime(store, input);
+    store.secureDeliveryRuntimes = [delivery, ...(store.secureDeliveryRuntimes ?? [])].slice(0, 100);
+    recordTrace(store, createEvent("secure_delivery.prepared", delivery.id, "secureDeliveryRuntime", delivery), {
+      actor: delivery.holder,
+      tenant: "tenant-axodus-dao",
+      action: "secure_delivery.prepared",
+      governanceStanding: delivery.status,
+      restrictions: delivery.status === "blocked" ? delivery.access.reasonCodes : []
+    });
+    await this.writeStore(store);
+    return delivery;
+  }
+
+  async getSecureDeliverySnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildSecureDeliverySnapshot(store.secureDeliveryRuntimes ?? []);
+    store.secureDeliverySnapshots = [snapshot, ...(store.secureDeliverySnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async recordDeliveryTelemetry(input: DeliveryTelemetryRequest) {
+    const store = await this.readStore();
+    const telemetry = buildDeliveryTelemetryRecord(store, input);
+    store.deliveryTelemetry = [telemetry, ...(store.deliveryTelemetry ?? [])].slice(0, 200);
+    recordTrace(store, createEvent("delivery.telemetry_recorded", telemetry.id, "deliveryTelemetry", telemetry), {
+      actor: telemetry.actor,
+      tenant: "tenant-axodus-dao",
+      action: "delivery.telemetry_recorded",
+      governanceStanding: telemetry.outcome,
+      restrictions: telemetry.outcome === "denied" ? telemetry.entitlementTrace.reasonCodes : []
+    });
+    await this.writeStore(store);
+    return telemetry;
+  }
+
+  async getDeliveryObservabilitySnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildDeliveryObservabilitySnapshot(store.deliveryTelemetry ?? []);
+    store.deliveryObservabilitySnapshots = [snapshot, ...(store.deliveryObservabilitySnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
   async listEvents() {
     return (await this.readStore()).events;
+  }
+
+  async getRealtimeSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildMarketplaceRealtimeSnapshot(store);
+    store.realtimeSnapshots = [snapshot, ...(store.realtimeSnapshots ?? [])].slice(0, 20);
+    recordTrace(store, createEvent("realtime.snapshot_generated", snapshot.id, "realtimeSnapshot", snapshot), {
+      actor: "marketplace-realtime",
+      tenant: "tenant-axodus-dao",
+      action: "realtime.snapshot_generated",
+      governanceStanding: "preview-only"
+    });
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async getOperationalResilienceSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildOperationalResilienceSnapshot(store);
+    store.operationalResilienceSnapshots = [snapshot, ...(store.operationalResilienceSnapshots ?? [])].slice(0, 20);
+    recordTrace(store, createEvent("resilience.snapshot_generated", snapshot.id, "operationalResilienceSnapshot", snapshot), {
+      actor: "marketplace-resilience",
+      tenant: "tenant-axodus-dao",
+      action: "resilience.snapshot_generated",
+      governanceStanding: "preview-only"
+    });
+    await this.writeStore(store);
+    return snapshot;
   }
 
   async listAuditLogs() {

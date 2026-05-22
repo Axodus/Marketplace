@@ -2,12 +2,19 @@ import type { MarketplaceRepository } from "../repositories/marketplaceRepositor
 import {
   validateBillingPreviewRequest,
   validateChainIngestionEventRequest,
+  validateDeliveryTelemetryRequest,
   validateDraftListingRequest,
+  validateEntitlementEnforcementRequest,
+  validateGreenfieldAuthRequest,
   validateGovernanceWorkflowActionRequest,
   validateInvoiceLifecycleRequest,
   validateInvoicePreviewRequest,
   validateLicenseLifecycleRequest,
   validateProductActionRequest,
+  validateSecureDeliveryRequest,
+  validateSettlementExecutionRequest,
+  validateSignedUrlIssueRequest,
+  validateSignedUrlRevokeRequest,
   validateSubscriptionLifecycleRequest,
   validateSubscriptionPreviewRequest
 } from "../validation/marketplaceValidation.js";
@@ -83,8 +90,24 @@ export class MarketplaceApiService {
     return this.repository.getEntitlementSnapshot(holder);
   }
 
+  evaluateEntitlementEnforcement(input: Record<string, unknown>) {
+    return this.repository.evaluateEntitlementEnforcement(validateEntitlementEnforcementRequest(input));
+  }
+
+  getEntitlementEnforcementSnapshot() {
+    return this.repository.getEntitlementEnforcementSnapshot();
+  }
+
   listPurchases() {
     return this.repository.listPurchases();
+  }
+
+  executeSettlement(input: Record<string, unknown>) {
+    return this.repository.executeSettlement(validateSettlementExecutionRequest(input));
+  }
+
+  getSettlementSnapshot() {
+    return this.repository.getSettlementSnapshot();
   }
 
   listSubscriptions() {
@@ -147,8 +170,52 @@ export class MarketplaceApiService {
     return this.repository.listDeliveryPreviews();
   }
 
+  createGreenfieldAuthRuntime(input: Record<string, unknown>) {
+    return this.repository.createGreenfieldAuthRuntime(validateGreenfieldAuthRequest(input));
+  }
+
+  getGreenfieldAuthSnapshot() {
+    return this.repository.getGreenfieldAuthSnapshot();
+  }
+
+  issueSignedUrl(input: Record<string, unknown>) {
+    return this.repository.issueSignedUrl(validateSignedUrlIssueRequest(input));
+  }
+
+  revokeSignedUrl(input: Record<string, unknown>) {
+    return this.repository.revokeSignedUrl(validateSignedUrlRevokeRequest(input));
+  }
+
+  getSignedUrlSnapshot() {
+    return this.repository.getSignedUrlSnapshot();
+  }
+
+  createSecureDelivery(input: Record<string, unknown>) {
+    return this.repository.createSecureDelivery(validateSecureDeliveryRequest(input));
+  }
+
+  getSecureDeliverySnapshot() {
+    return this.repository.getSecureDeliverySnapshot();
+  }
+
+  recordDeliveryTelemetry(input: Record<string, unknown>) {
+    return this.repository.recordDeliveryTelemetry(validateDeliveryTelemetryRequest(input));
+  }
+
+  getDeliveryObservabilitySnapshot() {
+    return this.repository.getDeliveryObservabilitySnapshot();
+  }
+
   listEvents() {
     return this.repository.listEvents();
+  }
+
+  getRealtimeSnapshot() {
+    return this.repository.getRealtimeSnapshot();
+  }
+
+  getOperationalResilienceSnapshot() {
+    return this.repository.getOperationalResilienceSnapshot();
   }
 
   listAuditLogs() {

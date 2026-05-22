@@ -15,7 +15,7 @@ export async function createApiServer(options: ApiServerOptions = {}) {
   await marketplaceService.init();
   const marketplaceController = new MarketplaceController(marketplaceService);
 
-  return createServer(async (req, res) => {
+  const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
 
     if (url.pathname === "/healthz") {
@@ -34,6 +34,17 @@ export async function createApiServer(options: ApiServerOptions = {}) {
     res.writeHead(404);
     res.end(JSON.stringify({ error: { code: "ROUTE_NOT_FOUND", message: "Route was not found." } }));
   });
+
+  server.on("upgrade", async (req, socket) => {
+    const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
+    if (marketplaceController.canHandle(url)) {
+      await marketplaceController.handleUpgrade(req, socket, url);
+      return;
+    }
+    socket.destroy();
+  });
+
+  return server;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

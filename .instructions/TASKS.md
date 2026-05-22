@@ -734,3 +734,221 @@ Still deferred:
 - external accounting reconciliation
 - contract writes
 - wallet execution
+
+---
+
+# Sprint 24 — Event Streaming Infrastructure
+
+Status: IMPLEMENTED RUNTIME INFRASTRUCTURE
+
+Delivered:
+- realtime Marketplace snapshot service
+- realtime API endpoint
+- Server-Sent Events preview stream
+- readonly WebSocket handshake endpoint
+- live listing update aggregation
+- live bid update aggregation
+- governance live update aggregation
+- telemetry stream aggregation
+- realtime snapshot audit/runtime event
+- repository tests for realtime aggregation
+- controller tests for realtime snapshot, SSE stream and WebSocket handshake
+
+Still deferred:
+- external websocket broker
+- production queue fanout
+- live chain node subscriptions
+- realtime settlement events
+- contract writes
+- wallet execution
+
+---
+
+# Sprint 25 — Operational Resilience
+
+Status: IMPLEMENTED RUNTIME INFRASTRUCTURE
+
+Delivered:
+- operational resilience snapshot service
+- API endpoint for resilience status
+- retry queue previews
+- reconciliation retry readiness
+- treasury retry readiness
+- realtime stream retry readiness
+- indexer stale snapshot recovery readiness
+- degraded mode visibility
+- failover readiness flags
+- stale recovery recommendations
+- runtime/audit event for resilience snapshots
+- repository tests for retry queues and recovery mode
+- controller tests for degraded mode and retry queue rendering
+
+Still deferred:
+- automatic retry execution
+- production failover switching
+- external queue publishing
+- live indexer recovery
+- settlement execution
+- contract writes
+- wallet execution
+
+---
+
+# Sprint 26 — Greenfield Authentication Runtime
+
+Status: IMPLEMENTED RUNTIME INFRASTRUCTURE
+
+Delivered:
+- Greenfield authentication runtime service
+- bucket access runtime model
+- holder access verification
+- license entitlement verification
+- subscription entitlement verification
+- NFT ownership snapshot verification readiness
+- signed URL auth preview lifecycle
+- Greenfield auth snapshot metrics
+- API endpoints for auth runtime and auth snapshot
+- delivery telemetry event for Greenfield auth verification
+- repository tests for bucket auth and access verification
+- controller tests for Greenfield auth endpoints
+
+Still deferred:
+- production Greenfield API calls
+- production signed URL issuance
+- bucket policy mutation
+- live ownership enforcement
+- asset movement
+- contract writes
+- wallet execution
+
+---
+
+# Sprint 27 — Signed URL Runtime Real
+
+Status: IMPLEMENTED BACKEND RUNTIME
+
+Delivered:
+- HMAC-SHA256 signed URL runtime service
+- signed URL issuance endpoint
+- signed URL revocation endpoint
+- signed URL snapshot endpoint
+- expiration visibility
+- revocation visibility
+- auth-gated signed URL issuance through Greenfield auth runtime
+- signed URL runtime telemetry events
+- repository tests for issuance, expiration and revocation
+- controller tests for signed URL endpoints
+
+Still deferred:
+- production Greenfield API calls
+- bucket policy mutation
+- production CDN/object-store integration
+- asset movement
+- contract writes
+- wallet execution
+
+---
+
+# Sprint 28 — Entitlement Enforcement Runtime
+
+Status: IMPLEMENTED OPERATIONAL RUNTIME
+
+Delivered:
+- entitlement enforcement runtime service
+- license access validation
+- subscription access validation
+- DAO/tenant access validation
+- governance review/blocking decisions
+- delivery and signed URL allow/deny flags
+- enforcement snapshot endpoint
+- enforcement telemetry event
+- Greenfield auth integration with entitlement enforcement
+- signed URL issuance integration with entitlement enforcement
+- repository tests for license, subscription and DAO enforcement
+- controller tests for enforcement endpoints
+
+Still deferred:
+- payment execution
+- treasury movement
+- contract writes
+- wallet execution
+- production object-store asset movement
+
+---
+
+# Sprint 29 — Secure Asset Delivery
+
+Status: IMPLEMENTED OPERATIONAL RUNTIME
+
+Delivered:
+- secure delivery runtime service
+- encrypted download manifest preparation
+- secure stream manifest preparation
+- ACS package delivery manifest preparation
+- entitlement-gated delivery preparation
+- delivery snapshot endpoint
+- secure delivery telemetry event
+- repository tests for encrypted download, secure stream and ACS blocked package delivery
+- controller tests for secure delivery endpoints
+
+Still deferred:
+- file transfer
+- live media streaming
+- ACS runtime provisioning
+- production object-store calls
+- asset movement
+- contract writes
+- wallet execution
+
+---
+
+# Sprint 30 — Delivery Observability
+
+Status: IMPLEMENTED OPERATIONAL RUNTIME
+
+Delivered:
+- delivery observability runtime service
+- download telemetry persistence
+- secure stream telemetry persistence
+- ACS package access telemetry persistence
+- entitlement traceability records
+- delivery audit records
+- access analytics snapshot
+- API endpoints for recording telemetry and reading observability
+- repository tests for telemetry, analytics and audit
+- controller tests for observability endpoints
+
+Still deferred:
+- file transfer
+- live media streaming
+- ACS runtime provisioning
+- production object-store reads
+- settlement execution
+- contract writes
+- wallet execution
+
+---
+
+# Sprint 31 — Settlement Runtime Activation
+
+Status: IMPLEMENTED CONTROLLED RUNTIME
+
+Delivered:
+- controlled settlement runtime service
+- settlement execution endpoint
+- settlement snapshot endpoint
+- controlled purchase execution
+- transaction lifecycle records
+- settlement confirmation records
+- purchase and license issuance from settlement runtime
+- settlement runtime audit/event records
+- repository tests for settlement confirmation and transaction lifecycle
+- controller tests for settlement endpoints
+
+Still deferred:
+- wallet transaction execution
+- blockchain writes
+- external payment gateway execution
+- treasury movement
+- fiat checkout
+- contract settlement

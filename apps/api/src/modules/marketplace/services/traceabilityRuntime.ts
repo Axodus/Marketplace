@@ -47,9 +47,15 @@ export function buildAuditLog(input: {
 }
 
 export function categorizeEvent(type: MarketplaceRuntimeEventEntity["type"], entityType: string): RuntimeEventCategory {
-  if (type.includes("indexer") || entityType.includes("chain") || entityType.includes("Snapshot")) return "indexer";
   if (type.includes("treasury")) return "treasury_preview";
+  if (type.includes("realtime") || type.includes("resilience")) return "telemetry";
+  if (type.includes("greenfield")) return "delivery";
+  if (type.includes("signed_url")) return "delivery";
+  if (type.includes("secure_delivery")) return "delivery";
+  if (type.includes("delivery.telemetry")) return "delivery";
+  if (type.includes("indexer") || entityType.includes("chain") || entityType.includes("Snapshot")) return "indexer";
   if (type.includes("invoice") || type.includes("billing") || type.includes("accounting")) return "billing";
+  if (type.includes("settlement")) return "billing";
   if (type.includes("subscription")) return "subscription";
   if (type.includes("license")) return "license";
   if (type.includes("entitlement")) return "entitlement";

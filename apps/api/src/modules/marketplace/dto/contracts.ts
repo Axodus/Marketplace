@@ -498,6 +498,68 @@ export interface EntitlementSnapshotEntity {
   generatedAt: string;
 }
 
+export interface EntitlementEnforcementRequest {
+  productId: string;
+  holder?: string;
+  daoId?: string;
+}
+
+export interface EntitlementEnforcementRecord {
+  id: string;
+  productId: string;
+  holder: string;
+  daoId: string | null;
+  decision: "allowed" | "denied" | "review_required";
+  checks: {
+    license: {
+      required: boolean;
+      valid: boolean;
+      licenseRuntimeId: string | null;
+      reasonCodes: string[];
+    };
+    subscription: {
+      required: boolean;
+      valid: boolean;
+      subscriptionId: string | null;
+      reasonCodes: string[];
+    };
+    dao: {
+      required: boolean;
+      valid: boolean;
+      tenantId: string | null;
+      reasonCodes: string[];
+    };
+    governance: {
+      valid: boolean;
+      standing: string;
+      reasonCodes: string[];
+    };
+  };
+  deliveryAllowed: boolean;
+  signedUrlAllowed: boolean;
+  enforcementApplied: true;
+  settlementEnabled: false;
+  walletExecutionEnabled: false;
+  generatedAt: string;
+}
+
+export interface EntitlementEnforcementSnapshot {
+  id: string;
+  records: EntitlementEnforcementRecord[];
+  metrics: {
+    allowed: number;
+    denied: number;
+    reviewRequired: number;
+    licenseFailures: number;
+    subscriptionFailures: number;
+    daoFailures: number;
+  };
+  enforcementOperational: true;
+  settlementEnabled: false;
+  walletExecutionEnabled: false;
+  generatedAt: string;
+}
+
 export interface PurchaseEntity {
   id: string;
   buyer: string;
@@ -513,6 +575,119 @@ export interface PurchaseEntity {
   settlementEnabled: false;
   walletExecutionEnabled: false;
   blockchainWritesEnabled: false;
+}
+
+export interface SettlementExecutionRequest {
+  productId: string;
+  buyer?: string;
+  controlledRollout?: boolean;
+}
+
+export interface SettlementRuntime {
+  id: string;
+  purchaseId: string | null;
+  productId: string;
+  buyer: string;
+  sellerId: string | null;
+  amount: number;
+  currency: string;
+  status: "confirmed" | "blocked";
+  transaction: {
+    id: string;
+    lifecycle: "initialized" | "authorized" | "confirmed" | "blocked";
+    confirmationId: string | null;
+    reasonCodes: string[];
+    executedAt: string;
+  };
+  controlledRollout: true;
+  settlementRuntimeEnabled: true;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  externalPaymentEnabled: false;
+  treasuryMovementEnabled: false;
+}
+
+export interface SettlementRuntimeSnapshot {
+  id: string;
+  records: SettlementRuntime[];
+  metrics: {
+    confirmed: number;
+    blocked: number;
+    totalVolume: number;
+  };
+  controlledRollout: true;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  generatedAt: string;
+}
+
+export interface RoyaltyDistributionRequest {
+  settlementId: string;
+  controlledRollout?: boolean;
+}
+
+export interface RoyaltyDistributionRuntime {
+  id: string;
+  settlementId: string;
+  productId: string;
+  sellerId: string | null;
+  currency: string;
+  grossAmount: number;
+  status: "allocated" | "blocked";
+  reasonCodes: string[];
+  eip2981: {
+    standard: "EIP-2981";
+    bps: number;
+    recipient: string;
+    royaltyAmount: number;
+    settlementReady: boolean;
+  };
+  creatorPayout: {
+    recipient: string;
+    amount: number;
+    status: "allocated" | "blocked";
+    payoutExecutionEnabled: false;
+  };
+  treasuryAllocation: {
+    recipient: string;
+    platformFee: number;
+    ecosystemFee: number;
+    treasuryAmount: number;
+    status: "allocated" | "blocked";
+    treasuryMovementEnabled: false;
+  };
+  accounting: {
+    royaltyAccountingReady: true;
+    creatorPayoutReady: true;
+    treasuryAllocationReady: true;
+    externalAccountingEnabled: false;
+  };
+  controlledRollout: true;
+  royaltyRuntimeEnabled: true;
+  externalPayoutEnabled: false;
+  contractExecutionEnabled: false;
+  treasuryMovementEnabled: false;
+  createdAt: string;
+}
+
+export interface RoyaltyDistributionSnapshot {
+  id: string;
+  records: RoyaltyDistributionRuntime[];
+  metrics: {
+    allocated: number;
+    blocked: number;
+    grossVolume: number;
+    royaltyTotal: number;
+    creatorPayoutTotal: number;
+    treasuryTotal: number;
+  };
+  eip2981SettlementReady: true;
+  creatorPayoutRuntimeReady: true;
+  treasuryAllocationRuntimeReady: true;
+  externalPayoutEnabled: false;
+  contractExecutionEnabled: false;
+  treasuryMovementEnabled: false;
+  generatedAt: string;
 }
 
 export interface SubscriptionEntity {
@@ -607,7 +782,8 @@ export type RuntimeEventCategory =
   | "delivery"
   | "storefront"
   | "treasury_preview"
-  | "indexer";
+  | "indexer"
+  | "telemetry";
 
 export interface AuditLogEntity {
   id: string;
@@ -924,6 +1100,215 @@ export interface AssetDeliveryPreviewEntity {
   createdAt: string;
 }
 
+export interface GreenfieldAuthRequest {
+  productId: string;
+  holder?: string;
+  daoId?: string;
+}
+
+export interface GreenfieldAuthRuntime {
+  id: string;
+  productId: string;
+  holder: string;
+  bucket: {
+    name: string | null;
+    scope: "product" | "tenant" | "none";
+    accessMode: "signed-url-preview" | "bucket-auth-preview" | "not-required";
+    bucketAuthReady: boolean;
+  };
+  ownership: {
+    required: boolean;
+    verified: boolean;
+    source: "license" | "subscription" | "ownership_snapshot" | "none";
+    snapshotId: string | null;
+  };
+  accessVerification: {
+    status: "verified-preview" | "blocked-preview" | "not-required";
+    reasons: string[];
+    entitlementSnapshotId: string;
+    expiresAt: string | null;
+  };
+  delivery: {
+    deliveryType: string;
+    signedUrlPreview: string | null;
+    productionSignedUrlEnabled: false;
+    productionGreenfieldEnabled: false;
+  };
+  authExecutionEnabled: false;
+  externalGreenfieldCallEnabled: false;
+  createdAt: string;
+}
+
+export interface GreenfieldAuthRuntimeSnapshot {
+  id: string;
+  records: GreenfieldAuthRuntime[];
+  metrics: {
+    bucketsPrepared: number;
+    verifiedAccess: number;
+    blockedAccess: number;
+    ownershipVerified: number;
+  };
+  productionGreenfieldEnabled: false;
+  externalAuthEnabled: false;
+  generatedAt: string;
+}
+
+export interface SignedUrlIssueRequest {
+  productId: string;
+  holder?: string;
+  daoId?: string;
+  ttlSeconds?: number;
+}
+
+export interface SignedUrlRevokeRequest {
+  signedUrlId: string;
+  reason?: string;
+}
+
+export interface SignedUrlRuntime {
+  id: string;
+  productId: string;
+  holder: string;
+  greenfieldAuthId: string;
+  bucket: string | null;
+  url: string | null;
+  signature: string | null;
+  nonce: string;
+  status: "issued" | "blocked" | "expired" | "revoked";
+  issuedAt: string;
+  expiresAt: string | null;
+  revokedAt: string | null;
+  revocationReason: string | null;
+  expirationVisible: true;
+  revocationVisible: true;
+  signing: {
+    algorithm: "HMAC-SHA256";
+    keySource: "env" | "runtime-ephemeral";
+    productionSignerEnabled: false;
+  };
+  productionGreenfieldEnabled: false;
+  externalSignedUrlEnabled: false;
+}
+
+export interface SignedUrlRuntimeSnapshot {
+  id: string;
+  records: SignedUrlRuntime[];
+  metrics: {
+    issued: number;
+    blocked: number;
+    expired: number;
+    revoked: number;
+  };
+  productionGreenfieldEnabled: false;
+  generatedAt: string;
+}
+
+export interface SecureDeliveryRequest {
+  productId: string;
+  holder?: string;
+  daoId?: string;
+  mode?: "encrypted_download" | "secure_stream" | "acs_package";
+}
+
+export interface SecureDeliveryRuntime {
+  id: string;
+  productId: string;
+  holder: string;
+  mode: "encrypted_download" | "secure_stream" | "acs_package";
+  enforcementId: string;
+  status: "prepared" | "blocked";
+  encryptedDownload: {
+    enabled: boolean;
+    algorithm: "AES-256-GCM";
+    contentDigest: string | null;
+    keyWrap: "HMAC-SHA256";
+    downloadToken: string | null;
+  };
+  secureStream: {
+    enabled: boolean;
+    protocol: "HLS-preview";
+    streamToken: string | null;
+    segmentTtlSeconds: number;
+  };
+  acsPackage: {
+    enabled: boolean;
+    packageId: string | null;
+    manifestDigest: string | null;
+    provisioningEnabled: false;
+  };
+  access: {
+    expiresAt: string | null;
+    reasonCodes: string[];
+  };
+  productionDeliveryEnabled: false;
+  externalObjectStoreEnabled: false;
+  createdAt: string;
+}
+
+export interface SecureDeliverySnapshot {
+  id: string;
+  records: SecureDeliveryRuntime[];
+  metrics: {
+    prepared: number;
+    blocked: number;
+    encryptedDownloads: number;
+    secureStreams: number;
+    acsPackages: number;
+  };
+  productionDeliveryEnabled: false;
+  generatedAt: string;
+}
+
+export interface DeliveryTelemetryRequest {
+  deliveryId: string;
+  event: "download_requested" | "stream_started" | "acs_package_requested" | "access_denied" | "delivery_completed";
+  actor?: string;
+}
+
+export interface DeliveryTelemetryRecord {
+  id: string;
+  deliveryId: string;
+  productId: string;
+  holder: string;
+  actor: string;
+  mode: SecureDeliveryRuntime["mode"];
+  event: DeliveryTelemetryRequest["event"];
+  outcome: "allowed" | "denied" | "observed";
+  entitlementTrace: {
+    enforcementId: string;
+    decision: "allowed" | "denied" | "review_required" | "unknown";
+    reasonCodes: string[];
+  };
+  deliveryAudit: {
+    encryptedDownloadObserved: boolean;
+    secureStreamObserved: boolean;
+    acsPackageObserved: boolean;
+    productionDeliveryEnabled: false;
+    externalObjectStoreEnabled: false;
+  };
+  recordedAt: string;
+}
+
+export interface DeliveryObservabilitySnapshot {
+  id: string;
+  telemetry: DeliveryTelemetryRecord[];
+  analytics: {
+    totalEvents: number;
+    downloadEvents: number;
+    streamEvents: number;
+    acsPackageEvents: number;
+    deniedEvents: number;
+    uniqueHolders: number;
+    uniqueProducts: number;
+  };
+  audit: {
+    deliveryAuditRecords: number;
+    entitlementTraceRecords: number;
+    productionDeliveryEnabled: false;
+  };
+  generatedAt: string;
+}
+
 export interface MarketplaceRuntimeEventEntity {
   id: string;
   category?: RuntimeEventCategory;
@@ -931,6 +1316,8 @@ export interface MarketplaceRuntimeEventEntity {
     | "listing.created"
     | "validation.requested"
     | "purchase.preview_issued"
+    | "settlement.executed"
+    | "settlement.blocked"
     | "license.preview_issued"
     | "license.lifecycle_updated"
     | "subscription.preview_updated"
@@ -943,17 +1330,108 @@ export interface MarketplaceRuntimeEventEntity {
     | "reconciliation.snapshot_generated"
     | "reconciliation.ownership_snapshot_generated"
     | "reconciliation.treasury_snapshot_generated"
+    | "realtime.snapshot_generated"
+    | "resilience.snapshot_generated"
     | "indexer.snapshot_generated"
     | "indexer.event_ingested"
     | "indexer.chain_snapshot_persisted"
+    | "greenfield.auth_verified"
+    | "signed_url.issued"
+    | "signed_url.revoked"
+    | "secure_delivery.prepared"
+    | "delivery.telemetry_recorded"
     | "delivery.preview_issued"
-    | "entitlement.snapshot_generated";
+    | "entitlement.snapshot_generated"
+    | "entitlement.enforcement_evaluated";
   entityId: string;
   entityType: string;
   createdAt: string;
   replaySafe?: true;
   correlationId?: string;
   payload: Record<string, unknown>;
+}
+
+export interface MarketplaceRealtimeSnapshot {
+  id: string;
+  channels: Array<"listings" | "bids" | "governance" | "telemetry">;
+  transport: {
+    websocketPrepared: true;
+    ssePrepared: true;
+    pollingFallbackPrepared: true;
+    endpoint: "/api/marketplace/live";
+    streamEndpoint: "/api/marketplace/live/stream";
+    websocketEndpoint: "/api/marketplace/live/ws";
+  };
+  liveUpdates: {
+    listingUpdates: MarketplaceRuntimeEventEntity[];
+    bidUpdates: ChainIngestionEventEntity[];
+    governanceUpdates: MarketplaceRuntimeEventEntity[];
+    telemetryUpdates: MarketplaceRuntimeEventEntity[];
+  };
+  metrics: {
+    listingUpdates: number;
+    bidUpdates: number;
+    governanceUpdates: number;
+    telemetryUpdates: number;
+    streamableEvents: number;
+  };
+  realtimeExecutionEnabled: false;
+  externalBrokerEnabled: false;
+  generatedAt: string;
+}
+
+export interface MarketplaceRetryQueueItem {
+  id: string;
+  source: "ownership_reconciliation" | "treasury_reconciliation" | "realtime_stream" | "indexer_snapshot";
+  entityId: string;
+  action: "retry_reconciliation" | "retry_stream_publish" | "recover_stale_snapshot";
+  reasonCode: string;
+  attempts: number;
+  status: "queued_preview" | "ready_for_retry" | "blocked_preview";
+  nextRetryAt: string;
+  executionEnabled: false;
+}
+
+export interface MarketplaceOperationalResilienceSnapshot {
+  id: string;
+  mode: "healthy" | "degraded" | "recovery_required";
+  degradedMode: {
+    enabled: boolean;
+    reasons: string[];
+    readOnlyFallbackEnabled: true;
+    writeSuppressionRecommended: boolean;
+  };
+  retryQueues: {
+    reconciliation: MarketplaceRetryQueueItem[];
+    treasury: MarketplaceRetryQueueItem[];
+    realtime: MarketplaceRetryQueueItem[];
+    indexer: MarketplaceRetryQueueItem[];
+  };
+  failover: {
+    localStoreAvailable: true;
+    mockFallbackAvailable: true;
+    externalBrokerAvailable: false;
+    databaseFailoverPrepared: true;
+    indexerFailoverPrepared: true;
+  };
+  staleRecovery: {
+    staleOwnershipSnapshots: number;
+    staleRealtimeSnapshots: number;
+    staleChainSnapshots: number;
+    recoveryActions: string[];
+    automaticRecoveryEnabled: false;
+  };
+  metrics: {
+    queuedRetries: number;
+    reconciliationRetries: number;
+    treasuryRetries: number;
+    realtimeRetries: number;
+    indexerRetries: number;
+    staleSnapshots: number;
+  };
+  retryExecutionEnabled: false;
+  failoverExecutionEnabled: false;
+  generatedAt: string;
 }
 
 export interface MarketplaceStore {
@@ -973,7 +1451,13 @@ export interface MarketplaceStore {
   licenses: LicenseEntity[];
   licenseRuntimes?: LicenseRuntimeEntity[];
   entitlementSnapshots?: EntitlementSnapshotEntity[];
+  entitlementEnforcements?: EntitlementEnforcementRecord[];
+  entitlementEnforcementSnapshots?: EntitlementEnforcementSnapshot[];
   purchases: PurchaseEntity[];
+  settlements?: SettlementRuntime[];
+  settlementSnapshots?: SettlementRuntimeSnapshot[];
+  royaltyDistributions?: RoyaltyDistributionRuntime[];
+  royaltyDistributionSnapshots?: RoyaltyDistributionSnapshot[];
   subscriptions: SubscriptionEntity[];
   billingPreviews: BillingPreviewEntity[];
   invoices?: InvoicePreviewEntity[];
@@ -982,6 +1466,8 @@ export interface MarketplaceStore {
   reconciliationSnapshots?: ReconciliationSnapshotEntity[];
   ownershipReconciliationSnapshots?: OwnershipReconciliationSnapshot[];
   treasuryReconciliationSnapshots?: TreasuryReconciliationSnapshot[];
+  realtimeSnapshots?: MarketplaceRealtimeSnapshot[];
+  operationalResilienceSnapshots?: MarketplaceOperationalResilienceSnapshot[];
   indexerSnapshots?: IndexerSnapshotEntity[];
   chainIngestionEvents?: ChainIngestionEventEntity[];
   chainSnapshots?: ChainSnapshotEntity[];
@@ -991,6 +1477,14 @@ export interface MarketplaceStore {
   governanceValidations: GovernanceValidationEntity[];
   draftListings: DraftListingEntity[];
   deliveryPreviews: AssetDeliveryPreviewEntity[];
+  greenfieldAuthRuntimes?: GreenfieldAuthRuntime[];
+  greenfieldAuthSnapshots?: GreenfieldAuthRuntimeSnapshot[];
+  signedUrlRuntimes?: SignedUrlRuntime[];
+  signedUrlSnapshots?: SignedUrlRuntimeSnapshot[];
+  secureDeliveryRuntimes?: SecureDeliveryRuntime[];
+  secureDeliverySnapshots?: SecureDeliverySnapshot[];
+  deliveryTelemetry?: DeliveryTelemetryRecord[];
+  deliveryObservabilitySnapshots?: DeliveryObservabilitySnapshot[];
   events: MarketplaceRuntimeEventEntity[];
 }
 

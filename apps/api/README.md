@@ -53,7 +53,9 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `GET /api/marketplace/licenses/runtime`
 - `GET /api/marketplace/entitlements`
 - `GET /api/marketplace/entitlements/:holder`
+- `GET /api/marketplace/entitlements/enforcement`
 - `GET /api/marketplace/purchases`
+- `GET /api/marketplace/settlements`
 - `GET /api/marketplace/subscriptions`
 - `GET /api/marketplace/billing-previews`
 - `GET /api/marketplace/invoices`
@@ -78,9 +80,19 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `GET /api/marketplace/governance-observability`
 - `GET /api/marketplace/governance-validations`
 - `GET /api/marketplace/delivery-previews`
+- `GET /api/marketplace/greenfield/auth`
+- `GET /api/marketplace/greenfield/signed-urls`
+- `GET /api/marketplace/delivery/secure`
+- `GET /api/marketplace/delivery/observability`
 - `GET /api/marketplace/events`
+- `GET /api/marketplace/live`
+- `GET /api/marketplace/live/stream`
+- `GET /api/marketplace/live/ws`
+- `GET /api/marketplace/resilience`
 - `POST /api/marketplace/draft-listings`
 - `POST /api/marketplace/purchases/preview`
+- `POST /api/marketplace/settlements/execute`
+- `POST /api/marketplace/entitlements/enforce`
 - `POST /api/marketplace/billing-previews`
 - `POST /api/marketplace/invoices/preview`
 - `POST /api/marketplace/invoices/lifecycle`
@@ -89,6 +101,11 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `POST /api/marketplace/subscriptions/lifecycle`
 - `POST /api/marketplace/governance-workflow/actions`
 - `POST /api/marketplace/delivery-previews`
+- `POST /api/marketplace/greenfield/auth`
+- `POST /api/marketplace/greenfield/signed-urls`
+- `POST /api/marketplace/greenfield/signed-urls/revoke`
+- `POST /api/marketplace/delivery/secure`
+- `POST /api/marketplace/delivery/telemetry`
 - `POST /api/marketplace/reconciliation/snapshot`
 - `POST /api/marketplace/reconciliation/ownership`
 - `POST /api/marketplace/reconciliation/treasury`
@@ -236,6 +253,94 @@ Sprint 23 billing/treasury reconciliation persists:
 - settlement preview readiness flags
 
 Treasury reconciliation compares persisted invoice previews against deterministic product pricing, EIP-2981 royalty metadata and Axodus fee policy previews. It records mismatch reason codes and metrics, but does not execute treasury movement, royalty distribution, payment settlement or external reconciliation.
+
+Sprint 24 realtime runtime exposes:
+
+- realtime Marketplace snapshot endpoint
+- Server-Sent Events preview stream
+- readonly WebSocket handshake endpoint
+- live listing update aggregation
+- live bid update aggregation
+- governance update aggregation
+- telemetry update aggregation
+
+Realtime runtime is infrastructure-only. It does not connect to an external broker, does not subscribe to live chain nodes, does not perform settlement and does not enable contract or wallet execution.
+
+Sprint 25 operational resilience exposes:
+
+- retry queue previews
+- reconciliation retry readiness
+- treasury retry readiness
+- realtime stream retry readiness
+- stale snapshot recovery previews
+- degraded mode visibility
+- failover readiness flags
+
+Operational resilience is preview-only. It does not execute retries, switch databases, publish to production queues, recover live indexer state, move funds or perform wallet/contract execution.
+
+Sprint 26 Greenfield authentication runtime exposes:
+
+- bucket access runtime
+- Greenfield auth preview records
+- holder access verification
+- license/subscription entitlement checks
+- NFT ownership snapshot verification readiness
+- signed URL preview lifecycle under auth checks
+
+Greenfield authentication remains production-disabled. It does not call BNB Greenfield, issue production signed URLs, mutate bucket policy, enforce live ownership, move assets or execute wallet/contract actions.
+
+Sprint 27 signed URL runtime exposes:
+
+- HMAC-SHA256 signed URL issuance
+- TTL and expiration visibility
+- revocation runtime
+- signed URL snapshot metrics
+- signed URL delivery telemetry
+
+Signed URL runtime is backend-real but Greenfield-production-disabled. It signs local runtime URLs with `MARKETPLACE_SIGNED_URL_SECRET` when configured, otherwise an ephemeral runtime key is used. It does not call BNB Greenfield, mutate bucket policy, execute asset transfer, or perform wallet/contract actions.
+
+Sprint 28 entitlement enforcement runtime exposes:
+
+- operational access validation
+- license enforcement
+- subscription enforcement
+- DAO/tenant access enforcement
+- governance review/blocking decisions
+- enforcement snapshot metrics
+
+Greenfield auth and signed URL issuance now depend on entitlement enforcement decisions. Enforcement is operational for Marketplace access decisions, but it still does not execute settlement, wallet actions, contract writes, production asset delivery, or treasury movement.
+
+Sprint 29 secure asset delivery runtime exposes:
+
+- encrypted download manifests
+- secure stream manifests
+- ACS package delivery manifests
+- entitlement-gated delivery preparation
+- delivery snapshot metrics
+- secure delivery telemetry
+
+Secure delivery is operational at manifest/token level only. It does not transfer files, stream media, provision ACS runtimes, call production object storage, execute contracts, or move assets.
+
+Sprint 30 delivery observability exposes:
+
+- download telemetry
+- stream telemetry
+- ACS package access telemetry
+- entitlement traceability
+- delivery audit records
+- access analytics
+
+Delivery observability persists audit and analytics records only. It does not execute file transfer, live streaming, ACS provisioning, object-store reads, settlement, wallet actions, or contract writes.
+
+Sprint 31 settlement runtime exposes controlled economic activation:
+
+- controlled purchase execution
+- settlement runtime confirmation
+- transaction lifecycle records
+- purchase/license issuance from settlement runtime
+- settlement snapshot metrics
+
+Settlement execution requires `controlledRollout: true`. The runtime confirms Marketplace-internal settlement records only. It does not execute wallet transactions, chain writes, external payment gateway calls, treasury movement, fiat checkout, or contract settlement.
 
 Every response is wrapped in an envelope that declares:
 

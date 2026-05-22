@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { FileMarketplaceRepository } from "../repositories/marketplaceRepository.js";
+import { buildSignedUrlSnapshot } from "../services/signedUrlRuntime.js";
 
 let tempDir: string;
 
@@ -275,6 +276,330 @@ describe("FileMarketplaceRepository", () => {
     expect(runtime.metrics).toMatchObject({ events: 3, nftEvents: 1, listingEvents: 1, bidEvents: 1, chains: 1 });
     expect(runtime.settlementEnabled).toBe(false);
     expect(events.map((item) => item.type)).toEqual(expect.arrayContaining(["indexer.event_ingested", "indexer.chain_snapshot_persisted"]));
+  });
+
+  it("builds realtime listing, bid, governance and telemetry snapshots", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    await repository.createDraftListing({
+      title: "Realtime listing preview",
+      category: "Digital Assets",
+      tokenStandard: "ERC721",
+      listingType: "fixed",
+      chain: "Polygon",
+      price: 100,
+      currency: "USDC",
+      royaltyBps: 500,
+      deliveryType: "Signed URL",
+      governanceReviewRequired: true,
+      description: "Realtime preview listing"
+    });
+    await repository.createInvoicePreview({ buyer: "0xRealtime", productIds: ["product-governance-dashboard-nft"] });
+    await repository.ingestChainEvent({
+      chain: "Polygon",
+      blockNumber: 12348,
+      blockHash: "0xblock4",
+      transactionHash: "0xtx4",
+      logIndex: 4,
+      eventKind: "bid.placed",
+      contractAddress: "mock:governance-dashboard-access",
+      tokenStandard: "ERC721",
+      tokenId: "AXD-GOV-001",
+      listingId: "listing-1",
+      bidder: "0xBidder",
+      amount: "126000000"
+    });
+
+    const snapshot = await repository.getRealtimeSnapshot();
+    const events = await repository.listEvents();
+
+    expect(snapshot.transport.websocketPrepared).toBe(true);
+    expect(snapshot.transport.ssePrepared).toBe(true);
+    expect(snapshot.metrics.listingUpdates).toBeGreaterThan(0);
+    expect(snapshot.metrics.bidUpdates).toBe(1);
+    expect(snapshot.metrics.governanceUpdates).toBeGreaterThan(0);
+    expect(snapshot.metrics.telemetryUpdates).toBeGreaterThan(0);
+    expect(snapshot.realtimeExecutionEnabled).toBe(false);
+    expect(snapshot.externalBrokerEnabled).toBe(false);
+    expect(events[0]).toMatchObject({ type: "realtime.snapshot_generated", category: "telemetry" });
+  });
+
+  it("builds operational resilience retry queues and degraded recovery mode", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+    await repository.createPurchasePreview({ productId: "product-governance-dashboard-nft", buyer: "0xExpectedOwner" });
+    await repository.createInvoicePreview({ buyer: "0xPending", productIds: ["product-governance-dashboard-nft"] });
+    await repository.ingestChainEvent({
+      chain: "Polygon",
+      blockNumber: 1,
+      blockHash: "0xold",
+      transactionHash: "0xoldtx",
+      logIndex: 1,
+      eventKind: "nft.transfer",
+      contractAddress: "mock:governance-dashboard-access",
+      tokenStandard: "ERC721",
+      tokenId: "AXD-GOV-001",
+      owner: "0xDifferentOwner"
+    });
+    await repository.ingestChainEvent({
+      chain: "Polygon",
+      blockNumber: 400,
+      blockHash: "0xlatest",
+      transactionHash: "0xlatesttx",
+      logIndex: 2,
+      eventKind: "listing.created",
+      contractAddress: "mock:governance-dashboard-access",
+      tokenStandard: "ERC721",
+      tokenId: "AXD-GOV-001",
+      listingId: "listing-stale",
+      seller: "0xSeller",
+      price: "120000000"
+    });
+    await repository.createOwnershipReconciliationSnapshot();
+    await repository.createTreasuryReconciliationSnapshot();
+
+    const resilience = await repository.getOperationalResilienceSnapshot();
+    const events = await repository.listEvents();
+
+    expect(resilience.mode).toBe("recovery_required");
+    expect(resilience.degradedMode.enabled).toBe(true);
+    expect(resilience.retryQueues.reconciliation.length).toBeGreaterThan(0);
+    expect(resilience.retryQueues.treasury.length).toBeGreaterThan(0);
+    expect(resilience.retryQueues.indexer.length).toBeGreaterThan(0);
+    expect(resilience.metrics.queuedRetries).toBeGreaterThan(0);
+    expect(resilience.staleRecovery.automaticRecoveryEnabled).toBe(false);
+    expect(resilience.retryExecutionEnabled).toBe(false);
+    expect(resilience.failoverExecutionEnabled).toBe(false);
+    expect(events[0]).toMatchObject({ type: "resilience.snapshot_generated", category: "telemetry" });
+  });
+
+  it("verifies Greenfield bucket auth through entitlement and blocks restricted access", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+    await repository.createPurchasePreview({ productId: "product-governance-dashboard-nft", buyer: "0xGreenfieldHolder" });
+    const license = (await repository.listLicenseRuntimes()).find((item) => item.holder === "0xGreenfieldHolder");
+    await repository.updateLicenseLifecycle({ licenseId: license?.id ?? "", state: "active", reason: "greenfield-auth-test" });
+
+    const verified = await repository.createGreenfieldAuthRuntime({
+      productId: "product-governance-dashboard-nft",
+      holder: "0xGreenfieldHolder"
+    });
+    const blocked = await repository.createGreenfieldAuthRuntime({
+      productId: "product-academy-cert-bundle",
+      holder: "0xGreenfieldHolder"
+    });
+    const snapshot = await repository.getGreenfieldAuthSnapshot();
+    const events = await repository.listEvents();
+
+    expect(verified.bucket).toMatchObject({ name: "mock-greenfield-governance-access", bucketAuthReady: true });
+    expect(verified.ownership.verified).toBe(true);
+    expect(verified.accessVerification.status).toBe("verified-preview");
+    expect(verified.delivery.signedUrlPreview).toContain("signature=auth-preview");
+    expect(verified.externalGreenfieldCallEnabled).toBe(false);
+    expect(blocked.accessVerification.status).toBe("blocked-preview");
+    expect(blocked.accessVerification.reasons).toEqual(expect.arrayContaining(["greenfield-nft-ownership-not-verified"]));
+    expect(snapshot.metrics.verifiedAccess).toBeGreaterThan(0);
+    expect(snapshot.productionGreenfieldEnabled).toBe(false);
+    expect(events[0]).toMatchObject({ type: "greenfield.auth_verified", category: "delivery" });
+  });
+
+  it("issues, expires and revokes signed URL runtimes", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+    await repository.createPurchasePreview({ productId: "product-governance-dashboard-nft", buyer: "0xSignedUrlHolder" });
+    const license = (await repository.listLicenseRuntimes()).find((item) => item.holder === "0xSignedUrlHolder");
+    await repository.updateLicenseLifecycle({ licenseId: license?.id ?? "", state: "active", reason: "signed-url-runtime-test" });
+
+    const issued = await repository.issueSignedUrl({
+      productId: "product-governance-dashboard-nft",
+      holder: "0xSignedUrlHolder",
+      ttlSeconds: 120
+    });
+    const expiredSnapshot = buildSignedUrlSnapshot(
+      [{ ...issued, expiresAt: new Date(Date.now() - 1_000).toISOString() }],
+      new Date()
+    );
+    const revoked = await repository.revokeSignedUrl({ signedUrlId: issued.id, reason: "operator-preview-revocation" });
+    const snapshot = await repository.getSignedUrlSnapshot();
+    const events = await repository.listEvents();
+
+    expect(issued.status).toBe("issued");
+    expect(issued.url).toContain("signature=");
+    expect(issued.signature).toHaveLength(64);
+    expect(issued.expirationVisible).toBe(true);
+    expect(issued.revocationVisible).toBe(true);
+    expect(issued.signing.algorithm).toBe("HMAC-SHA256");
+    expect(issued.externalSignedUrlEnabled).toBe(false);
+    expect(expiredSnapshot.records[0].status).toBe("expired");
+    expect(revoked).toMatchObject({ status: "revoked", revocationReason: "operator-preview-revocation" });
+    expect(snapshot.metrics.revoked).toBe(1);
+    expect(snapshot.productionGreenfieldEnabled).toBe(false);
+    expect(events.map((event) => event.type)).toEqual(expect.arrayContaining(["signed_url.issued", "signed_url.revoked"]));
+  });
+
+  it("enforces license, subscription and DAO access operationally", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    const deniedLicense = await repository.evaluateEntitlementEnforcement({
+      productId: "product-governance-dashboard-nft",
+      holder: "0xEnforcement"
+    });
+
+    await repository.createPurchasePreview({ productId: "product-governance-dashboard-nft", buyer: "0xEnforcement" });
+    const license = (await repository.listLicenseRuntimes()).find((item) => item.holder === "0xEnforcement");
+    await repository.updateLicenseLifecycle({ licenseId: license?.id ?? "", state: "active", reason: "enforcement-license-active" });
+    const allowedLicense = await repository.evaluateEntitlementEnforcement({
+      productId: "product-governance-dashboard-nft",
+      holder: "0xEnforcement"
+    });
+
+    const deniedDao = await repository.evaluateEntitlementEnforcement({
+      productId: "product-academy-cert-bundle",
+      holder: "0xAcademyMember"
+    });
+    const subscription = await repository.createSubscriptionPreview({ productId: "product-academy-cert-bundle", holder: "0xAcademyMember" });
+    await repository.updateSubscriptionLifecycle({ subscriptionId: subscription.id, state: "active", reason: "enforcement-subscription-active" });
+    const allowedDaoSubscription = await repository.evaluateEntitlementEnforcement({
+      productId: "product-academy-cert-bundle",
+      holder: "0xAcademyMember",
+      daoId: "tenant-academy-dao"
+    });
+    const snapshot = await repository.getEntitlementEnforcementSnapshot();
+    const events = await repository.listEvents();
+
+    expect(deniedLicense).toMatchObject({ decision: "denied", deliveryAllowed: false, signedUrlAllowed: false, enforcementApplied: true });
+    expect(deniedLicense.checks.license.reasonCodes).toContain("license-required");
+    expect(allowedLicense).toMatchObject({ decision: "allowed", deliveryAllowed: true, signedUrlAllowed: true });
+    expect(allowedLicense.checks.license.valid).toBe(true);
+    expect(deniedDao.checks.dao.reasonCodes).toContain("dao-access-required");
+    expect(deniedDao.checks.subscription.reasonCodes).toContain("subscription-required");
+    expect(allowedDaoSubscription.decision).toBe("review_required");
+    expect(allowedDaoSubscription.checks.subscription.valid).toBe(true);
+    expect(allowedDaoSubscription.checks.dao.valid).toBe(true);
+    expect(allowedDaoSubscription.checks.governance.reasonCodes).toContain("governance-review-required");
+    expect(snapshot.enforcementOperational).toBe(true);
+    expect(snapshot.metrics.denied).toBeGreaterThan(0);
+    expect(events[0]).toMatchObject({ type: "entitlement.enforcement_evaluated", category: "entitlement" });
+  });
+
+  it("prepares encrypted downloads, secure streams and ACS package delivery", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+    await repository.createPurchasePreview({ productId: "product-governance-dashboard-nft", buyer: "0xDeliveryHolder" });
+    const license = (await repository.listLicenseRuntimes()).find((item) => item.holder === "0xDeliveryHolder");
+    await repository.updateLicenseLifecycle({ licenseId: license?.id ?? "", state: "active", reason: "secure-delivery-license-active" });
+
+    const encrypted = await repository.createSecureDelivery({
+      productId: "product-governance-dashboard-nft",
+      holder: "0xDeliveryHolder",
+      mode: "encrypted_download"
+    });
+    const stream = await repository.createSecureDelivery({
+      productId: "product-governance-dashboard-nft",
+      holder: "0xDeliveryHolder",
+      mode: "secure_stream"
+    });
+    const blockedAcs = await repository.createSecureDelivery({
+      productId: "product-mcp-agent-template",
+      holder: "0xDeliveryHolder",
+      mode: "acs_package"
+    });
+    const snapshot = await repository.getSecureDeliverySnapshot();
+    const events = await repository.listEvents();
+
+    expect(encrypted.status).toBe("prepared");
+    expect(encrypted.encryptedDownload).toMatchObject({ enabled: true, algorithm: "AES-256-GCM", keyWrap: "HMAC-SHA256" });
+    expect(encrypted.encryptedDownload.downloadToken).toContain("dl_");
+    expect(encrypted.productionDeliveryEnabled).toBe(false);
+    expect(stream.status).toBe("prepared");
+    expect(stream.secureStream).toMatchObject({ enabled: true, protocol: "HLS-preview", segmentTtlSeconds: 90 });
+    expect(stream.secureStream.streamToken).toContain("stream_");
+    expect(blockedAcs.status).toBe("blocked");
+    expect(blockedAcs.acsPackage.provisioningEnabled).toBe(false);
+    expect(snapshot.metrics.encryptedDownloads).toBe(1);
+    expect(snapshot.metrics.secureStreams).toBe(1);
+    expect(snapshot.metrics.blocked).toBeGreaterThan(0);
+    expect(events[0]).toMatchObject({ type: "secure_delivery.prepared", category: "delivery" });
+  });
+
+  it("persists delivery telemetry, entitlement traces and access analytics", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+    await repository.createPurchasePreview({ productId: "product-governance-dashboard-nft", buyer: "0xTelemetryHolder" });
+    const license = (await repository.listLicenseRuntimes()).find((item) => item.holder === "0xTelemetryHolder");
+    await repository.updateLicenseLifecycle({ licenseId: license?.id ?? "", state: "active", reason: "delivery-telemetry-license-active" });
+    const encrypted = await repository.createSecureDelivery({
+      productId: "product-governance-dashboard-nft",
+      holder: "0xTelemetryHolder",
+      mode: "encrypted_download"
+    });
+    const stream = await repository.createSecureDelivery({
+      productId: "product-governance-dashboard-nft",
+      holder: "0xTelemetryHolder",
+      mode: "secure_stream"
+    });
+    const blocked = await repository.createSecureDelivery({
+      productId: "product-mcp-agent-template",
+      holder: "0xTelemetryHolder",
+      mode: "acs_package"
+    });
+
+    const downloadTelemetry = await repository.recordDeliveryTelemetry({ deliveryId: encrypted.id, event: "download_requested" });
+    const streamTelemetry = await repository.recordDeliveryTelemetry({ deliveryId: stream.id, event: "stream_started" });
+    const deniedTelemetry = await repository.recordDeliveryTelemetry({ deliveryId: blocked.id, event: "access_denied", actor: "delivery-auditor" });
+    const observability = await repository.getDeliveryObservabilitySnapshot();
+    const auditLogs = await repository.listAuditLogs();
+    const events = await repository.listEvents();
+
+    expect(downloadTelemetry.outcome).toBe("allowed");
+    expect(downloadTelemetry.deliveryAudit.encryptedDownloadObserved).toBe(true);
+    expect(downloadTelemetry.entitlementTrace.decision).toBe("allowed");
+    expect(streamTelemetry.deliveryAudit.secureStreamObserved).toBe(true);
+    expect(deniedTelemetry.outcome).toBe("denied");
+    expect(deniedTelemetry.actor).toBe("delivery-auditor");
+    expect(observability.analytics).toMatchObject({ totalEvents: 3, downloadEvents: 1, streamEvents: 1, deniedEvents: 1 });
+    expect(observability.audit.entitlementTraceRecords).toBe(3);
+    expect(observability.audit.productionDeliveryEnabled).toBe(false);
+    expect(auditLogs[0].action).toBe("delivery.telemetry_recorded");
+    expect(events[0]).toMatchObject({ type: "delivery.telemetry_recorded", category: "delivery" });
+  });
+
+  it("executes controlled settlement runtime and transaction lifecycle without wallet writes", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    const blocked = await repository.executeSettlement({
+      productId: "product-governance-dashboard-nft",
+      buyer: "0xSettlementBuyer"
+    });
+    const confirmed = await repository.executeSettlement({
+      productId: "product-governance-dashboard-nft",
+      buyer: "0xSettlementBuyer",
+      controlledRollout: true
+    });
+    const snapshot = await repository.getSettlementSnapshot();
+    const purchases = await repository.listPurchases();
+    const licenses = await repository.listLicenseRuntimes();
+    const events = await repository.listEvents();
+
+    expect(blocked.status).toBe("blocked");
+    expect(blocked.transaction.reasonCodes).toContain("controlled-rollout-required");
+    expect(confirmed.status).toBe("confirmed");
+    expect(confirmed.transaction.lifecycle).toBe("confirmed");
+    expect(confirmed.transaction.confirmationId).toContain("confirmation-");
+    expect(confirmed.settlementRuntimeEnabled).toBe(true);
+    expect(confirmed.walletExecutionEnabled).toBe(false);
+    expect(confirmed.blockchainWritesEnabled).toBe(false);
+    expect(confirmed.externalPaymentEnabled).toBe(false);
+    expect(confirmed.treasuryMovementEnabled).toBe(false);
+    expect(purchases.some((purchase) => purchase.id === confirmed.purchaseId)).toBe(true);
+    expect(licenses.some((license) => license.issuedFromPurchaseId === confirmed.purchaseId)).toBe(true);
+    expect(snapshot.metrics.confirmed).toBe(1);
+    expect(snapshot.metrics.blocked).toBe(1);
+    expect(snapshot.metrics.totalVolume).toBe(120);
+    expect(events.map((event) => event.type)).toEqual(expect.arrayContaining(["settlement.executed", "settlement.blocked"]));
   });
 
   it("reconciles ownership snapshots with mismatch and stale visibility", async () => {

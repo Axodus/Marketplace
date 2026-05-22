@@ -728,6 +728,230 @@ CONFIRMED
 
 ---
 
+# Sprint 24 Event Streaming Runtime
+
+Decision:
+Marketplace may expose realtime infrastructure over persisted mock-first runtime state before external brokers, production queues or live node subscriptions exist.
+
+Approved:
+- realtime snapshot endpoint
+- Server-Sent Events preview stream
+- readonly WebSocket handshake endpoint
+- listing update aggregation
+- bid update aggregation
+- governance update aggregation
+- telemetry update aggregation
+- persisted realtime snapshot audit/runtime event
+
+Deferred:
+- external websocket broker
+- production queue fanout
+- live chain node subscriptions
+- realtime settlement events
+- contract writes
+- wallet execution
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 25 Operational Resilience Runtime
+
+Decision:
+Marketplace may expose operational resilience previews over persisted runtime state before automatic retries, production failover or live indexer recovery exist.
+
+Approved:
+- retry queue previews
+- reconciliation retry readiness
+- treasury retry readiness
+- realtime stream retry readiness
+- indexer stale snapshot recovery readiness
+- degraded mode visibility
+- failover readiness flags
+- stale recovery recommendations
+- persisted resilience snapshot audit/runtime event
+
+Deferred:
+- automatic retry execution
+- production failover switching
+- external queue publishing
+- live indexer recovery
+- settlement execution
+- contract writes
+- wallet execution
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 26 Greenfield Authentication Runtime
+
+Decision:
+Marketplace may expose Greenfield authentication runtime over persisted delivery, entitlement and ownership snapshot state before production Greenfield calls or live access enforcement are enabled.
+
+Approved:
+- bucket access runtime model
+- Greenfield auth preview records
+- holder access verification
+- license and subscription entitlement checks
+- NFT ownership snapshot readiness
+- signed URL auth preview lifecycle
+- Greenfield auth snapshot metrics
+- delivery telemetry event for auth verification
+
+Deferred:
+- production Greenfield API calls
+- production signed URL issuance
+- bucket policy mutation
+- live ownership enforcement
+- asset movement
+- contract writes
+- wallet execution
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 27 Signed URL Runtime
+
+Decision:
+Marketplace may issue backend-real HMAC signed URL runtime records after Greenfield auth preview verification, while production Greenfield delivery and asset movement remain disabled.
+
+Approved:
+- signed URL issuance endpoint
+- signed URL revocation endpoint
+- signed URL snapshot endpoint
+- HMAC-SHA256 signatures
+- TTL and expiration visibility
+- revocation visibility
+- signed URL delivery telemetry events
+- `MARKETPLACE_SIGNED_URL_SECRET` support with ephemeral local fallback
+
+Deferred:
+- production Greenfield API calls
+- bucket policy mutation
+- production CDN/object-store integration
+- asset movement
+- contract writes
+- wallet execution
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 28 Entitlement Enforcement Runtime
+
+Decision:
+Marketplace may enforce license, subscription and DAO/tenant access operationally for backend access decisions before production asset delivery, settlement or chain writes are enabled.
+
+Approved:
+- operational access validation
+- license enforcement
+- subscription enforcement
+- DAO/tenant access enforcement
+- governance review/blocking decisions
+- delivery and signed URL allow/deny flags
+- enforcement snapshot metrics
+- Greenfield auth and signed URL integration with enforcement decisions
+
+Deferred:
+- payment execution
+- treasury movement
+- contract writes
+- wallet execution
+- production object-store asset movement
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 29 Secure Asset Delivery Runtime
+
+Decision:
+Marketplace may prepare secure delivery manifests for encrypted downloads, secure streams and ACS packages after entitlement enforcement, while production file transfer and provisioning remain disabled.
+
+Approved:
+- encrypted download manifest preparation
+- secure stream manifest preparation
+- ACS package delivery manifest preparation
+- entitlement-gated delivery preparation
+- HMAC-wrapped delivery tokens
+- delivery snapshot metrics
+- secure delivery telemetry event
+
+Deferred:
+- file transfer
+- live media streaming
+- ACS runtime provisioning
+- production object-store calls
+- asset movement
+- contract writes
+- wallet execution
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 30 Delivery Observability Runtime
+
+Decision:
+Marketplace may persist delivery telemetry, entitlement traceability, delivery audit records and access analytics for secure delivery runtime before production delivery execution exists.
+
+Approved:
+- download telemetry persistence
+- secure stream telemetry persistence
+- ACS package access telemetry persistence
+- entitlement traceability
+- delivery audit records
+- access analytics snapshot
+- delivery telemetry API endpoints
+
+Deferred:
+- file transfer
+- live media streaming
+- ACS runtime provisioning
+- production object-store reads
+- settlement execution
+- contract writes
+- wallet execution
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 31 Settlement Runtime Activation
+
+Decision:
+Marketplace may execute controlled internal settlement runtime records when `controlledRollout: true` is provided, while wallet transactions, chain writes, external payment gateways and treasury movement remain disabled.
+
+Approved:
+- controlled purchase execution
+- settlement confirmation records
+- transaction lifecycle records
+- purchase and license issuance from settlement runtime
+- settlement snapshot metrics
+- settlement runtime audit/event records
+
+Deferred:
+- wallet transaction execution
+- blockchain writes
+- external payment gateway execution
+- treasury movement
+- fiat checkout
+- contract settlement
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation

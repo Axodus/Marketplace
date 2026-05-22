@@ -814,6 +814,218 @@ Current boundaries:
 - no contract write
 - no wallet execution
 
+## Sprint 24 Event Streaming Runtime
+
+Sprint 24 adds realtime Marketplace infrastructure over persisted runtime state.
+
+The API now supports:
+- realtime snapshot aggregation
+- Server-Sent Events preview streaming
+- readonly WebSocket handshake
+- live listing update aggregation
+- live bid update aggregation
+- governance update aggregation
+- telemetry update aggregation
+
+Endpoints:
+- `GET /api/marketplace/live`
+- `GET /api/marketplace/live/stream`
+- `GET /api/marketplace/live/ws`
+
+Realtime runtime is derived from persisted Marketplace events, indexer ingestion previews, governance events and telemetry records. It records a realtime snapshot event for auditability.
+
+Current boundaries:
+- no external broker
+- no production queue
+- no live chain node subscription
+- no settlement execution
+- no contract write
+- no wallet execution
+
+## Sprint 25 Operational Resilience Runtime
+
+Sprint 25 adds operational resilience read models over persisted Marketplace runtime state.
+
+The API now supports:
+- retry queue previews
+- reconciliation retry readiness
+- treasury retry readiness
+- realtime stream retry readiness
+- degraded mode visibility
+- failover readiness flags
+- stale snapshot recovery previews
+
+Endpoint:
+- `GET /api/marketplace/resilience`
+
+Operational resilience derives retry queues from ownership reconciliation, treasury reconciliation, realtime snapshots and indexer snapshots. It exposes degraded/recovery modes and recovery recommendations while keeping all retry and failover execution disabled.
+
+Current boundaries:
+- no automatic retry execution
+- no production failover switch
+- no external queue publish
+- no live indexer recovery
+- no settlement execution
+- no contract write
+- no wallet execution
+
+## Sprint 26 Greenfield Authentication Runtime
+
+Sprint 26 starts Block D by adding Greenfield authentication runtime boundaries over Marketplace delivery and entitlement state.
+
+The API now supports:
+- bucket access runtime
+- auth runtime records
+- holder access verification
+- license and subscription entitlement checks
+- NFT ownership snapshot readiness
+- signed URL preview lifecycle under auth checks
+
+Endpoints:
+- `POST /api/marketplace/greenfield/auth`
+- `GET /api/marketplace/greenfield/auth`
+
+Greenfield auth derives access from product bucket metadata, entitlement snapshots, active license/subscription runtime and persisted ownership snapshots. It records auth events as delivery telemetry.
+
+Current boundaries:
+- no production Greenfield call
+- no production signed URL issuance
+- no bucket policy mutation
+- no live ownership enforcement
+- no asset movement
+- no contract write
+- no wallet execution
+
+## Sprint 27 Signed URL Runtime
+
+Sprint 27 adds backend-real signed URL issuance over the Greenfield auth runtime.
+
+The API now supports:
+- HMAC-SHA256 signed URL generation
+- TTL and expiration visibility
+- revocation visibility
+- signed URL runtime snapshots
+- signed URL delivery telemetry
+
+Endpoints:
+- `POST /api/marketplace/greenfield/signed-urls`
+- `POST /api/marketplace/greenfield/signed-urls/revoke`
+- `GET /api/marketplace/greenfield/signed-urls`
+
+Signed URL issuance requires Greenfield auth preview verification. The signer uses `MARKETPLACE_SIGNED_URL_SECRET` when configured and falls back to an ephemeral runtime key for local mock-persistent operation.
+
+Current boundaries:
+- no production Greenfield call
+- no bucket policy mutation
+- no production CDN/object-store integration
+- no asset movement
+- no contract write
+- no wallet execution
+
+## Sprint 28 Entitlement Enforcement Runtime
+
+Sprint 28 makes Marketplace entitlement enforcement operational for backend access decisions.
+
+The API now supports:
+- license access validation
+- subscription access validation
+- DAO/tenant access validation
+- governance review/blocking decisions
+- delivery and signed URL allow/deny flags
+- enforcement snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/entitlements/enforce`
+- `GET /api/marketplace/entitlements/enforcement`
+
+Greenfield auth and signed URL issuance now consume entitlement enforcement decisions before exposing access or issuing signed URLs.
+
+Current boundaries:
+- no payment execution
+- no treasury movement
+- no contract write
+- no wallet execution
+- no production object-store asset movement
+
+## Sprint 29 Secure Asset Delivery Runtime
+
+Sprint 29 adds secure delivery preparation for protected Marketplace assets.
+
+The API now supports:
+- encrypted download manifests
+- secure stream manifests
+- ACS package delivery manifests
+- entitlement-gated delivery preparation
+- delivery snapshot metrics
+- secure delivery telemetry
+
+Endpoints:
+- `POST /api/marketplace/delivery/secure`
+- `GET /api/marketplace/delivery/secure`
+
+Secure delivery depends on entitlement enforcement decisions. Prepared delivery records include AES-256-GCM metadata, HMAC-wrapped access tokens, HLS preview stream tokens, and ACS package manifests.
+
+Current boundaries:
+- no file transfer
+- no live media streaming
+- no ACS runtime provisioning
+- no production object-store call
+- no asset movement
+- no contract write
+- no wallet execution
+
+## Sprint 30 Delivery Observability Runtime
+
+Sprint 30 makes secure delivery observable and auditable.
+
+The API now supports:
+- download telemetry
+- secure stream telemetry
+- ACS package access telemetry
+- entitlement traceability
+- delivery audit records
+- access analytics
+
+Endpoints:
+- `POST /api/marketplace/delivery/telemetry`
+- `GET /api/marketplace/delivery/observability`
+
+Delivery observability correlates secure delivery records, entitlement enforcement ids, holder/product context, delivery mode, telemetry outcome and audit metadata.
+
+Current boundaries:
+- no file transfer
+- no live media streaming
+- no ACS runtime provisioning
+- no production object-store reads
+- no settlement execution
+- no contract write
+- no wallet execution
+
+## Sprint 31 Settlement Runtime Activation
+
+Sprint 31 starts Block E by enabling controlled Marketplace-internal settlement runtime.
+
+The API now supports:
+- controlled purchase execution
+- settlement confirmation records
+- transaction lifecycle records
+- purchase and license issuance from settlement runtime
+- settlement snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/settlements/execute`
+- `GET /api/marketplace/settlements`
+
+Settlement execution requires `controlledRollout: true`. The runtime creates Marketplace-owned purchase and license records and confirms an internal transaction lifecycle.
+
+Current boundaries:
+- no wallet transaction
+- no blockchain write
+- no external payment gateway
+- no treasury movement
+- no fiat checkout
+- no contract settlement
+
 ---
 
 # Governance Integration
