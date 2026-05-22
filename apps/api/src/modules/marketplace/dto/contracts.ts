@@ -293,6 +293,64 @@ export interface GovernanceWorkflowSnapshot {
   generatedAt: string;
 }
 
+export interface EmergencyGovernanceControl {
+  id: string;
+  entityId: string;
+  entityType: string;
+  tenantId: string;
+  control: "emergency_restriction" | "emergency_freeze" | "emergency_suspension" | "emergency_visibility";
+  trigger: string;
+  severity: "warning" | "restricted" | "critical";
+  previewState: "prepared" | "active-preview";
+  executionEnabled: false;
+  reasonCodes: string[];
+}
+
+export interface GovernanceTelemetryRecord {
+  id: string;
+  category: "governance_action" | "restriction" | "moderation" | "emergency_event";
+  entityId: string;
+  entityType: string;
+  tenantId: string;
+  severity: "info" | "warning" | "critical";
+  message: string;
+  reasonCodes: string[];
+  createdAt: string;
+}
+
+export interface GovernanceOperatorConsoleSnapshot {
+  id: string;
+  emergencyRuntime: {
+    controls: EmergencyGovernanceControl[];
+    emergencyRestrictions: number;
+    emergencyFreezes: number;
+    emergencySuspensions: number;
+    emergencyVisibilityControls: number;
+    executionEnabled: false;
+  };
+  telemetry: {
+    records: GovernanceTelemetryRecord[];
+    governanceActions: number;
+    restrictions: number;
+    moderationEvents: number;
+    emergencyEvents: number;
+  };
+  operatorConsole: {
+    governanceVisibility: "available";
+    moderationVisibility: "available";
+    restrictionVisibility: "available";
+    federationVisibility: "available";
+    liveControlsEnabled: false;
+  };
+  federation: {
+    health: "healthy-preview" | "warning-preview" | "restricted-preview";
+    tenants: number;
+    restrictedStorefronts: number;
+    reviewRequiredStorefronts: number;
+  };
+  generatedAt: string;
+}
+
 export interface GovernanceAuthorityRecord {
   entityId: string;
   entityType: "product" | "seller" | "tenant";
@@ -713,6 +771,7 @@ export interface MarketplaceStore {
   daoFederationRuntime?: DAOFederationRuntimeSnapshot;
   governanceWorkflow?: GovernanceWorkflowSnapshot;
   governanceWorkflowActions?: GovernanceWorkflowActionRecord[];
+  governanceObservability?: GovernanceOperatorConsoleSnapshot;
   governanceAuthority?: GovernanceAuthoritySnapshot;
   governanceEnforcement?: GovernanceEnforcementSnapshot;
   licenses: LicenseEntity[];

@@ -1,3 +1,3 @@
-import { ReownWalletStateMock } from "../modules/marketplace/services/boundaryAdapters";
+import { walletRuntimeStore } from "./walletRuntime";
 
-export const appKitWalletState = ReownWalletStateMock;
+export const appKitWalletState = walletRuntimeStore;

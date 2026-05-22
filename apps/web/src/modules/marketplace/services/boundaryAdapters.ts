@@ -3,13 +3,6 @@ import { createDraftListingPreview, issueMockPurchase } from "./marketplaceServi
 import { createSignedUrlPreview, getDeliveryRuntime } from "./deliveryRuntime";
 import { traceAdapterCall } from "./runtimeTelemetry";
 
-export const ReownWalletStateMock = {
-  connected: true,
-  address: "0xAxoD...Mock",
-  chain: "Polygon",
-  networkMode: "mock"
-};
-
 export const MarketplaceContractAdapter = {
   async buyNow(product: Product) {
     traceAdapterCall("MarketplaceContractAdapter.buyNow", "started", { productId: product.id, settlementEnabled: false });

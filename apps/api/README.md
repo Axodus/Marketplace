@@ -67,6 +67,8 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `GET /api/marketplace/governance-enforcement/:entityId`
 - `GET /api/marketplace/dao-federation`
 - `GET /api/marketplace/dao-federation/tenants/:tenantId`
+- `GET /api/marketplace/governance-workflow`
+- `GET /api/marketplace/governance-observability`
 - `GET /api/marketplace/governance-validations`
 - `GET /api/marketplace/delivery-previews`
 - `GET /api/marketplace/events`
@@ -78,6 +80,7 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `POST /api/marketplace/subscriptions/preview`
 - `POST /api/marketplace/licenses/lifecycle`
 - `POST /api/marketplace/subscriptions/lifecycle`
+- `POST /api/marketplace/governance-workflow/actions`
 - `POST /api/marketplace/delivery-previews`
 - `POST /api/marketplace/reconciliation/snapshot`
 - `POST /api/marketplace/indexer-snapshots`
@@ -165,6 +168,28 @@ Sprint 13 DAO federation runtime derives tenant-aware infrastructure views:
 - federation health metrics
 
 Federation runtime is preview-only. Responses declare `publicActivationEnabled: false` and `settlementEnabled: false`.
+
+Sprint 14 governance workflow runtime persists moderation-only action records and exposes:
+
+- product, seller, storefront, entitlement and billing review queues
+- approval lifecycle state
+- constitutional reason codes
+- moderation metrics
+- governance workflow audit records
+
+Workflow actions are audit records only. They declare `governanceWritesEnabled: false` and `moderationOnly: true`.
+
+Sprint 15 governance observability runtime exposes:
+
+- emergency restriction, freeze, suspension and visibility controls
+- governance action telemetry
+- restriction telemetry
+- moderation telemetry
+- emergency event telemetry
+- operator console readiness
+- federation visibility
+
+Emergency controls are preview-only. Responses declare `executionEnabled: false` and `liveControlsEnabled: false`.
 
 Every response is wrapped in an envelope that declares:
 

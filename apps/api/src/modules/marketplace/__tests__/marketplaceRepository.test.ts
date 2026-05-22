@@ -298,4 +298,26 @@ describe("FileMarketplaceRepository", () => {
     expect(updatedWorkflow.governanceAudit[0].entityId).toBe("product-mcp-agent-template");
     expect(updatedWorkflow.approvalLifecycle.currentByEntity["product-mcp-agent-template"]).toBe("restricted");
   });
+
+  it("builds governance emergency controls and operator telemetry", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    await repository.createGovernanceWorkflowAction({
+      actor: "governance-moderator",
+      queue: "product",
+      entityId: "product-mcp-agent-template",
+      entityType: "product",
+      action: "restricted",
+      reasonCode: "RESTRICT_PRODUCT_COMMERCE"
+    });
+    const observability = await repository.getGovernanceObservabilitySnapshot();
+
+    expect(observability.emergencyRuntime.executionEnabled).toBe(false);
+    expect(observability.operatorConsole.liveControlsEnabled).toBe(false);
+    expect(observability.emergencyRuntime.controls.some((control) => control.entityId === "product-mcp-agent-template")).toBe(true);
+    expect(observability.telemetry.governanceActions).toBeGreaterThan(0);
+    expect(observability.telemetry.restrictions).toBeGreaterThan(0);
+    expect(observability.federation.tenants).toBe(3);
+  });
 });

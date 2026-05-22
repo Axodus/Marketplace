@@ -66,6 +66,7 @@ export class MarketplaceController {
       if (req.method === "GET" && route === "/invoices") return send(res, await this.service.listInvoices());
       if (req.method === "GET" && route === "/accounting-telemetry") return send(res, await this.service.listAccountingTelemetry());
       if (req.method === "GET" && route === "/governance-workflow") return send(res, await this.service.getGovernanceWorkflowSnapshot());
+      if (req.method === "GET" && route === "/governance-observability") return send(res, await this.service.getGovernanceObservabilitySnapshot());
       if (req.method === "GET" && route === "/governance-validations") return send(res, await this.service.listGovernanceValidations());
       if (req.method === "GET" && route === "/governance-authority") return send(res, await this.service.getGovernanceAuthoritySnapshot());
       if (req.method === "GET" && route.startsWith("/governance-authority/")) {

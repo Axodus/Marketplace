@@ -517,6 +517,67 @@ Current mode remains preview-only:
 - no constitutional write execution
 - no destructive freeze of tenant operations
 
+## Sprint 14 Governance Workflow Runtime
+
+Sprint 14 adds operational governance workflow infrastructure.
+
+The API now exposes:
+- review queues for products, sellers, storefronts, entitlements and billing
+- approval lifecycle state
+- constitutional reason codes
+- moderation runtime metrics
+- persisted governance workflow actions
+- governance workflow audit records
+
+Endpoints:
+- `GET /api/marketplace/governance-workflow`
+- `POST /api/marketplace/governance-workflow/actions`
+
+Approval lifecycle states:
+- pending_approval
+- approved
+- rejected
+- restricted
+- escalated
+- emergency_review
+
+Constitutional reason code categories:
+- warning
+- sanction
+- restriction
+- escalation
+
+Workflow actions are persisted as moderation/audit records only. They do not execute Governance writes, sanctions, settlements, entitlement revocations, product removals or tenant freezes.
+
+## Sprint 15 Governance Observability & Emergency Controls
+
+Sprint 15 adds governance emergency runtime and operator observability.
+
+The API now exposes:
+- emergency restriction controls
+- emergency freeze controls
+- emergency suspension controls
+- emergency visibility controls
+- governance action telemetry
+- restriction telemetry
+- moderation telemetry
+- emergency event telemetry
+- operator console readiness
+
+Endpoint:
+- `GET /api/marketplace/governance-observability`
+
+The operator console reports:
+- governance visibility
+- moderation visibility
+- restriction visibility
+- federation visibility
+- federation health
+- emergency controls
+- telemetry counters and records
+
+Emergency controls are preview-only. They do not execute live Governance writes, product removals, seller/tenant freezes, license suspensions, entitlement revocations or settlement actions.
+
 ---
 
 # Governance Integration

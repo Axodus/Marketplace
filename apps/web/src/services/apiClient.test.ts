@@ -544,4 +544,79 @@ describe("apiClient", () => {
     expect(workflow.approvalLifecycle.currentByEntity["product-mcp-agent-template"]).toBe("restricted");
     expect(workflow.constitutionalReasonCodes[0].category).toBe("restriction");
   });
+
+  it("hydrates governance observability and emergency controls", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          data: {
+            id: "governance-observability-1",
+            emergencyRuntime: {
+              controls: [
+                {
+                  id: "emergency-restriction-product-mcp-agent-template",
+                  entityId: "product-mcp-agent-template",
+                  entityType: "product",
+                  tenantId: "tenant-mcp-working-group",
+                  control: "emergency_restriction",
+                  trigger: "restricted",
+                  severity: "restricted",
+                  previewState: "active-preview",
+                  executionEnabled: false,
+                  reasonCodes: ["RESTRICT_PRODUCT_COMMERCE"]
+                }
+              ],
+              emergencyRestrictions: 1,
+              emergencyFreezes: 0,
+              emergencySuspensions: 0,
+              emergencyVisibilityControls: 0,
+              executionEnabled: false
+            },
+            telemetry: {
+              records: [
+                {
+                  id: "telemetry-emergency-restriction-product-mcp-agent-template",
+                  category: "restriction",
+                  entityId: "product-mcp-agent-template",
+                  entityType: "product",
+                  tenantId: "tenant-mcp-working-group",
+                  severity: "warning",
+                  message: "emergency_restriction active-preview",
+                  reasonCodes: ["RESTRICT_PRODUCT_COMMERCE"],
+                  createdAt: "2026-05-22T00:00:00.000Z"
+                }
+              ],
+              governanceActions: 0,
+              restrictions: 1,
+              moderationEvents: 0,
+              emergencyEvents: 0
+            },
+            operatorConsole: {
+              governanceVisibility: "available",
+              moderationVisibility: "available",
+              restrictionVisibility: "available",
+              federationVisibility: "available",
+              liveControlsEnabled: false
+            },
+            federation: {
+              health: "warning-preview",
+              tenants: 3,
+              restrictedStorefronts: 0,
+              reviewRequiredStorefronts: 2
+            },
+            generatedAt: "2026-05-22T00:00:00.000Z"
+          }
+        })
+      })
+    );
+
+    const observability = await apiClient.getGovernanceObservability();
+
+    expect(observability.emergencyRuntime.executionEnabled).toBe(false);
+    expect(observability.operatorConsole.liveControlsEnabled).toBe(false);
+    expect(observability.telemetry.restrictions).toBe(1);
+    expect(observability.emergencyRuntime.controls[0].entityId).toBe("product-mcp-agent-template");
+  });
 });

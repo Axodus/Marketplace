@@ -432,6 +432,63 @@ CONFIRMED
 
 ---
 
+## Sprint 14 Governance Workflow Runtime
+
+Decision:
+Marketplace must persist governance workflow actions and expose operational review queues before live moderation or Governance write execution is introduced.
+
+Approved:
+- product, seller, storefront, entitlement and billing review queues
+- approval lifecycle states
+- constitutional warning, sanction, restriction and escalation reason codes
+- moderation runtime metrics
+- persisted governance workflow action records
+- governance workflow audit visibility
+- Marketplace Governance page workflow rendering
+
+Deferred:
+- live Governance writes
+- live sanction execution
+- live approval mutation in Governance nucleus
+- destructive product removal
+- live entitlement revocation
+- production moderation assignment engine
+
+Status:
+CONFIRMED
+
+---
+
+## Sprint 15 Governance Observability And Emergency Controls
+
+Decision:
+Marketplace must expose emergency governance readiness and operator observability before any live emergency control is enabled.
+
+Approved:
+- emergency restriction preview controls
+- emergency freeze preview controls
+- emergency suspension preview controls
+- emergency visibility preview controls
+- governance action telemetry
+- restriction telemetry
+- moderation telemetry
+- emergency event telemetry
+- operator console route
+- federation and restriction visibility in operator console
+
+Deferred:
+- live Governance emergency writes
+- live product removal
+- live seller or tenant freeze
+- live license suspension
+- live entitlement revocation
+- live settlement intervention
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation

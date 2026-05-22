@@ -16,6 +16,7 @@ import type {
   GovernanceAuthoritySnapshot,
   GovernanceEnforcementRecord,
   GovernanceEnforcementSnapshot,
+  GovernanceOperatorConsoleSnapshot,
   GovernanceWorkflowActionRecord,
   GovernanceWorkflowActionRequest,
   GovernanceWorkflowSnapshot,
@@ -50,6 +51,7 @@ import { withGovernanceAuthority } from "../services/governanceAuthorityAdapter.
 import { withGovernanceEnforcement } from "../services/governanceEnforcementRuntime.js";
 import { withDAOFederationRuntime } from "../services/daoFederationRuntime.js";
 import { createGovernanceWorkflowAction, withGovernanceWorkflow } from "../services/governanceWorkflowRuntime.js";
+import { withGovernanceObservability } from "../services/governanceObservabilityRuntime.js";
 
 export function getDefaultMarketplaceStorePath() {
   return process.env.MARKETPLACE_STORE_PATH ?? path.resolve(process.cwd(), ".runtime/marketplace-store.json");
@@ -91,6 +93,7 @@ export interface MarketplaceRepository {
   getTenantRuntime(tenantId: string): Promise<DAOFederationRuntimeSnapshot["tenantIsolation"][number] | undefined>;
   getGovernanceWorkflowSnapshot(): Promise<GovernanceWorkflowSnapshot>;
   createGovernanceWorkflowAction(input: GovernanceWorkflowActionRequest): Promise<GovernanceWorkflowActionRecord>;
+  getGovernanceObservabilitySnapshot(): Promise<GovernanceOperatorConsoleSnapshot>;
   listDeliveryPreviews(): Promise<AssetDeliveryPreviewEntity[]>;
   listEvents(): Promise<MarketplaceRuntimeEventEntity[]>;
   listAuditLogs(): Promise<AuditLogEntity[]>;
@@ -258,6 +261,10 @@ export class FileMarketplaceRepository implements MarketplaceRepository {
     store.governanceWorkflowActions = [action, ...(store.governanceWorkflowActions ?? [])];
     await this.writeStore(store);
     return action;
+  }
+
+  async getGovernanceObservabilitySnapshot() {
+    return (await this.readStore()).governanceObservability!;
   }
 
   async listDeliveryPreviews() {
@@ -578,9 +585,11 @@ export class FileMarketplaceRepository implements MarketplaceRepository {
 
   private async readStore(): Promise<MarketplaceStore> {
     await this.initIfMissing();
-    return withGovernanceWorkflow(
-      withDAOFederationRuntime(
-        withRegistryReadModels(withGovernanceEnforcement(withGovernanceAuthority(JSON.parse(await readFile(this.storePath, "utf8")) as MarketplaceStore)))
+    return withGovernanceObservability(
+      withGovernanceWorkflow(
+        withDAOFederationRuntime(
+          withRegistryReadModels(withGovernanceEnforcement(withGovernanceAuthority(JSON.parse(await readFile(this.storePath, "utf8")) as MarketplaceStore)))
+        )
       )
     );
   }

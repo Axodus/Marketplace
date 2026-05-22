@@ -448,3 +448,63 @@ Still deferred:
 - constitutional write execution
 - destructive tenant freeze
 - public DAO storefront publishing workflow
+
+---
+
+# Sprint 14 — Governance Workflow Runtime
+
+Status: IMPLEMENTED MOCK-PERSISTENT
+
+Delivered:
+- governance workflow runtime read model
+- product review queue
+- seller review queue
+- storefront review queue
+- entitlement review queue
+- billing review queue
+- approval lifecycle states: pending_approval, approved, rejected, restricted, escalated, emergency_review
+- constitutional reason codes for warnings, sanctions, restrictions and escalations
+- moderation runtime metrics
+- persisted governance workflow actions
+- governance workflow audit records
+- API endpoints for workflow snapshot and moderation action persistence
+- Marketplace Governance page workflow queue and reason-code visibility
+- API and web tests for workflow hydration, moderation actions and audit persistence
+
+Still deferred:
+- live Governance writes
+- live sanctions
+- destructive product removal
+- live entitlement revocation
+- production moderation assignment engine
+- real approval mutation in Governance nucleus
+
+---
+
+# Sprint 15 — Governance Observability & Emergency Controls
+
+Status: IMPLEMENTED PREVIEW-ONLY
+
+Delivered:
+- governance observability runtime read model
+- emergency restriction preview controls
+- emergency freeze preview controls
+- emergency suspension preview controls
+- emergency visibility preview controls
+- governance action telemetry
+- restriction telemetry
+- moderation telemetry
+- emergency event telemetry
+- operator console API endpoint
+- frontend operator console route at `/marketplace/operator`
+- operator console navigation entry
+- operator visibility for governance, moderation, restrictions and federation
+- API and web tests for emergency runtime and observability hydration
+
+Still deferred:
+- live Governance emergency writes
+- live product removal
+- live seller or tenant freeze
+- live license suspension
+- live entitlement revocation
+- live settlement intervention

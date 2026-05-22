@@ -212,6 +212,42 @@ The DAO storefront view renders activation status, operational status, tenant is
 
 Federation remains preview-only. The UI does not publicly activate storefronts, enforce tenant isolation destructively, execute cross-tenant settlement, mutate constitutional state or freeze tenants.
 
+## Governance Workflow Runtime
+
+Sprint 14 adds operational governance workflow visibility.
+
+The web client can consume:
+
+- product, seller, storefront, entitlement and billing review queues
+- approval lifecycle state
+- constitutional reason codes
+- moderation runtime metrics
+- governance workflow audit records
+
+The Governance page renders queue metrics, product approval lifecycle and constitutional reason codes.
+
+Workflow remains moderation-only. The UI does not execute Governance writes, sanctions, destructive removals, entitlement revocations or live approval mutations.
+
+## Governance Observability & Emergency Controls
+
+Sprint 15 adds operator console visibility.
+
+The web client can consume:
+
+- emergency restriction controls
+- emergency freeze controls
+- emergency suspension controls
+- emergency visibility controls
+- governance action telemetry
+- restriction telemetry
+- moderation telemetry
+- emergency event telemetry
+- federation health visibility
+
+The operator console is available at `/marketplace/operator`.
+
+Emergency controls remain preview-only. The UI does not execute live Governance writes, product removals, seller or tenant freezes, license suspensions, entitlement revocations or settlement intervention.
+
 ## Folders
 
 ```
@@ -245,6 +281,7 @@ src/
 - `/marketplace/entitlements`
 - `/marketplace/orders`
 - `/marketplace/audit`
+- `/marketplace/operator`
 - `/marketplace/dashboard`
 - `/item/:chain/:contract/:id` redirects legacy NFT item references to registered product pages when present in mock data.
 
@@ -259,4 +296,6 @@ src/
 - API client tests cover read-only governance authority hydration.
 - API client tests cover preview-only governance enforcement hydration.
 - API client tests cover DAO federation runtime hydration.
+- API client tests cover governance workflow runtime hydration.
+- API client tests cover governance observability and emergency controls.
 - Future visual/E2E tests should cover wallet mock state, buy-now preview, bid preview, and signed URL preview after mock purchase.

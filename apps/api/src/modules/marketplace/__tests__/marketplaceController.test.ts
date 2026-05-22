@@ -203,4 +203,28 @@ describe("MarketplaceController", () => {
     expect(actionPayload.data.governanceWritesEnabled).toBe(false);
     expect(updatedPayload.data.governanceAudit[0].reasonCode).toBe("RESTRICT_PRODUCT_COMMERCE");
   });
+
+  it("serves governance observability and emergency operator console", async () => {
+    await fetch(`${baseUrl}/api/marketplace/governance-workflow/actions`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        actor: "governance-moderator",
+        queue: "product",
+        entityId: "product-mcp-agent-template",
+        entityType: "product",
+        action: "restricted",
+        reasonCode: "RESTRICT_PRODUCT_COMMERCE"
+      })
+    });
+    const response = await fetch(`${baseUrl}/api/marketplace/governance-observability`);
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload.data.emergencyRuntime.executionEnabled).toBe(false);
+    expect(payload.data.operatorConsole.governanceVisibility).toBe("available");
+    expect(payload.data.operatorConsole.liveControlsEnabled).toBe(false);
+    expect(payload.data.telemetry.governanceActions).toBeGreaterThan(0);
+    expect(payload.data.telemetry.restrictions).toBeGreaterThan(0);
+  });
 });

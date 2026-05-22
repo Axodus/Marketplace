@@ -1,5 +1,17 @@
-import { ReownWalletStateMock } from "../modules/marketplace/services/boundaryAdapters";
+import { useEffect, useSyncExternalStore } from "react";
+import { walletRuntimeStore } from "../services/walletRuntime";
 
 export function useWallet() {
-  return ReownWalletStateMock;
+  const state = useSyncExternalStore(walletRuntimeStore.subscribe, walletRuntimeStore.getSnapshot, walletRuntimeStore.getSnapshot);
+
+  useEffect(() => {
+    void walletRuntimeStore.hydrate();
+  }, []);
+
+  return {
+    ...state,
+    connect: walletRuntimeStore.connect.bind(walletRuntimeStore),
+    disconnect: walletRuntimeStore.disconnect.bind(walletRuntimeStore),
+    switchChain: walletRuntimeStore.switchChain.bind(walletRuntimeStore)
+  };
 }

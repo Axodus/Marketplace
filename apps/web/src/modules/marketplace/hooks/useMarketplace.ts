@@ -205,6 +205,21 @@ export function useOperationalTraceability() {
   });
 }
 
+export function useGovernanceOperatorConsole() {
+  return useQuery({
+    queryKey: ["marketplace-governance-operator-console"],
+    queryFn: async () => {
+      traceMarketplaceLifecycle("marketplace-governance-operator-console-query", "started");
+      const [observability, workflow, federation] = await Promise.all([
+        apiClient.getGovernanceObservability(),
+        apiClient.getGovernanceWorkflow(),
+        apiClient.getDAOFederationRuntime()
+      ]);
+      return { observability, workflow, federation };
+    }
+  });
+}
+
 export function useTenantStorefront(tenantIdOrSlug?: string) {
   return useQuery({
     queryKey: ["marketplace-tenant-storefront", tenantIdOrSlug],

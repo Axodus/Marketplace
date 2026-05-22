@@ -518,6 +518,60 @@ export interface GovernanceWorkflowSnapshot {
   generatedAt: string;
 }
 
+export interface GovernanceOperatorConsoleSnapshot {
+  id: string;
+  emergencyRuntime: {
+    controls: Array<{
+      id: string;
+      entityId: string;
+      entityType: string;
+      tenantId: string;
+      control: "emergency_restriction" | "emergency_freeze" | "emergency_suspension" | "emergency_visibility";
+      trigger: string;
+      severity: "warning" | "restricted" | "critical";
+      previewState: "prepared" | "active-preview";
+      executionEnabled: false;
+      reasonCodes: string[];
+    }>;
+    emergencyRestrictions: number;
+    emergencyFreezes: number;
+    emergencySuspensions: number;
+    emergencyVisibilityControls: number;
+    executionEnabled: false;
+  };
+  telemetry: {
+    records: Array<{
+      id: string;
+      category: "governance_action" | "restriction" | "moderation" | "emergency_event";
+      entityId: string;
+      entityType: string;
+      tenantId: string;
+      severity: "info" | "warning" | "critical";
+      message: string;
+      reasonCodes: string[];
+      createdAt: string;
+    }>;
+    governanceActions: number;
+    restrictions: number;
+    moderationEvents: number;
+    emergencyEvents: number;
+  };
+  operatorConsole: {
+    governanceVisibility: "available";
+    moderationVisibility: "available";
+    restrictionVisibility: "available";
+    federationVisibility: "available";
+    liveControlsEnabled: false;
+  };
+  federation: {
+    health: "healthy-preview" | "warning-preview" | "restricted-preview";
+    tenants: number;
+    restrictedStorefronts: number;
+    reviewRequiredStorefronts: number;
+  };
+  generatedAt: string;
+}
+
 export interface AuditLogRecord {
   id: string;
   actor: string;
@@ -844,6 +898,14 @@ async function getGovernanceWorkflow(): Promise<GovernanceWorkflowSnapshot> {
   }
 }
 
+async function getGovernanceObservability(): Promise<GovernanceOperatorConsoleSnapshot> {
+  try {
+    return await request<GovernanceOperatorConsoleSnapshot>("/governance-observability");
+  } catch {
+    return buildFallbackGovernanceObservability();
+  }
+}
+
 async function listAuditLogs() {
   try {
     return await request<AuditLogRecord[]>("/audit-logs");
@@ -1057,6 +1119,7 @@ export const apiClient = {
   getDAOFederationRuntime,
   getTenantRuntime,
   getGovernanceWorkflow,
+  getGovernanceObservability,
   listAuditLogs,
   listReconciliationSnapshots,
   createReconciliationSnapshot,
@@ -1214,6 +1277,84 @@ function buildFallbackGovernanceWorkflow(): GovernanceWorkflowSnapshot {
       governanceWritesEnabled: false
     },
     governanceAudit: [],
+    generatedAt
+  };
+}
+
+function buildFallbackGovernanceObservability(): GovernanceOperatorConsoleSnapshot {
+  const generatedAt = new Date().toISOString();
+  const workflow = buildFallbackGovernanceWorkflow();
+  const controls = workflow.queues
+    .flatMap((queue) => queue.items)
+    .filter((item) => item.lifecycle === "restricted" || item.lifecycle === "emergency_review")
+    .map((item) => ({
+      id: `emergency-restriction-${item.entityId}`,
+      entityId: item.entityId,
+      entityType: item.entityType,
+      tenantId: item.tenantId,
+      control: "emergency_restriction" as const,
+      trigger: item.lifecycle,
+      severity: item.lifecycle === "emergency_review" ? ("critical" as const) : ("restricted" as const),
+      previewState: "prepared" as const,
+      executionEnabled: false as const,
+      reasonCodes: item.reasonCodes
+    }));
+  const records: GovernanceOperatorConsoleSnapshot["telemetry"]["records"] = [
+    ...workflow.queues.flatMap((queue) =>
+      queue.items.map((item) => ({
+        id: `telemetry-moderation-${item.id}`,
+        category: "moderation" as const,
+        entityId: item.entityId,
+        entityType: item.entityType,
+        tenantId: item.tenantId,
+        severity: item.severity === "critical" ? ("critical" as const) : item.severity === "high" ? ("warning" as const) : ("info" as const),
+        message: `${queue.queue} queue item in ${item.lifecycle}`,
+        reasonCodes: item.reasonCodes,
+        createdAt: item.createdAt
+      }))
+    ),
+    ...controls.map((control) => ({
+      id: `telemetry-${control.id}`,
+      category: "restriction" as const,
+      entityId: control.entityId,
+      entityType: control.entityType,
+      tenantId: control.tenantId,
+      severity: control.severity === "critical" ? ("critical" as const) : ("warning" as const),
+      message: `${control.control} ${control.previewState}`,
+      reasonCodes: control.reasonCodes,
+      createdAt: generatedAt
+    }))
+  ];
+  return {
+    id: `governance-observability-${Date.now()}`,
+    emergencyRuntime: {
+      controls,
+      emergencyRestrictions: controls.filter((control) => control.control === "emergency_restriction").length,
+      emergencyFreezes: 0,
+      emergencySuspensions: 0,
+      emergencyVisibilityControls: 0,
+      executionEnabled: false
+    },
+    telemetry: {
+      records,
+      governanceActions: 0,
+      restrictions: records.filter((record) => record.category === "restriction").length,
+      moderationEvents: records.filter((record) => record.category === "moderation").length,
+      emergencyEvents: records.filter((record) => record.category === "emergency_event").length
+    },
+    operatorConsole: {
+      governanceVisibility: "available",
+      moderationVisibility: "available",
+      restrictionVisibility: "available",
+      federationVisibility: "available",
+      liveControlsEnabled: false
+    },
+    federation: {
+      health: "warning-preview",
+      tenants: 1,
+      restrictedStorefronts: 0,
+      reviewRequiredStorefronts: workflow.moderationRuntime.pendingApproval
+    },
     generatedAt
   };
 }

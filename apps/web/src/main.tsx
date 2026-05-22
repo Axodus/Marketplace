@@ -18,6 +18,9 @@ const MarketplaceLicensePage = lazy(() => import("./modules/marketplace/pages/Ma
 const EntitlementDashboardPage = lazy(() => import("./modules/marketplace/pages/EntitlementDashboardPage").then((module) => ({ default: module.EntitlementDashboardPage })));
 const BillingRuntimePage = lazy(() => import("./modules/marketplace/pages/BillingRuntimePage").then((module) => ({ default: module.BillingRuntimePage })));
 const TraceabilityDashboardPage = lazy(() => import("./modules/marketplace/pages/TraceabilityDashboardPage").then((module) => ({ default: module.TraceabilityDashboardPage })));
+const GovernanceOperatorConsolePage = lazy(() =>
+  import("./modules/marketplace/pages/GovernanceOperatorConsolePage").then((module) => ({ default: module.GovernanceOperatorConsolePage }))
+);
 const MarketplaceDashboardPage = lazy(() => import("./modules/marketplace/pages/MarketplaceDashboardPage").then((module) => ({ default: module.MarketplaceDashboardPage })));
 const LegacyItemPage = lazy(() => import("./modules/marketplace/pages/LegacyItemPage").then((module) => ({ default: module.LegacyItemPage })));
 
@@ -68,6 +71,7 @@ const router = createBrowserRouter([
       { path: "marketplace/entitlements", element: routeElement(<EntitlementDashboardPage />) },
       { path: "marketplace/orders", element: routeElement(<BillingRuntimePage />) },
       { path: "marketplace/audit", element: routeElement(<TraceabilityDashboardPage />) },
+      { path: "marketplace/operator", element: routeElement(<GovernanceOperatorConsolePage />) },
       { path: "marketplace/dashboard", element: routeElement(<MarketplaceDashboardPage />) },
       { path: "item/:chain/:contract/:id", element: routeElement(<LegacyItemPage />) },
       { path: "*", element: <RouteErrorPage /> }

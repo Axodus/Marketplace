@@ -138,6 +138,10 @@ export class MarketplaceApiService {
     return this.repository.createGovernanceWorkflowAction(validateGovernanceWorkflowActionRequest(input));
   }
 
+  getGovernanceObservabilitySnapshot() {
+    return this.repository.getGovernanceObservabilitySnapshot();
+  }
+
   listDeliveryPreviews() {
     return this.repository.listDeliveryPreviews();
   }
