@@ -1000,3 +1000,49 @@ Still deferred:
 - wallet transaction execution
 - blockchain writes
 - external treasury movement
+
+---
+
+# Sprint 34 — Treasury Execution Runtime
+
+Status: IMPLEMENTED OPERATIONAL RUNTIME
+
+Delivered:
+- DAO treasury routing runtime
+- ecosystem fee routing runtime
+- platform fee routing runtime
+- creator royalty routing runtime
+- governance-aware execution gates
+- treasury execution reconciliation
+- treasury execution snapshot metrics
+- treasury runtime audit/event records
+- repository tests for treasury routing and reconciliation
+- controller tests for treasury execution endpoints
+
+Still deferred:
+- external treasury movement
+- wallet transaction execution
+- blockchain writes
+
+---
+
+# Sprint 35 — Crosschain & LayerZero Runtime
+
+Status: IMPLEMENTED OPERATIONAL RUNTIME
+
+Delivered:
+- LayerZero message preparation runtime
+- bridge messaging runtime
+- controlled bridge execution runtime
+- crosschain ownership synchronization
+- crosschain inventory synchronization
+- crosschain runtime snapshot metrics
+- crosschain runtime audit/event records
+- repository tests for messaging, bridge and inventory synchronization
+- controller tests for crosschain endpoints
+
+Still deferred:
+- production LayerZero messaging
+- external bridge execution
+- wallet transaction execution
+- blockchain writes

@@ -850,6 +850,107 @@ export interface TreasuryExecutionSnapshot {
   generatedAt: string;
 }
 
+export interface CrosschainMessageRequest {
+  productId: string;
+  sourceChain: string;
+  targetChain: string;
+  payload?: Record<string, unknown>;
+}
+
+export interface BridgeExecutionRequest {
+  messageId: string;
+  holder?: string;
+  controlledRollout?: boolean;
+}
+
+export interface CrosschainInventorySyncRequest {
+  productId?: string;
+  sourceChain?: string;
+  targetChain?: string;
+}
+
+export interface CrosschainMessageRuntime {
+  id: string;
+  productId: string;
+  tenantId: string;
+  protocol: "LayerZero";
+  sourceChain: string;
+  targetChain: string;
+  payloadHash: string;
+  status: "prepared" | "blocked";
+  reasonCodes: string[];
+  bridgeReady: boolean;
+  layerZeroMessagingEnabled: true;
+  externalMessagingEnabled: false;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  createdAt: string;
+}
+
+export interface BridgeRuntime {
+  id: string;
+  messageId: string;
+  productId: string;
+  tenantId: string;
+  holder: string;
+  sourceChain: string;
+  targetChain: string;
+  status: "bridged" | "blocked";
+  reasonCodes: string[];
+  ownership: {
+    sourceOwner: string | null;
+    targetOwner: string | null;
+    verificationStatus: "synchronized" | "pending" | "blocked";
+  };
+  inventory: {
+    sourceChainAvailable: boolean;
+    targetChainAvailable: boolean;
+    synchronized: boolean;
+  };
+  layerZeroMessageId: string | null;
+  bridgeRuntimeEnabled: true;
+  externalBridgeEnabled: false;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  createdAt: string;
+}
+
+export interface CrosschainInventoryRecord {
+  id: string;
+  productId: string;
+  tenantId: string;
+  chains: string[];
+  synchronizedChains: string[];
+  bridgeReadyChains: string[];
+  ownershipHolders: string[];
+  status: "synchronized" | "partial" | "blocked";
+  reasonCodes: string[];
+  updatedAt: string;
+}
+
+export interface CrosschainRuntimeSnapshot {
+  id: string;
+  messages: CrosschainMessageRuntime[];
+  bridges: BridgeRuntime[];
+  inventory: CrosschainInventoryRecord[];
+  metrics: {
+    messagesPrepared: number;
+    messagesBlocked: number;
+    bridgesExecuted: number;
+    bridgesBlocked: number;
+    synchronizedInventory: number;
+    partialInventory: number;
+  };
+  layerZeroRuntimeEnabled: true;
+  bridgeRuntimeEnabled: true;
+  inventorySynchronizationEnabled: true;
+  externalMessagingEnabled: false;
+  externalBridgeEnabled: false;
+  walletExecutionEnabled: false;
+  blockchainWritesEnabled: false;
+  generatedAt: string;
+}
+
 export interface SubscriptionEntity {
   id: string;
   productId: string;
@@ -1487,6 +1588,11 @@ export interface MarketplaceRuntimeEventEntity {
     | "auction.blocked"
     | "treasury.execution_completed"
     | "treasury.execution_blocked"
+    | "crosschain.message_prepared"
+    | "crosschain.message_blocked"
+    | "crosschain.bridge_executed"
+    | "crosschain.bridge_blocked"
+    | "crosschain.inventory_synchronized"
     | "license.preview_issued"
     | "license.lifecycle_updated"
     | "subscription.preview_updated"
@@ -1632,6 +1738,10 @@ export interface MarketplaceStore {
   auctionSnapshots?: AuctionRuntimeSnapshot[];
   treasuryExecutions?: TreasuryExecutionRuntime[];
   treasuryExecutionSnapshots?: TreasuryExecutionSnapshot[];
+  crosschainMessages?: CrosschainMessageRuntime[];
+  bridgeRuntimes?: BridgeRuntime[];
+  crosschainInventory?: CrosschainInventoryRecord[];
+  crosschainSnapshots?: CrosschainRuntimeSnapshot[];
   subscriptions: SubscriptionEntity[];
   billingPreviews: BillingPreviewEntity[];
   invoices?: InvoicePreviewEntity[];

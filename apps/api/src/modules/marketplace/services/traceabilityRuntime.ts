@@ -47,6 +47,7 @@ export function buildAuditLog(input: {
 }
 
 export function categorizeEvent(type: MarketplaceRuntimeEventEntity["type"], entityType: string): RuntimeEventCategory {
+  if (type.includes("crosschain") || type.includes("bridge")) return "indexer";
   if (type.includes("auction") || type.includes("bid")) return "product";
   if (type.includes("royalty")) return "treasury_preview";
   if (type.includes("treasury")) return "treasury_preview";

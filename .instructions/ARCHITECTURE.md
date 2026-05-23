@@ -1076,6 +1076,54 @@ Current boundaries:
 - no blockchain write
 - no external treasury movement
 
+## Sprint 34 Treasury Execution Runtime
+
+Sprint 34 activates governance-aware operational treasury routing inside the Marketplace API.
+
+The API now supports:
+- DAO treasury routing
+- ecosystem fee routing
+- platform fee routing
+- creator royalty routing
+- treasury execution reconciliation
+- governance-aware execution gates
+
+Endpoints:
+- `POST /api/marketplace/treasury/execute`
+- `GET /api/marketplace/treasury/executions`
+
+Treasury execution requires `controlledRollout: true` and an allocated royalty distribution. The runtime executes Marketplace-internal routing records and reconciliation only.
+
+Current boundaries:
+- no external treasury movement
+- no wallet transaction
+- no blockchain write
+
+## Sprint 35 Crosschain & LayerZero Runtime
+
+Sprint 35 activates crosschain Marketplace infrastructure inside the API runtime.
+
+The API now supports:
+- LayerZero message preparation
+- bridge runtime execution
+- crosschain ownership synchronization
+- crosschain inventory synchronization
+- crosschain runtime snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/crosschain/messages`
+- `POST /api/marketplace/crosschain/bridge`
+- `POST /api/marketplace/crosschain/sync`
+- `GET /api/marketplace/crosschain`
+
+Bridge execution requires `controlledRollout: true` and a prepared crosschain message. The runtime persists bridge and inventory state only.
+
+Current boundaries:
+- no production LayerZero message
+- no external bridge execution
+- no wallet transaction
+- no blockchain write
+
 ---
 
 # Governance Integration

@@ -1003,6 +1003,56 @@ CONFIRMED
 
 ---
 
+# Sprint 34 Treasury Execution Runtime
+
+Decision:
+Marketplace may execute governance-aware internal treasury routing records for allocated royalty distributions when `controlledRollout: true` is provided, while external treasury movement, wallet transactions and chain writes remain disabled.
+
+Approved:
+- DAO treasury routing records
+- ecosystem fee routing records
+- platform fee routing records
+- creator royalty routing records
+- governance-aware execution gates
+- treasury execution reconciliation
+- treasury execution snapshot metrics
+- treasury runtime audit/event records
+
+Deferred:
+- external treasury movement
+- wallet transaction execution
+- blockchain writes
+
+Status:
+CONFIRMED
+
+---
+
+# Sprint 35 Crosschain & LayerZero Runtime
+
+Decision:
+Marketplace may prepare LayerZero messages, execute controlled internal bridge runtime records and synchronize crosschain inventory state, while production LayerZero messaging, external bridge execution, wallet transactions and chain writes remain disabled.
+
+Approved:
+- LayerZero message preparation records
+- bridge messaging records
+- controlled bridge execution records
+- crosschain ownership synchronization records
+- crosschain inventory synchronization records
+- crosschain runtime snapshot metrics
+- crosschain runtime audit/event records
+
+Deferred:
+- production LayerZero messaging
+- external bridge execution
+- wallet transaction execution
+- blockchain writes
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation

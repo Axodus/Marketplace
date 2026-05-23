@@ -9,9 +9,16 @@ import type {
   AuctionRuntime,
   AuctionRuntimeSnapshot,
   AuctionSettlementRequest,
+  BridgeExecutionRequest,
+  BridgeRuntime,
   ChainIngestionEventEntity,
   ChainIngestionEventRequest,
   ChainSnapshotEntity,
+  CrosschainInventoryRecord,
+  CrosschainInventorySyncRequest,
+  CrosschainMessageRequest,
+  CrosschainMessageRuntime,
+  CrosschainRuntimeSnapshot,
   DeliveryObservabilitySnapshot,
   DeliveryTelemetryRecord,
   DeliveryTelemetryRequest,
@@ -107,6 +114,12 @@ import { buildSettlementRuntime, buildSettlementRuntimeSnapshot } from "../servi
 import { buildRoyaltyDistributionRuntime, buildRoyaltyDistributionSnapshot } from "../services/royaltyDistributionRuntime.js";
 import { buildAuctionRuntimeSnapshot, expireAuctionRuntime, placeAuctionBidRuntime, settleAuctionRuntime } from "../services/auctionRuntime.js";
 import { buildTreasuryExecutionSnapshot, executeTreasuryRuntime } from "../services/treasuryExecutionRuntime.js";
+import {
+  buildCrosschainRuntimeSnapshot,
+  executeBridgeRuntime,
+  prepareCrosschainMessage,
+  synchronizeCrosschainInventory
+} from "../services/crosschainRuntime.js";
 
 export function getDefaultMarketplaceStorePath() {
   return process.env.MARKETPLACE_STORE_PATH ?? path.resolve(process.cwd(), ".runtime/marketplace-store.json");
@@ -144,6 +157,10 @@ export interface MarketplaceRepository {
   getAuctionRuntimeSnapshot(): Promise<AuctionRuntimeSnapshot>;
   executeTreasury(input: TreasuryExecutionRequest): Promise<TreasuryExecutionRuntime>;
   getTreasuryExecutionSnapshot(): Promise<TreasuryExecutionSnapshot>;
+  prepareCrosschainMessage(input: CrosschainMessageRequest): Promise<CrosschainMessageRuntime>;
+  executeBridge(input: BridgeExecutionRequest): Promise<BridgeRuntime>;
+  synchronizeCrosschainInventory(input: CrosschainInventorySyncRequest): Promise<CrosschainInventoryRecord[]>;
+  getCrosschainRuntimeSnapshot(): Promise<CrosschainRuntimeSnapshot>;
   listSubscriptions(): Promise<SubscriptionEntity[]>;
   updateSubscriptionLifecycle(input: SubscriptionLifecycleRequest): Promise<SubscriptionEntity>;
   listBillingPreviews(): Promise<BillingPreviewEntity[]>;
@@ -490,6 +507,101 @@ export class FileMarketplaceRepository implements MarketplaceRepository {
     const store = await this.readStore();
     const snapshot = buildAuctionRuntimeSnapshot(store);
     store.auctionSnapshots = [snapshot, ...(store.auctionSnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async executeTreasury(input: TreasuryExecutionRequest) {
+    const store = await this.readStore();
+    const execution = executeTreasuryRuntime(store, input);
+    store.treasuryExecutions = [execution, ...(store.treasuryExecutions ?? [])].slice(0, 100);
+    recordTrace(
+      store,
+      createEvent(execution.status === "executed" ? "treasury.execution_completed" : "treasury.execution_blocked", execution.id, "treasuryExecution", execution),
+      {
+        actor: "marketplace-treasury-runtime",
+        tenant: execution.tenantId,
+        action: execution.status === "executed" ? "treasury.execution_completed" : "treasury.execution_blocked",
+        governanceStanding: execution.governance.standing,
+        restrictions: [...execution.governance.reasonCodes, ...execution.reconciliation.reasonCodes]
+      }
+    );
+    await this.writeStore(store);
+    return execution;
+  }
+
+  async getTreasuryExecutionSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildTreasuryExecutionSnapshot(store.treasuryExecutions ?? []);
+    store.treasuryExecutionSnapshots = [snapshot, ...(store.treasuryExecutionSnapshots ?? [])].slice(0, 20);
+    await this.writeStore(store);
+    return snapshot;
+  }
+
+  async prepareCrosschainMessage(input: CrosschainMessageRequest) {
+    const store = await this.readStore();
+    const message = prepareCrosschainMessage(store, input);
+    store.crosschainMessages = [message, ...(store.crosschainMessages ?? [])].slice(0, 100);
+    recordTrace(
+      store,
+      createEvent(
+        message.status === "prepared" ? "crosschain.message_prepared" : "crosschain.message_blocked",
+        message.id,
+        "crosschainMessage",
+        message
+      ),
+      {
+        actor: "marketplace-crosschain-runtime",
+        tenant: message.tenantId,
+        action: message.status === "prepared" ? "crosschain.message_prepared" : "crosschain.message_blocked",
+        governanceStanding: message.status,
+        restrictions: message.reasonCodes
+      }
+    );
+    await this.writeStore(store);
+    return message;
+  }
+
+  async executeBridge(input: BridgeExecutionRequest) {
+    const store = await this.readStore();
+    const bridge = executeBridgeRuntime(store, input);
+    store.bridgeRuntimes = [bridge, ...(store.bridgeRuntimes ?? [])].slice(0, 100);
+    synchronizeCrosschainInventory(store, { productId: bridge.productId });
+    recordTrace(
+      store,
+      createEvent(bridge.status === "bridged" ? "crosschain.bridge_executed" : "crosschain.bridge_blocked", bridge.id, "bridgeRuntime", bridge),
+      {
+        actor: bridge.holder,
+        tenant: bridge.tenantId,
+        action: bridge.status === "bridged" ? "crosschain.bridge_executed" : "crosschain.bridge_blocked",
+        governanceStanding: bridge.status,
+        restrictions: bridge.reasonCodes
+      }
+    );
+    await this.writeStore(store);
+    return bridge;
+  }
+
+  async synchronizeCrosschainInventory(input: CrosschainInventorySyncRequest) {
+    const store = await this.readStore();
+    const records = synchronizeCrosschainInventory(store, input);
+    for (const record of records) {
+      recordTrace(store, createEvent("crosschain.inventory_synchronized", record.id, "crosschainInventory", record), {
+        actor: "marketplace-crosschain-runtime",
+        tenant: record.tenantId,
+        action: "crosschain.inventory_synchronized",
+        governanceStanding: record.status,
+        restrictions: record.reasonCodes
+      });
+    }
+    await this.writeStore(store);
+    return records;
+  }
+
+  async getCrosschainRuntimeSnapshot() {
+    const store = await this.readStore();
+    const snapshot = buildCrosschainRuntimeSnapshot(store);
+    store.crosschainSnapshots = [snapshot, ...(store.crosschainSnapshots ?? [])].slice(0, 20);
     await this.writeStore(store);
     return snapshot;
   }

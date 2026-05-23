@@ -58,6 +58,8 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `GET /api/marketplace/settlements`
 - `GET /api/marketplace/royalties/distributions`
 - `GET /api/marketplace/auctions`
+- `GET /api/marketplace/treasury/executions`
+- `GET /api/marketplace/crosschain`
 - `GET /api/marketplace/subscriptions`
 - `GET /api/marketplace/billing-previews`
 - `GET /api/marketplace/invoices`
@@ -98,6 +100,10 @@ MARKETPLACE_STORE_PATH=.runtime/marketplace-store.json
 - `POST /api/marketplace/auctions/bids`
 - `POST /api/marketplace/auctions/settle`
 - `POST /api/marketplace/auctions/expire`
+- `POST /api/marketplace/treasury/execute`
+- `POST /api/marketplace/crosschain/messages`
+- `POST /api/marketplace/crosschain/bridge`
+- `POST /api/marketplace/crosschain/sync`
 - `POST /api/marketplace/entitlements/enforce`
 - `POST /api/marketplace/billing-previews`
 - `POST /api/marketplace/invoices/preview`
@@ -369,6 +375,27 @@ Sprint 33 auction runtime exposes operational auction execution:
 
 Auction settlement and expiration require `controlledRollout: true`. The runtime can issue Marketplace purchase/license records for a winning bid, but it does not execute contract auction settlement, wallet transactions, chain writes or external treasury movement.
 
+Sprint 34 treasury execution runtime exposes governance-aware operational routing:
+
+- DAO treasury routing
+- ecosystem fee routing
+- platform fee routing
+- creator royalty routing
+- treasury execution reconciliation
+- governance-aware execution gates
+
+Treasury execution requires `controlledRollout: true` and an allocated royalty distribution. The runtime executes Marketplace-internal routing records and reconciliation only. It does not execute external treasury movement, wallet transactions or blockchain writes.
+
+Sprint 35 crosschain runtime exposes operational bridge infrastructure:
+
+- LayerZero message preparation
+- bridge runtime execution
+- crosschain ownership synchronization
+- crosschain inventory synchronization
+- crosschain runtime snapshot metrics
+
+Bridge execution requires `controlledRollout: true` and a prepared crosschain message. The runtime persists bridge and inventory state only. It does not send production LayerZero messages, perform external bridge execution, execute wallet transactions or write to a chain.
+
 Every response is wrapped in an envelope that declares:
 
 - `mode: mock-persistent`
@@ -385,7 +412,7 @@ Every response is wrapped in an envelope that declares:
 - auction settlement
 - treasury settlement
 - production Greenfield signed URL issuance
-- LayerZero messaging
+- production LayerZero messaging
 
 ## Validation
 

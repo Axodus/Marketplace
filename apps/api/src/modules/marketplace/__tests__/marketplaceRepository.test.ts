@@ -720,6 +720,125 @@ describe("FileMarketplaceRepository", () => {
     );
   });
 
+  it("executes governance-aware treasury routing and reconciliation from royalty distributions", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    const settlement = await repository.executeSettlement({
+      productId: "product-governance-dashboard-nft",
+      buyer: "0xTreasuryExecution",
+      controlledRollout: true
+    });
+    const distribution = await repository.allocateRoyaltyDistribution({ settlementId: settlement.id, controlledRollout: true });
+    const blocked = await repository.executeTreasury({ royaltyDistributionId: distribution.id });
+    const executed = await repository.executeTreasury({ royaltyDistributionId: distribution.id, controlledRollout: true });
+    const snapshot = await repository.getTreasuryExecutionSnapshot();
+    const events = await repository.listEvents();
+
+    expect(blocked.status).toBe("blocked");
+    expect(blocked.governance.reasonCodes).toContain("controlled-rollout-required");
+    expect(executed.status).toBe("executed");
+    expect(executed.governance).toMatchObject({
+      standing: "compliant",
+      authority: "tenant-axodus-dao",
+      executionAllowed: true
+    });
+    expect(executed.routes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ type: "creator_royalty", recipient: "Axodus Treasury", amount: 6, status: "executed" }),
+        expect.objectContaining({ type: "dao_treasury", recipient: "tenant-axodus-dao", amount: 1.2, status: "executed" }),
+        expect.objectContaining({ type: "platform_fee", recipient: "Axodus Protocol Treasury", amount: 1.8, status: "executed" }),
+        expect.objectContaining({ type: "ecosystem_fee", recipient: "Axodus Ecosystem Treasury", amount: 1.2, status: "executed" })
+      ])
+    );
+    expect(executed.reconciliation).toMatchObject({
+      status: "reconciled",
+      expectedRoyaltyAmount: 6,
+      routedRoyaltyAmount: 6,
+      expectedTreasuryAmount: 4.2,
+      routedTreasuryAmount: 4.2,
+      mismatchAmount: 0
+    });
+    expect(executed.treasuryExecutionEnabled).toBe(true);
+    expect(executed.externalTreasuryMovementEnabled).toBe(false);
+    expect(executed.walletExecutionEnabled).toBe(false);
+    expect(executed.blockchainWritesEnabled).toBe(false);
+    expect(snapshot.metrics).toMatchObject({
+      executed: 1,
+      blocked: 1,
+      routesExecuted: 4,
+      royaltyRoutedTotal: 6,
+      treasuryRoutedTotal: 4.2
+    });
+    expect(events.map((event) => event.type)).toEqual(
+      expect.arrayContaining(["treasury.execution_completed", "treasury.execution_blocked"])
+    );
+  });
+
+  it("prepares LayerZero messages, executes controlled bridges and synchronizes crosschain inventory", async () => {
+    const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
+    await repository.init();
+
+    const blockedMessage = await repository.prepareCrosschainMessage({
+      productId: "product-governance-dashboard-nft",
+      sourceChain: "Polygon",
+      targetChain: "Polygon"
+    });
+    const message = await repository.prepareCrosschainMessage({
+      productId: "product-governance-dashboard-nft",
+      sourceChain: "Polygon",
+      targetChain: "Ethereum",
+      payload: { action: "sync-ownership" }
+    });
+    const blockedBridge = await repository.executeBridge({ messageId: message.id, holder: "0xCrosschainHolder" });
+    const bridge = await repository.executeBridge({ messageId: message.id, holder: "0xCrosschainHolder", controlledRollout: true });
+    const inventory = await repository.synchronizeCrosschainInventory({ productId: "product-governance-dashboard-nft" });
+    const snapshot = await repository.getCrosschainRuntimeSnapshot();
+    const events = await repository.listEvents();
+
+    expect(blockedMessage.status).toBe("blocked");
+    expect(blockedMessage.reasonCodes).toContain("same-chain-message-not-required");
+    expect(message.status).toBe("prepared");
+    expect(message.protocol).toBe("LayerZero");
+    expect(message.bridgeReady).toBe(true);
+    expect(message.externalMessagingEnabled).toBe(false);
+    expect(blockedBridge.status).toBe("blocked");
+    expect(blockedBridge.reasonCodes).toContain("controlled-rollout-required");
+    expect(bridge.status).toBe("bridged");
+    expect(bridge.ownership).toMatchObject({
+      sourceOwner: "0xCrosschainHolder",
+      targetOwner: "0xCrosschainHolder",
+      verificationStatus: "synchronized"
+    });
+    expect(bridge.layerZeroMessageId).toContain("lz-");
+    expect(bridge.externalBridgeEnabled).toBe(false);
+    expect(bridge.blockchainWritesEnabled).toBe(false);
+    expect(inventory[0]).toMatchObject({
+      productId: "product-governance-dashboard-nft",
+      status: "synchronized",
+      ownershipHolders: ["0xCrosschainHolder"]
+    });
+    expect(inventory[0].synchronizedChains).toEqual(expect.arrayContaining(["Polygon", "Ethereum"]));
+    expect(snapshot.metrics).toMatchObject({
+      messagesPrepared: 1,
+      messagesBlocked: 1,
+      bridgesExecuted: 1,
+      bridgesBlocked: 1,
+      synchronizedInventory: 1
+    });
+    expect(snapshot.layerZeroRuntimeEnabled).toBe(true);
+    expect(snapshot.externalBridgeEnabled).toBe(false);
+    expect(events.map((event) => event.type)).toEqual(
+      expect.arrayContaining([
+        "crosschain.message_prepared",
+        "crosschain.message_blocked",
+        "crosschain.bridge_executed",
+        "crosschain.bridge_blocked",
+        "crosschain.inventory_synchronized"
+      ])
+    );
+  });
+
   it("reconciles ownership snapshots with mismatch and stale visibility", async () => {
     const repository = new FileMarketplaceRepository(path.join(tempDir, "store.json"));
     await repository.init();

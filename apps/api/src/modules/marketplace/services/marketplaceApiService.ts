@@ -3,8 +3,11 @@ import {
   validateAuctionBidRequest,
   validateAuctionExpirationRequest,
   validateAuctionSettlementRequest,
+  validateBridgeExecutionRequest,
   validateBillingPreviewRequest,
   validateChainIngestionEventRequest,
+  validateCrosschainInventorySyncRequest,
+  validateCrosschainMessageRequest,
   validateDeliveryTelemetryRequest,
   validateDraftListingRequest,
   validateEntitlementEnforcementRequest,
@@ -20,7 +23,8 @@ import {
   validateSignedUrlIssueRequest,
   validateSignedUrlRevokeRequest,
   validateSubscriptionLifecycleRequest,
-  validateSubscriptionPreviewRequest
+  validateSubscriptionPreviewRequest,
+  validateTreasuryExecutionRequest
 } from "../validation/marketplaceValidation.js";
 
 export class MarketplaceApiService {
@@ -136,6 +140,30 @@ export class MarketplaceApiService {
 
   getAuctionRuntimeSnapshot() {
     return this.repository.getAuctionRuntimeSnapshot();
+  }
+
+  executeTreasury(input: Record<string, unknown>) {
+    return this.repository.executeTreasury(validateTreasuryExecutionRequest(input));
+  }
+
+  getTreasuryExecutionSnapshot() {
+    return this.repository.getTreasuryExecutionSnapshot();
+  }
+
+  prepareCrosschainMessage(input: Record<string, unknown>) {
+    return this.repository.prepareCrosschainMessage(validateCrosschainMessageRequest(input));
+  }
+
+  executeBridge(input: Record<string, unknown>) {
+    return this.repository.executeBridge(validateBridgeExecutionRequest(input));
+  }
+
+  synchronizeCrosschainInventory(input: Record<string, unknown>) {
+    return this.repository.synchronizeCrosschainInventory(validateCrosschainInventorySyncRequest(input));
+  }
+
+  getCrosschainRuntimeSnapshot() {
+    return this.repository.getCrosschainRuntimeSnapshot();
   }
 
   listSubscriptions() {

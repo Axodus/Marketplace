@@ -768,4 +768,115 @@ describe("MarketplaceController", () => {
     expect(snapshotPayload.data.metrics.acceptedBids).toBe(2);
     expect(snapshotPayload.data.contractSettlementEnabled).toBe(false);
   });
+
+  it("serves treasury-aware operational execution and routing reconciliation", async () => {
+    const settlementResponse = await fetch(`${baseUrl}/api/marketplace/settlements/execute`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: "product-governance-dashboard-nft", buyer: "0xRouteTreasury", controlledRollout: true })
+    });
+    const settlementPayload = await settlementResponse.json();
+    const distributionResponse = await fetch(`${baseUrl}/api/marketplace/royalties/distributions`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ settlementId: settlementPayload.data.id, controlledRollout: true })
+    });
+    const distributionPayload = await distributionResponse.json();
+    const blockedResponse = await fetch(`${baseUrl}/api/marketplace/treasury/execute`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ royaltyDistributionId: distributionPayload.data.id })
+    });
+    const blockedPayload = await blockedResponse.json();
+    const executedResponse = await fetch(`${baseUrl}/api/marketplace/treasury/execute`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ royaltyDistributionId: distributionPayload.data.id, controlledRollout: true })
+    });
+    const executedPayload = await executedResponse.json();
+    const snapshotResponse = await fetch(`${baseUrl}/api/marketplace/treasury/executions`);
+    const snapshotPayload = await snapshotResponse.json();
+
+    expect(blockedResponse.status).toBe(201);
+    expect(blockedPayload.data.status).toBe("blocked");
+    expect(blockedPayload.data.governance.reasonCodes).toContain("controlled-rollout-required");
+    expect(executedResponse.status).toBe(201);
+    expect(executedPayload.data.status).toBe("executed");
+    expect(executedPayload.data.governance.executionAllowed).toBe(true);
+    expect(executedPayload.data.routes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ type: "dao_treasury", amount: 1.2 }),
+        expect.objectContaining({ type: "ecosystem_fee", amount: 1.2 })
+      ])
+    );
+    expect(executedPayload.data.reconciliation.status).toBe("reconciled");
+    expect(executedPayload.data.reconciliation.routedTreasuryAmount).toBe(4.2);
+    expect(executedPayload.data.treasuryExecutionEnabled).toBe(true);
+    expect(executedPayload.data.externalTreasuryMovementEnabled).toBe(false);
+    expect(snapshotResponse.status).toBe(200);
+    expect(snapshotPayload.data.metrics.executed).toBe(1);
+    expect(snapshotPayload.data.metrics.blocked).toBe(1);
+    expect(snapshotPayload.data.metrics.treasuryRoutedTotal).toBe(4.2);
+  });
+
+  it("serves crosschain LayerZero messaging, bridge runtime and inventory synchronization", async () => {
+    const blockedMessageResponse = await fetch(`${baseUrl}/api/marketplace/crosschain/messages`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: "product-governance-dashboard-nft", sourceChain: "Polygon", targetChain: "Polygon" })
+    });
+    const blockedMessagePayload = await blockedMessageResponse.json();
+    const messageResponse = await fetch(`${baseUrl}/api/marketplace/crosschain/messages`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        productId: "product-governance-dashboard-nft",
+        sourceChain: "Polygon",
+        targetChain: "Ethereum",
+        payload: { action: "route-sync" }
+      })
+    });
+    const messagePayload = await messageResponse.json();
+    const blockedBridgeResponse = await fetch(`${baseUrl}/api/marketplace/crosschain/bridge`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ messageId: messagePayload.data.id, holder: "0xRouteCrosschain" })
+    });
+    const blockedBridgePayload = await blockedBridgeResponse.json();
+    const bridgeResponse = await fetch(`${baseUrl}/api/marketplace/crosschain/bridge`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ messageId: messagePayload.data.id, holder: "0xRouteCrosschain", controlledRollout: true })
+    });
+    const bridgePayload = await bridgeResponse.json();
+    const syncResponse = await fetch(`${baseUrl}/api/marketplace/crosschain/sync`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productId: "product-governance-dashboard-nft" })
+    });
+    const syncPayload = await syncResponse.json();
+    const snapshotResponse = await fetch(`${baseUrl}/api/marketplace/crosschain`);
+    const snapshotPayload = await snapshotResponse.json();
+
+    expect(blockedMessageResponse.status).toBe(201);
+    expect(blockedMessagePayload.data.status).toBe("blocked");
+    expect(blockedMessagePayload.data.reasonCodes).toContain("same-chain-message-not-required");
+    expect(messageResponse.status).toBe(201);
+    expect(messagePayload.data.status).toBe("prepared");
+    expect(messagePayload.data.protocol).toBe("LayerZero");
+    expect(messagePayload.data.externalMessagingEnabled).toBe(false);
+    expect(blockedBridgeResponse.status).toBe(201);
+    expect(blockedBridgePayload.data.status).toBe("blocked");
+    expect(blockedBridgePayload.data.reasonCodes).toContain("controlled-rollout-required");
+    expect(bridgeResponse.status).toBe(201);
+    expect(bridgePayload.data.status).toBe("bridged");
+    expect(bridgePayload.data.ownership.verificationStatus).toBe("synchronized");
+    expect(bridgePayload.data.externalBridgeEnabled).toBe(false);
+    expect(syncResponse.status).toBe(201);
+    expect(syncPayload.data[0].status).toBe("synchronized");
+    expect(snapshotResponse.status).toBe(200);
+    expect(snapshotPayload.data.metrics.bridgesExecuted).toBe(1);
+    expect(snapshotPayload.data.metrics.messagesPrepared).toBe(1);
+    expect(snapshotPayload.data.externalBridgeEnabled).toBe(false);
+  });
 });

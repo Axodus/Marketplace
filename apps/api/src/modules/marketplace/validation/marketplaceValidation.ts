@@ -3,8 +3,11 @@ import type {
   AuctionBidRequest,
   AuctionExpirationRequest,
   AuctionSettlementRequest,
+  BridgeExecutionRequest,
   ChainIngestionEventKind,
   ChainIngestionEventRequest,
+  CrosschainInventorySyncRequest,
+  CrosschainMessageRequest,
   DeliveryTelemetryRequest,
   DraftListingRequest,
   GovernanceApprovalLifecycleState,
@@ -24,7 +27,8 @@ import type {
   SignedUrlRevokeRequest,
   SubscriptionLifecycleRequest,
   SubscriptionLifecycleState,
-  SubscriptionPreviewRequest
+  SubscriptionPreviewRequest,
+  TreasuryExecutionRequest
 } from "../dto/contracts.js";
 
 export class ValidationError extends Error {
@@ -135,6 +139,39 @@ export function validateAuctionExpirationRequest(input: Record<string, unknown>)
   return {
     auctionId: assertString(input.auctionId, "auctionId"),
     controlledRollout: input.controlledRollout === true
+  };
+}
+
+export function validateTreasuryExecutionRequest(input: Record<string, unknown>): TreasuryExecutionRequest {
+  return {
+    royaltyDistributionId: assertString(input.royaltyDistributionId, "royaltyDistributionId"),
+    controlledRollout: input.controlledRollout === true
+  };
+}
+
+export function validateCrosschainMessageRequest(input: Record<string, unknown>): CrosschainMessageRequest {
+  const payload = input.payload && typeof input.payload === "object" && !Array.isArray(input.payload) ? (input.payload as Record<string, unknown>) : undefined;
+  return {
+    productId: assertString(input.productId, "productId"),
+    sourceChain: assertString(input.sourceChain, "sourceChain"),
+    targetChain: assertString(input.targetChain, "targetChain"),
+    payload
+  };
+}
+
+export function validateBridgeExecutionRequest(input: Record<string, unknown>): BridgeExecutionRequest {
+  return {
+    messageId: assertString(input.messageId, "messageId"),
+    holder: typeof input.holder === "string" && input.holder.trim() ? input.holder.trim() : undefined,
+    controlledRollout: input.controlledRollout === true
+  };
+}
+
+export function validateCrosschainInventorySyncRequest(input: Record<string, unknown>): CrosschainInventorySyncRequest {
+  return {
+    productId: typeof input.productId === "string" && input.productId.trim() ? input.productId.trim() : undefined,
+    sourceChain: typeof input.sourceChain === "string" && input.sourceChain.trim() ? input.sourceChain.trim() : undefined,
+    targetChain: typeof input.targetChain === "string" && input.targetChain.trim() ? input.targetChain.trim() : undefined
   };
 }
 
