@@ -85,3 +85,31 @@ Production execution: DISABLED
 ## Next Recommended Request
 
 MARKETPLACE-REQ-01 - Current Validation Evidence and Payment/Settlement Boundary Review
+
+## PORTFOLIO-REQ-02 Validation Refresh
+
+Status: COMPLETE
+
+Validation result: PASS
+
+Commands:
+
+```bash
+pnpm -r test
+pnpm -r lint
+pnpm -r build
+```
+
+Evidence:
+
+- tests: PASS, 102 tests
+- lint: PASS
+- build: PASS
+
+Maturity decision: PROMOTE_TO_L4_CANDIDATE
+
+Rationale:
+
+- Marketplace API/web validation passed across tests, lint and build.
+- Payment, settlement, wallet, minting, bridge and treasury paths remain blocked unless separately approved.
+- Promotion is to L4 candidate only, not production or value-transfer approval.

@@ -36,4 +36,19 @@ Result:
 
 Remaining validation:
 
-- Build/lint and payment/settlement boundary review should be run before maturity promotion beyond L3 candidate.
+- PORTFOLIO-REQ-02 completed lint and build.
+- Payment/settlement boundary review remains required before any production or value-transfer approval.
+
+PORTFOLIO-REQ-02 commands:
+
+```bash
+pnpm -r test
+pnpm -r lint
+pnpm -r build
+```
+
+PORTFOLIO-REQ-02 results:
+
+- Tests: PASS, 11 files / 102 tests
+- Lint: PASS
+- Build: PASS

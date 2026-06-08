@@ -30,10 +30,18 @@ Resolution path: Require contract, treasury, settlement and audit gates.
 
 Severity: MEDIUM
 
-Status: OPEN
+Status: RESOLVED
 
 Description: Historical evidence exists, but current validation was not fully refreshed before classification.
 
 Impact: Maturity remains L3 candidate.
 
-Resolution path: Run Marketplace validation in a dedicated request.
+Resolution path: PORTFOLIO-REQ-02 ran tests, lint and build successfully.
+
+## PORTFOLIO-REQ-02 Blocker Review
+
+| Blocker | Status |
+|---|---|
+| Payment execution not approved | ACTIVE |
+| Value transfer and settlement blocked | ACTIVE |
+| Current validation refresh required | RESOLVED |
