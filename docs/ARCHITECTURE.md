@@ -49,6 +49,21 @@ Phase 00 introduces five architecture domains:
 
 These domains prepare future implementation. They do not activate runtime behavior in Phase 00.
 
+## Marketplace Federation Domain
+
+The Marketplace Federation Domain allows Marketplace to represent internal and external assets through explicit origin, provider, validation status, provenance, risk and trust boundaries.
+
+Federation is a visibility, interoperability, discovery, import and progressive validation capability. It does not imply automatic custody, automatic liquidation, automatic execution, automatic validation, automatic trust, settlement, wallet signatures, bridge execution, treasury routing or on-chain execution.
+
+Core federation concepts:
+- External Collections: collections originated outside native Axodus infrastructure that may be visible, searchable, referencable, classified or displayed in Marketplace.
+- External Assets: NFTs, certificates, licenses or digital assets originated from external contracts, wallets, collections or providers.
+- External Contracts: ERC721, ERC1155 or other compatible contracts that may be indexed, imported, referenced, analyzed or displayed in a future approved implementation phase.
+- External Metadata: metadata obtained outside Axodus infrastructure, including images, attributes, descriptions, statistics, declared royalties, provenance, origin, validation state and risk information.
+- Federation Providers: external providers, connectors, data sources or integration systems responsible for future discovery, import, enrichment, classification or validation.
+
+Internal assets are originated, issued, controlled, licensed or operated inside Axodus infrastructure. External assets originate outside Axodus infrastructure but may be visible or referencable through federation. Federated Assets must not be displayed as native Axodus assets.
+
 ## Non-Execution Boundary
 
 Phase 00 is documentation-only.

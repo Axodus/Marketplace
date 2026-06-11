@@ -135,6 +135,43 @@ Before any federation or tenant implementation:
 
 ---
 
+## 3.2 Federated Import Workflow
+
+Federated import is the controlled documentation and future implementation workflow for representing external assets in Marketplace.
+
+Required stages:
+- discover the external source
+- identify the provider
+- read or reference the external contract
+- collect external metadata
+- normalize external metadata
+- validate initial origin
+- analyze provenance
+- classify risk
+- define validation status
+- publish through controlled Marketplace visibility
+- monitor and periodically revalidate
+
+Required asset fields before Marketplace presentation:
+- origin
+- provider
+- validation status
+- provenance
+- risk classification
+- trust boundaries
+
+Rules:
+- external assets must expose origin, provider and validation status before being presented as Federated Assets
+- external assets must not be displayed as native Axodus assets
+- External Collections must not be displayed as native Axodus collections
+- External Metadata must not be treated as authoritative by default
+- Federation Providers must not be treated as trusted by default
+- External Asset Validation must be progressive, explicit and auditable
+- federated import does not automatically enable purchase, sale, liquidation, custody, royalty execution, bridge execution, wallet signature, settlement or treasury routing
+- federated import does not create real connectors, SDKs, endpoints, GraphQL schemas, indexers, HTTP calls or on-chain execution in Phase 00
+
+---
+
 ## 4. Implementation
 
 Implementation rules:
@@ -251,6 +288,33 @@ ACS systems must remain bounded and governance-aware.
 - define revenue share preview
 - defer payout execution
 - defer external integration until approved
+
+---
+
+# Federation Provider Workflow
+
+## Provider Definition
+- define provider identity
+- define source type
+- define supported asset types
+- define origin scope
+- define validation role
+- define reliability classification
+- define trust boundaries
+
+## External Contract Reference
+- identify contract source
+- identify chain origin or source system
+- classify compatibility
+- document risk and validation status
+- defer all writes, signatures, custody and settlement
+
+## External Metadata Handling
+- collect metadata source references
+- normalize images, attributes, descriptions, declared royalties, statistics and provenance
+- classify metadata quality
+- expose validation status
+- preserve source attribution and trust boundaries
 
 ---
 

@@ -15,6 +15,8 @@ Phase 00 expands the architecture toward:
 - Revenue Sharing Domain
 - Marketplace Intelligence Domain
 
+Marketplace Federation Domain prepares representation of External Collections, External Assets, External Contracts, External Metadata and Federation Providers with explicit origin, provider, validation status, provenance and trust boundaries. Federated Assets are not native Axodus assets by default.
+
 Phase 00 is documentation-only. It does not activate runtime code, APIs, contracts, indexers, React components, persistence, GraphQL, real billing, external integrations, wallet signatures, bridge execution, treasury routing or on-chain execution.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  

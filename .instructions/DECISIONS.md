@@ -65,7 +65,14 @@ CONFIRMED
 ## Marketplace Federation Domain
 
 Decision:
-Marketplace must support a future federation model for DAO storefronts, tenant catalogs, seller storefronts, partner catalogs and white-label marketplace surfaces.
+Marketplace must support federation of external assets as a future visibility, interoperability, discovery, import and progressive validation capability.
+
+Federation allows Marketplace to represent:
+- External Collections
+- External Assets
+- External Contracts
+- External Metadata
+- Federation Providers
 
 Federation must preserve:
 - tenant boundaries
@@ -74,8 +81,54 @@ Federation must preserve:
 - catalog ownership
 - operational telemetry
 - restriction visibility
+- origin visibility
+- provider visibility
+- validation status
+- provenance
+- risk classification
+- trust boundaries
 
-Federation does not imply public storefront activation, live tenant isolation enforcement, cross-tenant settlement or external marketplace integration in Phase 00.
+External assets must not be treated as trusted by default. Every external or federated asset must carry explicit origin, provider, validation status, provenance and trust boundaries before it is presented as a federated asset.
+
+Federation does not imply:
+- native Axodus issuance
+- automatic custody
+- automatic liquidation
+- automatic execution
+- automatic validation
+- automatic trust
+- on-chain execution
+- wallet signatures
+- settlement
+- bridge execution
+- treasury routing
+- governance bypass
+- public storefront activation
+- live tenant isolation enforcement
+- cross-tenant settlement
+- external marketplace integration in Phase 00
+
+Status:
+CONFIRMED
+
+---
+
+## MEP-REQ-001 External Asset Federation
+
+Decision:
+Marketplace supports architectural federation of external assets, collections, contracts and metadata.
+
+External Collections are collections originated outside native Axodus infrastructure that may be visible, searchable, referencable, classified or displayed in Marketplace.
+
+External Assets are NFTs, certificates, licenses or digital assets originated from external contracts, wallets, collections or providers.
+
+External Contracts are ERC721, ERC1155 or other compatible contracts that may be indexed, imported, referenced, analyzed or displayed by Marketplace in a future approved implementation phase.
+
+External Metadata is metadata obtained outside Axodus infrastructure, including images, attributes, descriptions, statistics, declared royalties, provenance, origin, validation state and risk information.
+
+Federation Providers are external providers, connectors, data sources or integration systems responsible for future discovery, import, enrichment, classification or validation of external assets and collections.
+
+Phase 00 records the architecture only. It does not create real connectors, provider integrations, SDKs, endpoints, schemas, HTTP calls, indexers, contracts, custody, settlement or on-chain execution.
 
 Status:
 CONFIRMED

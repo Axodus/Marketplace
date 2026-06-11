@@ -59,6 +59,9 @@ Objectives:
 - introduce Marketplace Federation Domain implementation boundaries
 - model DAO storefronts, tenant catalogs, seller catalogs, partner catalogs and white-label marketplaces
 - preserve governance and constitutional visibility across federated surfaces
+- display and organize internal and external assets without implying automatic trust, custody, liquidation, settlement or execution
+- define External Collections, External Assets, External Contracts, External Metadata and Federation Providers as implementation-ready concepts
+- carry origin, provider, validation status, provenance, risk and trust boundaries into every federated asset surface
 
 Deliverables:
 - federation read models
@@ -66,6 +69,26 @@ Deliverables:
 - catalog visibility rules
 - governance inheritance visibility
 - federation telemetry readiness
+- external collection import readiness
+- external asset validation readiness
+- external contract reference readiness
+- external metadata normalization readiness
+- federation provider registry readiness
+
+Linked requirements:
+- MEP-REQ-020 — Contract Import
+- MEP-REQ-021 — Collection Import
+- MEP-REQ-022 — Wallet Discovery
+- MEP-REQ-023 — Federation Providers
+
+Dependencies:
+- PHASE 00 — Marketplace Architecture Revision
+- Phase 01 — NFT Marketplace Consolidation
+
+Implementation boundary:
+- Phase 02 implementation is future work
+- MEP-REQ-001 is documentation-only
+- no real provider integration, connector, SDK, endpoint, indexer, GraphQL schema, HTTP call, contract change, custody, settlement, bridge execution, treasury routing or on-chain execution is introduced by Phase 00
 
 ---
 
