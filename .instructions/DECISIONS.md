@@ -487,6 +487,16 @@ CONFIRMED
 
 ---
 
+## Historical Runtime Decisions Boundary
+
+Decision:
+The sprint runtime decisions below are preserved as historical Marketplace architecture records. They do not alter the Phase 00 closure status and do not approve new runtime, API, schema, contract, indexer, connector, dashboard, billing, settlement, tracking, tenant routing, wallet signature, bridge or on-chain execution.
+
+Status:
+CONFIRMED
+
+---
+
 ## Marketplace MVP Execution Model
 
 Decision:

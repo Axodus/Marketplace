@@ -49,6 +49,8 @@ Phase 00 introduces five architecture domains:
 
 These domains prepare future implementation. They do not activate runtime behavior in Phase 00.
 
+Phase 00 is closed as a documentation and architecture revision. Phase 01 — NFT Marketplace Consolidation is the next implementation phase and remains limited to the foundational NFT marketplace vertical.
+
 ## Marketplace Federation Domain
 
 The Marketplace Federation Domain allows Marketplace to represent internal and external assets through explicit origin, provider, validation status, provenance, risk and trust boundaries.
@@ -156,6 +158,7 @@ Marketplace must remain:
 - treasury-compatible
 - operationally transparent
 - modular
+- security-first
 - tenant-aware
 - federation-ready
 - revenue-share explicit

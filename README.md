@@ -2,6 +2,8 @@
 
 Axodus Marketplace is the federated digital distribution infrastructure for the Axodus ecosystem.
 
+Phase 00 — Marketplace Architecture Revision is complete as a documentation and architecture phase. Phase 01 — NFT Marketplace Consolidation is the next implementation phase.
+
 The NFT marketplace remains the first commercial vertical and preserves:
 - ERC721 and ERC1155 assets
 - EIP-2981 royalty compatibility
@@ -26,6 +28,8 @@ Revenue Sharing Domain prepares Attribution Model, Commission Model, Revenue Spl
 Marketplace Intelligence Domain prepares Commercial Analytics, Tenant Analytics, Product Analytics and Collection Analytics as interpretable, traceable and auditable intelligence concepts for future dashboards, telemetry pipelines and BI integration.
 
 Phase 00 is documentation-only. It does not activate runtime code, APIs, contracts, indexers, React components, persistence, GraphQL, real billing, external integrations, wallet signatures, bridge execution, treasury routing or on-chain execution.
+
+Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  
 > Do not commit secrets. Use `.env-*` only locally; CI reads from encrypted secrets.

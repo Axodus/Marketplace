@@ -2,7 +2,7 @@
 
 # Phase 00 — Marketplace Architecture Revision
 
-Status: IN PROGRESS
+Status: COMPLETED — DOCUMENTATION VALIDATED
 
 Objectives:
 - revise Marketplace from NFT-only framing into federated Axodus digital distribution infrastructure
@@ -20,6 +20,12 @@ Deliverables:
 - revised workflow and planning boundaries
 - decision record for federated Marketplace scope
 - non-execution boundaries for runtime, payment, wallet, treasury, billing and external integrations
+
+Closure:
+- MEP-REQ-001 through MEP-REQ-005 documented the five Phase 00 architecture domains
+- Phase 00 is closed as an architecture and documentation phase
+- no runtime, API, schema, contract, indexer, dashboard, billing, settlement, tracking, connector, tenant routing or on-chain execution was approved by Phase 00
+- Phase 01 — NFT Marketplace Consolidation is the next implementation phase
 
 Non-goals:
 - no runtime code
@@ -290,13 +296,74 @@ Implementation boundary:
 
 ---
 
-# Phase 08 — Sovereign Distribution Economy
+# Phase 08 — Academy Distribution
+
+Status: FUTURE
+
+Objectives:
+- distribute Academy courses, certifications, learning paths and educational products through Marketplace infrastructure
+- preserve licensing, entitlement, governance and tenant exposure boundaries for Academy products
+
+Deliverables:
+- Academy product distribution model
+- educational catalog exposure readiness
+- certification and course access readiness
+- Academy tenant and curated catalog compatibility
+
+Implementation boundary:
+- Phase 08 is future work
+- no Academy runtime, course billing, certification execution, entitlement mutation or external integration is introduced by Phase 00
+
+---
+
+# Phase 09 — ACS Distribution
+
+Status: FUTURE
+
+Objectives:
+- distribute ACS capabilities, MCP systems, agents, orchestration packages, workflow systems and cognitive infrastructure through Marketplace infrastructure
+- preserve governance, observability, licensing, entitlement and operational safety boundaries for ACS products
+
+Deliverables:
+- ACS product distribution model
+- ACS capability catalog readiness
+- ACS tenant and curated catalog compatibility
+- ACS operational observability readiness
+
+Implementation boundary:
+- Phase 09 is future work
+- no ACS provisioning, agent execution, MCP deployment, compute allocation or live integration is introduced by Phase 00
+
+---
+
+# Phase 10 — Enterprise Marketplace
+
+Status: FUTURE
+
+Objectives:
+- distribute enterprise offers, operational subscriptions, DAO service packages, dedicated ACS deployments and licensing models through Marketplace infrastructure
+- preserve governance, treasury compatibility, billing visibility, tenant configuration and enterprise policy boundaries
+
+Deliverables:
+- enterprise offer model
+- enterprise catalog readiness
+- enterprise tenant and white-label compatibility
+- enterprise licensing and subscription readiness
+
+Implementation boundary:
+- Phase 10 is future work
+- no enterprise billing, settlement, tenant provisioning, contract execution or external onboarding is introduced by Phase 00
+
+---
+
+# Phase 11 — Sovereign Commerce Network
 
 Status: FUTURE
 
 Objectives:
 - create sustainable ecosystem-wide commerce infrastructure
 - federate Axodus capabilities through governed, transparent and treasury-compatible commercial systems
+- connect Marketplace Federation, Marketplace-as-a-Service, Distribution Network, Revenue Sharing, Marketplace Intelligence, Academy Distribution, ACS Distribution and Enterprise Marketplace into a sovereign commerce network
 
 Deliverables:
 - decentralized operational commerce
@@ -304,8 +371,11 @@ Deliverables:
 - ecosystem-wide licensing
 - marketplace-as-a-service offerings
 - federated distribution systems
+- sovereign commerce governance and observability readiness
 
 Marketplace systems must remain:
 - governance-aware
 - treasury-compatible
 - operationally transparent
+- modular
+- security-first

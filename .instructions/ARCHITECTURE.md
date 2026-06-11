@@ -35,8 +35,11 @@ while remaining:
 - treasury-aware
 - operationally transparent
 - modular
+- security-first
 
 Phase 00 is documentation-only. It does not implement runtime code, API surfaces, contracts, indexers, React components, persistence, GraphQL, billing execution, external integrations or on-chain execution.
+
+Phase 00 is closed as an architecture revision after documenting Marketplace Federation Domain, Marketplace-as-a-Service Domain, Distribution Network Domain, Revenue Sharing Domain and Marketplace Intelligence Domain. Phase 01 — NFT Marketplace Consolidation is the next implementation phase and remains limited to the foundational NFT marketplace vertical.
 
 ---
 
@@ -808,6 +811,12 @@ Frontend responsibilities:
 - billing visibility
 
 Business logic should remain outside frontend state whenever possible.
+
+---
+
+# Historical Runtime Notes Boundary
+
+The sections below preserve previous sprint/runtime architecture notes for continuity. They do not change the Phase 00 closure status and do not approve new runtime, API, schema, contract, indexer, connector, dashboard, billing, settlement, tracking, tenant routing, wallet signature, bridge or on-chain execution.
 
 ## Phase 1 Web App Architecture
 
