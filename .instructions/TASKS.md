@@ -1,5 +1,28 @@
 # Marketplace Roadmap
 
+# Phase 01 — NFT Marketplace Consolidation Planning
+
+Status: PLANNING — RUNTIME AUDIT COMPLETE
+
+Planning artifact:
+- `docs/PHASE_01_RUNTIME_AUDIT.md`
+
+Recommended implementation sequence:
+- MEP-REQ-010 — Explorer Consolidation
+- MEP-REQ-011 — Collection System
+- MEP-REQ-012 — Seller Profiles
+- MEP-REQ-013 — Asset Registry
+- MEP-REQ-014 — Marketplace Analytics
+- MEP-PHASE-01-CLOSURE — QA, navigation and no-execution boundary validation
+
+Constraints:
+- keep Phase 01 mock-first
+- preserve ERC721, ERC1155, EIP-2981 royalties, listings, bids, auctions, buy-now, seller profiles, collections and asset registry as the NFT foundation
+- do not activate real search infrastructure, tracking, events, APIs, GraphQL schemas, databases, contracts, wallet signatures, payments, settlement, billing execution, bridge execution, treasury routing, external integrations, tenant registry, revenue sharing or BI pipelines
+- keep Phase 02 Federation Layer, Phase 03 Tenant Infrastructure, Phase 05 Distribution Network, Phase 06 Revenue Sharing and Phase 07 Marketplace Intelligence as future phases
+
+---
+
 # Phase 0 — Marketplace Architecture
 
 Status: IN PROGRESS

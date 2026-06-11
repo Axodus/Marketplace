@@ -2,7 +2,7 @@
 
 Axodus Marketplace is the federated digital distribution infrastructure for the Axodus ecosystem.
 
-Phase 00 — Marketplace Architecture Revision is complete as a documentation and architecture phase. Phase 01 — NFT Marketplace Consolidation is the next implementation phase.
+Phase 00 — Marketplace Architecture Revision is complete as a documentation and architecture phase. Phase 01 — NFT Marketplace Consolidation is in planning/runtime audit with `docs/PHASE_01_RUNTIME_AUDIT.md` as the implementation sequencing artifact.
 
 The NFT marketplace remains the first commercial vertical and preserves:
 - ERC721 and ERC1155 assets

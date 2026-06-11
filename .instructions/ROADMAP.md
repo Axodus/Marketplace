@@ -40,7 +40,7 @@ Non-goals:
 
 # Phase 01 — NFT Marketplace Consolidation
 
-Status: PLANNED
+Status: PLANNING — RUNTIME AUDIT COMPLETE
 
 Objectives:
 - consolidate the NFT marketplace vertical as the first Marketplace commercial product surface
@@ -54,6 +54,22 @@ Deliverables:
 - seller profile and storefront readiness
 - listing, bid, auction and buy-now preview readiness
 - royalty and settlement preview alignment
+
+Planning artifact:
+- `docs/PHASE_01_RUNTIME_AUDIT.md`
+
+Linked requirements:
+- MEP-REQ-010 — Explorer Consolidation
+- MEP-REQ-011 — Collection System
+- MEP-REQ-012 — Seller Profiles
+- MEP-REQ-013 — Asset Registry
+- MEP-REQ-014 — Marketplace Analytics
+
+Implementation boundary:
+- Phase 01 remains mock-first until each linked requirement is implemented and validated
+- MEP-01A is audit and planning only
+- no final explorer, collection, seller, asset registry or analytics feature is implemented by MEP-01A
+- no real search infrastructure, tracking, events, API, GraphQL schema, database, contract, wallet signature, payment, settlement, billing execution, bridge execution, treasury routing or external integration is introduced by MEP-01A
 
 ---
 
