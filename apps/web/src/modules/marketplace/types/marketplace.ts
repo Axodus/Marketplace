@@ -24,6 +24,7 @@ export type DeliveryType = "Greenfield" | "Signed URL" | "MCP Runtime" | "Dashbo
 export type Chain = "Ethereum" | "BNB" | "Arbitrum" | "Harmony" | "Polygon";
 export type PurchaseStatus = "mock-issued" | "pending-governance-review" | "blocked";
 export type CollectionOrigin = "native" | "future-external";
+export type AssetHistoryStatus = "mock-confirmed" | "mock-pending" | "mock-blocked";
 
 export interface Pricing {
   amount: number;
@@ -96,6 +97,51 @@ export interface Product {
   bridgeReadiness: BridgeReadiness;
   greenfieldBucket?: string;
   signedUrlPreviewAvailable: boolean;
+  metadataAttributes?: Array<{
+    traitType: string;
+    value: string;
+  }>;
+}
+
+export interface AssetHistoryEntry {
+  id: string;
+  timestamp: string;
+  actor: string;
+  status: AssetHistoryStatus;
+  note: string;
+}
+
+export interface OwnershipHistoryEntry extends AssetHistoryEntry {
+  owner: string;
+}
+
+export interface TransferHistoryEntry extends AssetHistoryEntry {
+  from: string;
+  to: string;
+  chain: Chain;
+}
+
+export interface LicenseHistoryEntry extends AssetHistoryEntry {
+  licenseType: LicenseType;
+  holder: string;
+}
+
+export interface AssetValidationLayer {
+  metadata: ProductStanding;
+  contract: ProductStanding;
+  collection: ProductStanding;
+  origin: ProductStanding;
+  royalty: ProductStanding;
+  notes: string[];
+}
+
+export interface AssetRegistryRecord {
+  productId: string;
+  currentOwner: string;
+  ownershipHistory: OwnershipHistoryEntry[];
+  transferHistory: TransferHistoryEntry[];
+  licenseHistory: LicenseHistoryEntry[];
+  validation: AssetValidationLayer;
 }
 
 export interface CollectionMetrics {

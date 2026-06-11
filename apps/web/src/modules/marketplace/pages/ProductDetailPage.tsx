@@ -8,6 +8,7 @@ import { ListingRuntimePanel } from "../components/ListingRuntimePanel";
 import { NftOwnershipPanel } from "../components/NftOwnershipPanel";
 import { SignatureIntentPanel } from "../components/SignatureIntentPanel";
 import { WalletSecurityPanel } from "../components/WalletSecurityPanel";
+import { AssetRegistryPanel } from "../components/AssetRegistryPanel";
 import { NeutralBadge, ProductStandingBadge, SellerStandingBadge } from "../components/StatusBadge";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import { useListingRuntime } from "../hooks/useListingRuntime";
@@ -15,7 +16,7 @@ import { useNftOwnership } from "../hooks/useNftOwnership";
 import { useProduct } from "../hooks/useMarketplace";
 import { useSignatureIntent } from "../hooks/useSignatureIntent";
 import { useWalletSecurity } from "../hooks/useWalletSecurity";
-import { getCollectionForProduct } from "../services/marketplaceService";
+import { getAssetRegistryForProduct, getCollectionForProduct } from "../services/marketplaceService";
 import { LayerZeroBridgeService, RoyaltyService, StorageAccessService } from "../services/boundaryAdapters";
 import {
   createSignedUrlPreview,
@@ -51,6 +52,7 @@ export function ProductDetailPage() {
   const entitlementPreview = getEntitlementEnforcementPreview(product);
   const signedUrlPreview = createSignedUrlPreview(product);
   const collection = getCollectionForProduct(product);
+  const assetRegistry = getAssetRegistryForProduct(product);
 
   return (
     <div className="space-y-6">
@@ -96,6 +98,8 @@ export function ProductDetailPage() {
           )}
         </div>
       </section>
+
+      <AssetRegistryPanel view={assetRegistry} />
 
       <section className="grid gap-4 lg:grid-cols-3">
         <GovernanceAuthorityPanel authority={authority} />

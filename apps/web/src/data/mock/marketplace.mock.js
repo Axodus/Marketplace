@@ -197,7 +197,12 @@ export const marketplaceProducts = [
       notes: "Bridge boundary prepared; no live bridge execution in MVP."
     },
     greenfieldBucket: "mock-greenfield-governance-access",
-    signedUrlPreviewAvailable: true
+    signedUrlPreviewAvailable: true,
+    metadataAttributes: [
+      { traitType: "Access", value: "Governance Dashboard" },
+      { traitType: "Token Standard", value: "ERC721" },
+      { traitType: "Boundary", value: "Signed URL Preview" }
+    ]
   },
   {
     id: "product-academy-cert-bundle",
@@ -249,7 +254,12 @@ export const marketplaceProducts = [
       notes: "LayerZero compatibility tracked as metadata only."
     },
     greenfieldBucket: "mock-greenfield-academy-content",
-    signedUrlPreviewAvailable: true
+    signedUrlPreviewAvailable: true,
+    metadataAttributes: [
+      { traitType: "Access", value: "Academy Certification" },
+      { traitType: "Token Standard", value: "ERC1155" },
+      { traitType: "Governance", value: "Review Required" }
+    ]
   },
   {
     id: "product-mcp-agent-template",
@@ -289,7 +299,12 @@ export const marketplaceProducts = [
       destinationChains: [],
       notes: "Bridge unavailable until plugin audit completes."
     },
-    signedUrlPreviewAvailable: false
+    signedUrlPreviewAvailable: false,
+    metadataAttributes: [
+      { traitType: "Access", value: "MCP Runtime" },
+      { traitType: "Token Standard", value: "OffchainLicense" },
+      { traitType: "Validation", value: "Restricted Preview" }
+    ]
   },
   {
     id: "product-trading-strategy-pass",
@@ -340,7 +355,154 @@ export const marketplaceProducts = [
       destinationChains: ["Ethereum"],
       notes: "Future cross-chain ownership sync boundary only."
     },
-    signedUrlPreviewAvailable: false
+    signedUrlPreviewAvailable: false,
+    metadataAttributes: [
+      { traitType: "Access", value: "Strategy License" },
+      { traitType: "Token Standard", value: "ERC721" },
+      { traitType: "Listing", value: "Dutch Auction" }
+    ]
+  }
+];
+
+export const marketplaceAssetRegistry = [
+  {
+    productId: "product-governance-dashboard-nft",
+    currentOwner: "0xMockOwnerGovernance001",
+    ownershipHistory: [
+      {
+        id: "ownership-governance-001",
+        timestamp: "2026-05-01T12:05:00.000Z",
+        actor: "asset-registry-mock",
+        status: "mock-confirmed",
+        owner: "0xMockOwnerGovernance001",
+        note: "Initial mock owner assigned for governance access pass."
+      }
+    ],
+    transferHistory: [
+      {
+        id: "transfer-governance-001",
+        timestamp: "2026-05-03T14:00:00.000Z",
+        actor: "transfer-preview",
+        status: "mock-confirmed",
+        from: "0xMockTreasuryIssuer",
+        to: "0xMockOwnerGovernance001",
+        chain: "Polygon",
+        note: "Mock transfer preview recorded without contract write."
+      }
+    ],
+    licenseHistory: [
+      {
+        id: "license-governance-001",
+        timestamp: "2026-05-04T09:00:00.000Z",
+        actor: "license-preview",
+        status: "mock-confirmed",
+        licenseType: "NFT Access License",
+        holder: "0xMockOwnerGovernance001",
+        note: "NFT access license preview attached to mock holder."
+      }
+    ],
+    validation: {
+      metadata: "compliant",
+      contract: "compliant",
+      collection: "compliant",
+      origin: "compliant",
+      royalty: "compliant",
+      notes: ["Native mock asset", "EIP-2981 royalty preview available", "No on-chain validation executed"]
+    }
+  },
+  {
+    productId: "product-academy-cert-bundle",
+    currentOwner: "0xMockAcademyHolder1155",
+    ownershipHistory: [
+      {
+        id: "ownership-academy-001",
+        timestamp: "2026-04-22T10:00:00.000Z",
+        actor: "asset-registry-mock",
+        status: "mock-confirmed",
+        owner: "0xMockAcademyHolder1155",
+        note: "Mock ERC1155 holder balance represented as registry ownership."
+      }
+    ],
+    transferHistory: [],
+    licenseHistory: [
+      {
+        id: "license-academy-001",
+        timestamp: "2026-04-24T09:00:00.000Z",
+        actor: "license-preview",
+        status: "mock-pending",
+        licenseType: "Subscription License",
+        holder: "0xMockAcademyHolder1155",
+        note: "Subscription license preview remains pending governance review."
+      }
+    ],
+    validation: {
+      metadata: "under-review",
+      contract: "under-review",
+      collection: "under-review",
+      origin: "compliant",
+      royalty: "compliant",
+      notes: ["Native mock ERC1155 asset", "Academy collection requires governance review", "No indexer or chain read executed"]
+    }
+  },
+  {
+    productId: "product-mcp-agent-template",
+    currentOwner: "0xMockMcpLicenseHolder",
+    ownershipHistory: [],
+    transferHistory: [],
+    licenseHistory: [
+      {
+        id: "license-mcp-001",
+        timestamp: "2026-05-08T11:00:00.000Z",
+        actor: "license-preview",
+        status: "mock-blocked",
+        licenseType: "DAO License",
+        holder: "0xMockMcpLicenseHolder",
+        note: "DAO license preview blocked by governance restriction."
+      }
+    ],
+    validation: {
+      metadata: "restricted",
+      contract: "restricted",
+      collection: "restricted",
+      origin: "under-review",
+      royalty: "under-review",
+      notes: ["Offchain license asset", "Plugin audit incomplete", "No license enforcement executed"]
+    }
+  },
+  {
+    productId: "product-trading-strategy-pass",
+    currentOwner: "0xMockStrategyHolder007",
+    ownershipHistory: [
+      {
+        id: "ownership-strategy-001",
+        timestamp: "2026-05-11T08:15:00.000Z",
+        actor: "asset-registry-mock",
+        status: "mock-confirmed",
+        owner: "0xMockStrategyHolder007",
+        note: "Mock owner assigned for strategy license pass."
+      }
+    ],
+    transferHistory: [
+      {
+        id: "transfer-strategy-001",
+        timestamp: "2026-05-12T13:30:00.000Z",
+        actor: "auction-preview",
+        status: "mock-pending",
+        from: "0xMockTreasuryIssuer",
+        to: "0xMockStrategyHolder007",
+        chain: "Arbitrum",
+        note: "Dutch auction transfer remains preview-only."
+      }
+    ],
+    licenseHistory: [],
+    validation: {
+      metadata: "under-review",
+      contract: "under-review",
+      collection: "under-review",
+      origin: "compliant",
+      royalty: "compliant",
+      notes: ["Native mock ERC721 asset", "Risk-reviewed trading license", "No trading or settlement execution"]
+    }
   }
 ];
 

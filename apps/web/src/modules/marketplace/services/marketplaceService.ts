@@ -1,4 +1,5 @@
 import {
+  marketplaceAssetRegistry,
   marketplaceBoundaries,
   marketplaceCollections,
   marketplaceLicenses,
@@ -6,6 +7,7 @@ import {
   marketplaceSellers
 } from "../../../data/mock/marketplace.mock";
 import type {
+  AssetRegistryRecord,
   Chain,
   DraftListingInput,
   DraftListingPreview,
@@ -57,6 +59,7 @@ const collections = marketplaceCollections as MarketplaceCollection[];
 const sellers = marketplaceSellers as Seller[];
 const licenses = marketplaceLicenses as License[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
+const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 
 function normalizeSearch(value?: string) {
   return value?.trim().toLowerCase() ?? "";
@@ -227,6 +230,23 @@ export interface SellerProfileView {
   }>;
 }
 
+export interface AssetRegistryView {
+  product: Product;
+  collection: CollectionView | null;
+  seller: Seller | undefined;
+  license: License | undefined;
+  registry: AssetRegistryRecord;
+  metadataAttributes: Array<{
+    traitType: string;
+    value: string;
+  }>;
+  boundaries: Array<{
+    label: string;
+    value: string;
+    detail: string;
+  }>;
+}
+
 function buildCollectionMetrics(collection: MarketplaceCollection, collectionProducts: Product[]) {
   const listings = collectionProducts.filter((product) => product.status === "listed").length;
   const bids = collectionProducts.reduce((sum, product) => sum + (product.auction?.bidCount ?? 0), 0);
@@ -364,6 +384,67 @@ export function getProductByItemRef(chain: string, contract: string, tokenId: st
       product.tokenId?.toLowerCase() === tokenId.toLowerCase()
     );
   });
+}
+
+function createFallbackAssetRegistry(product: Product): AssetRegistryRecord {
+  return {
+    productId: product.id,
+    currentOwner: product.nftBound ? "0xMockOwnerUnavailable" : "mock-license-holder-unassigned",
+    ownershipHistory: [],
+    transferHistory: [],
+    licenseHistory: [],
+    validation: {
+      metadata: product.governanceStatus,
+      contract: product.contractAddress ? product.governanceStatus : "under-review",
+      collection: product.collectionId ? product.governanceStatus : "under-review",
+      origin: product.governanceStatus,
+      royalty: product.royaltyModel.standard === "None" ? "under-review" : product.governanceStatus,
+      notes: ["Fallback mock registry generated from product metadata", "No chain read, indexer, storage validation or settlement executed"]
+    }
+  };
+}
+
+export function getAssetRegistryForProduct(product: Product): AssetRegistryView {
+  const registry = assetRegistry.find((record) => record.productId === product.id) ?? createFallbackAssetRegistry(product);
+  const collection = getCollectionForProduct(product);
+  const seller = getSellerById(product.sellerId);
+  const license = getLicenseForProduct(product);
+
+  return {
+    product,
+    collection,
+    seller,
+    license,
+    registry,
+    metadataAttributes: product.metadataAttributes ?? [],
+    boundaries: [
+      {
+        label: "Contract boundary",
+        value: product.contractAddress ?? "mock offchain license",
+        detail: product.contractAddress ? "Contract reference is mock metadata only; no contract read or write is executed." : "Offchain license preview has no contract execution."
+      },
+      {
+        label: "Storage boundary",
+        value: product.greenfieldBucket ?? "not required",
+        detail: product.greenfieldBucket ? "Greenfield bucket is a mock access boundary; no production storage access is executed." : "No storage delivery boundary is required for this asset."
+      },
+      {
+        label: "Bridge boundary",
+        value: product.bridgeReadiness.layerZeroReady ? "future-ready metadata" : "deferred",
+        detail: product.bridgeReadiness.notes
+      },
+      {
+        label: "Settlement boundary",
+        value: product.pricing.settlementMode,
+        detail: "Pricing, bids and purchases remain mock-first with no payment, settlement or treasury routing."
+      }
+    ]
+  };
+}
+
+export function getAssetRegistryByProductSlug(slug: string) {
+  const product = getProductBySlug(slug);
+  return product ? getAssetRegistryForProduct(product) : null;
 }
 
 export function listSellers() {

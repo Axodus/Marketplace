@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildSellerProfileView,
   createDraftListingPreview,
+  getAssetRegistryByProductSlug,
   getCollectionBySlug,
   getCollectionForProduct,
   getProductByItemRef,
@@ -129,6 +130,30 @@ describe("marketplaceService", () => {
     const product = getProductByItemRef("polygon", "mock:governance-dashboard-access", "AXD-GOV-001");
 
     expect(product?.slug).toBe("governance-dashboard-nft-access");
+  });
+
+  it("builds asset registry views with ownership, transfer, license and validation history", () => {
+    const registry = getAssetRegistryByProductSlug("governance-dashboard-nft-access");
+
+    expect(registry?.registry.currentOwner).toBe("0xMockOwnerGovernance001");
+    expect(registry?.registry.ownershipHistory).toHaveLength(1);
+    expect(registry?.registry.transferHistory).toHaveLength(1);
+    expect(registry?.registry.licenseHistory).toHaveLength(1);
+    expect(registry?.registry.validation.metadata).toBe("compliant");
+    expect(registry?.metadataAttributes.map((attribute) => attribute.traitType)).toContain("Access");
+    expect(registry?.boundaries.map((boundary) => boundary.label)).toContain("Settlement boundary");
+  });
+
+  it("keeps empty asset registry histories explicit for mock assets", () => {
+    const registry = getAssetRegistryByProductSlug("academy-certification-erc1155-bundle");
+
+    expect(registry?.registry.transferHistory).toHaveLength(0);
+    expect(registry?.registry.licenseHistory[0].status).toBe("mock-pending");
+    expect(registry?.registry.validation.collection).toBe("under-review");
+  });
+
+  it("returns null for unknown asset registry slugs", () => {
+    expect(getAssetRegistryByProductSlug("missing-asset")).toBeNull();
   });
 
   it("creates draft listing previews without mutating products", () => {

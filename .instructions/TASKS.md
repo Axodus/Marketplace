@@ -11,7 +11,7 @@ Recommended implementation sequence:
 - MEP-REQ-010 — Explorer Consolidation — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-011 — Collection System — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-012 — Seller Profiles — IMPLEMENTED MOCK-FIRST
-- MEP-REQ-013 — Asset Registry
+- MEP-REQ-013 — Asset Registry — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-014 — Marketplace Analytics
 - MEP-PHASE-01-CLOSURE — QA, navigation and no-execution boundary validation
 
@@ -37,6 +37,14 @@ MEP-REQ-012 delivered:
 - governance validation panel using preview/read-only status only
 - associated collections, recent activity mock timeline and seller listing grid
 - seller-not-found and seller-without-listings states without identity provider, KYC, RBAC, onboarding, payments or settlement
+
+MEP-REQ-013 delivered:
+- product detail route consolidated as the mock-first Asset Registry surface
+- legacy NFT item route `/item/:chain/:contract/:id` preserved through existing item reference compatibility
+- mock ownership, transfer and license histories added to centralized Marketplace mock data
+- validation layer added for metadata, contract, collection, origin and royalty status
+- registry panel exposes metadata attributes, collection, seller, listing, royalty, storage, bridge and settlement boundaries
+- empty history states handled without indexer, on-chain read, storage validation, bridge execution, license enforcement, payments or settlement
 
 Constraints:
 - keep Phase 01 mock-first
