@@ -1,51 +1,83 @@
-# Architecture Overview
+# Marketplace Architecture Overview
 
-This document summarizes the high-level architecture of the Axodus NFT Marketplace monorepo and how each workspace interacts.
+This document summarizes the high-level Marketplace architecture. The operational source of truth for execution remains `.instructions/ARCHITECTURE.md`.
 
-## Components
-- Web (Next.js + Reown AppKit): user-facing PWA with multiwallet and Web2-like auth.
-- API (NestJS GraphQL/REST): single entrypoint for reads/writes; orchestrates storage and contracts; provides WS.
-- Indexer (Subgraphs + WS Workers): near-real-time events for listings/bids/sales per chain.
-- Contracts (Solidity): ERC721/1155, marketplace (fixed/english/dutch), royalties, LayerZero bridge.
-- Services (Storage/Payments): storage integrates BNB Greenfield; payments is a placeholder.
-- Infra (k8s/Terraform/CI): manifests, pipelines, and infra-as-code.
+## Strategic Scope
 
-## Data Flow
-1. User connects wallet via AppKit; JWT issued by API (nonce->sign flow).
-2. Reads go through API (GraphQL), backed by subgraphs and cache; direct RPC for light reads.
-3. Writes (list/buy/bid) go to contracts; after tx mined, workers push events to API for live updates.
-4. After purchase, API validates ownership and requests Storage service to issue a signed URL.
+Axodus Marketplace is the official federated digital distribution infrastructure for the Axodus ecosystem.
 
-## Multichain Strategy
-- Supported: Ethereum, BNB, Arbitrum, Harmony, Polygon.
-- RPC and WS endpoints configured per chain; indexer keeps block lag low.
-- LayerZero used for bridging when applicable (OFT adapters).
+Marketplace distributes and commercializes:
+- NFT assets and collections
+- digital products
+- licenses
+- subscriptions
+- ACS capabilities
+- Academy courses
+- enterprise offers
+- tenant catalogs
+- white-label marketplace surfaces
+- partner and affiliate offers
+- revenue sharing models
+- commercial intelligence
 
-## Observability & Reliability
-- Health endpoints on API and workers; metrics exported.
-- Redis used for pub/sub to fan-out subscriptions.
-- Idempotency keys on critical writes; rate limiting.
+The NFT marketplace remains the first commercial vertical. It is not replaced by the federated architecture.
 
-## Repository Structure
-```
-apps/
-  web/
-  api/
-  indexer/
-contracts/
-services/
-  storage/
-  payments/
-infra/
-docs/
-```
+## Foundational NFT Vertical
 
-## Environments
-- Local: Dockerized DB/Redis optional; .env-* files per workspace.
-- CI: GitHub Actions runs lint, tests, builds; secrets stored encrypted.
-- Staging/Prod: Deployed via Terraform+k8s with manual approvals.
+The NFT foundation remains explicit:
+- ERC721 assets
+- ERC1155 assets
+- EIP-2981 royalty compatibility
+- fixed listings
+- bids
+- english and dutch auctions
+- buy-now
+- seller profiles
+- collections
+- asset registry records
 
-## Security Notes
-- No secrets committed; use .env-* locally and secret stores in CI/prod.
-- EIP-2981 royalties enforced; marketplace safe math and guards.
-- Bucket ACLs on Greenfield; signed URLs with TTL and audit logs.
+Future federation, tenant, distribution, revenue sharing and intelligence work must extend this foundation without obscuring it.
+
+## Phase 00 Architecture Domains
+
+Phase 00 introduces five architecture domains:
+- Marketplace Federation Domain
+- Marketplace-as-a-Service Domain
+- Distribution Network Domain
+- Revenue Sharing Domain
+- Marketplace Intelligence Domain
+
+These domains prepare future implementation. They do not activate runtime behavior in Phase 00.
+
+## Non-Execution Boundary
+
+Phase 00 is documentation-only.
+
+It does not implement:
+- runtime code
+- API surfaces
+- contracts
+- indexers
+- React components
+- persistence
+- GraphQL
+- real billing
+- external integrations
+- wallet signatures
+- bridge execution
+- treasury routing
+- on-chain execution
+
+## Architecture Principles
+
+Marketplace must remain:
+- governance-aware
+- treasury-compatible
+- operationally transparent
+- modular
+- tenant-aware
+- federation-ready
+- revenue-share explicit
+- intelligence-transparent
+
+No future implementation should create hidden execution paths, hidden ranking authority, untraceable commercial policy or governance bypass.

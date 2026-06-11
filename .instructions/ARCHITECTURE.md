@@ -2,7 +2,22 @@
 
 # Architectural Mission
 
-The Marketplace workspace coordinates ecosystem-wide product distribution and operational commerce infrastructure.
+The Marketplace workspace is the official federated digital distribution infrastructure for the Axodus ecosystem.
+
+Marketplace is no longer limited to a mock-first NFT marketplace. The NFT marketplace remains the first commercial vertical and the foundational asset primitive, but the architecture now extends to ecosystem-wide distribution of:
+- digital assets
+- NFT collections
+- products
+- licenses
+- subscriptions
+- ACS capabilities
+- Academy courses
+- enterprise offers
+- tenant catalogs
+- white-label marketplaces
+- partner and affiliate offers
+- revenue sharing models
+- commercial intelligence
 
 Marketplace coordinates:
 - product access
@@ -12,12 +27,37 @@ Marketplace coordinates:
 - subscriptions
 - licensing
 - operational settlements
+- commercial discovery
+- tenant and partner distribution
 
 while remaining:
 - governance-compatible
 - treasury-aware
 - operationally transparent
 - modular
+
+Phase 00 is documentation-only. It does not implement runtime code, API surfaces, contracts, indexers, React components, persistence, GraphQL, billing execution, external integrations or on-chain execution.
+
+---
+
+# Foundational NFT Vertical
+
+The NFT marketplace nucleus remains the first vertical of Marketplace.
+
+The following primitives remain foundational:
+- ERC721 assets
+- ERC1155 assets
+- EIP-2981 royalty metadata and royalty previews
+- fixed listings
+- bids
+- english auctions
+- dutch auctions
+- buy-now previews
+- seller profiles
+- collections
+- asset registry records
+
+Federation, tenants, distribution, revenue sharing and intelligence extend this nucleus. They do not replace it.
 
 ---
 
@@ -31,6 +71,122 @@ Core marketplace layers:
 - licensing layer
 - billing layer
 - operational telemetry layer
+- federation layer
+- marketplace-as-a-service layer
+- distribution network layer
+- revenue sharing layer
+- intelligence layer
+
+---
+
+# Phase 00 Federated Architecture Domains
+
+Phase 00 introduces five architecture domains that prepare future implementation without activating runtime behavior.
+
+## Marketplace Federation Domain
+
+The Marketplace Federation Domain coordinates how DAO storefronts, tenant catalogs, seller storefronts, partner catalogs and white-label marketplaces are represented as federated distribution surfaces.
+
+Responsibilities:
+- define tenant and storefront boundaries
+- preserve DAO and governance context per storefront
+- model cross-tenant catalog visibility
+- prepare constitutional inheritance and restriction visibility
+- preserve the NFT vertical as a federation participant
+
+Boundaries:
+- no public storefront activation
+- no live tenant isolation enforcement
+- no cross-tenant settlement
+- no governance write execution
+- no external marketplace integration
+
+## Marketplace-as-a-Service Domain
+
+The Marketplace-as-a-Service Domain prepares packaged marketplace capability for Axodus tenants, partners and enterprise operators.
+
+Responsibilities:
+- define white-label marketplace capability boundaries
+- model tenant-scoped product catalogs
+- prepare configurable commercial policies
+- separate platform services from tenant authority
+- prepare operational dashboards and access packages
+
+Boundaries:
+- no tenant provisioning runtime
+- no production billing
+- no external customer onboarding
+- no managed marketplace deployment
+- no hardcoded commercial policy
+
+## Distribution Network Domain
+
+The Distribution Network Domain models how Axodus capabilities are discovered and distributed across ecosystem channels.
+
+Responsibilities:
+- model distribution channels for NFTs, ACS, Academy, enterprise offers and DAO services
+- prepare partner, affiliate and referral distribution concepts
+- separate discovery, offer routing and entitlement activation
+- define commercial catalog propagation boundaries
+- preserve auditability across distribution paths
+
+Boundaries:
+- no affiliate payout execution
+- no partner integration
+- no external catalog sync
+- no real campaign routing
+- no entitlement mutation
+
+## Revenue Sharing Domain
+
+The Revenue Sharing Domain prepares deterministic allocation models for creators, sellers, tenants, partners, affiliates, platform fees, ecosystem fees and treasury-compatible splits.
+
+Responsibilities:
+- model revenue share participants
+- preserve EIP-2981 royalty compatibility
+- define split preview boundaries
+- separate allocation previews from payout execution
+- expose treasury-compatible accounting visibility
+
+Boundaries:
+- no payment settlement
+- no treasury movement
+- no royalty distribution execution
+- no partner payout execution
+- no tax or fiat reconciliation execution
+
+## Marketplace Intelligence Domain
+
+The Marketplace Intelligence Domain prepares governance-compatible commercial intelligence for product discovery, catalog health, tenant performance, distribution effectiveness and operational risk visibility.
+
+Responsibilities:
+- define intelligence read models
+- support catalog, tenant, seller and distribution analytics
+- prepare recommendation and ranking boundaries
+- expose telemetry without hidden commercial authority
+- separate insights from automated execution
+
+Boundaries:
+- no automated pricing
+- no autonomous promotion
+- no hidden ranking authority
+- no external analytics export
+- no user profiling beyond approved future policy
+
+---
+
+# Official Distribution Scope
+
+Marketplace is the official Axodus infrastructure for:
+- distribution
+- commercialization
+- licensing
+- subscription access
+- commercial discovery
+- tenant catalog exposure
+- ecosystem capability packaging
+
+This scope includes NFTs and extends to ACS, Academy, enterprise, DAO and partner products. All future implementation must preserve governance awareness, treasury compatibility, operational transparency and modular boundaries.
 
 ---
 

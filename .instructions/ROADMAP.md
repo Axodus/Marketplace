@@ -1,117 +1,158 @@
 # Marketplace Roadmap
 
-# Phase 0 — Marketplace Architecture
+# Phase 00 — Marketplace Architecture Revision
 
 Status: IN PROGRESS
 
 Objectives:
-- define marketplace architecture
-- define product systems
-- define subscription systems
-- define ACS service distribution
-- define billing infrastructure
+- revise Marketplace from NFT-only framing into federated Axodus digital distribution infrastructure
+- preserve NFT marketplace primitives as the first commercial vertical
+- define Marketplace Federation Domain
+- define Marketplace-as-a-Service Domain
+- define Distribution Network Domain
+- define Revenue Sharing Domain
+- define Marketplace Intelligence Domain
+- prepare Phase 01 NFT Marketplace Consolidation, Phase 02 Federation Layer and Phase 03 Tenant Infrastructure
 
 Deliverables:
-- marketplace architecture specification
-- subscription framework
-- ACS distribution framework
-- educational commerce framework
-- billing architecture
+- revised architecture specification
+- revised product taxonomy
+- revised workflow and planning boundaries
+- decision record for federated Marketplace scope
+- non-execution boundaries for runtime, payment, wallet, treasury, billing and external integrations
+
+Non-goals:
+- no runtime code
+- no API implementation
+- no contract implementation
+- no indexer implementation
+- no React implementation
+- no persistence or GraphQL implementation
+- no real billing, settlement, wallet signature, bridge, treasury routing or on-chain execution
 
 ---
 
-# Phase 1 — Core Marketplace Infrastructure
+# Phase 01 — NFT Marketplace Consolidation
 
 Status: PLANNED
 
 Objectives:
-- implement product systems
-- implement subscription systems
-- implement billing infrastructure
-- implement operational telemetry
+- consolidate the NFT marketplace vertical as the first Marketplace commercial product surface
+- preserve ERC721, ERC1155, EIP-2981, listings, bids, auctions, buy-now, seller profiles, collections and asset registry
+- align NFT products with licensing, entitlement, billing preview, governance and telemetry boundaries
+- keep execution mode explicitly controlled by the approved implementation phase
 
 Deliverables:
-- marketplace platform
-- subscription systems
-- billing systems
-- telemetry systems
-- operational dashboards
+- consolidated NFT marketplace domain model
+- NFT collection and asset registry readiness
+- seller profile and storefront readiness
+- listing, bid, auction and buy-now preview readiness
+- royalty and settlement preview alignment
 
 ---
 
-# Phase 2 — ACS Marketplace Infrastructure
+# Phase 02 — Federation Layer
 
 Status: PLANNED
 
 Objectives:
-- distribute ACS services and cognitive infrastructure
+- introduce Marketplace Federation Domain implementation boundaries
+- model DAO storefronts, tenant catalogs, seller catalogs, partner catalogs and white-label marketplaces
+- preserve governance and constitutional visibility across federated surfaces
 
 Deliverables:
-- MCP marketplace
-- orchestration packages
-- AI agents
-- compute access
-- ACS operational telemetry
+- federation read models
+- tenant and storefront federation boundaries
+- catalog visibility rules
+- governance inheritance visibility
+- federation telemetry readiness
 
 ---
 
-# Phase 3 — Educational Marketplace
+# Phase 03 — Tenant Infrastructure
 
 Status: PLANNED
 
 Objectives:
-- integrate Academy into marketplace systems
+- introduce Marketplace-as-a-Service tenant infrastructure
+- prepare tenant-scoped catalog, offer, entitlement, licensing and subscription boundaries
+- separate platform authority from tenant commercial configuration
 
 Deliverables:
-- course access
-- certification commerce
-- governance education systems
-- learning subscriptions
+- tenant catalog model
+- white-label marketplace capability boundaries
+- tenant policy and configuration model
+- tenant operational telemetry
+- tenant access and entitlement readiness
 
 ---
 
-# Phase 4 — Enterprise Marketplace
+# Phase 04 — Distribution Network
 
 Status: PLANNED
 
 Objectives:
-- distribute enterprise infrastructure
+- model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
+- prepare discovery, offer routing and catalog propagation without external activation
 
 Deliverables:
-- enterprise subscriptions
-- DAO operational packages
-- ACS enterprise provisioning
-- operational licensing
+- distribution channel model
+- partner and affiliate boundary model
+- catalog propagation readiness
+- distribution telemetry readiness
+- offer routing preview model
 
 ---
 
-# Phase 5 — Ecosystem Commerce Network
+# Phase 05 — Revenue Sharing Infrastructure
+
+Status: PLANNED
+
+Objectives:
+- introduce revenue sharing models for sellers, creators, tenants, partners, affiliates, platform fees, ecosystem fees and treasury-compatible splits
+- preserve EIP-2981 royalty compatibility
+- separate allocation previews from payout execution
+
+Deliverables:
+- revenue share participant model
+- deterministic split preview model
+- royalty compatibility model
+- tenant and partner allocation previews
+- treasury-compatible accounting visibility
+
+---
+
+# Phase 06 — Marketplace Intelligence
 
 Status: FUTURE
 
 Objectives:
-- decentralized ecosystem commerce
+- introduce governance-compatible commercial intelligence for discovery, catalog health, tenant performance, distribution effectiveness and operational risk visibility
+- separate insight generation from automated execution
 
 Deliverables:
-- DAO marketplaces
-- ACS provider markets
-- educational federation
-- ecosystem distribution networks
+- catalog intelligence read models
+- tenant and seller performance visibility
+- distribution effectiveness telemetry
+- risk and governance visibility
+- recommendation and ranking boundaries with no hidden authority
 
 ---
 
-# Phase 6 — Sovereign Distribution Economy
+# Phase 07 — Sovereign Distribution Economy
 
 Status: FUTURE
 
 Objectives:
 - create sustainable ecosystem-wide commerce infrastructure
+- federate Axodus capabilities through governed, transparent and treasury-compatible commercial systems
 
 Deliverables:
 - decentralized operational commerce
 - cognitive economy access
 - ecosystem-wide licensing
-- sovereign distribution systems
+- marketplace-as-a-service offerings
+- federated distribution systems
 
 Marketplace systems must remain:
 - governance-aware

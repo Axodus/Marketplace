@@ -7,6 +7,140 @@
 Decision:
 Marketplace acts as the sovereign distribution and ecosystem commerce infrastructure of Axodus.
 
+Marketplace is the official infrastructure for distribution, commercialization, licensing, subscription access and discovery of Axodus digital capabilities.
+
+Status:
+CONFIRMED
+
+---
+
+## Phase 00 Marketplace Architecture Revision
+
+Decision:
+Phase 00 revises Marketplace from a product framed primarily as a mock-first NFT marketplace into a federated digital distribution infrastructure for the Axodus ecosystem.
+
+The NFT marketplace nucleus remains the first commercial vertical and foundational asset primitive. It is not deprecated or replaced.
+
+Preserved NFT foundations:
+- ERC721
+- ERC1155
+- EIP-2981 royalties
+- listings
+- bids
+- english and dutch auctions
+- buy-now
+- seller profiles
+- collections
+- asset registry
+
+New architectural domains:
+- Marketplace Federation Domain
+- Marketplace-as-a-Service Domain
+- Distribution Network Domain
+- Revenue Sharing Domain
+- Marketplace Intelligence Domain
+
+Phase 00 is documentation-only.
+
+Deferred:
+- runtime implementation
+- API implementation
+- contract implementation
+- indexer implementation
+- React implementation
+- persistence implementation
+- GraphQL implementation
+- real billing
+- external integrations
+- wallet signatures
+- bridge execution
+- treasury routing
+- on-chain execution
+
+Status:
+CONFIRMED
+
+---
+
+## Marketplace Federation Domain
+
+Decision:
+Marketplace must support a future federation model for DAO storefronts, tenant catalogs, seller storefronts, partner catalogs and white-label marketplace surfaces.
+
+Federation must preserve:
+- tenant boundaries
+- governance context
+- constitutional inheritance visibility
+- catalog ownership
+- operational telemetry
+- restriction visibility
+
+Federation does not imply public storefront activation, live tenant isolation enforcement, cross-tenant settlement or external marketplace integration in Phase 00.
+
+Status:
+CONFIRMED
+
+---
+
+## Marketplace-as-a-Service Domain
+
+Decision:
+Marketplace may evolve into a Marketplace-as-a-Service capability for Axodus tenants, partners and enterprise operators.
+
+This domain prepares:
+- white-label marketplace boundaries
+- tenant-scoped catalogs
+- configurable commercial policies
+- tenant operational dashboards
+- platform service separation from tenant authority
+
+Phase 00 does not provision tenants, deploy managed marketplaces, activate production billing or onboard external customers.
+
+Status:
+CONFIRMED
+
+---
+
+## Distribution Network Domain
+
+Decision:
+Marketplace must model distribution networks for NFTs, ACS capabilities, Academy products, DAO services, enterprise offers, partner offers and affiliate channels.
+
+Distribution architecture must separate:
+- discovery
+- catalog propagation
+- offer routing
+- entitlement activation
+- commercial telemetry
+
+Phase 00 does not activate affiliate payouts, partner integrations, external catalog synchronization or entitlement mutation.
+
+Status:
+CONFIRMED
+
+---
+
+## Revenue Sharing Domain
+
+Decision:
+Marketplace must prepare revenue sharing models for creators, sellers, tenants, partners, affiliates, platform fees, ecosystem fees and treasury-compatible splits.
+
+Revenue sharing must preserve EIP-2981 royalty compatibility and deterministic accounting visibility.
+
+All Phase 00 revenue sharing is architectural. It does not execute payment settlement, treasury movement, royalty distribution, partner payout, tax calculation or fiat reconciliation.
+
+Status:
+CONFIRMED
+
+---
+
+## Marketplace Intelligence Domain
+
+Decision:
+Marketplace must prepare governance-compatible commercial intelligence for catalog health, product discovery, tenant performance, seller visibility, distribution effectiveness and operational risk visibility.
+
+Intelligence must be transparent and auditable. It must not create hidden ranking authority, automated pricing, autonomous promotion or user profiling outside a future approved policy.
+
 Status:
 CONFIRMED
 

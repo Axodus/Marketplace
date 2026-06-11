@@ -8,8 +8,43 @@ Marketplace development prioritizes:
 - governance compatibility
 - sustainable commerce
 - observable settlements
+- federated distribution
+- tenant-aware product boundaries
+- transparent revenue sharing
+- auditable marketplace intelligence
 
 Avoid opaque commercial systems.
+
+---
+
+# Phase 00 Workflow
+
+Phase 00 is architectural and documentary.
+
+Allowed:
+- update Marketplace architecture
+- update product taxonomy
+- update roadmap sequencing
+- record decisions
+- define future domain boundaries
+- document non-execution constraints
+
+Not allowed in Phase 00:
+- runtime code implementation
+- API implementation
+- contract implementation
+- indexer implementation
+- React implementation
+- persistence implementation
+- GraphQL implementation
+- production billing
+- wallet signatures
+- bridge execution
+- treasury routing
+- external integrations
+- on-chain execution
+
+Phase 00 output must make Phase 01 NFT Marketplace Consolidation, Phase 02 Federation Layer and Phase 03 Tenant Infrastructure implementable without architectural ambiguity.
 
 ---
 
@@ -23,8 +58,32 @@ Before implementation:
 - define treasury implications
 - define governance implications
 - define telemetry requirements
+- define federation implications
+- define tenant ownership implications
+- define revenue sharing implications
+- define intelligence and discovery implications
 
 Marketplace systems must preserve ecosystem sovereignty.
+
+---
+
+## 1.1 NFT Vertical Preservation
+
+Before changing Marketplace product architecture, confirm that the NFT vertical remains explicit.
+
+The preserved baseline includes:
+- ERC721
+- ERC1155
+- EIP-2981 royalties
+- listings
+- bids
+- auctions
+- buy-now
+- seller profiles
+- collections
+- asset registry
+
+New domains may extend the NFT vertical but must not erase or obscure it.
 
 ---
 
@@ -40,6 +99,18 @@ Billing transparency is mandatory.
 
 ---
 
+## 2.1 Revenue Sharing Validation
+
+Before any revenue sharing implementation:
+- identify all allocation participants
+- separate preview allocation from payout execution
+- preserve EIP-2981 royalty compatibility when NFT products are involved
+- define treasury-compatible accounting visibility
+- define tenant, partner and affiliate split boundaries
+- document payout execution as deferred unless explicitly approved
+
+---
+
 ## 3. Subscription Validation
 
 Before deployment:
@@ -51,14 +122,32 @@ Before deployment:
 
 ---
 
+## 3.1 Federation And Tenant Validation
+
+Before any federation or tenant implementation:
+- define tenant catalog ownership
+- define storefront authority
+- define governance inheritance
+- define restriction visibility
+- define cross-tenant discovery boundaries
+- define white-label marketplace configuration boundaries
+- keep public activation disabled until a future approved phase
+
+---
+
 ## 4. Implementation
 
 Implementation rules:
 - isolate billing systems
 - isolate subscriptions
 - isolate ACS provisioning
+- isolate federation models
+- isolate tenant configuration
+- isolate revenue sharing models
+- isolate intelligence read models
 - expose telemetry
 - expose accounting visibility
+- keep external integrations behind future adapter boundaries
 
 ---
 
@@ -70,6 +159,10 @@ Before merge:
 - validate operational visibility
 - validate ACS integration
 - validate educational commerce flows
+- validate federation boundaries
+- validate tenant isolation assumptions
+- validate revenue sharing previews
+- validate intelligence transparency
 
 ---
 
@@ -80,21 +173,30 @@ Before merge:
 - define access boundaries
 - define telemetry requirements
 - define billing rules
+- define tenant and federation scope
+- define distribution channels
+- define revenue sharing participants
+- define intelligence visibility
 
 ---
 
 ## Product Distribution
-- access provisioning
-- subscription validation
+- access provisioning preview or future approved provisioning
+- subscription validation preview
 - telemetry generation
 - billing coordination
+- federation visibility
+- tenant catalog propagation
+- distribution channel routing
+- revenue share preview generation
 
 ---
 
 ## Product Retirement
-- finalize subscriptions
+- finalize subscription previews or future approved subscriptions
 - archive telemetry
 - preserve accounting consistency
+- preserve tenant and revenue share audit history
 
 ---
 
@@ -108,16 +210,16 @@ Before merge:
 ---
 
 ## Subscription Operations
-- billing execution
-- access validation
+- billing preview or future approved billing execution
+- access validation preview
 - telemetry updates
 - accounting aggregation
 
 ---
 
 ## Subscription Termination
-- revoke access
-- finalize settlements
+- revoke access only in a future approved execution phase
+- finalize settlement previews or future approved settlements
 - archive telemetry
 
 ---
@@ -125,12 +227,43 @@ Before merge:
 # ACS Workflow
 
 ## ACS Distribution
-- MCP provisioning
-- orchestration deployment
-- workflow provisioning
-- compute allocation
+- MCP provisioning preview or future approved provisioning
+- orchestration deployment preview
+- workflow provisioning preview
+- compute allocation preview
 
 ACS systems must remain bounded and governance-aware.
+
+---
+
+# Distribution Network Workflow
+
+## Channel Definition
+- define distribution surface
+- define channel owner
+- define eligible product categories
+- define governance restrictions
+- define telemetry and audit requirements
+
+## Partner And Affiliate Boundaries
+- define partner or affiliate role
+- define catalog visibility
+- define revenue share preview
+- defer payout execution
+- defer external integration until approved
+
+---
+
+# Marketplace Intelligence Workflow
+
+## Intelligence Design
+- define read model objective
+- define data sources
+- define transparency requirements
+- define governance restrictions
+- define ranking or recommendation boundary
+
+Intelligence must expose insights without hidden commercial authority, autonomous pricing, autonomous promotion or unapproved user profiling.
 
 ---
 
@@ -141,6 +274,10 @@ All marketplace-sensitive changes must:
 - document governance implications
 - document subscription impact
 - document ACS operational impact
+- document tenant and federation impact
+- document revenue sharing impact
+- document intelligence and discovery impact
+- document external integration status
 
 ---
 
@@ -148,8 +285,11 @@ All marketplace-sensitive changes must:
 
 All architecture changes must update:
 - ARCHITECTURE.md
-- TASKS.md
 - ROADMAP.md
 - DECISIONS.md
+- PRODUCTS.md
+- WORKFLOW.md
+
+Update TASKS.md when the architecture change creates executable follow-up work.
 
 The `.instructions` layer must remain operationally current.
