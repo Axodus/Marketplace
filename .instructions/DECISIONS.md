@@ -219,7 +219,7 @@ CONFIRMED
 ## Distribution Network Domain
 
 Decision:
-Marketplace must model distribution networks for NFTs, ACS capabilities, Academy products, DAO services, enterprise offers, partner offers and affiliate channels.
+Marketplace must support a future commercial distribution network for NFTs, ACS capabilities, Academy products, DAO services, enterprise offers, partner offers, distributors, agencies, affiliates and Community Marketplaces.
 
 Distribution architecture must separate:
 - discovery
@@ -227,8 +227,52 @@ Distribution architecture must separate:
 - offer routing
 - entitlement activation
 - commercial telemetry
+- Commercial Origin
+- Distribution Channel
+- Distribution Eligibility
+- Traceability
+- Commercial Governance
 
-Phase 00 does not activate affiliate payouts, partner integrations, external catalog synchronization or entitlement mutation.
+Distribution participants:
+- Distributor is a participant, operator, channel or authorized entity that may distribute products or digital capabilities inside Axodus rules.
+- Partner is an organization, entity, community, company, DAO, institution or participant with a commercial, institutional, strategic or operational relationship with Marketplace.
+- Agency is an entity that may operate distribution, campaigns, onboarding, curation or channels for multiple clients, communities or commercial fronts.
+- Affiliate is an originator of traffic, leads, referrals, conversions, registrations, sales or commercial opportunities for future attribution.
+- Community Marketplace is a community, vertical, DAO, creator group, project, network, Academy, ACS, partner or distribution marketplace that may operate as a tenant, distribution channel or curated catalog depending on configuration and governance.
+
+Commercial distribution must be observable, traceable, auditable and governance-compatible.
+
+Distribution Network cannot create opaque commercial authority or invisible commercial flows.
+
+Distributors, partners, agencies, affiliates and Community Marketplaces cannot bypass:
+- governance
+- product policies
+- licensing rules
+- product validations
+- treasury boundaries
+- observability
+- security policy
+- constitutional restrictions
+
+Future Attribution Engine, Referral System, Partner Network, Revenue Sharing Domain and Marketplace Intelligence Domain may consume preserved commercial origin, eligibility and traceability data after approved implementation phases.
+
+Phase 00 does not activate affiliate payouts, partner integrations, external catalog synchronization, entitlement mutation, tracking, referral links, commissions, payments, payouts, settlement, revenue sharing, partner dashboards, APIs, schemas, persistence or treasury routing.
+
+Status:
+CONFIRMED
+
+---
+
+## MEP-REQ-003 Distribution Network
+
+Decision:
+Marketplace will support a distributed commercial network where distributors, partners, agencies, affiliates and Community Marketplaces can participate in ecosystem expansion under explicit governance, traceability, observability and commercial limits.
+
+Community Marketplaces may operate as Tenant Marketplaces, Distribution Channels or Curated Catalogs depending on configuration and governance.
+
+Commercial origin of a sale, lead, conversion, referral or distribution must be preserved for future attribution, analytics, commissions and revenue sharing. Preservation of commercial origin does not activate tracking, commission calculation, payment or payout execution in Phase 00.
+
+Distribution Eligibility must govern whether a product can be distributed by a specific channel, tenant, partner, agency, affiliate, community, vertical, region or future commercial context.
 
 Status:
 CONFIRMED

@@ -85,6 +85,23 @@ Catalog model:
 
 Tenant Isolation covers configuration, catalog scope, branding, domain identity, theme, analytics and exposure rules. Financial isolation, tenant billing, tenant settlement, tenant revenue sharing and tenant treasury routing are deferred to later phases.
 
+## Distribution Network Domain
+
+The Distribution Network Domain prepares Marketplace to operate as a distributed commercial network for commercialization, discovery, curation and ecosystem expansion.
+
+Core distribution concepts:
+- Distributor: participant, operator, channel or authorized entity that can distribute Axodus products or digital capabilities.
+- Partner: organization, entity, community, company, DAO, institution or participant with a commercial, institutional, strategic or operational relationship with Marketplace.
+- Agency: entity that may operate distribution channels, campaigns, onboarding, curation or delegated commercial operations for multiple clients, communities or fronts.
+- Affiliate: originator of traffic, leads, referrals, conversions, registrations, sales or opportunities for future attribution.
+- Community Marketplace: marketplace associated with a community, vertical, DAO, creator group, project, network, Academy, ACS, partner or distribution group.
+
+Tenant, Partner, Distributor, Agency, Affiliate and Community Marketplace are distinct roles. Community Marketplaces may operate as Tenant Marketplaces, Distribution Channels or Curated Catalogs depending on configuration and governance.
+
+Commercial distribution must preserve Commercial Origin, Distribution Channel, Distribution Eligibility, Traceability and Commercial Governance. Future Attribution Engine, Referral System, Partner Network, Revenue Sharing and Marketplace Intelligence may consume those records after approved implementation phases.
+
+Distribution Network does not activate real tracking, referral links, commission engines, partner dashboards, payments, payouts, settlement, revenue sharing or treasury routing in Phase 00.
+
 ## Non-Execution Boundary
 
 Phase 00 is documentation-only.

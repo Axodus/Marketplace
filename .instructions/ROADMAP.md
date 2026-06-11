@@ -165,13 +165,35 @@ Status: PLANNED
 Objectives:
 - model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
 - prepare discovery, offer routing and catalog propagation without external activation
+- recognize commercial channels, distributors, partners, agencies, affiliates, referrals and Community Marketplaces
+- preserve Commercial Origin, Distribution Channel, Distribution Eligibility and Traceability for future Attribution Engine, Revenue Sharing and Marketplace Intelligence
+- keep commercial distribution compatible with governance, product policies, licensing restrictions, observability and treasury boundaries
 
 Deliverables:
 - distribution channel model
+- distributor model
 - partner and affiliate boundary model
+- agency boundary model
+- Community Marketplace boundary model
+- Distribution Eligibility model
+- Commercial Origin model
 - catalog propagation readiness
 - distribution telemetry readiness
 - offer routing preview model
+
+Linked requirements:
+- MEP-REQ-050 — Attribution Engine
+- MEP-REQ-051 — Referral System
+- MEP-REQ-052 — Partner Network
+
+Dependencies:
+- Phase 03 — Tenant Infrastructure
+- Phase 04 — Curated Catalogs
+
+Implementation boundary:
+- Phase 05 implementation is future work
+- MEP-REQ-003 is documentation-only
+- no real attribution, referral, partner network, tracking, commission engine, partner dashboard, affiliate links, payment, payout, API, GraphQL schema, database, persistence, frontend component, route, integration, settlement, treasury routing or revenue sharing is introduced by Phase 00
 
 ---
 

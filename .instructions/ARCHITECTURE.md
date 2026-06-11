@@ -349,7 +349,65 @@ Boundaries:
 
 ## Distribution Network Domain
 
-The Distribution Network Domain models how Axodus capabilities are discovered and distributed across ecosystem channels.
+The Distribution Network Domain prepares Marketplace to operate as a distributed commercial network for commercialization, discovery, curation and ecosystem expansion.
+
+Marketplace remains governance-aware, treasury-compatible, operationally transparent and modular. Distribution Network expands where products can be discovered and originated, but it does not create opaque commercial authority or invisible commercial flows.
+
+Core concepts:
+
+### Tenant
+
+A Tenant is a logical marketplace instance or isolated configuration inside Axodus infrastructure. Tenants can expose configured catalogs, branding, themes and commercial surfaces while remaining inside Axodus governance, observability, product policy, licensing policy and treasury boundaries.
+
+### Partner
+
+A Partner represents an organization, entity, community, company, DAO, institution or participant with a commercial, institutional, strategic or operational relationship with Axodus Marketplace.
+
+Partners may participate in distribution, curation, onboarding, ecosystem expansion or specialized commercial operations. Partner status does not grant authority to bypass governance, product policy, licensing restrictions, treasury boundaries, validation or observability.
+
+### Distributor
+
+A Distributor represents a participant, operator, channel or authorized entity that can distribute products, collections, licenses, subscriptions, digital assets, Academy products, ACS capabilities, enterprise offers or other Axodus ecosystem digital capabilities.
+
+Distributor activity must be traceable, auditable, observable and compatible with governance.
+
+### Agency
+
+An Agency represents an entity capable of operating distribution channels, campaigns, commercial onboarding, curation, client management, distribution for multiple clients, distribution for multiple communities or delegated commercial operations inside Axodus rules.
+
+Agency activity must preserve product restrictions, licensing rules, governance validation, operational responsibility and future attribution boundaries.
+
+### Affiliate
+
+An Affiliate represents an originator of traffic, leads, conversions, registrations, sales or commercial opportunities, normally tied to future invitation, link, campaign, referral or attribution mechanisms.
+
+Affiliate status does not activate real referral tracking, affiliate links, commissions, payouts, settlement, revenue sharing or payment rights in Phase 00.
+
+### Community Marketplace
+
+A Community Marketplace represents a marketplace associated with a community, vertical, DAO, creator group, project, specific network, educational initiative, ACS front, partner or distribution group.
+
+A Community Marketplace may operate as a Tenant Marketplace, Distribution Channel or Curated Catalog depending on configuration and governance.
+
+Distribution relationship model:
+- Tenant: logical marketplace instance or isolated configuration
+- Partner: commercial, institutional, strategic or operational relationship
+- Distributor: authorized participant or channel for distributing products or digital capabilities
+- Agency: delegated commercial operator for campaigns, onboarding, curation or multi-client distribution
+- Affiliate: originator of traffic, leads, referrals, conversions or sales for future attribution
+- Community Marketplace: community-linked marketplace that may act as tenant, channel or curated catalog
+
+Commercial distribution must preserve:
+- Commercial Origin
+- Distribution Channel
+- Distribution Eligibility
+- Traceability
+- Commercial Governance
+- product policy validation
+- licensing validation
+- governance validation
+- observability requirements
+- future attribution context
 
 Responsibilities:
 - model distribution channels for NFTs, ACS, Academy, enterprise offers and DAO services
@@ -357,6 +415,16 @@ Responsibilities:
 - separate discovery, offer routing and entitlement activation
 - define commercial catalog propagation boundaries
 - preserve auditability across distribution paths
+- preserve commercial origin for future Attribution Engine, Referral System, Partner Network, Revenue Sharing and Marketplace Intelligence
+- define distributor, partner, agency, affiliate and community marketplace boundaries
+- define commercial governance and distribution eligibility boundaries
+
+Future domain relationships:
+- Attribution Engine will use preserved Commercial Origin, Distribution Channel and traceability data
+- Referral System will use approved affiliate or referral relationships only after a future implementation phase
+- Partner Network will organize partner, distributor, agency and community marketplace relationships
+- Revenue Sharing Domain may consume attribution and eligibility outputs in future phases
+- Marketplace Intelligence Domain may consume distribution telemetry and commercial traceability in future phases
 
 Boundaries:
 - no affiliate payout execution
@@ -364,6 +432,21 @@ Boundaries:
 - no external catalog sync
 - no real campaign routing
 - no entitlement mutation
+- no tracking implementation
+- no referral implementation
+- no commission engine
+- no partner dashboard
+- no affiliate link generation
+- no payment or payout execution
+- no commercial permission automation
+- no API or GraphQL schema
+- no database or persistence change
+- no frontend route or component change
+- no tracking events
+- no external integration
+- no settlement
+- no treasury routing
+- no revenue sharing execution
 
 ## Revenue Sharing Domain
 

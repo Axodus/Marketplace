@@ -8,6 +8,8 @@ Marketplace products coordinate:
 - tenant products
 - curated products
 - federated products
+- distribution-eligible products
+- channel-distributed products
 - native products
 - native assets
 - external assets
@@ -64,6 +66,37 @@ Curated Products compose Curated Catalogs. Sensitive products may require govern
 - products requiring origin, provider, validation status, provenance and trust boundaries
 
 Federated Products are not native Axodus products by default.
+
+---
+
+## Distribution-Eligible Products
+- products approved or potentially eligible for distribution through specific channels
+- products that may be exposed through tenants, partners, distributors, agencies, affiliates, communities or specialized marketplaces
+- products requiring Distribution Eligibility before channel exposure
+
+Distribution Eligibility may restrict products by:
+- specific channels
+- specific tenants
+- specific partners
+- specific agencies
+- specific communities
+- specific ecosystem verticals
+- specific regions or contexts in future phases
+- governance approval state
+- product policy
+- licensing rules
+- validation state
+
+Distribution eligibility does not activate referral tracking, commissions, revenue sharing, payments, payouts, settlement or treasury routing.
+
+---
+
+## Channel-Distributed Products
+- products exposed through a Distribution Channel
+- products associated with a tenant, partner, distributor, agency, affiliate or Community Marketplace context
+- products that must preserve Commercial Origin for future attribution and Marketplace Intelligence
+
+Channel distribution does not change product origin, ownership, licensing, validation, billing, settlement, revenue sharing or operational responsibility by default.
 
 ---
 
@@ -199,6 +232,14 @@ Federated Products and Federated Assets must carry:
 - ecosystem bundles
 - cross-tenant discovery packages
 - commercial channel placements
+- distributor channel definitions
+- agency distribution scopes
+- Community Marketplace placements
+- Distribution Channel records
+- Distribution Eligibility records
+- Commercial Origin records
+- Traceability requirements
+- Commercial Governance requirements
 
 ---
 
@@ -264,6 +305,27 @@ Products can appear in multiple Tenant Marketplaces depending on curation rules,
 
 Tenant exposure must not alter product origin, ownership, validation status, licensing rules, billing, settlement, revenue sharing or treasury routing by default.
 
+Distribution Network product concepts include:
+- Distributor
+- Partner
+- Agency
+- Affiliate
+- Community Marketplace
+- Distribution Channel
+- Distribution Eligibility
+- Commercial Origin
+- Traceability
+- Commercial Governance
+- Attribution Engine readiness
+- Referral System readiness
+- Partner Network readiness
+
+Products can be distributed by channel, partner, tenant, community, affiliate or specialized marketplace only when compatible with distribution eligibility, product policy, licensing restrictions and governance validation.
+
+Sensitive products may require governance approval before distribution through partners, affiliates, agencies or Community Marketplaces.
+
+Distributed products must preserve enough Commercial Origin and Traceability for future Attribution Engine, Revenue Sharing and Marketplace Intelligence.
+
 ---
 
 # Product Principles
@@ -294,3 +356,6 @@ Tenant exposure must not alter product origin, ownership, validation status, lic
 - no tenant marketplace can operate outside Axodus governance
 - no tenant exposure implies tenant billing, tenant settlement, tenant revenue sharing, financial isolation or complete data isolation by default
 - no white-label product exposure implies sovereign independence from Axodus policy
+- no distribution channel can bypass product policy, licensing restrictions, governance validation or observability
+- no distribution exposure implies referral tracking, commission, payment, payout, settlement, revenue sharing or treasury routing by default
+- no distributed product loses its original ownership, validation status, licensing rules or operational responsibility by default

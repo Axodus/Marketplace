@@ -329,6 +329,50 @@ ACS systems must remain bounded and governance-aware.
 
 # Distribution Network Workflow
 
+## Commercial Participant Onboarding
+- identify the commercial participant
+- classify participant type as Distributor, Partner, Agency, Affiliate or Community Marketplace
+- define commercial scope
+- define permitted products or categories
+- validate Distribution Eligibility
+- validate governance
+- validate product policies
+- validate licensing restrictions
+- define traceability rules
+- define operational responsibilities
+- define operating limits
+- create documentation record
+- publish controlled authorization or future authorization
+- monitor operations
+
+Rules:
+- no commercial participant may distribute products outside applicable permissions, policies, restrictions and validations
+- commercial onboarding does not automatically enable commissions, revenue sharing, payments, payouts, real tracking, affiliate links or settlement
+- distribution must preserve enough traceability for future Attribution Engine, Revenue Sharing and Marketplace Intelligence
+- distributors, partners, agencies, affiliates and Community Marketplaces cannot operate outside Axodus governance
+
+---
+
+## Product Publication In Distribution Channel
+- select the product
+- validate Distribution Eligibility
+- identify the Distribution Channel, tenant, partner, agency, affiliate or Community Marketplace
+- validate product policies
+- validate licensing restrictions
+- validate governance
+- define expected Commercial Origin
+- define minimum observability
+- publish through controlled visibility
+- monitor and review
+
+Rules:
+- channel publication does not change product origin, ownership, validation status, licensing rules, billing, settlement, revenue sharing or operational responsibility
+- sensitive products may require governance approval before partner, affiliate, agency or Community Marketplace distribution
+- Distribution Channel visibility must remain auditable and traceable
+- product distribution does not activate referral tracking, commission engine, partner dashboard, payments, payouts, settlement or treasury routing
+
+---
+
 ## Channel Definition
 - define distribution surface
 - define channel owner
