@@ -4,6 +4,7 @@ import { apiClient } from "../../../services/apiClient";
 import type { ProductFilters } from "../services/marketplaceService";
 import {
   DEFAULT_PRODUCT_EXPLORER_FILTERS,
+  buildSellerProfileView,
   calculateDashboardMetrics,
   getProductByItemRef,
   getCollectionBySlug,
@@ -146,11 +147,10 @@ export function useSeller(sellerId?: string) {
         apiClient.getGovernanceEnforcementSnapshot()
       ]);
       return {
-        seller,
+        ...buildSellerProfileView(seller, products),
         authority,
         enforcement,
-        governanceEnforcement,
-        products: products.filter((product) => product.sellerId === seller.id)
+        governanceEnforcement
       };
     }
   });

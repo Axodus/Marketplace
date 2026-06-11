@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildSellerProfileView,
   createDraftListingPreview,
   getCollectionBySlug,
   getCollectionForProduct,
   getProductByItemRef,
   getProductBySlug,
+  getSellerById,
+  getSellerProfileById,
   issueMockPurchase,
   listCollections,
   listProducts
@@ -68,6 +71,26 @@ describe("marketplaceService", () => {
     expect(collection?.collection.assetType).toBe("ERC1155");
     expect(collection?.products.map((item) => item.slug)).toContain("academy-certification-erc1155-bundle");
     expect(getCollectionForProduct(product!)?.collection.slug).toBe("academy-certification-packs");
+  });
+
+  it("builds seller profile metrics, activity and collection relationships from mock data", () => {
+    const seller = getSellerById("seller-axodus-core");
+    expect(seller).toBeDefined();
+
+    const profile = buildSellerProfileView(seller!);
+
+    expect(profile.metrics.listings).toBe(2);
+    expect(profile.metrics.nftBoundListings).toBe(2);
+    expect(profile.metrics.collections).toBe(2);
+    expect(profile.metrics.totalBids).toBe(6);
+    expect(profile.reputation.label).toBe("excellent-mock");
+    expect(profile.reputation.riskLabel).toBe("low");
+    expect(profile.activity.length).toBeGreaterThan(0);
+    expect(profile.collections.map((view) => view.collection.slug)).toContain("axodus-governance-access");
+  });
+
+  it("returns null for unknown seller profiles", () => {
+    expect(getSellerProfileById("seller-missing")).toBeNull();
   });
 
   it("finds products by slug", () => {

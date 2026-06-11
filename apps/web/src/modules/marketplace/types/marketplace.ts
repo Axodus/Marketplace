@@ -124,8 +124,12 @@ export interface MarketplaceCollection {
 export interface Seller {
   id: string;
   name: string;
+  handle?: string;
+  avatar?: string;
+  mockAccount?: string;
   type: SellerType;
   verificationStatus: VerificationStatus;
+  verificationNote?: string;
   governanceStanding: SellerStanding;
   reputation: number;
   registeredDAOs: string[];

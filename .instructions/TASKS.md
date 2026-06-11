@@ -10,7 +10,7 @@ Planning artifact:
 Recommended implementation sequence:
 - MEP-REQ-010 — Explorer Consolidation — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-011 — Collection System — IMPLEMENTED MOCK-FIRST
-- MEP-REQ-012 — Seller Profiles
+- MEP-REQ-012 — Seller Profiles — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-013 — Asset Registry
 - MEP-REQ-014 — Marketplace Analytics
 - MEP-PHASE-01-CLOSURE — QA, navigation and no-execution boundary validation
@@ -29,6 +29,14 @@ MEP-REQ-011 delivered:
 - product-to-collection relationships through mock `collectionId`
 - navigation from layout and product cards/details into collection pages
 - collection-not-found and empty-assets states without external provider, indexer or on-chain lookup
+
+MEP-REQ-012 delivered:
+- seller profile route consolidated at `/marketplace/sellers/:sellerId`
+- seller identity, handle, avatar, mock account, verification note and governance standing
+- mock reputation, risk indicator, listing count, NFT-bound count, mock sales, mock volume and bid metrics
+- governance validation panel using preview/read-only status only
+- associated collections, recent activity mock timeline and seller listing grid
+- seller-not-found and seller-without-listings states without identity provider, KYC, RBAC, onboarding, payments or settlement
 
 Constraints:
 - keep Phase 01 mock-first

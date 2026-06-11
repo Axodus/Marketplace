@@ -200,6 +200,33 @@ export interface CollectionView {
   };
 }
 
+export interface SellerProfileView {
+  seller: Seller;
+  products: Product[];
+  collections: CollectionView[];
+  metrics: {
+    listings: number;
+    activeListings: number;
+    mockSales: number;
+    mockVolume: number;
+    totalBids: number;
+    collections: number;
+    averagePrice: number;
+    nftBoundListings: number;
+  };
+  reputation: {
+    score: number;
+    label: "excellent-mock" | "trusted-mock" | "review-mock" | "restricted-mock";
+    riskLabel: "low" | "medium" | "high";
+  };
+  activity: Array<{
+    id: string;
+    label: string;
+    timestamp: string;
+    detail: string;
+  }>;
+}
+
 function buildCollectionMetrics(collection: MarketplaceCollection, collectionProducts: Product[]) {
   const listings = collectionProducts.filter((product) => product.status === "listed").length;
   const bids = collectionProducts.reduce((sum, product) => sum + (product.auction?.bidCount ?? 0), 0);
@@ -255,6 +282,74 @@ export function getCollectionBySlug(slug: string) {
 export function getCollectionForProduct(product: Product) {
   if (!product.collectionId) return null;
   return listCollections().find((view) => view.collection.id === product.collectionId) ?? null;
+}
+
+function getReputationLabel(seller: Seller): SellerProfileView["reputation"]["label"] {
+  if (seller.governanceStanding === "restricted" || seller.governanceStanding === "suspended" || seller.governanceStanding === "sanctioned") {
+    return "restricted-mock";
+  }
+  if (seller.reputation >= 95) return "excellent-mock";
+  if (seller.reputation >= 80) return "trusted-mock";
+  return "review-mock";
+}
+
+function getRiskLabel(seller: Seller): SellerProfileView["reputation"]["riskLabel"] {
+  if (seller.riskScore <= 10) return "low";
+  if (seller.riskScore <= 30) return "medium";
+  return "high";
+}
+
+export function buildSellerProfileView(seller: Seller, sourceProducts: Product[] = products): SellerProfileView {
+  const sellerProducts = sourceProducts.filter((product) => product.sellerId === seller.id);
+  const sellerCollectionIds = new Set(sellerProducts.map((product) => product.collectionId).filter(Boolean));
+  const sellerCollections = listCollections().filter((view) => sellerCollectionIds.has(view.collection.id));
+  const totalBids = sellerProducts.reduce((sum, product) => sum + (product.auction?.bidCount ?? 0), 0);
+  const mockVolume = sellerProducts.reduce((sum, product) => sum + product.pricing.amount, 0);
+  const activeListings = sellerProducts.filter((product) => product.status === "listed").length;
+  const mockSales = sellerProducts.filter((product) => product.status === "listed" && product.governanceStatus !== "restricted").length + totalBids;
+  const latestProducts = [...sellerProducts].sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt));
+  const activity = latestProducts.slice(0, 4).map((product) => ({
+    id: `activity-${seller.id}-${product.id}`,
+    label: product.auction ? "Auction activity mock" : "Listing activity mock",
+    timestamp: product.updatedAt,
+    detail: `${product.title} is ${product.status} with ${product.governanceStatus} governance standing.`
+  }));
+
+  if (activity.length === 0) {
+    activity.push({
+      id: `activity-${seller.id}-empty`,
+      label: "No listing activity",
+      timestamp: new Date(0).toISOString(),
+      detail: "This mock seller has no listed Marketplace assets yet."
+    });
+  }
+
+  return {
+    seller,
+    products: sellerProducts,
+    collections: sellerCollections,
+    metrics: {
+      listings: sellerProducts.length,
+      activeListings,
+      mockSales,
+      mockVolume,
+      totalBids,
+      collections: sellerCollections.length,
+      averagePrice: sellerProducts.length ? Number((mockVolume / sellerProducts.length).toFixed(2)) : 0,
+      nftBoundListings: sellerProducts.filter((product) => product.nftBound).length
+    },
+    reputation: {
+      score: seller.reputation,
+      label: getReputationLabel(seller),
+      riskLabel: getRiskLabel(seller)
+    },
+    activity
+  };
+}
+
+export function getSellerProfileById(id: string) {
+  const seller = getSellerById(id);
+  return seller ? buildSellerProfileView(seller, products) : null;
 }
 
 export function getProductBySlug(slug: string) {
