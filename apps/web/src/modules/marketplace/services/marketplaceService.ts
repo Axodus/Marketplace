@@ -14,9 +14,14 @@ import type {
   ProductCategory,
   ProductStanding,
   PurchaseRecord,
-  Seller
+  Seller,
+  TokenStandard
 } from "../types/marketplace";
 import { getDeliveryTelemetrySummary } from "./deliveryRuntime";
+
+export type ProductAssetTypeFilter = "all" | "nft" | "erc721" | "erc1155" | "offchain";
+export type ProductListingStatusFilter = Product["status"] | "auction-active" | "all";
+export type ProductSortOption = "relevance" | "price-asc" | "price-desc" | "recent" | "activity" | "name";
 
 export interface ProductFilters {
   category?: ProductCategory | "all";
@@ -24,20 +29,115 @@ export interface ProductFilters {
   governanceStatus?: ProductStanding | "all";
   licenseType?: string;
   chain?: Chain | "all";
+  assetType?: ProductAssetTypeFilter;
+  listingStatus?: ProductListingStatusFilter;
+  listingType?: Product["listingType"] | "all";
+  sellerId?: string | "all";
   maturity?: string;
   daoOwned?: boolean;
   minSellerReputation?: number;
+  sortBy?: ProductSortOption;
 }
+
+export const DEFAULT_PRODUCT_EXPLORER_FILTERS: ProductFilters = {
+  category: "all",
+  chain: "all",
+  governanceStatus: "all",
+  assetType: "all",
+  listingStatus: "all",
+  listingType: "all",
+  sellerId: "all",
+  sortBy: "relevance"
+};
 
 const products = marketplaceProducts as Product[];
 const sellers = marketplaceSellers as Seller[];
 const licenses = marketplaceLicenses as License[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 
-export function listProducts(filters: ProductFilters = {}) {
-  return products.filter((product) => {
-    const seller = getSellerById(product.sellerId);
-    const query = filters.search?.trim().toLowerCase();
+function normalizeSearch(value?: string) {
+  return value?.trim().toLowerCase() ?? "";
+}
+
+function getSearchFields(product: Product, seller?: Seller) {
+  return [
+    product.title,
+    product.description,
+    product.shortDescription,
+    product.category,
+    product.subcategory,
+    product.licenseType,
+    product.tokenStandard,
+    product.listingType,
+    product.status,
+    product.contractAddress,
+    product.tokenId,
+    seller?.name,
+    seller?.type,
+    seller?.verificationStatus,
+    seller?.governanceStanding,
+    ...product.tags,
+    ...product.supportedChains,
+    ...(seller?.registeredDAOs ?? [])
+  ].filter(Boolean);
+}
+
+function matchesAssetType(product: Product, assetType?: ProductAssetTypeFilter) {
+  if (!assetType || assetType === "all") return true;
+  if (assetType === "nft") return product.nftBound;
+  if (assetType === "offchain") return product.tokenStandard === "OffchainLicense" || !product.nftBound;
+  return product.tokenStandard.toLowerCase() === assetType;
+}
+
+function matchesListingStatus(product: Product, listingStatus?: ProductListingStatusFilter) {
+  if (!listingStatus || listingStatus === "all") return true;
+  if (listingStatus === "auction-active") return product.auction?.status === "active";
+  return product.status === listingStatus;
+}
+
+function relevanceScore(product: Product, query: string, seller?: Seller) {
+  if (!query) return 0;
+  const title = product.title.toLowerCase();
+  const sellerName = seller?.name.toLowerCase() ?? "";
+  const tags = product.tags.join(" ").toLowerCase();
+  let score = 0;
+  if (title === query) score += 100;
+  if (title.includes(query)) score += 50;
+  if (sellerName.includes(query)) score += 30;
+  if (product.category.toLowerCase().includes(query)) score += 25;
+  if (product.subcategory.toLowerCase().includes(query)) score += 20;
+  if (tags.includes(query)) score += 15;
+  if (product.shortDescription.toLowerCase().includes(query)) score += 10;
+  if (product.description.toLowerCase().includes(query)) score += 5;
+  return score;
+}
+
+function activityScore(product: Product) {
+  return (product.auction?.bidCount ?? 0) + (product.signedUrlPreviewAvailable ? 1 : 0) + (product.nftBound ? 1 : 0);
+}
+
+function sortProducts(sourceProducts: Product[], filters: ProductFilters, sourceSellers: Seller[]) {
+  const query = normalizeSearch(filters.search);
+  const sortBy = filters.sortBy ?? "relevance";
+
+  return [...sourceProducts].sort((left, right) => {
+    const leftSeller = sourceSellers.find((seller) => seller.id === left.sellerId);
+    const rightSeller = sourceSellers.find((seller) => seller.id === right.sellerId);
+
+    if (sortBy === "price-asc") return left.pricing.amount - right.pricing.amount || left.title.localeCompare(right.title);
+    if (sortBy === "price-desc") return right.pricing.amount - left.pricing.amount || left.title.localeCompare(right.title);
+    if (sortBy === "recent") return Date.parse(right.updatedAt) - Date.parse(left.updatedAt) || left.title.localeCompare(right.title);
+    if (sortBy === "activity") return activityScore(right) - activityScore(left) || left.title.localeCompare(right.title);
+    if (sortBy === "name") return left.title.localeCompare(right.title);
+
+    return relevanceScore(right, query, rightSeller) - relevanceScore(left, query, leftSeller) || left.title.localeCompare(right.title);
+  });
+}
+
+export function filterAndSortProducts(sourceProducts: Product[], filters: ProductFilters = {}, sourceSellers: Seller[] = sellers) {
+  const query = normalizeSearch(filters.search);
+  const filtered = sourceProducts.filter((product) => {
+    const seller = sourceSellers.find((item) => item.id === product.sellerId);
 
     if (filters.category && filters.category !== "all" && product.category !== filters.category) return false;
     if (filters.governanceStatus && filters.governanceStatus !== "all" && product.governanceStatus !== filters.governanceStatus) {
@@ -45,16 +145,34 @@ export function listProducts(filters: ProductFilters = {}) {
     }
     if (filters.licenseType && filters.licenseType !== "all" && product.licenseType !== filters.licenseType) return false;
     if (filters.chain && filters.chain !== "all" && !product.supportedChains.includes(filters.chain)) return false;
+    if (!matchesAssetType(product, filters.assetType)) return false;
+    if (!matchesListingStatus(product, filters.listingStatus)) return false;
+    if (filters.listingType && filters.listingType !== "all" && product.listingType !== filters.listingType) return false;
+    if (filters.sellerId && filters.sellerId !== "all" && product.sellerId !== filters.sellerId) return false;
     if (filters.maturity && filters.maturity !== "all" && product.maturity !== filters.maturity) return false;
     if (filters.daoOwned && !seller?.registeredDAOs.length) return false;
     if (filters.minSellerReputation && (!seller || seller.reputation < filters.minSellerReputation)) return false;
 
     if (!query) return true;
-    return [product.title, product.shortDescription, product.category, product.subcategory, ...product.tags]
-      .join(" ")
-      .toLowerCase()
-      .includes(query);
+    return getSearchFields(product, seller).join(" ").toLowerCase().includes(query);
   });
+
+  return sortProducts(filtered, filters, sourceSellers);
+}
+
+export function getProductExplorerFacets() {
+  return {
+    categories: Array.from(new Set(products.map((product) => product.category))).sort(),
+    chains: Array.from(new Set(products.flatMap((product) => product.supportedChains))).sort(),
+    sellers: sellers.map((seller) => ({ id: seller.id, name: seller.name })).sort((left, right) => left.name.localeCompare(right.name)),
+    tokenStandards: Array.from(new Set(products.map((product) => product.tokenStandard))).sort() as TokenStandard[],
+    listingTypes: Array.from(new Set(products.map((product) => product.listingType))).sort(),
+    listingStatuses: Array.from(new Set(products.map((product) => product.status))).sort()
+  };
+}
+
+export function listProducts(filters: ProductFilters = {}) {
+  return filterAndSortProducts(products, filters, sellers);
 }
 
 export function getProductBySlug(slug: string) {

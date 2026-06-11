@@ -1,4 +1,5 @@
 import {
+  filterAndSortProducts,
   getProductBySlug,
   listLicenses as listMockLicenses,
   listProducts as listMockProducts,
@@ -671,16 +672,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 function applyProductFilters(products: Product[], filters: ProductFilters = {}) {
-  return products.filter((product) => {
-    const query = filters.search?.trim().toLowerCase();
-    if (filters.category && filters.category !== "all" && product.category !== filters.category) return false;
-    if (filters.governanceStatus && filters.governanceStatus !== "all" && product.governanceStatus !== filters.governanceStatus) return false;
-    if (filters.licenseType && filters.licenseType !== "all" && product.licenseType !== filters.licenseType) return false;
-    if (filters.chain && filters.chain !== "all" && !product.supportedChains.includes(filters.chain)) return false;
-    if (filters.maturity && filters.maturity !== "all" && product.maturity !== filters.maturity) return false;
-    if (!query) return true;
-    return [product.title, product.shortDescription, product.category, product.subcategory, ...product.tags].join(" ").toLowerCase().includes(query);
-  });
+  return filterAndSortProducts(products, filters, listMockSellers());
 }
 
 async function listProducts(filters: ProductFilters = {}) {

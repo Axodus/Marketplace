@@ -8,12 +8,19 @@ Planning artifact:
 - `docs/PHASE_01_RUNTIME_AUDIT.md`
 
 Recommended implementation sequence:
-- MEP-REQ-010 — Explorer Consolidation
+- MEP-REQ-010 — Explorer Consolidation — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-011 — Collection System
 - MEP-REQ-012 — Seller Profiles
 - MEP-REQ-013 — Asset Registry
 - MEP-REQ-014 — Marketplace Analytics
 - MEP-PHASE-01-CLOSURE — QA, navigation and no-execution boundary validation
+
+MEP-REQ-010 delivered:
+- Explorer search across product title, descriptions, tags, category, subcategory, token standard, listing type, license type, seller and chain fields
+- filters for category, asset type, chain, governance state, listing status, listing type and seller
+- sorting by relevance, price, recent update, activity and name
+- clear filters action, result summary, loading state, API fallback state and empty state
+- shared mock-first filtering/sorting helper for local fallback and API-hydrated products
 
 Constraints:
 - keep Phase 01 mock-first

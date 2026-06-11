@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "../../../services/apiClient";
 import type { ProductFilters } from "../services/marketplaceService";
 import {
+  DEFAULT_PRODUCT_EXPLORER_FILTERS,
   calculateDashboardMetrics,
   getProductByItemRef,
   getSellerById,
@@ -12,7 +13,7 @@ import {
 import { instrumentMarketplaceError, traceMarketplaceLifecycle } from "../services/runtimeTelemetry";
 
 export function useProductFilters() {
-  const [filters, setFilters] = useState<ProductFilters>({ category: "all", chain: "all", governanceStatus: "all" });
+  const [filters, setFilters] = useState<ProductFilters>(DEFAULT_PRODUCT_EXPLORER_FILTERS);
   const fallbackProducts = useMemo(() => listProducts(filters), [filters]);
   const productsQuery = useQuery({
     queryKey: ["marketplace-products", filters],

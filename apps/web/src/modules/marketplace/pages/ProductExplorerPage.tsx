@@ -5,7 +5,7 @@ import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import { getSellerById } from "../services/marketplaceService";
 
 export function ProductExplorerPage() {
-  const { filters, setFilters, products, governanceEnforcement } = useProductFilters();
+  const { filters, setFilters, products, governanceEnforcement, isLoading, error } = useProductFilters();
   useMarketplaceTelemetry("product-explorer-page", { resultCount: products.length });
   const enforcementRecords = governanceEnforcement?.records ?? [];
   const restrictedCount = governanceEnforcement?.restrictedProductIds.length ?? 0;
@@ -16,6 +16,10 @@ export function ProductExplorerPage() {
       <div>
         <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Product explorer</p>
         <h1 className="mt-2 text-3xl font-semibold">NFT listings, licenses and ecosystem assets</h1>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+          Discover mock-first ERC721, ERC1155, auction, license and product listings. Search, filters and sorting run against Marketplace
+          mock/read-model data without backend search, settlement, wallet signatures or external marketplace integration.
+        </p>
       </div>
       <section className="rounded border border-slate-200 bg-white p-4 text-sm shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -30,6 +34,31 @@ export function ProductExplorerPage() {
         </div>
       </section>
       <ProductFiltersPanel filters={filters} setFilters={setFilters} />
+      <section className="rounded border border-slate-200 bg-white p-4 text-sm shadow-sm" aria-live="polite">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="font-semibold text-slate-950">
+            {products.length} {products.length === 1 ? "result" : "results"}
+          </p>
+          <p className="text-slate-600">
+            Sort: {filters.sortBy ?? "relevance"} | Category: {filters.category ?? "all"} | Asset: {filters.assetType ?? "all"}
+          </p>
+        </div>
+      </section>
+      {isLoading && (
+        <section className="rounded border border-slate-200 bg-white p-6 shadow-sm" role="status" aria-live="polite">
+          <h2 className="text-xl font-semibold">Loading Marketplace listings</h2>
+          <p className="mt-2 text-sm text-slate-600">Hydrating mock-first product data and governance visibility.</p>
+        </section>
+      )}
+      {error && (
+        <section className="rounded border border-amber-200 bg-amber-50 p-6 text-amber-900 shadow-sm" role="status">
+          <h2 className="text-xl font-semibold">Using local Marketplace mock data</h2>
+          <p className="mt-2 text-sm">
+            The API-backed read model was unavailable for this query. The Explorer remains available through local mock data and no runtime
+            execution was attempted.
+          </p>
+        </section>
+      )}
       {products.length ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-live="polite">
           {products.map((product) => (
@@ -44,7 +73,9 @@ export function ProductExplorerPage() {
       ) : (
         <section className="rounded border border-slate-200 bg-white p-6 shadow-sm" role="status">
           <h2 className="text-xl font-semibold">No Marketplace products match these filters</h2>
-          <p className="mt-2 text-sm text-slate-600">Adjust category, chain, governance standing or search terms. No runtime execution was attempted.</p>
+          <p className="mt-2 text-sm text-slate-600">
+            Adjust search, category, asset type, chain, seller, listing status or sorting. No runtime execution was attempted.
+          </p>
         </section>
       )}
     </div>
