@@ -250,13 +250,43 @@ Status: FUTURE
 Objectives:
 - introduce governance-compatible commercial intelligence for discovery, catalog health, tenant performance, distribution effectiveness and operational risk visibility
 - separate insight generation from automated execution
+- transform catalog, collection, tenant, product, distribution, revenue, activity and telemetry data into commercial and operational intelligence
+- define Commercial Analytics, Collection Analytics, Tenant Analytics and Distribution Analytics implementation boundaries
+- preserve interpretability, traceability, auditability, transparency and governance compatibility for metrics and indicators
 
 Deliverables:
+- Commercial Analytics readiness
+- Collection Analytics readiness
+- Tenant Analytics readiness
+- Product Analytics readiness
+- Distribution Analytics readiness
 - catalog intelligence read models
 - tenant and seller performance visibility
 - distribution effectiveness telemetry
 - risk and governance visibility
 - recommendation and ranking boundaries with no hidden authority
+- Interpretability and Traceability criteria
+- Auditability requirements
+- Operational Intelligence boundaries
+
+Linked requirements:
+- MEP-REQ-070 — Commercial Analytics
+- MEP-REQ-071 — Collection Analytics
+- MEP-REQ-072 — Tenant Analytics
+- MEP-REQ-073 — Distribution Analytics
+
+Dependencies:
+- Phase 01 — NFT Marketplace Consolidation
+- Phase 02 — Federation Layer
+- Phase 03 — Tenant Infrastructure
+- Phase 04 — Curated Catalogs
+- Phase 05 — Distribution Network
+- Phase 06 — Revenue Sharing
+
+Implementation boundary:
+- Phase 07 implementation is future work
+- MEP-REQ-005 is documentation-only
+- no dashboard, tracking, analytics event, BI integration, telemetry pipeline, analytics schema, analytics database, sensitive data collection, API, GraphQL schema, database, persistence, frontend component, route, automated ranking or automated decision is introduced by Phase 00
 
 ---
 

@@ -116,6 +116,20 @@ Revenue Sharing connects Attribution, Commission, Revenue Split, Billing, Treasu
 
 No revenue division may occur without Audit Trail, traceable Commercial Origin, identified participants, explicit Commercial Rules, governance validation, Treasury Validation, Billing Visibility and Settlement Visibility.
 
+## Marketplace Intelligence Domain
+
+The Marketplace Intelligence Domain prepares Marketplace to transform future product, collection, tenant, channel, distribution, revenue, activity and telemetry data into commercial and operational intelligence.
+
+Core intelligence concepts:
+- Commercial Analytics: aggregated operational and commercial metrics for Marketplace volume, conversion, activity, distribution, sales, channels, funnel behavior, Commercial Origin and network health.
+- Tenant Analytics: Tenant Marketplace metrics for catalog activity, traffic, conversion, curation, channels, performance, product exposure and ecosystem contribution.
+- Product Analytics: product metrics for views, conversions, sales, subscriptions, licenses, renewals, future revenue visibility, retention, channel performance, tenant performance, eligibility and validation status.
+- Collection Analytics: NFT or digital collection metrics for volume, holders, activity, floor price, listings, bids, sales, transfers, ranking, validation, origin, provenance, metadata quality and channel or tenant performance.
+
+Marketplace Intelligence connects Product Domain, Marketplace Federation Domain, Marketplace-as-a-Service Domain, Distribution Network Domain, Revenue Sharing Domain, Billing Layer, Telemetry Layer and Governance Integration.
+
+Analytics must preserve Interpretability, Traceability, Auditability, transparency and governance compatibility. Analytics do not replace governance, audit, accounting, billing, product validation, licensing validation or treasury validation.
+
 ## Non-Execution Boundary
 
 Phase 00 is documentation-only.

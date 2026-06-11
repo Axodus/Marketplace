@@ -12,6 +12,10 @@ Marketplace products coordinate:
 - channel-distributed products
 - revenue participation products
 - commercial rules
+- product analytics requirements
+- collection analytics requirements
+- tenant analytics requirements
+- channel analytics requirements
 - native products
 - native assets
 - external assets
@@ -133,6 +137,53 @@ Products can be distributed by multiple channels or tenants, but future economic
 Federated Products and External Assets must not inherit commission, split, settlement or payout rules automatically. They require explicit validation before any future commercial rule applies.
 
 Sensitive products may require governance approval before distribution or shared monetization.
+
+---
+
+## Analytics-Ready Products
+- products prepared to expose future analytics according to category, lifecycle, tenant context, channel context and validation status
+- products with future global analytics, tenant analytics, channel analytics, collection analytics, distribution analytics and lifecycle analytics requirements
+- products that may define telemetry requirements before analytics implementation
+
+Relevant categories include:
+- NFT
+- digital collection
+- license
+- subscription
+- Academy product
+- ACS product
+- enterprise offer
+- DAO product
+- federated product
+- tenant product
+- channel-distributed product
+
+Future Product Analytics metrics may include:
+- views
+- conversions
+- sales
+- subscriptions
+- licenses
+- renewals
+- future revenue visibility
+- retention
+- distribution
+- channel performance
+- tenant performance
+- operational activity
+- lifecycle state
+- validation status
+- eligibility status
+
+Federated Product analytics must preserve:
+- origin
+- provider
+- validation status
+- metadata quality
+- risk classification
+- trust boundaries
+
+Analytics must not automatically alter product eligibility, governance status, licensing rules, billing, settlement, Revenue Split Rules or Commercial Rules.
 
 ---
 
@@ -306,6 +357,18 @@ Revenue sharing products are accounting models and commercial capabilities. They
 - seller and collection discovery analytics
 - distribution effectiveness reports
 - governance and operational risk visibility
+- Commercial Analytics readiness
+- Tenant Analytics readiness
+- Product Analytics readiness
+- Collection Analytics readiness
+- Distribution Analytics readiness
+- Commercial Metrics definitions
+- Tenant Metrics definitions
+- Collection Metrics definitions
+- Interpretability requirements
+- Traceability requirements
+- Auditability requirements
+- Operational Intelligence boundaries
 
 Intelligence products provide transparent read models and insights. They must not create hidden ranking authority or autonomous commercial execution.
 
@@ -389,6 +452,25 @@ Revenue Sharing Domain product concepts include:
 
 Commercial Rules must be explicit, auditable and reviewable before activation.
 
+Marketplace Intelligence Domain product concepts include:
+- Commercial Analytics
+- Tenant Analytics
+- Product Analytics
+- Collection Analytics
+- Distribution Analytics
+- Commercial Metrics
+- Tenant Metrics
+- Collection Metrics
+- Interpretability
+- Traceability
+- Auditability
+- Operational Intelligence
+- Telemetry Layer readiness
+
+Products may have analytics globally, by tenant, by channel, by collection, by distribution path and by lifecycle stage.
+
+Analytics must preserve source context, criteria, limitations and auditability before being used for operational decisions.
+
 ---
 
 # Product Principles
@@ -426,3 +508,6 @@ Commercial Rules must be explicit, auditable and reviewable before activation.
 - no commission or split may be implicit, hidden or non-auditable
 - no federated or external product inherits revenue sharing rules without explicit validation
 - no participant has automatic revenue rights before attribution, eligibility, explicit rules, governance validation, billing visibility and treasury validation
+- no analytics metric may automatically alter product eligibility, governance, licensing, billing, settlement or commercial rules
+- no ranking or indicator may be used as an unreviewable automated decision
+- no analytics implementation, tracking, dashboard, BI pipeline or sensitive data collection is enabled in Phase 00

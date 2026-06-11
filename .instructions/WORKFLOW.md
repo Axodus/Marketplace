@@ -458,6 +458,31 @@ Rules:
 
 Intelligence must expose insights without hidden commercial authority, autonomous pricing, autonomous promotion or unapproved user profiling.
 
+## Metrics Definition For Products, Collections, Tenants And Channels
+- identify the analyzed object
+- classify the object as product, collection, tenant, channel, partner, affiliate, distributor or marketplace
+- define analytics objectives
+- define future events or signals
+- define indicators
+- define data origin
+- define granularity
+- define visibility
+- define interpretation criteria
+- validate governance
+- validate privacy and data sensitivity
+- validate auditability
+- validate allowed operational use
+- create documentation record
+- schedule periodic review
+
+Rules:
+- analytics must be used for transparency, operational improvement, audit, performance visibility and strategic intelligence
+- metrics, rankings and indicators cannot be used as unreviewable automated decisions
+- analytics do not replace billing, accounting, governance, product validation, licensing validation or Treasury Validation
+- Commercial Analytics, Tenant Analytics, Product Analytics and Collection Analytics must preserve Interpretability, Traceability and Auditability
+- analytics for federated products and collections must preserve origin, provider, validation status, metadata quality, risk and trust boundaries
+- MEP-REQ-005 does not enable real tracking, sensitive data collection, dashboards, BI integration, analytics events or telemetry pipelines
+
 ---
 
 # Security Workflow

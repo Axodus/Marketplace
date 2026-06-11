@@ -344,9 +344,55 @@ CONFIRMED
 ## Marketplace Intelligence Domain
 
 Decision:
-Marketplace must prepare governance-compatible commercial intelligence for catalog health, product discovery, tenant performance, seller visibility, distribution effectiveness and operational risk visibility.
+Marketplace must become a future source of commercial and operational intelligence for catalog health, product discovery, tenant performance, seller visibility, distribution effectiveness, collection performance, revenue visibility, operational activity and ecosystem risk visibility.
 
-Intelligence must be transparent and auditable. It must not create hidden ranking authority, automated pricing, autonomous promotion or user profiling outside a future approved policy.
+Analytics must be:
+- interpretable
+- traceable
+- auditable
+- transparent
+- telemetry-visible
+- governance-compatible
+- linked to explicit data origin where possible
+- bounded by documented criteria and known limitations
+
+Marketplace Intelligence cannot replace:
+- governance
+- audit
+- accounting
+- billing
+- product validation
+- licensing validation
+- treasury validation
+- settlement validation
+
+Metrics, rankings and indicators must have documented criteria, explicit data origin and known limits.
+
+Marketplace Intelligence cannot create opaque commercial authority, hidden ranking authority, automated pricing, autonomous promotion, unreviewable product eligibility changes, automated governance bypass or user profiling outside a future approved policy.
+
+Real dashboards, analytics events, tracking, BI integrations, telemetry pipelines, analytical databases, schemas and sensitive data collection belong to future approved phases, not Phase 00.
+
+Status:
+CONFIRMED
+
+---
+
+## MEP-REQ-005 Marketplace Intelligence
+
+Decision:
+Marketplace Intelligence will support future Commercial Analytics, Tenant Analytics, Product Analytics and Collection Analytics.
+
+Commercial Analytics represents aggregated and operational Marketplace metrics, including commercial volume, future revenue visibility, conversion, activity, distribution, sales, channels, funnel behavior, commercial performance, Commercial Origin, commercial participation and distribution network health.
+
+Tenant Analytics represents metrics for Tenant Marketplaces, including catalog activity, traffic, sales, conversion, curation, channels, performance, distribution, commercial participation, product exposure, tenant activity and ecosystem contribution.
+
+Product Analytics represents product metrics, including views, conversions, sales, subscriptions, licenses, renewals, future revenue visibility, retention, distribution, channel performance, tenant performance, eligibility, commercial activity, lifecycle state, operational contribution and validation status.
+
+Collection Analytics represents NFT collection or digital collection metrics, including volume, holders, activity, floor price, listings, bids, sales, transfers, ranking, validation, origin, provenance, metadata quality and performance across tenants or channels.
+
+Marketplace Intelligence must connect Product Domain, Marketplace Federation Domain, Marketplace-as-a-Service Domain, Distribution Network Domain, Revenue Sharing Domain, Billing Layer, Telemetry Layer and Governance Integration without replacing any of those domains.
+
+Analytics are for transparency, operational improvement, audit, performance visibility and strategic intelligence. They are not operational authority by default.
 
 Status:
 CONFIRMED

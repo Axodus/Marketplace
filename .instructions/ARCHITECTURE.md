@@ -591,7 +591,56 @@ Boundaries:
 
 ## Marketplace Intelligence Domain
 
-The Marketplace Intelligence Domain prepares governance-compatible commercial intelligence for product discovery, catalog health, tenant performance, distribution effectiveness and operational risk visibility.
+The Marketplace Intelligence Domain prepares Marketplace to transform future product, collection, tenant, channel, distribution, revenue, activity and telemetry data into commercial and operational intelligence.
+
+Marketplace Intelligence is a transversal analysis, commercial observability and operational intelligence layer. It is not a source of commercial authority, does not replace governance, does not replace audit, does not replace accounting, does not replace billing and does not replace product, licensing or treasury validation.
+
+Core concepts:
+
+### Commercial Analytics
+
+Commercial Analytics represents aggregated and operational marketplace metrics, including volume, future revenue visibility, conversion, activity, distribution, sales, channels, funnel behavior, commercial performance, Commercial Origin, commercial participation and overall distribution network health.
+
+Commercial Analytics must be interpretable, traceable, auditable and governance-compatible.
+
+### Tenant Analytics
+
+Tenant Analytics represents metrics for each Tenant Marketplace, including catalog activity, traffic, sales, conversion, curation, channels, tenant performance, distribution, commercial participation, product exposure, tenant activity and ecosystem contribution.
+
+Tenant Analytics must preserve tenant context without creating tenant authority outside Axodus governance, observability and treasury boundaries.
+
+### Product Analytics
+
+Product Analytics represents product metrics, including views, conversions, sales, subscriptions, licenses, renewals, future revenue visibility, retention, distribution, channel performance, tenant performance, Distribution Eligibility, commercial activity, lifecycle state, operational contribution and validation status.
+
+Product Analytics must not automatically alter product eligibility, governance status, licensing rules, billing, settlement, revenue sharing or Commercial Rules.
+
+### Collection Analytics
+
+Collection Analytics represents NFT collection or digital collection metrics, including volume, holders, activity, floor price, listings, bids, sales, transfers, ranking, validation, origin, provenance, metadata quality and performance across tenants or channels.
+
+Collection Analytics for federated or external collections must preserve origin, provider, validation status, metadata quality, risk and trust boundaries.
+
+Domain relationships:
+- Product Domain supplies product categories, eligibility, exposure, licensing, lifecycle state and performance context
+- Marketplace Federation Domain supplies external origin, provider, validation status, provenance, metadata quality, risk and trust boundaries
+- Marketplace-as-a-Service Domain supplies tenant context, Tenant Catalog, Marketplace Themes, Marketplace Domains, Marketplace Branding, curation and marketplace-specific exposure
+- Distribution Network Domain supplies Distribution Channels, partners, agencies, affiliates, Community Marketplaces and Commercial Origin
+- Revenue Sharing Domain supplies future Attribution Model, Tenant Participation, Commission Model and Revenue Split Rules visibility requirements
+- Billing Layer supplies future accounting, Billing Visibility, Settlement Visibility, charging, reconciliation and treasury compatibility data
+- Telemetry Layer supplies operational traceability, future events, metrics, logs and activity signals
+- Governance Integration supplies policy, restriction, approval, constitutional and review context
+
+Analytics principles:
+- metrics must preserve transparency
+- metrics must preserve auditability
+- metrics must preserve traceability
+- metrics must be governance-compatible
+- metrics should be interpretable and linked to data origin whenever possible
+- metrics, rankings and indicators must have documented criteria, explicit data origin and known limitations
+- analytics must support transparency, operational improvement, audit, performance visibility and strategic intelligence
+
+Marketplace Intelligence must not create opaque authority, undocumented automated decisions, unreviewable rankings, hidden product eligibility changes, hidden commercial policy changes or automated governance bypass.
 
 Responsibilities:
 - define intelligence read models
@@ -599,6 +648,12 @@ Responsibilities:
 - prepare recommendation and ranking boundaries
 - expose telemetry without hidden commercial authority
 - separate insights from automated execution
+- define Commercial Analytics boundaries
+- define Tenant Analytics boundaries
+- define Product Analytics boundaries
+- define Collection Analytics boundaries
+- define Distribution Analytics boundaries
+- preserve Interpretability, Traceability, Auditability and Operational Intelligence boundaries
 
 Boundaries:
 - no automated pricing
@@ -606,6 +661,22 @@ Boundaries:
 - no hidden ranking authority
 - no external analytics export
 - no user profiling beyond approved future policy
+- no real tracking
+- no dashboards
+- no analytics events
+- no analytics schema
+- no analytics database
+- no telemetry pipeline
+- no BI integration
+- no sensitive data collection
+- no API or GraphQL schema
+- no database or persistence change
+- no frontend route or component change
+- no automatic ranking execution
+- no automated decision execution
+- no billing analytics runtime
+- no partner analytics runtime
+- no tenant dashboard runtime
 
 ---
 
