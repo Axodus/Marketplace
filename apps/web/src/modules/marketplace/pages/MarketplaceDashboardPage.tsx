@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { Activity, BarChart3, BadgeDollarSign, Gavel, Layers3, Store, TrendingUp } from "lucide-react";
 import { MetricCard } from "../components/MetricCard";
 import { useMarketplaceDashboard } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
@@ -18,36 +20,66 @@ export function MarketplaceDashboardPage() {
   }
   const deliveryEvents = buildDeliveryTelemetry(data.products);
   const runtimeMetrics = getMarketplaceRuntimeMetrics();
+  const { analytics } = data;
 
   return (
     <div className="space-y-6">
       <div>
         <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Marketplace dashboard</p>
-        <h1 className="mt-2 text-3xl font-semibold">Operational telemetry preview</h1>
+        <h1 className="mt-2 text-3xl font-semibold">NFT marketplace analytics mock-first</h1>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+          Volume, activity and market metrics are derived from local mock data for Phase 01. This is not Marketplace Intelligence Phase 07,
+          BI, tracking, billing analytics or settlement visibility.
+        </p>
       </div>
-      <section className="grid gap-4 md:grid-cols-4">
-        <MetricCard label="Listings" value={data.metrics.activeListings} detail="Mock fixed and auction listings" />
-        <MetricCard label="Verified sellers" value={data.metrics.verifiedSellers} detail="Governance standing verified" />
-        <MetricCard label="NFT-bound" value={data.metrics.nftBoundProducts} detail="ERC721/1155 products" />
-        <MetricCard label="Royalty preview" value={`${data.metrics.royaltyPreview} USDC`} detail="No settlement executed" />
+
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard label="Total volume mock" value={`${analytics.volume.totalVolume} USDC`} detail={`${analytics.volume.salesCount} mock sales/bids`} />
+        <MetricCard label="Average price mock" value={`${analytics.volume.averagePrice} USDC`} detail="Listed products only" />
+        <MetricCard label="Floor price mock" value={`${analytics.volume.floorPrice} USDC`} detail="Lowest active listing" />
+        <MetricCard label="Royalty preview" value={`${analytics.volume.royaltyPreview} USDC`} detail="EIP-2981/custom preview only" />
       </section>
-      <section className="grid gap-4 md:grid-cols-4">
-        <MetricCard label="Protected assets" value={data.metrics.protectedAssets} detail="Entitlement-aware delivery required" />
-        <MetricCard label="Signed URL previews" value={data.metrics.signedUrlPreviews} detail="Greenfield preview lifecycle only" />
-        <MetricCard label="Entitlement checks" value={data.metrics.entitlementChecks} detail="Mock enforcement boundaries" />
-        <MetricCard label="Revocations" value={data.metrics.deliveryRevocations} detail="Governance or access blocks visible" />
+
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard label="Active listings" value={analytics.activity.activeListings} detail="Mock listed products" />
+        <MetricCard label="Active auctions" value={analytics.activity.activeAuctions} detail="English and dutch previews" />
+        <MetricCard label="Total bids" value={analytics.activity.totalBids} detail="Mock bid counters" />
+        <MetricCard label="Market status" value={analytics.market.marketStatus} detail="Governance-aware summary" />
       </section>
-      <section className="grid gap-4 md:grid-cols-4">
+
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard label="NFT-bound" value={analytics.market.nftBoundProducts} detail="ERC721/1155 listings" />
+        <MetricCard label="ERC721" value={analytics.market.erc721Products} detail="Mock asset standard" />
+        <MetricCard label="ERC1155" value={analytics.market.erc1155Products} detail="Mock asset standard" />
         <MetricCard label="Runtime traces" value={runtimeMetrics.traceCount} detail="In-memory observability preview" />
-        <MetricCard label="Adapter traces" value={runtimeMetrics.adapterEvents} detail="Mock adapter calls observed" />
-        <MetricCard label="Runtime errors" value={runtimeMetrics.runtimeErrors} detail="Instrumented failures" />
-        <MetricCard label="Export enabled" value={runtimeMetrics.observabilityExportEnabled ? "Yes" : "No"} detail="Future telemetry integration" />
       </section>
+
+      <section className="grid gap-4 lg:grid-cols-3">
+        <AnalyticsPanel icon={<BadgeDollarSign />} title="Volume Metrics">
+          <MetricRow label="Total mock volume" value={`${analytics.volume.totalVolume} USDC`} />
+          <MetricRow label="Mock sales count" value={analytics.volume.salesCount} />
+          <MetricRow label="Average mock price" value={`${analytics.volume.averagePrice} USDC`} />
+          <MetricRow label="Royalty preview" value={`${analytics.volume.royaltyPreview} USDC`} />
+        </AnalyticsPanel>
+        <AnalyticsPanel icon={<Activity />} title="Activity Metrics">
+          <MetricRow label="Active listings" value={analytics.activity.activeListings} />
+          <MetricRow label="Active auctions" value={analytics.activity.activeAuctions} />
+          <MetricRow label="Total bids" value={analytics.activity.totalBids} />
+          <MetricRow label="Auction bid activity" value={analytics.activity.bidActivity} />
+        </AnalyticsPanel>
+        <AnalyticsPanel icon={<TrendingUp />} title="Market Metrics">
+          <MetricRow label="Total products" value={analytics.market.totalProducts} />
+          <MetricRow label="NFT-bound products" value={analytics.market.nftBoundProducts} />
+          <MetricRow label="Floor price mock" value={`${analytics.volume.floorPrice} USDC`} />
+          <MetricRow label="Status" value={analytics.market.marketStatus} />
+        </AnalyticsPanel>
+      </section>
+
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="rounded border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Category metrics</h2>
           <div className="mt-4 space-y-3">
-            {Object.entries(data.metrics.categories).map(([category, count]) => (
+            {Object.entries(analytics.market.categories).map(([category, count]) => (
               <div key={category}>
                 <div className="flex justify-between text-sm">
                   <span>{category}</span>
@@ -61,18 +93,89 @@ export function MarketplaceDashboardPage() {
           </div>
         </div>
         <div className="rounded border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-semibold">Integration boundaries</h2>
+          <h2 className="text-xl font-semibold">Mock analytics boundaries</h2>
           <div className="mt-4 space-y-3">
-            {data.boundaries.map((boundary) => (
-              <div key={boundary.id} className="rounded border border-slate-200 bg-slate-50 p-3">
-                <p className="font-semibold">{boundary.label}</p>
-                <p className="text-sm text-slate-600">{boundary.description}</p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-teal-700">{boundary.status}</p>
+            {analytics.notes.map((note) => (
+              <div key={note} className="rounded border border-slate-200 bg-slate-50 p-3">
+                <p className="text-sm leading-6 text-slate-600">{note}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center gap-2 text-slate-950">
+            <Layers3 size={20} />
+            <h2 className="text-xl font-semibold">Top collections</h2>
+          </div>
+          {analytics.collections.length ? (
+            <div className="mt-4 space-y-3">
+              {analytics.collections.slice(0, 5).map((collection) => (
+                <Link key={collection.id} to={`/marketplace/collections/${collection.slug}`} className="block rounded border border-slate-200 bg-slate-50 p-3 hover:border-teal-700">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-semibold text-slate-950">{collection.name}</p>
+                    <span className="text-sm font-semibold text-teal-700">Rank #{collection.ranking}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-slate-600">
+                    {collection.volume} USDC volume | {collection.floorPrice} USDC floor | {collection.bids} bids
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState>No collection metrics are available in mock data.</EmptyState>
+          )}
+        </div>
+
+        <div className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center gap-2 text-slate-950">
+            <Store size={20} />
+            <h2 className="text-xl font-semibold">Top sellers</h2>
+          </div>
+          {analytics.sellers.length ? (
+            <div className="mt-4 space-y-3">
+              {analytics.sellers.slice(0, 5).map((seller) => (
+                <Link key={seller.id} to={`/marketplace/sellers/${seller.id}`} className="block rounded border border-slate-200 bg-slate-50 p-3 hover:border-teal-700">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-semibold text-slate-950">{seller.name}</p>
+                    <span className="text-sm font-semibold text-teal-700">{seller.mockVolume} USDC</span>
+                  </div>
+                  <p className="mt-1 text-sm text-slate-600">
+                    {seller.listings} listings | {seller.mockSales} mock sales/bids | {seller.reputation}/100 reputation
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState>No seller metrics are available in mock data.</EmptyState>
+          )}
+        </div>
+      </section>
+
+      <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex items-center gap-2 text-slate-950">
+          <BarChart3 size={20} />
+          <h2 className="text-xl font-semibold">Recent market activity</h2>
+        </div>
+        {analytics.activity.recentActivity.length ? (
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {analytics.activity.recentActivity.map((event) => (
+              <div key={event.id} className="rounded border border-slate-200 bg-slate-50 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-semibold text-slate-950">{event.label}</p>
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{event.timestamp}</span>
+                </div>
+                <p className="mt-2 text-sm text-slate-600">{event.detail}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState>No recent market activity exists in mock data.</EmptyState>
+        )}
+      </section>
+
       <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-xl font-semibold">Pending validations</h2>
         <div className="mt-4 overflow-x-auto">
@@ -121,6 +224,47 @@ export function MarketplaceDashboardPage() {
           ))}
         </div>
       </section>
+
+      <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex items-center gap-2 text-slate-950">
+          <Gavel size={20} />
+          <h2 className="text-xl font-semibold">Integration boundaries</h2>
+        </div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          {data.boundaries.map((boundary) => (
+            <div key={boundary.id} className="rounded border border-slate-200 bg-slate-50 p-3">
+              <p className="font-semibold">{boundary.label}</p>
+              <p className="text-sm text-slate-600">{boundary.description}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-teal-700">{boundary.status}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
+}
+
+function AnalyticsPanel({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center gap-2 text-slate-950">
+        {icon}
+        <h2 className="text-xl font-semibold">{title}</h2>
+      </div>
+      <div className="mt-4 space-y-3">{children}</div>
+    </div>
+  );
+}
+
+function MetricRow({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded border border-slate-200 bg-slate-50 p-3 text-sm">
+      <span className="text-slate-600">{label}</span>
+      <span className="font-semibold text-slate-950">{value}</span>
+    </div>
+  );
+}
+
+function EmptyState({ children }: { children: React.ReactNode }) {
+  return <p className="mt-4 rounded border border-dashed border-slate-300 bg-slate-50 p-3 text-sm text-slate-500">{children}</p>;
 }

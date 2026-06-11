@@ -247,6 +247,55 @@ export interface AssetRegistryView {
   }>;
 }
 
+export interface MarketplaceAnalyticsView {
+  volume: {
+    totalVolume: number;
+    averagePrice: number;
+    floorPrice: number;
+    royaltyPreview: number;
+    salesCount: number;
+  };
+  activity: {
+    activeListings: number;
+    activeAuctions: number;
+    totalBids: number;
+    bidActivity: number;
+    recentActivity: Array<{
+      id: string;
+      label: string;
+      timestamp: string;
+      detail: string;
+    }>;
+  };
+  market: {
+    totalProducts: number;
+    nftBoundProducts: number;
+    erc721Products: number;
+    erc1155Products: number;
+    categories: Record<string, number>;
+    marketStatus: "healthy-mock" | "review-needed-mock" | "restricted-mock";
+  };
+  collections: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    volume: number;
+    floorPrice: number;
+    itemCount: number;
+    bids: number;
+    ranking: number;
+  }>;
+  sellers: Array<{
+    id: string;
+    name: string;
+    listings: number;
+    mockVolume: number;
+    mockSales: number;
+    reputation: number;
+  }>;
+  notes: string[];
+}
+
 function buildCollectionMetrics(collection: MarketplaceCollection, collectionProducts: Product[]) {
   const listings = collectionProducts.filter((product) => product.status === "listed").length;
   const bids = collectionProducts.reduce((sum, product) => sum + (product.auction?.bidCount ?? 0), 0);
@@ -445,6 +494,93 @@ export function getAssetRegistryForProduct(product: Product): AssetRegistryView 
 export function getAssetRegistryByProductSlug(slug: string) {
   const product = getProductBySlug(slug);
   return product ? getAssetRegistryForProduct(product) : null;
+}
+
+export function buildMarketplaceAnalytics(sourceProducts: Product[] = products, sourceSellers: Seller[] = sellers): MarketplaceAnalyticsView {
+  const listedProducts = sourceProducts.filter((product) => product.status === "listed");
+  const activeAuctions = sourceProducts.filter((product) => product.auction?.status === "active");
+  const totalVolume = listedProducts.reduce((sum, product) => sum + product.pricing.amount, 0);
+  const floorPrice = listedProducts.reduce<number | null>((lowest, product) => {
+    if (lowest === null) return product.pricing.amount;
+    return Math.min(lowest, product.pricing.amount);
+  }, null);
+  const totalBids = sourceProducts.reduce((sum, product) => sum + (product.auction?.bidCount ?? 0), 0);
+  const categories = sourceProducts.reduce<Record<string, number>>((acc, product) => {
+    acc[product.category] = (acc[product.category] ?? 0) + 1;
+    return acc;
+  }, {});
+  const restrictedProducts = sourceProducts.filter((product) => product.governanceStatus === "restricted" || product.governanceStatus === "suspended").length;
+  const reviewProducts = sourceProducts.filter((product) => product.governanceStatus === "under-review").length;
+  const marketStatus =
+    restrictedProducts > 0 ? "restricted-mock" : reviewProducts > sourceProducts.length / 2 ? "review-needed-mock" : "healthy-mock";
+  const recentActivity = [...sourceProducts]
+    .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt))
+    .slice(0, 6)
+    .map((product) => ({
+      id: `market-activity-${product.id}`,
+      label: product.auction ? "Auction activity mock" : "Listing activity mock",
+      timestamp: product.updatedAt,
+      detail: `${product.title} is ${product.status} with ${product.pricing.amount} ${product.pricing.currency} mock price and ${product.auction?.bidCount ?? 0} bids.`
+    }));
+  const collectionsSummary = listCollections()
+    .filter((view) => sourceProducts.some((product) => product.collectionId === view.collection.id))
+    .map((view) => ({
+      id: view.collection.id,
+      name: view.collection.name,
+      slug: view.collection.slug,
+      volume: view.metrics.volume,
+      floorPrice: view.metrics.floorPrice,
+      itemCount: view.metrics.itemCount,
+      bids: view.metrics.bids,
+      ranking: view.metrics.ranking
+    }))
+    .sort((left, right) => right.volume - left.volume || left.ranking - right.ranking);
+  const sellersSummary = sourceSellers
+    .map((seller) => {
+      const profile = buildSellerProfileView(seller, sourceProducts);
+      return {
+        id: seller.id,
+        name: seller.name,
+        listings: profile.metrics.listings,
+        mockVolume: profile.metrics.mockVolume,
+        mockSales: profile.metrics.mockSales,
+        reputation: seller.reputation
+      };
+    })
+    .filter((seller) => seller.listings > 0)
+    .sort((left, right) => right.mockVolume - left.mockVolume || right.reputation - left.reputation);
+
+  return {
+    volume: {
+      totalVolume,
+      averagePrice: listedProducts.length ? Number((totalVolume / listedProducts.length).toFixed(2)) : 0,
+      floorPrice: floorPrice ?? 0,
+      royaltyPreview: sourceProducts.reduce((sum, product) => sum + product.royaltyModel.previewAmount, 0),
+      salesCount: listedProducts.filter((product) => product.governanceStatus !== "restricted" && product.governanceStatus !== "suspended").length + totalBids
+    },
+    activity: {
+      activeListings: listedProducts.length,
+      activeAuctions: activeAuctions.length,
+      totalBids,
+      bidActivity: activeAuctions.reduce((sum, product) => sum + (product.auction?.bidCount ?? 0), 0),
+      recentActivity
+    },
+    market: {
+      totalProducts: sourceProducts.length,
+      nftBoundProducts: sourceProducts.filter((product) => product.nftBound).length,
+      erc721Products: sourceProducts.filter((product) => product.tokenStandard === "ERC721").length,
+      erc1155Products: sourceProducts.filter((product) => product.tokenStandard === "ERC1155").length,
+      categories,
+      marketStatus
+    },
+    collections: collectionsSummary,
+    sellers: sellersSummary,
+    notes: [
+      "Analytics are derived from centralized mock Marketplace data.",
+      "No tracking events, BI pipeline, analytical database, billing analytics, settlement visibility or Marketplace Intelligence Phase 07 runtime is active.",
+      "Metrics are operational transparency previews for Phase 01 NFT Marketplace consolidation."
+    ]
+  };
 }
 
 export function listSellers() {

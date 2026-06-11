@@ -12,7 +12,7 @@ Recommended implementation sequence:
 - MEP-REQ-011 — Collection System — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-012 — Seller Profiles — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-013 — Asset Registry — IMPLEMENTED MOCK-FIRST
-- MEP-REQ-014 — Marketplace Analytics
+- MEP-REQ-014 — Marketplace Analytics — IMPLEMENTED MOCK-FIRST
 - MEP-PHASE-01-CLOSURE — QA, navigation and no-execution boundary validation
 
 MEP-REQ-010 delivered:
@@ -45,6 +45,14 @@ MEP-REQ-013 delivered:
 - validation layer added for metadata, contract, collection, origin and royalty status
 - registry panel exposes metadata attributes, collection, seller, listing, royalty, storage, bridge and settlement boundaries
 - empty history states handled without indexer, on-chain read, storage validation, bridge execution, license enforcement, payments or settlement
+
+MEP-REQ-014 delivered:
+- marketplace dashboard route `/marketplace/dashboard` consolidated as the mock-first NFT analytics surface
+- volume metrics added for total mock volume, mock sales count, average price, floor price and royalty preview
+- activity metrics added for active listings, active auctions, total bids, auction bid activity and recent market activity
+- market metrics added for NFT-bound products, ERC721 products, ERC1155 products, categories and market status summary
+- collection and seller summaries added from centralized mock data
+- analytics boundaries documented in UI as Phase 01 operational transparency, not tracking, BI, billing analytics, settlement visibility or Phase 07 Marketplace Intelligence
 
 Constraints:
 - keep Phase 01 mock-first

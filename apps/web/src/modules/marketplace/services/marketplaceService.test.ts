@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildSellerProfileView,
+  buildMarketplaceAnalytics,
   createDraftListingPreview,
   getAssetRegistryByProductSlug,
   getCollectionBySlug,
@@ -154,6 +155,29 @@ describe("marketplaceService", () => {
 
   it("returns null for unknown asset registry slugs", () => {
     expect(getAssetRegistryByProductSlug("missing-asset")).toBeNull();
+  });
+
+  it("builds mock-first marketplace analytics for volume, activity and market metrics", () => {
+    const analytics = buildMarketplaceAnalytics();
+
+    expect(analytics.volume.totalVolume).toBe(750);
+    expect(analytics.volume.averagePrice).toBe(187.5);
+    expect(analytics.volume.floorPrice).toBe(80);
+    expect(analytics.activity.activeListings).toBe(4);
+    expect(analytics.activity.activeAuctions).toBe(2);
+    expect(analytics.activity.totalBids).toBe(23);
+    expect(analytics.market.erc721Products).toBe(2);
+    expect(analytics.market.erc1155Products).toBe(1);
+    expect(analytics.market.marketStatus).toBe("restricted-mock");
+  });
+
+  it("builds collection, seller and recent activity summaries for analytics", () => {
+    const analytics = buildMarketplaceAnalytics();
+
+    expect(analytics.collections.map((collection) => collection.slug)).toContain("axodus-governance-access");
+    expect(analytics.sellers[0].id).toBe("seller-axodus-core");
+    expect(analytics.activity.recentActivity.length).toBeGreaterThan(0);
+    expect(analytics.notes.join(" ")).toContain("No tracking events");
   });
 
   it("creates draft listing previews without mutating products", () => {

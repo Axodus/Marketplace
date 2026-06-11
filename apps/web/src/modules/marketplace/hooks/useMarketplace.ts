@@ -4,6 +4,7 @@ import { apiClient } from "../../../services/apiClient";
 import type { ProductFilters } from "../services/marketplaceService";
 import {
   DEFAULT_PRODUCT_EXPLORER_FILTERS,
+  buildMarketplaceAnalytics,
   buildSellerProfileView,
   calculateDashboardMetrics,
   getProductByItemRef,
@@ -56,6 +57,7 @@ export function useMarketplaceDashboard() {
         metrics: calculateDashboardMetrics(),
         products: runtime.products,
         sellers: runtime.sellers,
+        analytics: buildMarketplaceAnalytics(runtime.products, runtime.sellers),
         runtime,
         governanceWorkflow,
         boundaries: listBoundaries()
