@@ -6,8 +6,10 @@ import {
   DEFAULT_PRODUCT_EXPLORER_FILTERS,
   calculateDashboardMetrics,
   getProductByItemRef,
+  getCollectionBySlug,
   getSellerById,
   listBoundaries,
+  listCollections,
   listProducts
 } from "../services/marketplaceService";
 import { instrumentMarketplaceError, traceMarketplaceLifecycle } from "../services/runtimeTelemetry";
@@ -57,6 +59,33 @@ export function useMarketplaceDashboard() {
         governanceWorkflow,
         boundaries: listBoundaries()
       };
+    }
+  });
+}
+
+export function useCollections() {
+  return useQuery({
+    queryKey: ["marketplace-collections"],
+    queryFn: () => {
+      traceMarketplaceLifecycle("marketplace-collections-query", "completed");
+      return listCollections();
+    }
+  });
+}
+
+export function useCollection(slug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-collection", slug],
+    enabled: Boolean(slug),
+    queryFn: () => {
+      const collection = getCollectionBySlug(slug ?? "");
+      if (!collection) {
+        const error = new Error("Collection not found");
+        instrumentMarketplaceError("marketplace-collection-query", error, { slug: slug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-collection-query", "completed", { collectionId: collection.collection.id });
+      return collection;
     }
   });
 }

@@ -1,10 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
-import { Box, Building2, FileSearch, FilePlus2, Gavel, LayoutDashboard, RadioTower, ReceiptText, ShieldCheck, Tags, WalletCards } from "lucide-react";
+import { Box, Building2, FileSearch, FilePlus2, Gavel, LayoutDashboard, Layers3, RadioTower, ReceiptText, ShieldCheck, Tags, WalletCards } from "lucide-react";
 import { useWallet } from "../hooks/useWallet";
 
 const links = [
   { to: "/marketplace", label: "Home", icon: Box },
   { to: "/marketplace/explore", label: "Explore", icon: Tags },
+  { to: "/marketplace/collections", label: "Collections", icon: Layers3 },
   { to: "/marketplace/create", label: "Create/Sell", icon: FilePlus2 },
   { to: "/marketplace/tenants/tenant-axodus-dao", label: "DAO Storefront", icon: Building2 },
   { to: "/marketplace/governance", label: "Governance", icon: ShieldCheck },

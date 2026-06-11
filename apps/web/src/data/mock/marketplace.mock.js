@@ -79,6 +79,69 @@ export const marketplaceLicenses = [
   }
 ];
 
+export const marketplaceCollections = [
+  {
+    id: "collection-governance-access",
+    name: "Axodus Governance Access",
+    slug: "axodus-governance-access",
+    description: "Native mock ERC721 collection for governance dashboards, treasury visibility previews and Axodus access passes.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+    chain: "Polygon",
+    contractAddress: "mock:collection:governance-access",
+    assetType: "ERC721",
+    origin: "native",
+    validationStatus: "compliant",
+    governanceStatus: "compliant",
+    sellerId: "seller-axodus-core",
+    metrics: {
+      volume: 1240,
+      floorPrice: 120,
+      holders: 86,
+      recentActivity: 14
+    }
+  },
+  {
+    id: "collection-academy-certifications",
+    name: "Academy Certification Packs",
+    slug: "academy-certification-packs",
+    description: "Native mock ERC1155 collection for Academy certification bundles, PoK-compatible learning credentials and DAO-gated education.",
+    image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+    chain: "BNB",
+    contractAddress: "mock:collection:academy-certifications",
+    assetType: "ERC1155",
+    origin: "native",
+    validationStatus: "under-review",
+    governanceStatus: "under-review",
+    sellerId: "seller-academy-guild",
+    metrics: {
+      volume: 920,
+      floorPrice: 80,
+      holders: 144,
+      recentActivity: 22
+    }
+  },
+  {
+    id: "collection-strategy-license-passes",
+    name: "Strategy License Passes",
+    slug: "strategy-license-passes",
+    description: "Native mock ERC721 collection for trading strategy access passes, risk-reviewed licenses and auction previews.",
+    image: "https://images.unsplash.com/photo-1642790551116-18e150f248e5?auto=format&fit=crop&w=1200&q=80",
+    chain: "Arbitrum",
+    contractAddress: "mock:collection:strategy-license-passes",
+    assetType: "ERC721",
+    origin: "native",
+    validationStatus: "under-review",
+    governanceStatus: "under-review",
+    sellerId: "seller-axodus-core",
+    metrics: {
+      volume: 680,
+      floorPrice: 180,
+      holders: 41,
+      recentActivity: 8
+    }
+  }
+];
+
 export const marketplaceProducts = [
   {
     id: "product-governance-dashboard-nft",
@@ -86,6 +149,7 @@ export const marketplaceProducts = [
     slug: "governance-dashboard-nft-access",
     category: "Governance",
     subcategory: "Governance dashboards",
+    collectionId: "collection-governance-access",
     sellerId: "seller-axodus-core",
     description:
       "ERC721-gated access pass for governance dashboard modules, treasury visibility previews, and voting analytics.",
@@ -129,6 +193,7 @@ export const marketplaceProducts = [
     slug: "academy-certification-erc1155-bundle",
     category: "Education",
     subcategory: "Certification packs",
+    collectionId: "collection-academy-certifications",
     sellerId: "seller-academy-guild",
     description:
       "ERC1155 certification pack for governance education, Proof of Knowledge compatibility, and gated learning content.",
@@ -220,6 +285,7 @@ export const marketplaceProducts = [
     slug: "strategy-license-dutch-auction",
     category: "Trading",
     subcategory: "Strategy licenses",
+    collectionId: "collection-strategy-license-passes",
     sellerId: "seller-axodus-core",
     description:
       "Mock dutch auction for a strategy license NFT, with risk-aware listing metadata and no live trading execution.",

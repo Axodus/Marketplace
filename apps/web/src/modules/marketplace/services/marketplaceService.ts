@@ -1,5 +1,6 @@
 import {
   marketplaceBoundaries,
+  marketplaceCollections,
   marketplaceLicenses,
   marketplaceProducts,
   marketplaceSellers
@@ -10,6 +11,7 @@ import type {
   DraftListingPreview,
   License,
   MarketplaceBoundaryStatus,
+  MarketplaceCollection,
   Product,
   ProductCategory,
   ProductStanding,
@@ -51,6 +53,7 @@ export const DEFAULT_PRODUCT_EXPLORER_FILTERS: ProductFilters = {
 };
 
 const products = marketplaceProducts as Product[];
+const collections = marketplaceCollections as MarketplaceCollection[];
 const sellers = marketplaceSellers as Seller[];
 const licenses = marketplaceLicenses as License[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
@@ -60,6 +63,8 @@ function normalizeSearch(value?: string) {
 }
 
 function getSearchFields(product: Product, seller?: Seller) {
+  const collection = collections.find((item) => item.id === product.collectionId);
+
   return [
     product.title,
     product.description,
@@ -72,6 +77,10 @@ function getSearchFields(product: Product, seller?: Seller) {
     product.status,
     product.contractAddress,
     product.tokenId,
+    collection?.name,
+    collection?.description,
+    collection?.assetType,
+    collection?.chain,
     seller?.name,
     seller?.type,
     seller?.verificationStatus,
@@ -173,6 +182,79 @@ export function getProductExplorerFacets() {
 
 export function listProducts(filters: ProductFilters = {}) {
   return filterAndSortProducts(products, filters, sellers);
+}
+
+export interface CollectionView {
+  collection: MarketplaceCollection;
+  products: Product[];
+  metrics: {
+    itemCount: number;
+    listings: number;
+    bids: number;
+    volume: number;
+    holders: number;
+    floorPrice: number;
+    recentActivity: number;
+    rankScore: number;
+    ranking: number;
+  };
+}
+
+function buildCollectionMetrics(collection: MarketplaceCollection, collectionProducts: Product[]) {
+  const listings = collectionProducts.filter((product) => product.status === "listed").length;
+  const bids = collectionProducts.reduce((sum, product) => sum + (product.auction?.bidCount ?? 0), 0);
+  const lowestProductPrice = collectionProducts.reduce<number | null>((lowest, product) => {
+    if (lowest === null) return product.pricing.amount;
+    return Math.min(lowest, product.pricing.amount);
+  }, null);
+  const floorPrice = collection.metrics?.floorPrice ?? lowestProductPrice ?? 0;
+  const volume = collection.metrics?.volume ?? collectionProducts.reduce((sum, product) => sum + product.pricing.amount, 0);
+  const holders = collection.metrics?.holders ?? Math.max(collectionProducts.length, 0);
+  const recentActivity = collection.metrics?.recentActivity ?? bids + listings;
+  const rankScore = volume + bids * 10 + recentActivity * 5 + holders;
+
+  return {
+    itemCount: collectionProducts.length,
+    listings,
+    bids,
+    volume,
+    holders,
+    floorPrice,
+    recentActivity,
+    rankScore,
+    ranking: 0
+  };
+}
+
+export function listCollections(): CollectionView[] {
+  const views = collections.map((collection) => {
+    const collectionProducts = products.filter((product) => product.collectionId === collection.id);
+    return {
+      collection,
+      products: collectionProducts,
+      metrics: buildCollectionMetrics(collection, collectionProducts)
+    };
+  });
+
+  const ranked = [...views].sort((left, right) => right.metrics.rankScore - left.metrics.rankScore || left.collection.name.localeCompare(right.collection.name));
+  const rankByCollectionId = new Map(ranked.map((view, index) => [view.collection.id, index + 1]));
+
+  return ranked.map((view) => ({
+    ...view,
+    metrics: {
+      ...view.metrics,
+      ranking: rankByCollectionId.get(view.collection.id) ?? 0
+    }
+  }));
+}
+
+export function getCollectionBySlug(slug: string) {
+  return listCollections().find((view) => view.collection.slug === slug || view.collection.id === slug);
+}
+
+export function getCollectionForProduct(product: Product) {
+  if (!product.collectionId) return null;
+  return listCollections().find((view) => view.collection.id === product.collectionId) ?? null;
 }
 
 export function getProductBySlug(slug: string) {

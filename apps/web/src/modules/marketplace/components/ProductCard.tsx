@@ -3,6 +3,7 @@ import { Clock, Layers, ShieldCheck } from "lucide-react";
 import type { Product, Seller } from "../types/marketplace";
 import type { GovernanceEnforcementRecord } from "../../../services/apiClient";
 import { ProductStandingBadge, SellerStandingBadge } from "./StatusBadge";
+import { getCollectionForProduct } from "../services/marketplaceService";
 
 export function ProductCard({
   product,
@@ -13,6 +14,8 @@ export function ProductCard({
   seller?: Seller;
   enforcement?: GovernanceEnforcementRecord;
 }) {
+  const collection = getCollectionForProduct(product);
+
   return (
     <article className="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
       <img src={product.images[0]} alt="" className="h-44 w-full object-cover" />
@@ -36,6 +39,14 @@ export function ProductCard({
           <Link to={`/marketplace/products/${product.slug}`} className="mt-1 block text-lg font-semibold hover:text-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
             {product.title}
           </Link>
+          {collection && (
+            <Link
+              to={`/marketplace/collections/${collection.collection.slug}`}
+              className="mt-2 inline-flex text-xs font-semibold text-teal-700 hover:text-teal-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+            >
+              {collection.collection.name}
+            </Link>
+          )}
           <p className="mt-2 text-sm leading-6 text-slate-600">{product.shortDescription}</p>
         </div>
         <div className="grid grid-cols-2 gap-3 text-sm">

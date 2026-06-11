@@ -9,7 +9,7 @@ Planning artifact:
 
 Recommended implementation sequence:
 - MEP-REQ-010 — Explorer Consolidation — IMPLEMENTED MOCK-FIRST
-- MEP-REQ-011 — Collection System
+- MEP-REQ-011 — Collection System — IMPLEMENTED MOCK-FIRST
 - MEP-REQ-012 — Seller Profiles
 - MEP-REQ-013 — Asset Registry
 - MEP-REQ-014 — Marketplace Analytics
@@ -21,6 +21,14 @@ MEP-REQ-010 delivered:
 - sorting by relevance, price, recent update, activity and name
 - clear filters action, result summary, loading state, API fallback state and empty state
 - shared mock-first filtering/sorting helper for local fallback and API-hydrated products
+
+MEP-REQ-011 delivered:
+- native mock NFT collections with ERC721 and ERC1155 presentation metadata
+- collection routes at `/marketplace/collections` and `/marketplace/collections/:slug`
+- collection cards, detail page, metrics and ranking derived from mock data
+- product-to-collection relationships through mock `collectionId`
+- navigation from layout and product cards/details into collection pages
+- collection-not-found and empty-assets states without external provider, indexer or on-chain lookup
 
 Constraints:
 - keep Phase 01 mock-first

@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { createDraftListingPreview, getProductByItemRef, getProductBySlug, issueMockPurchase, listProducts } from "./marketplaceService";
+import {
+  createDraftListingPreview,
+  getCollectionBySlug,
+  getCollectionForProduct,
+  getProductByItemRef,
+  getProductBySlug,
+  issueMockPurchase,
+  listCollections,
+  listProducts
+} from "./marketplaceService";
 import { StorageAccessService, GreenfieldAccessAdapter } from "./boundaryAdapters";
 
 describe("marketplaceService", () => {
@@ -40,6 +49,25 @@ describe("marketplaceService", () => {
     expect(priceAscending.map((product) => product.pricing.amount)).toEqual([80, 120, 250, 300]);
     expect(activity[0].slug).toBe("academy-certification-erc1155-bundle");
     expect(listProducts().map((product) => product.id)).toEqual(originalOrder);
+  });
+
+  it("lists ranked native mock collections with derived metrics", () => {
+    const collections = listCollections();
+
+    expect(collections).toHaveLength(3);
+    expect(collections.map((view) => view.metrics.ranking)).toEqual([1, 2, 3]);
+    expect(collections[0].collection.slug).toBe("axodus-governance-access");
+    expect(collections[0].metrics.itemCount).toBe(1);
+    expect(collections[0].metrics.listings).toBe(1);
+  });
+
+  it("resolves collection detail and product collection relationship", () => {
+    const collection = getCollectionBySlug("academy-certification-packs");
+    const product = getProductBySlug("academy-certification-erc1155-bundle");
+
+    expect(collection?.collection.assetType).toBe("ERC1155");
+    expect(collection?.products.map((item) => item.slug)).toContain("academy-certification-erc1155-bundle");
+    expect(getCollectionForProduct(product!)?.collection.slug).toBe("academy-certification-packs");
   });
 
   it("finds products by slug", () => {

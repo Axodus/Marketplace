@@ -15,6 +15,7 @@ import { useNftOwnership } from "../hooks/useNftOwnership";
 import { useProduct } from "../hooks/useMarketplace";
 import { useSignatureIntent } from "../hooks/useSignatureIntent";
 import { useWalletSecurity } from "../hooks/useWalletSecurity";
+import { getCollectionForProduct } from "../services/marketplaceService";
 import { LayerZeroBridgeService, RoyaltyService, StorageAccessService } from "../services/boundaryAdapters";
 import {
   createSignedUrlPreview,
@@ -49,6 +50,7 @@ export function ProductDetailPage() {
   const deliveryRuntime = getDeliveryRuntime(product);
   const entitlementPreview = getEntitlementEnforcementPreview(product);
   const signedUrlPreview = createSignedUrlPreview(product);
+  const collection = getCollectionForProduct(product);
 
   return (
     <div className="space-y-6">
@@ -60,6 +62,7 @@ export function ProductDetailPage() {
             <NeutralBadge>{product.tokenStandard}</NeutralBadge>
             <NeutralBadge>{product.listingType}</NeutralBadge>
             <NeutralBadge>{product.maturity}</NeutralBadge>
+            {collection && <NeutralBadge>{collection.collection.name}</NeutralBadge>}
             {deliveryRuntime.protectedAsset && <NeutralBadge>Protected asset</NeutralBadge>}
             {deliveryRuntime.entitlementRequired && <NeutralBadge>Entitlement required</NeutralBadge>}
             {deliveryRuntime.authorizationState === "governance-restricted" && <NeutralBadge>Governance restricted</NeutralBadge>}
@@ -72,7 +75,13 @@ export function ProductDetailPage() {
             <Info label="Royalty" value={`${royalty.amount} ${royalty.currency} to ${royalty.recipient}`} />
             <Info label="Delivery" value={product.deliveryType} />
             <Info label="Access" value={product.accessModel} />
+            {collection && <Info label="Collection" value={collection.collection.name} />}
           </div>
+          {collection && (
+            <Link to={`/marketplace/collections/${collection.collection.slug}`} className="mt-4 inline-flex text-sm font-semibold text-teal-700">
+              Open collection
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => setPurchaseOpen(true)}

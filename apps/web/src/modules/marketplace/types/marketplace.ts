@@ -23,6 +23,7 @@ export type LicenseType =
 export type DeliveryType = "Greenfield" | "Signed URL" | "MCP Runtime" | "Dashboard Access" | "Manual Service";
 export type Chain = "Ethereum" | "BNB" | "Arbitrum" | "Harmony" | "Polygon";
 export type PurchaseStatus = "mock-issued" | "pending-governance-review" | "blocked";
+export type CollectionOrigin = "native" | "future-external";
 
 export interface Pricing {
   amount: number;
@@ -59,6 +60,7 @@ export interface Product {
   slug: string;
   category: ProductCategory;
   subcategory: string;
+  collectionId?: string;
   sellerId: string;
   description: string;
   shortDescription: string;
@@ -94,6 +96,29 @@ export interface Product {
   bridgeReadiness: BridgeReadiness;
   greenfieldBucket?: string;
   signedUrlPreviewAvailable: boolean;
+}
+
+export interface CollectionMetrics {
+  volume: number;
+  floorPrice: number;
+  holders: number;
+  recentActivity: number;
+}
+
+export interface MarketplaceCollection {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+  chain: Chain;
+  contractAddress: string;
+  assetType: Extract<TokenStandard, "ERC721" | "ERC1155">;
+  origin: CollectionOrigin;
+  validationStatus: ProductStanding;
+  governanceStatus: ProductStanding;
+  sellerId: string;
+  metrics?: Partial<CollectionMetrics>;
 }
 
 export interface Seller {
