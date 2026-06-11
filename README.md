@@ -21,6 +21,8 @@ Marketplace-as-a-Service Domain prepares Tenant Marketplaces, White Label Market
 
 Distribution Network Domain prepares Distributors, Partners, Agencies, Affiliates and Community Marketplaces as traceable commercial distribution roles for future Attribution Engine, Referral System, Partner Network, Revenue Sharing and Marketplace Intelligence.
 
+Revenue Sharing Domain prepares Attribution Model, Commission Model, Revenue Split Rules and Tenant Participation as auditable commercial rule concepts for future Commission Engine, Split Rules and Revenue Dashboard work.
+
 Phase 00 is documentation-only. It does not activate runtime code, APIs, contracts, indexers, React components, persistence, GraphQL, real billing, external integrations, wallet signatures, bridge execution, treasury routing or on-chain execution.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  

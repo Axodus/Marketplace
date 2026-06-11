@@ -102,6 +102,20 @@ Commercial distribution must preserve Commercial Origin, Distribution Channel, D
 
 Distribution Network does not activate real tracking, referral links, commission engines, partner dashboards, payments, payouts, settlement, revenue sharing or treasury routing in Phase 00.
 
+## Revenue Sharing Domain
+
+The Revenue Sharing Domain prepares Marketplace to model future economic participation without activating financial execution in Phase 00.
+
+Core revenue concepts:
+- Attribution Model: identifies the commercial origin or economic contribution of a sale, subscription, license, conversion, lead, bid, purchase, renewal or transaction.
+- Commission Model: defines conceptual remuneration rules for authorized participants.
+- Revenue Split Rules: define how future revenue may be divided among eligible creators, sellers, tenants, marketplace, distributors, affiliates, partners, agencies, communities, treasury or other authorized participants.
+- Tenant Participation: identifies future economic participation of a tenant in sales, distribution, curation, exposure, operation or support of a catalog, product, collection, subscription, license or offer.
+
+Revenue Sharing connects Attribution, Commission, Revenue Split, Billing, Treasury, Governance, Telemetry and Marketplace Intelligence. Billing remains responsible for accounting, Billing Visibility, Settlement Visibility, reconciliation and future treasury integration. Treasury routing, payouts, settlement, real billing, Commission Engine, Split Rules and Revenue Dashboard are deferred to future approved phases.
+
+No revenue division may occur without Audit Trail, traceable Commercial Origin, identified participants, explicit Commercial Rules, governance validation, Treasury Validation, Billing Visibility and Settlement Visibility.
+
 ## Non-Execution Boundary
 
 Phase 00 is documentation-only.

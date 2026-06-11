@@ -109,6 +109,37 @@ Before any revenue sharing implementation:
 - define tenant, partner and affiliate split boundaries
 - document payout execution as deferred unless explicitly approved
 
+## 2.1.1 Product Commercial Rules Definition
+
+Commercial Rules definition is the controlled documentation and future implementation workflow for Revenue Sharing.
+
+Required stages:
+- identify the product or offer
+- identify potential economic participants
+- identify expected Commercial Origin
+- define the Attribution Model
+- define the Commission Model
+- define expected Revenue Split Rules
+- define eligibility by channel, tenant, partner, affiliate or distributor
+- validate product policies
+- validate licensing
+- validate governance
+- validate treasury
+- validate Billing Visibility
+- validate Settlement Visibility
+- define required telemetry
+- review before activation
+- create documentation record
+- monitor future behavior
+
+Rules:
+- any Revenue Sharing model must be reviewable before activation
+- Revenue Sharing cannot be activated without traceable Commercial Origin, identified participants, explicit Commercial Rules, governance validation, Treasury Validation and Billing Visibility
+- documented Revenue Sharing does not enable payments, payouts, real splits, real billing, settlement or treasury routing
+- commissions and splits cannot be implicit, hidden or non-auditable
+- Attribution Model, Commission Model, Revenue Split Rules and Tenant Participation remain conceptual until a future approved implementation phase
+- products federated from external sources must not inherit commission, split or settlement rules without explicit validation
+
 ---
 
 ## 3. Subscription Validation

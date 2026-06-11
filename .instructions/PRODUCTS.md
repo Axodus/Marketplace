@@ -10,6 +10,8 @@ Marketplace products coordinate:
 - federated products
 - distribution-eligible products
 - channel-distributed products
+- revenue participation products
+- commercial rules
 - native products
 - native assets
 - external assets
@@ -97,6 +99,40 @@ Distribution eligibility does not activate referral tracking, commissions, reven
 - products that must preserve Commercial Origin for future attribution and Marketplace Intelligence
 
 Channel distribution does not change product origin, ownership, licensing, validation, billing, settlement, revenue sharing or operational responsibility by default.
+
+---
+
+## Revenue Participation Products
+- products that may carry future commercial policies for revenue participation
+- products that may define conceptual commission rules, split rules, channel eligibility, tenant eligibility, partner eligibility, affiliate eligibility or distributor eligibility
+- products that may identify future creator, seller, treasury and marketplace participation
+
+Revenue Participation does not imply real financial execution in Phase 00.
+
+Future commercial policy fields may include:
+- Commission Model
+- Revenue Split Rules
+- Distribution Eligibility
+- tenant eligibility
+- partner eligibility
+- affiliate eligibility
+- distributor eligibility
+- creator participation
+- seller participation
+- treasury participation
+- marketplace participation
+- Billing Visibility requirements
+- Settlement Visibility requirements
+- Treasury Validation requirements
+- Audit Trail requirements
+
+Revenue Participation must depend on attribution, eligibility, explicit Commercial Rules and validation before future activation.
+
+Products can be distributed by multiple channels or tenants, but future economic participation must depend on Attribution Model, Distribution Eligibility, explicit Revenue Split Rules, governance validation, billing visibility and treasury validation.
+
+Federated Products and External Assets must not inherit commission, split, settlement or payout rules automatically. They require explicit validation before any future commercial rule applies.
+
+Sensitive products may require governance approval before distribution or shared monetization.
 
 ---
 
@@ -249,6 +285,16 @@ Federated Products and Federated Assets must carry:
 - tenant revenue share models
 - partner and affiliate split models
 - platform and ecosystem fee previews
+- Attribution Model records
+- Commission Model records
+- Revenue Split Rules
+- Tenant Participation records
+- Revenue Participation policies
+- Commercial Rules
+- Billing Visibility requirements
+- Treasury Validation requirements
+- Audit Trail requirements
+- Settlement Visibility requirements
 
 Revenue sharing products are accounting models and commercial capabilities. They do not execute payouts unless a future approved phase explicitly adds that runtime.
 
@@ -326,6 +372,23 @@ Sensitive products may require governance approval before distribution through p
 
 Distributed products must preserve enough Commercial Origin and Traceability for future Attribution Engine, Revenue Sharing and Marketplace Intelligence.
 
+Revenue Sharing Domain product concepts include:
+- Attribution Model
+- Commission Model
+- Revenue Split Rules
+- Tenant Participation
+- Revenue Participation
+- Commercial Rules
+- Billing Visibility
+- Treasury Validation
+- Audit Trail
+- Settlement Visibility
+- Commission Engine readiness
+- Split Rules readiness
+- Revenue Dashboard readiness
+
+Commercial Rules must be explicit, auditable and reviewable before activation.
+
 ---
 
 # Product Principles
@@ -359,3 +422,7 @@ Distributed products must preserve enough Commercial Origin and Traceability for
 - no distribution channel can bypass product policy, licensing restrictions, governance validation or observability
 - no distribution exposure implies referral tracking, commission, payment, payout, settlement, revenue sharing or treasury routing by default
 - no distributed product loses its original ownership, validation status, licensing rules or operational responsibility by default
+- no product commercial policy implies real payment, payout, billing, settlement, split execution or treasury routing in Phase 00
+- no commission or split may be implicit, hidden or non-auditable
+- no federated or external product inherits revenue sharing rules without explicit validation
+- no participant has automatic revenue rights before attribution, eligibility, explicit rules, governance validation, billing visibility and treasury validation

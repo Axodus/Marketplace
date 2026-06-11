@@ -282,11 +282,59 @@ CONFIRMED
 ## Revenue Sharing Domain
 
 Decision:
-Marketplace must prepare revenue sharing models for creators, sellers, tenants, partners, affiliates, platform fees, ecosystem fees and treasury-compatible splits.
+Marketplace must support future Revenue Sharing models for creators, sellers, tenants, partners, affiliates, distributors, agencies, communities, platform fees, ecosystem fees, treasury-compatible splits and other authorized participants.
 
-Revenue sharing must preserve EIP-2981 royalty compatibility and deterministic accounting visibility.
+Revenue Sharing must be:
+- deterministic
+- auditable
+- transparent
+- telemetry-visible
+- governance-aware
+- treasury-compatible
+- billing-visible
+- settlement-visible
+- revisable before activation
 
-All Phase 00 revenue sharing is architectural. It does not execute payment settlement, treasury movement, royalty distribution, partner payout, tax calculation or fiat reconciliation.
+Commissions, Revenue Split Rules, Commercial Rules and Tenant Participation must not create hidden financial flows, opaque commercial authority, billing bypass, settlement bypass, treasury bypass, governance bypass, licensing bypass or product-policy bypass.
+
+Revenue Sharing in Phase 00 is architectural modeling only. It does not execute payment settlement, treasury movement, royalty distribution, commission calculation, partner payout, tenant payout, tax calculation, fiat reconciliation, smart contract split, billing, Revenue Dashboard, API, schema or operational activation.
+
+Any Revenue Sharing model must be reviewable before activation.
+
+Status:
+CONFIRMED
+
+---
+
+## MEP-REQ-004 Revenue Sharing
+
+Decision:
+Marketplace will support future Revenue Sharing through explicit Attribution Model, Commission Model, Revenue Split Rules and Tenant Participation concepts.
+
+Attribution Model identifies the commercial origin or economic contribution of a sale, subscription, license, conversion, lead, bid, purchase, renewal or transaction.
+
+Commission Model defines conceptual remuneration rules for authorized participants such as fixed, percentage, product, channel, tenant, campaign, partner, affiliate, distributor or category commissions.
+
+Revenue Split Rules define how future revenue may be divided among eligible participants such as creator, seller, tenant, marketplace, distributor, affiliate, partner, agency, community, treasury or other authorized participants.
+
+Tenant Participation identifies the future economic participation of a tenant in the sale, distribution, curation, exposure, operation or support of a catalog, product, collection, subscription, license or offer inside a Tenant Marketplace.
+
+No Revenue Sharing model may activate without:
+- Audit Trail
+- traceable Commercial Origin
+- identified participants
+- explicit Commercial Rules
+- Distribution Eligibility
+- product policy validation
+- licensing validation
+- governance validation
+- Treasury Validation
+- Billing Visibility
+- Settlement Visibility
+- telemetry requirements
+- review before activation
+
+Execution of payments, splits, Commission Engine, Split Rules, Revenue Dashboard, billing, settlement, payouts and treasury routing belongs to future approved phases, not Phase 00.
 
 Status:
 CONFIRMED

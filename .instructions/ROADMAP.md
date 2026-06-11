@@ -205,6 +205,10 @@ Objectives:
 - introduce revenue sharing models for sellers, creators, tenants, partners, affiliates, platform fees, ecosystem fees and treasury-compatible splits
 - preserve EIP-2981 royalty compatibility
 - separate allocation previews from payout execution
+- define Attribution Model, Commission Model, Revenue Split Rules and Tenant Participation implementation boundaries
+- prepare Commission Engine, Split Rules and Revenue Dashboard as future capabilities
+- depend on Distribution Network commercial origin, distribution eligibility and traceability
+- depend on Attribution Engine or equivalent commercial attribution capability before activation
 
 Deliverables:
 - revenue share participant model
@@ -212,6 +216,30 @@ Deliverables:
 - royalty compatibility model
 - tenant and partner allocation previews
 - treasury-compatible accounting visibility
+- Attribution Model readiness
+- Commission Model readiness
+- Revenue Split Rules readiness
+- Tenant Participation readiness
+- Billing Visibility boundary
+- Settlement Visibility boundary
+- Treasury Validation boundary
+- Revenue Dashboard readiness
+
+Linked requirements:
+- MEP-REQ-060 — Commission Engine
+- MEP-REQ-061 — Split Rules
+- MEP-REQ-062 — Revenue Dashboard
+
+Dependencies:
+- Phase 05 — Distribution Network
+- Attribution Engine or equivalent commercial attribution capability
+- Billing Visibility and Settlement Visibility boundaries
+- Treasury Validation boundary
+
+Implementation boundary:
+- Phase 06 implementation is future work
+- MEP-REQ-004 is documentation-only
+- no real Commission Engine, split engine, Revenue Dashboard, payment, payout, billing, settlement, treasury routing, definitive financial calculation, pricing model, API, GraphQL schema, database, persistence, frontend component, route, contract, adapter or integration is introduced by Phase 00
 
 ---
 

@@ -450,7 +450,111 @@ Boundaries:
 
 ## Revenue Sharing Domain
 
-The Revenue Sharing Domain prepares deterministic allocation models for creators, sellers, tenants, partners, affiliates, platform fees, ecosystem fees and treasury-compatible splits.
+The Revenue Sharing Domain prepares Marketplace to model future economic participation in sales, subscriptions, licenses, digital assets, Academy products, ACS capabilities, enterprise offers and distributed products.
+
+Revenue Sharing is a rules, traceability, auditability and visibility layer. It is not financial execution in Phase 00.
+
+Revenue Sharing relates to:
+- Attribution: identifies commercial origin or economic contribution
+- Commission: defines conceptual remuneration rules for authorized participants
+- Revenue Split: defines how future revenue may be divided among eligible participants
+- Billing: remains responsible for accounting, billing visibility, settlement visibility, reconciliation and future treasury integration
+- Treasury: remains the governed boundary for treasury-compatible movement and routing in future phases
+- Governance: validates whether rules, participants and product policies are allowed
+- Telemetry: provides audit trail, commercial traceability and operational visibility
+- Marketplace Intelligence: consumes revenue, attribution and performance visibility after approved implementation phases
+
+Core concepts:
+
+### Attribution Model
+
+Attribution Model represents how the commercial origin of a sale, subscription, license, conversion, lead, bid, purchase, renewal or transaction is identified.
+
+Attribution may involve:
+- global marketplace
+- Tenant Marketplace
+- referral
+- campaign
+- affiliate
+- partner
+- distributor
+- agency
+- community
+- Distribution Channel
+- collection
+- product
+- seller
+- creator
+- federated source
+
+Attribution Model depends on traceable Commercial Origin from Distribution Network. Attribution does not activate tracking events, commission calculation, settlement or payouts in Phase 00.
+
+### Commission Model
+
+Commission Model represents conceptual remuneration rules for authorized participants.
+
+Commission models may include:
+- fixed commission
+- percentage commission
+- product-based commission
+- channel-based commission
+- tenant-based commission
+- campaign-based commission
+- partner commission
+- affiliate commission
+- distributor commission
+- category-based commission
+
+Commission Model definitions are conceptual until an approved future implementation introduces calculation, review, activation and settlement boundaries.
+
+### Revenue Split Rules
+
+Revenue Split Rules represent how future revenue may be divided between eligible participants such as:
+- creator
+- seller
+- tenant
+- marketplace
+- distributor
+- affiliate
+- partner
+- agency
+- community
+- treasury
+- other authorized participants
+
+Revenue Split Rules are architectural rules in Phase 00. They do not execute payment, payout, settlement, treasury routing, smart contract splits, billing, definitive financial calculation or revenue sharing activation.
+
+### Tenant Participation
+
+Tenant Participation represents future economic participation of a tenant in the sale, distribution, curation, exposure, operation or support of a catalog, product, collection, subscription, license or offer inside a Tenant Marketplace.
+
+Tenant Participation must depend on attribution, eligibility, explicit rules, governance validation, billing visibility and treasury validation before any future activation.
+
+Revenue sharing prerequisites:
+- audit trail
+- traceable Commercial Origin
+- identified participants
+- explicit Commercial Rules
+- Distribution Eligibility
+- product policy validation
+- licensing validation
+- governance validation
+- Treasury Validation
+- Billing Visibility
+- Settlement Visibility
+- telemetry requirements
+- review before activation
+
+No revenue division may occur without audit trail, traceable commercial origin, identified participants, explicit rules and governance validation.
+
+Revenue Sharing must not create hidden financial flows, opaque commercial authority, treasury bypass, governance bypass, automatic liquidation or automatic settlement.
+
+Domain relationships:
+- Distribution Network Domain supplies participants, channels, Commercial Origin and Distribution Eligibility
+- Marketplace-as-a-Service Domain supplies tenants, tenant catalogs and Tenant Participation context
+- Billing supplies accounting, billing visibility, settlement visibility and future reconciliation boundaries
+- Treasury supplies governed future treasury routing boundaries
+- Marketplace Intelligence supplies visibility, analytics, audit support and performance analysis after approved implementation phases
 
 Responsibilities:
 - model revenue share participants
@@ -458,6 +562,11 @@ Responsibilities:
 - define split preview boundaries
 - separate allocation previews from payout execution
 - expose treasury-compatible accounting visibility
+- define Attribution Model boundaries
+- define Commission Model boundaries
+- define Revenue Split Rules boundaries
+- define Tenant Participation boundaries
+- require auditability, billing visibility, settlement visibility and treasury validation before activation
 
 Boundaries:
 - no payment settlement
@@ -465,6 +574,20 @@ Boundaries:
 - no royalty distribution execution
 - no partner payout execution
 - no tax or fiat reconciliation execution
+- no real billing
+- no Commission Engine
+- no split engine
+- no Revenue Dashboard
+- no smart contract split
+- no definitive financial calculation
+- no pricing model activation
+- no API or GraphQL schema
+- no database or persistence change
+- no frontend route or component change
+- no tracking events
+- no settlement
+- no treasury routing
+- no revenue sharing activation
 
 ## Marketplace Intelligence Domain
 
