@@ -138,16 +138,78 @@ CONFIRMED
 ## Marketplace-as-a-Service Domain
 
 Decision:
-Marketplace may evolve into a Marketplace-as-a-Service capability for Axodus tenants, partners and enterprise operators.
+Marketplace will evolve into a Marketplace-as-a-Service capability for Axodus tenants, communities, partners, business units, DAOs, enterprises, ecosystem verticals, products, ACS initiatives, Academy fronts and authorized commercial channels.
+
+Tenants may operate specialized, community, partner or white-label marketplaces inside Axodus infrastructure.
+
+A Tenant Marketplace is a configurable logical marketplace instance. It is not necessarily a separate application.
+
+White label does not mean sovereign independence outside Axodus rules.
 
 This domain prepares:
+- Tenant Marketplace boundaries
 - white-label marketplace boundaries
+- Marketplace Branding
+- Marketplace Domains
+- Marketplace Themes
 - tenant-scoped catalogs
 - configurable commercial policies
+- tenant configuration
+- Tenant Isolation boundaries
 - tenant operational dashboards
 - platform service separation from tenant authority
 
-Phase 00 does not provision tenants, deploy managed marketplaces, activate production billing or onboard external customers.
+Tenants cannot break:
+- Axodus governance
+- treasury boundaries
+- observability requirements
+- product policies
+- licensing policies
+- security policies
+- constitutional restrictions
+- ecosystem restrictions
+
+Deferred to later phases:
+- real multi-tenancy
+- tenant registry
+- domain routing
+- custom domains
+- subdomains
+- tenant persistence
+- tenant APIs
+- tenant GraphQL schemas
+- financial isolation
+- billing by tenant
+- settlement by tenant
+- revenue sharing by tenant
+- treasury routing by tenant
+- complete tenant data isolation
+- tenant authentication or RBAC
+- tenant dashboards
+
+Phase 00 does not provision tenants, deploy managed marketplaces, activate production billing, implement routing, create tenant isolation runtime or onboard external customers.
+
+Status:
+CONFIRMED
+
+---
+
+## MEP-REQ-002 Marketplace-as-a-Service
+
+Decision:
+Marketplace-as-a-Service is the architecture direction for supporting multiple tenant marketplaces over the same sovereign Axodus distribution infrastructure.
+
+The global Marketplace remains the ecosystem-level distribution infrastructure. Tenant Marketplaces are logical configurable instances inside that infrastructure.
+
+Catalog model:
+- Global Catalog is the broad set of products, assets, collections, licenses, subscriptions and digital capabilities available in Axodus Marketplace infrastructure.
+- Tenant Catalog is the subset of products, assets, collections or capabilities exposed, enabled or configured inside a specific Tenant Marketplace.
+- Curated Catalog is an editorial, commercial, strategic or community selection organized by a tenant, community, partner or authorized operation.
+- Federated Catalog is the set of assets, collections or products originated outside Axodus infrastructure but displayed or referenced through federation.
+
+Tenant product exposure does not change product origin, ownership, validation status, licensing rules, billing, settlement or revenue sharing by default.
+
+Tenant Governance is mandatory. Tenant configuration, branding, domains, themes and catalog selection must remain compatible with Axodus governance, product policy, licensing policy, security policy, observability and treasury boundaries.
 
 Status:
 CONFIRMED

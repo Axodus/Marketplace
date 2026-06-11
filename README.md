@@ -17,6 +17,8 @@ Phase 00 expands the architecture toward:
 
 Marketplace Federation Domain prepares representation of External Collections, External Assets, External Contracts, External Metadata and Federation Providers with explicit origin, provider, validation status, provenance and trust boundaries. Federated Assets are not native Axodus assets by default.
 
+Marketplace-as-a-Service Domain prepares Tenant Marketplaces, White Label Marketplaces, Marketplace Branding, Marketplace Domains and Marketplace Themes as logical configuration concepts inside Axodus governance, observability and treasury boundaries.
+
 Phase 00 is documentation-only. It does not activate runtime code, APIs, contracts, indexers, React components, persistence, GraphQL, real billing, external integrations, wallet signatures, bridge execution, treasury routing or on-chain execution.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  

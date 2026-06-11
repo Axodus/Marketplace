@@ -4,6 +4,10 @@
 
 Marketplace products coordinate:
 - NFT assets and collections
+- global products
+- tenant products
+- curated products
+- federated products
 - native products
 - native assets
 - external assets
@@ -26,6 +30,42 @@ Products represent operational ecosystem capabilities.
 ---
 
 # Product Categories
+
+## Global Products
+- products available in the general Axodus Marketplace infrastructure
+- products eligible for ecosystem-level discovery, distribution or commercial visibility
+- products that may later be exposed in one or more tenant marketplaces depending on policy and configuration
+
+Global Products do not automatically become available in every Tenant Marketplace.
+
+---
+
+## Tenant Products
+- products exposed, enabled or configured inside a specific Tenant Marketplace
+- products selected according to tenant configuration, distribution eligibility, product policy, licensing policy and governance validation
+- products that may inherit global product metadata while carrying tenant-specific exposure context
+
+Tenant Product exposure does not automatically change product origin, ownership, validation status, licensing rules, billing, settlement, revenue sharing or treasury routing.
+
+---
+
+## Curated Products
+- products selected editorially, commercially, strategically or communally for a specific catalog
+- products organized by a tenant, community, partner or authorized operation
+- products that may require additional governance or product-policy validation before tenant exposure
+
+Curated Products compose Curated Catalogs. Sensitive products may require governance validation before tenant availability.
+
+---
+
+## Federated Products
+- products, assets or collections originated outside native Axodus infrastructure
+- products displayed or referenced through Marketplace Federation Domain
+- products requiring origin, provider, validation status, provenance and trust boundaries
+
+Federated Products are not native Axodus products by default.
+
+---
 
 ## Native Products
 - products originated inside Axodus infrastructure
@@ -144,6 +184,12 @@ Federated Products and Federated Assets must carry:
 - white-label marketplace packages
 - commercial policy configurations
 - tenant access plans
+- Tenant Marketplace exposure rules
+- Marketplace Branding configuration
+- Marketplace Domains configuration
+- Marketplace Themes configuration
+- Tenant Configuration records
+- Tenant Governance requirements
 
 ---
 
@@ -198,6 +244,26 @@ Marketplace Federation Domain product concepts include:
 - Federated Assets
 - External Asset Validation
 
+Marketplace-as-a-Service product concepts include:
+- Global Product
+- Tenant Product
+- Curated Product
+- Federated Product
+- Tenant Marketplace
+- White Label Marketplace
+- Marketplace Branding
+- Marketplace Domains
+- Marketplace Themes
+- Tenant Catalog
+- Curated Catalog
+- Tenant Isolation
+- Tenant Governance
+- Tenant Configuration
+
+Products can appear in multiple Tenant Marketplaces depending on curation rules, permission, distribution eligibility, governance validation and tenant configuration.
+
+Tenant exposure must not alter product origin, ownership, validation status, licensing rules, billing, settlement, revenue sharing or treasury routing by default.
+
 ---
 
 # Product Principles
@@ -225,3 +291,6 @@ Marketplace Federation Domain product concepts include:
 - no external asset is trusted by default
 - no external asset may be displayed as native Axodus
 - no federated product implies custody, liquidation, settlement, bridge execution or commercial guarantee by default
+- no tenant marketplace can operate outside Axodus governance
+- no tenant exposure implies tenant billing, tenant settlement, tenant revenue sharing, financial isolation or complete data isolation by default
+- no white-label product exposure implies sovereign independence from Axodus policy

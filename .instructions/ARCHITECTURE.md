@@ -215,18 +215,134 @@ Boundaries:
 
 ## Marketplace-as-a-Service Domain
 
-The Marketplace-as-a-Service Domain prepares packaged marketplace capability for Axodus tenants, partners and enterprise operators.
+The Marketplace-as-a-Service Domain prepares Marketplace to support multiple specialized commercial experiences over the same sovereign Axodus distribution infrastructure.
+
+The global Marketplace remains the ecosystem-level infrastructure for distribution, discovery, governance awareness, observability and treasury-compatible commercial boundaries. Tenant Marketplaces are configurable logical instances operating inside that infrastructure. A Tenant Marketplace is not necessarily a separate application.
+
+Core concepts:
+
+### Tenant Marketplace
+
+A Tenant Marketplace represents a logical marketplace instance operated by a tenant, community, partner, business unit, DAO, enterprise, ecosystem vertical, product, ACS initiative, Academy front or authorized commercial channel.
+
+Tenant Marketplaces may have their own catalog scope, curation rules, branding, theme, domain identity and exposure rules. They remain inside Axodus governance, security, observability, product policy, licensing policy and treasury boundaries.
+
+### White Label Marketplace
+
+A White Label Marketplace represents a tenant marketplace with its own brand, positioning, catalog and user-facing experience, sustained by Axodus infrastructure.
+
+White label does not mean sovereign independence outside Axodus rules. It does not bypass governance, treasury boundaries, observability, product restrictions, licensing restrictions, security policy or constitutional limits.
+
+### Marketplace Branding
+
+Marketplace Branding represents identity and presentation configuration, including:
+- marketplace name
+- logo
+- description
+- visual identity
+- positioning
+- institutional text
+- trust elements
+- commercial messaging
+- presentation configuration
+- images and media references
+
+Branding is tenant-scoped configuration. It is not a separate runtime, independent authority or permission to violate ecosystem policy.
+
+### Marketplace Domains
+
+Marketplace Domains represent future domain, subdomain, slug, alias and tenant routing concepts.
+
+Marketplace Domains may define how a tenant marketplace is addressed or discovered in a future implementation phase. MEP-REQ-002 does not implement real routing, DNS, custom domains, subdomains, web infrastructure or multi-tenant route handling.
+
+### Marketplace Themes
+
+Marketplace Themes represent visual experience configuration, including:
+- colors
+- typography
+- layout
+- visual style
+- interface density
+- navigation
+- section order
+- exposure preferences
+- tenant experience variations
+
+Themes must remain compatible with accessibility, ecosystem trust requirements, product policy and observability requirements.
+
+Catalog boundaries:
+
+### Global Catalog
+
+The Global Catalog represents the broad set of products, assets, collections, licenses, subscriptions and digital capabilities available in Axodus Marketplace infrastructure.
+
+### Tenant Catalog
+
+The Tenant Catalog represents the subset of products, assets, collections or capabilities exposed, enabled or configured inside a specific Tenant Marketplace.
+
+### Curated Catalog
+
+The Curated Catalog represents an editorial, commercial, community or strategic selection of items organized by a tenant, community, partner or authorized operation.
+
+### Federated Catalog
+
+The Federated Catalog represents assets, collections or products originated outside Axodus infrastructure but displayed or referenced through the Marketplace Federation Domain.
+
+Tenant isolation boundaries:
+- isolated tenant configuration
+- isolated or segmented catalog scope
+- isolated branding configuration
+- isolated domain, subdomain, slug or alias configuration
+- isolated theme configuration
+- tenant-scoped analytics visibility
+- tenant-scoped product exposure rules
+- tenant-scoped governance and restriction visibility
+
+Deferred tenant capabilities:
+- financial isolation
+- tenant billing
+- tenant settlement
+- tenant revenue sharing
+- tenant treasury routing
+- complete tenant data isolation
+- tenant authentication or RBAC
+- tenant dashboards
+- real domain routing
+- custom DNS or subdomain infrastructure
+
+Tenants cannot violate governance, permissions, product restrictions, licensing rules, security policy, observability requirements or treasury limits.
 
 Responsibilities:
+- define Tenant Marketplace boundaries
 - define white-label marketplace capability boundaries
+- define Marketplace Branding concepts
+- define Marketplace Domains concepts
+- define Marketplace Themes concepts
 - model tenant-scoped product catalogs
+- model Global Catalog, Tenant Catalog, Curated Catalog and Federated Catalog relationships
 - prepare configurable commercial policies
 - separate platform services from tenant authority
 - prepare operational dashboards and access packages
+- preserve the NFT vertical as a tenant-displayable foundation
 
 Boundaries:
 - no tenant provisioning runtime
+- no tenant registry implementation
+- no multi-tenancy implementation
+- no domain routing
+- no custom domain or subdomain implementation
+- no frontend route or component change
+- no database schema
+- no API or GraphQL schema
+- no tenant persistence
 - no production billing
+- no billing by tenant
+- no settlement by tenant
+- no revenue sharing by tenant
+- no financial isolation
+- no complete data isolation
+- no tenant authentication or RBAC
+- no tenant dashboard implementation
 - no external customer onboarding
 - no managed marketplace deployment
 - no hardcoded commercial policy

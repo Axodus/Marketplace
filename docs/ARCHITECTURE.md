@@ -64,6 +64,27 @@ Core federation concepts:
 
 Internal assets are originated, issued, controlled, licensed or operated inside Axodus infrastructure. External assets originate outside Axodus infrastructure but may be visible or referencable through federation. Federated Assets must not be displayed as native Axodus assets.
 
+## Marketplace-as-a-Service Domain
+
+The Marketplace-as-a-Service Domain prepares Marketplace to support multiple specialized commercial experiences over the same sovereign Axodus infrastructure.
+
+The global Marketplace remains the ecosystem distribution infrastructure. Tenant Marketplaces are configurable logical instances inside that infrastructure, not necessarily separate applications.
+
+Core Marketplace-as-a-Service concepts:
+- Tenant Marketplace: a logical marketplace operated by a tenant, community, partner, DAO, enterprise, product, ACS initiative, Academy front or authorized channel.
+- White Label Marketplace: a tenant marketplace with its own brand, positioning, catalog and user-facing experience, still governed by Axodus rules.
+- Marketplace Branding: tenant identity and presentation configuration, including name, logo, description, visual identity, trust elements and commercial messaging.
+- Marketplace Domains: future domain, subdomain, slug, alias and routing concepts; Phase 00 does not implement DNS, custom domains or route handling.
+- Marketplace Themes: tenant visual experience configuration, including colors, typography, layout, navigation, section order and exposure preferences.
+
+Catalog model:
+- Global Catalog: broad product and asset availability inside Axodus Marketplace infrastructure.
+- Tenant Catalog: subset exposed, enabled or configured inside a Tenant Marketplace.
+- Curated Catalog: editorial, commercial, strategic or community selection.
+- Federated Catalog: externally originated products, assets or collections referenced through federation.
+
+Tenant Isolation covers configuration, catalog scope, branding, domain identity, theme, analytics and exposure rules. Financial isolation, tenant billing, tenant settlement, tenant revenue sharing and tenant treasury routing are deferred to later phases.
+
 ## Non-Execution Boundary
 
 Phase 00 is documentation-only.

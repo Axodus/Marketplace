@@ -135,6 +135,60 @@ Before any federation or tenant implementation:
 
 ---
 
+## 3.1.1 Tenant Marketplace Creation Workflow
+
+Tenant Marketplace creation is a controlled documentation and future implementation workflow for Marketplace-as-a-Service.
+
+Required stages:
+- define the tenant
+- identify the responsible operator
+- define the marketplace objective
+- define identity and positioning
+- configure Marketplace Branding
+- configure Marketplace Themes
+- define future domain, subdomain or slug
+- define the initial Tenant Catalog
+- define product exposure rules
+- define curation boundaries
+- validate governance
+- validate product restrictions
+- validate licensing restrictions
+- validate observability requirements
+- publish through controlled Marketplace visibility
+- monitor operations
+
+Rules:
+- no Tenant Marketplace may operate outside Axodus governance
+- Tenant Marketplace is a logical configurable instance, not necessarily a separate application
+- tenant creation does not automatically enable tenant billing, tenant settlement, tenant revenue sharing, real domain routing, custom domains, subdomains, complete data isolation, financial isolation, tenant authentication, RBAC or tenant dashboards
+- tenant catalog selection must be compatible with product policy, licensing policy, distribution policy and governance
+- sensitive products may require governance validation before tenant exposure
+- white-label configuration does not grant sovereignty outside Axodus treasury boundaries, observability or ecosystem policies
+
+---
+
+## 3.1.2 Marketplace Branding And Theme Update Workflow
+
+Branding and theme changes must preserve ecosystem trust, accessibility, observability and policy compliance.
+
+Required stages:
+- request the change
+- review identity and positioning
+- validate consistency with ecosystem rules
+- validate product and licensing policy impact
+- validate user experience impact
+- update branding or theme through a controlled process
+- record the change
+- monitor post-change behavior
+
+Rules:
+- Marketplace Branding changes must not misrepresent product origin, validation status, tenant authority or Axodus responsibility
+- Marketplace Themes must remain compatible with accessibility, trust indicators and governance visibility
+- Marketplace Domains, slugs or aliases are future routing concepts only in Phase 00
+- branding and theme updates do not activate runtime routing, DNS, frontend components, tenant dashboards, billing, settlement or revenue sharing
+
+---
+
 ## 3.2 Federated Import Workflow
 
 Federated import is the controlled documentation and future implementation workflow for representing external assets in Marketplace.

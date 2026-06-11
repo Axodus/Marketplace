@@ -100,17 +100,65 @@ Objectives:
 - introduce Marketplace-as-a-Service tenant infrastructure
 - prepare tenant-scoped catalog, offer, entitlement, licensing and subscription boundaries
 - separate platform authority from tenant commercial configuration
+- support Tenant Marketplace, White Label Marketplace, Marketplace Branding, Marketplace Domains and Marketplace Themes as future implementation concepts
+- prepare tenant configuration, tenant identity, tenant branding, domain/subdomain/slug identity and catalog isolation boundaries
+- preserve Axodus governance, observability, product policy, licensing policy and treasury boundaries for every tenant
 
 Deliverables:
+- Multi-Tenant Foundation readiness
 - tenant catalog model
+- Curated Catalog readiness
 - white-label marketplace capability boundaries
+- Marketplace Branding model
+- Marketplace Domains model
+- Marketplace Themes model
+- Tenant Isolation boundary model
 - tenant policy and configuration model
 - tenant operational telemetry
 - tenant access and entitlement readiness
 
+Linked requirements:
+- MEP-REQ-030 — Multi-Tenant Foundation
+- MEP-REQ-031 — Marketplace Branding
+- MEP-REQ-032 — Tenant Domains
+- MEP-REQ-033 — Tenant Isolation
+
+Dependencies:
+- PHASE 00 — Marketplace Architecture Revision
+- Phase 01 — NFT Marketplace Consolidation
+- Phase 02 — Federation Layer
+
+Relationship to Phase 04:
+- Phase 03 prepares tenant identity, configuration and isolation boundaries
+- Phase 04 — Curated Catalogs depends on Tenant Infrastructure for tenant-specific catalog selection, product exposure and curation rules
+
+Implementation boundary:
+- Phase 03 implementation is future work
+- MEP-REQ-002 is documentation-only
+- no real multi-tenancy, tenant registry, domain routing, custom domain, subdomain, frontend route, database schema, API, GraphQL schema, persistence, tenant billing, tenant settlement, tenant revenue sharing, financial isolation, complete data isolation, tenant authentication, RBAC or tenant dashboard is introduced by Phase 00
+
 ---
 
-# Phase 04 — Distribution Network
+# Phase 04 — Curated Catalogs
+
+Status: PLANNED
+
+Objectives:
+- model tenant, partner, community, DAO, Academy, ACS and enterprise curated catalogs
+- define editorial, commercial, strategic and community curation rules
+- prepare product exposure, eligibility and governance validation for tenant-specific catalogs
+- preserve relationship to future Distribution Network capabilities
+
+Deliverables:
+- curated catalog model
+- tenant product selection rules
+- catalog eligibility boundaries
+- product exposure policy readiness
+- governance validation readiness
+
+---
+
+# Phase 05 — Distribution Network
 
 Status: PLANNED
 
@@ -127,7 +175,7 @@ Deliverables:
 
 ---
 
-# Phase 05 — Revenue Sharing Infrastructure
+# Phase 06 — Revenue Sharing Infrastructure
 
 Status: PLANNED
 
@@ -145,7 +193,7 @@ Deliverables:
 
 ---
 
-# Phase 06 — Marketplace Intelligence
+# Phase 07 — Marketplace Intelligence
 
 Status: FUTURE
 
@@ -162,7 +210,7 @@ Deliverables:
 
 ---
 
-# Phase 07 — Sovereign Distribution Economy
+# Phase 08 — Sovereign Distribution Economy
 
 Status: FUTURE
 
