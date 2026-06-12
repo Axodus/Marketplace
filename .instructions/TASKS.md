@@ -2,7 +2,7 @@
 
 # Phase 03 - Tenant Infrastructure Planning
 
-Status: IN PROGRESS - MULTI-TENANT FOUNDATION IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - TENANT BRANDING IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md`
@@ -10,7 +10,7 @@ Planning artifact:
 Recommended implementation sequence:
 - MEP-03A - Tenant Infrastructure Planning and Isolation Audit - COMPLETED
 - MEP-REQ-030 - Multi-Tenant Foundation - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-031 - Marketplace Branding
+- MEP-REQ-031 - Marketplace Branding - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-032 - Tenant Domains
 - MEP-REQ-033 - Tenant Isolation
 - MEP-PHASE-03-CLOSURE - QA, navigation and Marketplace-as-a-Service validation
@@ -31,6 +31,15 @@ MEP-REQ-030 delivered:
 - added `/marketplace/tenants` registry surface and reused `/marketplace/tenants/:tenantId` for tenant detail by id or slug
 - displayed tenant identity, configuration, enabled sections, referenced products/collections, warnings, disclaimers and execution boundaries
 - preserved mock/config-first boundaries with no tenant billing, settlement, treasury routing, custom DNS, production tenant routing, RBAC, isolated database or revenue sharing
+
+MEP-REQ-031 delivered:
+- added Tenant Branding, Tenant Theme and Tenant Visual Identity mock/config-first models
+- added branding/theme data for Axodus Global Marketplace, Axodus Academy Marketplace, ACS Services Marketplace and Community Marketplace Demo
+- added service helpers for global branding fallback, tenant branding resolution, tenant theme resolution, tenant display name and tenant logo placeholder resolution
+- added hooks for tenant branding and tenant theme read models
+- applied controlled branding on Tenant Registry, Tenant Detail and Layout tenant context using local display hints and safe fallback
+- displayed tenant logo placeholders, tenant display name, theme mode, primary color, secondary color, accent color, brand status, trust labels and branding boundary notes
+- preserved no white-label production, custom DNS, production tenant routing, tenant billing, tenant settlement, RBAC, isolated database, backend, revenue sharing, tracking or BI boundaries
 
 Constraints:
 - keep Phase 03 mock-first/read-model oriented until explicit implementation requests authorize runtime changes

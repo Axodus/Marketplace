@@ -11,6 +11,7 @@ import {
   getExternalContractById,
   getFederationProviderById,
   getFederationProviderReference,
+  getGlobalBranding,
   getGlobalTenant,
   getProductByItemRef,
   getProductBySlug,
@@ -27,6 +28,9 @@ import {
   listCollections,
   listProducts,
   listTenants,
+  getTenantDisplayName,
+  getTenantLogo,
+  resolveTenantBranding,
   resolveTenantContext
 } from "./marketplaceService";
 import { StorageAccessService, GreenfieldAccessAdapter } from "./boundaryAdapters";
@@ -266,6 +270,27 @@ describe("marketplaceService", () => {
     expect(fallback.isGlobalMarketplace).toBe(true);
     expect(fallback.tenant.slug).toBe("global");
     expect(fallback.executionBoundaries.join(" ")).toContain("does not create production tenant routing");
+  });
+
+  it("resolves Tenant Branding, Tenant Theme and Tenant Visual Identity with global fallback", () => {
+    const academyBranding = resolveTenantBranding("academy");
+    const fallbackBranding = resolveTenantBranding("missing-tenant");
+    const globalBranding = getGlobalBranding();
+    const academyLogo = getTenantLogo("academy");
+
+    expect(academyBranding.branding.displayName).toBe("Axodus Academy Marketplace");
+    expect(academyBranding.branding.brandStatus).toBe("tenant-custom-mock");
+    expect(academyBranding.theme.themeName).toBe("Academy Blue Mock");
+    expect(academyBranding.branding.visualIdentity.badgeLabel).toBe("Tenant Marketplace");
+    expect(academyBranding.branding.primaryColor).toBe("#1d4ed8");
+    expect(academyBranding.branding.secondaryColor).toBe("#0f766e");
+    expect(academyBranding.branding.accentColor).toBe("#f97316");
+    expect(academyBranding.usesGlobalBrandingFallback).toBe(false);
+    expect(academyLogo.placeholder).toBe("A");
+    expect(getTenantDisplayName("academy")).toBe("Axodus Academy Marketplace");
+    expect(fallbackBranding.branding.displayName).toBe(globalBranding.displayName);
+    expect(fallbackBranding.usesGlobalBrandingFallback).toBe(true);
+    expect(globalBranding.disclaimers.join(" ")).toContain("custom DNS");
   });
 
   it("finds products by slug", () => {

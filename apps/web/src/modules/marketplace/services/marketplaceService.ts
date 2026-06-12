@@ -28,6 +28,8 @@ import type {
   PurchaseRecord,
   Seller,
   Tenant,
+  TenantBranding,
+  TenantTheme,
   TokenStandard,
   WalletDiscoveryRecord,
   WalletDiscoveryStatus
@@ -372,6 +374,9 @@ export interface ExternalContractView {
 export interface TenantContextView {
   tenant: Tenant;
   isGlobalMarketplace: boolean;
+  branding: TenantBranding;
+  theme: TenantTheme;
+  usesGlobalBrandingFallback: boolean;
   referencedProducts: Product[];
   referencedCollections: CollectionView[];
   enabledSections: string[];
@@ -516,9 +521,79 @@ export function getTenantBySlug(slug: string) {
   return tenants.find((tenant) => tenant.slug === slug) ?? null;
 }
 
+function isValidThemeColor(color?: string) {
+  return Boolean(color && /^#[0-9a-fA-F]{6}$/.test(color));
+}
+
+function canUseTenantBranding(tenant: Tenant) {
+  const branding = tenant.branding;
+  if (!branding?.isBrandingEnabled) return false;
+  if (tenant.status === "disabled" || tenant.status === "restricted" || tenant.visibility === "archived") return false;
+  return [branding.primaryColor, branding.secondaryColor, branding.accentColor, branding.backgroundHint, branding.surfaceHint, branding.textHint].every(isValidThemeColor);
+}
+
+export function getGlobalBranding() {
+  const global = getGlobalTenant();
+  if (!global.branding) {
+    throw new Error("Global Tenant Branding is required for Marketplace branding fallback");
+  }
+  return global.branding;
+}
+
+export function getTenantBranding(tenant: Tenant) {
+  return tenant.branding ?? null;
+}
+
+export function resolveTenantBranding(idOrSlug?: string) {
+  const requestedTenant = idOrSlug ? getTenantById(idOrSlug) ?? getTenantBySlug(idOrSlug) : null;
+  const tenant = requestedTenant ?? getGlobalTenant();
+  const globalBranding = getGlobalBranding();
+  const shouldUseGlobalFallback = Boolean(idOrSlug && !requestedTenant) || !canUseTenantBranding(tenant);
+  const branding = !shouldUseGlobalFallback
+    ? tenant.branding!
+    : {
+        ...globalBranding,
+        usesGlobalFallback: true,
+        warnings: [
+          ...globalBranding.warnings,
+          `Tenant Branding fallback applied for ${tenant.slug}; tenant branding is missing, disabled, restricted or invalid.`
+        ]
+      };
+
+  return {
+    tenant,
+    branding,
+    theme: branding.theme,
+    usesGlobalBrandingFallback: shouldUseGlobalFallback
+  };
+}
+
+export function resolveTenantTheme(idOrSlug?: string) {
+  return resolveTenantBranding(idOrSlug).theme;
+}
+
+export function getTenantDisplayName(idOrSlug?: string) {
+  return resolveTenantBranding(idOrSlug).branding.displayName;
+}
+
+export function getTenantLogo(idOrSlug?: string) {
+  const { branding } = resolveTenantBranding(idOrSlug);
+  return {
+    logoUrl: branding.logoUrl,
+    logoAlt: branding.logoAlt,
+    placeholder: branding.shortName
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .slice(0, 3)
+      .toUpperCase()
+  };
+}
+
 export function resolveTenantContext(idOrSlug?: string): TenantContextView {
   const key = idOrSlug?.trim() ?? "";
   const tenant = key ? getTenantById(key) ?? getTenantBySlug(key) ?? getGlobalTenant() : getGlobalTenant();
+  const branding = resolveTenantBranding(tenant.slug);
   const referencedProductIds = new Set([...tenant.configuration.featuredProductIds, ...tenant.configuration.allowedProductIds]);
   const referencedCollectionIds = new Set([
     ...tenant.configuration.featuredCollectionIds,
@@ -531,6 +606,9 @@ export function resolveTenantContext(idOrSlug?: string): TenantContextView {
   return {
     tenant,
     isGlobalMarketplace: tenant.tenantType === "global",
+    branding: branding.branding,
+    theme: branding.theme,
+    usesGlobalBrandingFallback: branding.usesGlobalBrandingFallback,
     referencedProducts,
     referencedCollections,
     enabledSections: tenant.configuration.enabledSections,

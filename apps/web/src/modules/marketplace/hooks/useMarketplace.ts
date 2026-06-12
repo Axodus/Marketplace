@@ -19,7 +19,9 @@ import {
   listCollections,
   listProducts,
   listTenants,
-  resolveTenantContext
+  resolveTenantBranding,
+  resolveTenantContext,
+  resolveTenantTheme
 } from "../services/marketplaceService";
 import { instrumentMarketplaceError, traceMarketplaceLifecycle } from "../services/runtimeTelemetry";
 
@@ -199,6 +201,35 @@ export function useTenant(tenantIdOrSlug?: string) {
 
 export function useTenantContext(tenantIdOrSlug?: string) {
   return useTenant(tenantIdOrSlug);
+}
+
+export function useTenantBranding(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-branding", tenantIdOrSlug],
+    queryFn: () => {
+      const branding = resolveTenantBranding(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-tenant-branding-query", "completed", {
+        tenantId: branding.tenant.id,
+        brandStatus: branding.branding.brandStatus,
+        fallback: branding.usesGlobalBrandingFallback
+      });
+      return branding;
+    }
+  });
+}
+
+export function useTenantTheme(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-theme", tenantIdOrSlug],
+    queryFn: () => {
+      const theme = resolveTenantTheme(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-tenant-theme-query", "completed", {
+        themeId: theme.themeId,
+        themeMode: theme.themeMode
+      });
+      return theme;
+    }
+  });
 }
 
 export function useProduct(slug?: string) {

@@ -1,7 +1,8 @@
 import { Link, useParams } from "react-router-dom";
 import { Building2, Globe2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import type { CSSProperties } from "react";
 import { ProductCard } from "../components/ProductCard";
-import type { Tenant } from "../types/marketplace";
+import type { Tenant, TenantBranding } from "../types/marketplace";
 import { useTenant, useTenants } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 
@@ -44,30 +45,34 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
 
   if (!data) return null;
 
-  const { tenant, isGlobalMarketplace, referencedProducts, referencedCollections, enabledSections, executionBoundaries } = data;
+  const { tenant, isGlobalMarketplace, branding, theme, usesGlobalBrandingFallback, referencedProducts, referencedCollections, enabledSections, executionBoundaries } = data;
 
   return (
     <div className="space-y-6">
-      <section className="rounded border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded border border-slate-200 bg-white p-6 shadow-sm" style={tenantBrandingStyle(branding)}>
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+          <div className="flex max-w-3xl gap-4">
+            <TenantLogo branding={branding} />
+            <div>
             <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
               {isGlobalMarketplace ? <Globe2 size={16} /> : <Building2 size={16} />}{" "}
-              {isGlobalMarketplace ? "Global Marketplace fallback" : "Tenant Marketplace"}
+              {isGlobalMarketplace ? "Global Marketplace fallback" : branding.visualIdentity.badgeLabel}
             </p>
-            <h1 className="mt-2 text-3xl font-semibold">{tenant.identity.displayName}</h1>
-            <p className="mt-3 max-w-3xl text-slate-600">{tenant.identity.description}</p>
+            <h1 className="mt-2 text-3xl font-semibold">{branding.visualIdentity.headline}</h1>
+            <p className="mt-3 text-slate-600">{branding.visualIdentity.subheadline}</p>
+            <p className="mt-2 text-sm font-semibold text-slate-700">{branding.tagline}</p>
+            </div>
           </div>
-          <div className="rounded border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-900">
-            {tenant.status} / {tenant.visibility}
+          <div className="rounded border px-3 py-2 text-sm font-semibold" style={tenantBadgeStyle(branding)}>
+            {branding.brandStatus} / {usesGlobalBrandingFallback ? "global branding fallback" : "tenant colors"}
           </div>
         </div>
-        <div className="mt-6 grid gap-3 md:grid-cols-4">
+        <div className="mt-6 grid gap-3 md:grid-cols-5">
           <Stat label="Tenant type" value={tenant.tenantType} />
           <Stat label="Governance status" value={tenant.governanceStatus} />
           <Stat label="Tenant visibility" value={tenant.visibility} />
           <Stat label="Tenant slug" value={tenant.slug} />
-          <Stat label="Default route" value={tenant.configuration.defaultRoute} />
+          <Stat label="Theme mode" value={theme.themeMode} />
         </div>
       </section>
 
@@ -89,6 +94,32 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
 
         <div className="rounded border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <Building2 size={20} /> Tenant Branding
+          </h2>
+          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            <Row label="Tenant display name" value={branding.displayName} />
+            <Row label="Short name" value={branding.shortName} />
+            <Row label="Theme status" value={branding.brandStatus} />
+            <Row label="Theme mode" value={branding.themeMode} />
+            <Row label="Primary color" value={branding.primaryColor} />
+            <Row label="Secondary color" value={branding.secondaryColor} />
+            <Row label="Accent color" value={branding.accentColor} />
+            <Row label="Visual style" value={branding.visualStyle} />
+          </dl>
+          <div className="mt-4 flex gap-2" aria-label="Tenant colors">
+            <Swatch label="primary color" color={branding.primaryColor} />
+            <Swatch label="secondary color" color={branding.secondaryColor} />
+            <Swatch label="accent color" color={branding.accentColor} />
+          </div>
+          <p className="mt-4 rounded border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+            Marketplace Branding is mock/config-first. Theme tokens are local display hints and do not activate white-label production,
+            custom DNS, billing, settlement, RBAC or tenant isolation.
+          </p>
+        </div>
+      </section>
+
+      <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="flex items-center gap-2 text-xl font-semibold">
             <SlidersHorizontal size={20} /> Tenant Configuration
           </h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -111,12 +142,11 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
               ))}
             </div>
           </div>
-        </div>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
-        <BoundaryPanel title="Warnings" tone="amber" items={tenant.warnings} />
-        <BoundaryPanel title="Disclaimers" tone="slate" items={tenant.disclaimers} />
+        <BoundaryPanel title="Warnings" tone="amber" items={[...tenant.warnings, ...branding.warnings]} />
+        <BoundaryPanel title="Disclaimers" tone="slate" items={[...tenant.disclaimers, ...branding.disclaimers]} />
       </section>
 
       <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
@@ -173,20 +203,65 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
 }
 
 function TenantCard({ tenant }: { tenant: Tenant }) {
+  const branding = tenant.branding;
+
   return (
-    <Link to={`/marketplace/tenants/${tenant.slug}`} className="rounded border border-slate-200 bg-white p-5 shadow-sm hover:border-teal-300 hover:bg-teal-50">
-      <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">{tenant.tenantType}</p>
-      <h2 className="mt-2 text-lg font-semibold text-slate-950">{tenant.identity.displayName}</h2>
+    <Link
+      to={`/marketplace/tenants/${tenant.slug}`}
+      className="rounded border border-slate-200 bg-white p-5 shadow-sm hover:border-teal-300 hover:bg-teal-50"
+      style={branding ? tenantBrandingStyle(branding) : undefined}
+    >
+      <div className="flex items-start gap-3">
+        {branding ? <TenantLogo branding={branding} compact /> : null}
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">{tenant.tenantType}</p>
+          <h2 className="mt-2 text-lg font-semibold text-slate-950">{branding?.displayName ?? tenant.identity.displayName}</h2>
+        </div>
+      </div>
       <p className="mt-2 min-h-12 text-sm text-slate-600">{tenant.description}</p>
       <div className="mt-4 space-y-2 text-sm">
         <Row label="Status" value={tenant.status} />
         <Row label="Visibility" value={tenant.visibility} />
         <Row label="Governance status" value={tenant.governanceStatus} />
+        <Row label="Branding" value={branding?.brandStatus ?? "global branding fallback"} />
       </div>
       <p className="mt-4 rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
-        mock-first / config-first / no settlement
+        mock branding / config-first branding / no settlement
       </p>
     </Link>
+  );
+}
+
+function TenantLogo({ branding, compact = false }: { branding: TenantBranding; compact?: boolean }) {
+  const initials = branding.shortName
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 3)
+    .toUpperCase();
+  const size = compact ? "h-10 w-10 text-sm" : "h-16 w-16 text-lg";
+
+  if (branding.logoUrl) {
+    return <img src={branding.logoUrl} alt={branding.logoAlt} className={`${size} rounded border border-slate-200 object-cover`} />;
+  }
+
+  return (
+    <span
+      aria-label={branding.logoAlt}
+      className={`${size} flex shrink-0 items-center justify-center rounded border font-semibold text-white`}
+      style={{ backgroundColor: branding.primaryColor, borderColor: branding.secondaryColor }}
+    >
+      {initials}
+    </span>
+  );
+}
+
+function Swatch({ label, color }: { label: string; color: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700">
+      <span className="h-4 w-4 rounded border border-slate-300" style={{ backgroundColor: color }} />
+      {label}
+    </span>
   );
 }
 
@@ -235,4 +310,19 @@ function BoundaryPanel({ title, tone, items }: { title: string; tone: "amber" | 
       </ul>
     </div>
   );
+}
+
+function tenantBrandingStyle(branding: TenantBranding): CSSProperties {
+  return {
+    borderColor: branding.secondaryColor,
+    background: `linear-gradient(180deg, ${branding.backgroundHint} 0%, ${branding.surfaceHint} 42%)`
+  };
+}
+
+function tenantBadgeStyle(branding: TenantBranding): CSSProperties {
+  return {
+    borderColor: branding.accentColor,
+    backgroundColor: branding.backgroundHint,
+    color: branding.primaryColor
+  };
 }

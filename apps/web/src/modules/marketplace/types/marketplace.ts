@@ -26,6 +26,8 @@ export type TenantStatus =
 export type TenantType = "global" | "community" | "creator" | "academy" | "acs" | "enterprise" | "dao" | "partner" | "demo";
 export type TenantVisibility = "public-mock" | "private-preview" | "restricted" | "archived";
 export type TenantGovernanceStatus = "governance-aligned" | "governance-review" | "restricted" | "disabled";
+export type TenantThemeStatus = "global-default" | "configured-mock" | "tenant-custom-mock" | "review-required" | "restricted" | "disabled";
+export type TenantThemeMode = "light" | "dark-preview" | "system";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -120,6 +122,58 @@ export interface TenantConfiguration {
   isTenantCatalogEnabled: boolean;
 }
 
+export interface TenantTheme {
+  themeId: string;
+  themeName: string;
+  themeMode: TenantThemeMode;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  backgroundHint: string;
+  surfaceHint: string;
+  textHint: string;
+  borderRadius: "sm" | "md";
+  density: "compact" | "comfortable";
+  contrastLevel: "standard" | "high";
+  isCustomTheme: boolean;
+  isMockTheme: boolean;
+}
+
+export interface TenantVisualIdentity {
+  headline: string;
+  subheadline: string;
+  badgeLabel: string;
+  trustLabel: string;
+  operatorLabel: string;
+  governanceLabel: string;
+  marketplaceLabel: string;
+}
+
+export interface TenantBranding {
+  logoUrl?: string;
+  logoAlt: string;
+  iconUrl?: string;
+  displayName: string;
+  shortName: string;
+  tagline: string;
+  description: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  backgroundHint: string;
+  surfaceHint: string;
+  textHint: string;
+  themeMode: TenantThemeMode;
+  visualStyle: "global-default" | "academy" | "acs" | "community";
+  brandStatus: TenantThemeStatus;
+  isBrandingEnabled: boolean;
+  usesGlobalFallback: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  theme: TenantTheme;
+  visualIdentity: TenantVisualIdentity;
+}
+
 export interface Tenant {
   id: string;
   slug: string;
@@ -132,6 +186,7 @@ export interface Tenant {
   governanceStatus: TenantGovernanceStatus;
   identity: TenantIdentity;
   configuration: TenantConfiguration;
+  branding?: TenantBranding;
   createdAt: string;
   updatedAt: string;
   warnings: string[];

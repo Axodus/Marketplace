@@ -1,6 +1,7 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Box, Building2, FileCode2, FileSearch, FilePlus2, Gavel, LayoutDashboard, Layers3, RadioTower, ReceiptText, ShieldCheck, Tags, WalletCards } from "lucide-react";
 import { useWallet } from "../hooks/useWallet";
+import { resolveTenantBranding } from "../modules/marketplace/services/marketplaceService";
 
 const links = [
   { to: "/marketplace", label: "Home", icon: Box },
@@ -22,6 +23,10 @@ const links = [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const wallet = useWallet();
+  const location = useLocation();
+  const tenantRouteMatch = location.pathname.match(/^\/marketplace\/tenants\/([^/]+)/);
+  const tenantBranding = resolveTenantBranding(tenantRouteMatch?.[1]);
+  const headerBranding = tenantBranding.branding;
   const walletTone =
     wallet.status === "connected"
       ? "bg-emerald-600"
@@ -35,13 +40,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-          <Link to="/marketplace" className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded border border-slate-300 bg-slate-950 text-white">
+          <Link to={tenantRouteMatch ? `/marketplace/tenants/${tenantRouteMatch[1]}` : "/marketplace"} className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded border text-white" style={{ backgroundColor: headerBranding.primaryColor, borderColor: headerBranding.secondaryColor }}>
               <Gavel size={20} />
             </span>
             <span>
-              <span className="block text-sm font-semibold uppercase tracking-wide text-slate-500">Axodus</span>
-              <span className="block text-lg font-semibold">NFT Marketplace</span>
+              <span className="block text-sm font-semibold uppercase tracking-wide text-slate-500">
+                {tenantRouteMatch ? headerBranding.visualIdentity.badgeLabel : "Axodus"}
+              </span>
+              <span className="block text-lg font-semibold">{tenantRouteMatch ? headerBranding.shortName : "NFT Marketplace"}</span>
             </span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex" aria-label="Marketplace sections">

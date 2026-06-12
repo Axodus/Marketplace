@@ -135,7 +135,7 @@ Implementation boundary:
 
 # Phase 03 — Tenant Infrastructure
 
-Status: IN PROGRESS — MULTI-TENANT FOUNDATION IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS — TENANT BRANDING IMPLEMENTED MOCK/CONFIG-FIRST
 
 Objectives:
 - introduce Marketplace-as-a-Service tenant infrastructure
@@ -147,6 +147,7 @@ Objectives:
 
 Deliverables:
 - Multi-Tenant Foundation mock/config-first runtime
+- Marketplace Branding mock/config-first runtime
 - tenant catalog model
 - Curated Catalog readiness
 - white-label marketplace capability boundaries
@@ -164,7 +165,7 @@ Planning artifact:
 Linked requirements:
 - MEP-03A — Tenant Infrastructure Planning and Isolation Audit — completed
 - MEP-REQ-030 — Multi-Tenant Foundation — completed mock/config-first
-- MEP-REQ-031 — Marketplace Branding
+- MEP-REQ-031 — Marketplace Branding — completed mock/config-first
 - MEP-REQ-032 — Tenant Domains
 - MEP-REQ-033 — Tenant Isolation
 
@@ -180,7 +181,8 @@ Relationship to Phase 04:
 Implementation boundary:
 - MEP-03A is audit and planning only
 - MEP-REQ-030 introduces Tenant Registry, Tenant Identity and Tenant Configuration as mock/config-first runtime surfaces only
-- MEP-REQ-030 does not introduce Marketplace Branding, Tenant Themes, Tenant Domains, Tenant Isolation, custom DNS, subdomain routing, production tenant routing, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated database, backend schema, tracking, BI or separate tenant deploy
+- MEP-REQ-031 introduces Tenant Branding, Tenant Theme and Tenant Visual Identity as mock/config-first display surfaces only
+- MEP-REQ-031 does not introduce white-label production, custom DNS, subdomain routing, production tenant routing, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated database, backend schema, tracking, BI or separate tenant deploy
 - MEP-REQ-002 is documentation-only
 - no real multi-tenancy, tenant registry, domain routing, custom domain, subdomain, frontend route, database schema, API, GraphQL schema, persistence, tenant billing, tenant settlement, tenant revenue sharing, financial isolation, complete data isolation, tenant authentication, RBAC or tenant dashboard is introduced by Phase 00
 
