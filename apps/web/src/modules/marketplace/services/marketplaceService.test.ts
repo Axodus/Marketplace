@@ -64,11 +64,11 @@ describe("marketplaceService", () => {
     expect(listProducts().map((product) => product.id)).toEqual(originalOrder);
   });
 
-  it("lists ranked native mock collections with derived metrics", () => {
+  it("lists ranked native and external mock collections with derived metrics", () => {
     const collections = listCollections();
 
-    expect(collections).toHaveLength(4);
-    expect(collections.map((view) => view.metrics.ranking)).toEqual([1, 2, 3, 4]);
+    expect(collections).toHaveLength(5);
+    expect(collections.map((view) => view.metrics.ranking)).toEqual([1, 2, 3, 4, 5]);
     expect(collections[0].collection.slug).toBe("axodus-governance-access");
     expect(collections[0].metrics.itemCount).toBe(1);
     expect(collections[0].metrics.listings).toBe(1);
@@ -104,6 +104,21 @@ describe("marketplaceService", () => {
     expect(collection?.warnings.join(" ")).toContain("provider-reported");
     expect(collection && isExternalCollection(collection.collection)).toBe(true);
     expect(collection && getCollectionSourceLabel(collection.collection)).toContain("Federated Collection");
+  });
+
+  it("represents external ERC721 and ERC1155 contract references without execution", () => {
+    const erc721 = getCollectionBySlug("harmony-creator-keys");
+    const erc1155 = getCollectionBySlug("opensea-academy-badge-set");
+
+    expect(erc721?.collection.externalContract?.tokenStandard).toBe("ERC721");
+    expect(erc1155?.collection.externalContract?.tokenStandard).toBe("ERC1155");
+    expect(erc1155?.collection.provider?.name).toBe("OpenSea Mock Provider");
+    expect(erc1155?.collection.externalContract?.validationStatus).toBe("contract-referenced");
+    expect(erc1155?.collection.externalContract?.riskClassification).toBe("contract-risk");
+    expect(erc1155?.collection.externalContract?.provenance).toContain("no OpenSea call");
+    expect(erc1155?.boundaries.canTrade).toBe(false);
+    expect(erc1155?.boundaries.canSettle).toBe(false);
+    expect(erc1155?.boundaries.canBridge).toBe(false);
   });
 
   it("builds seller profile metrics, activity and collection relationships from mock data", () => {
@@ -187,10 +202,12 @@ describe("marketplaceService", () => {
 
   it("resolves Federation Providers by id or slug and exposes mock references", () => {
     const harmonyById = getFederationProviderById("provider-harmony-ecosystem-mock");
+    const openseaById = getFederationProviderById("provider-opensea-mock");
     const magicEdenBySlug = getFederationProviderById("magic-eden");
 
     expect(harmonyById?.provider.name).toBe("Harmony Ecosystem");
     expect(harmonyById?.references.collections.map((collection) => collection.slug)).toContain("harmony-creator-keys");
+    expect(openseaById?.references.collections.map((collection) => collection.slug)).toContain("opensea-academy-badge-set");
     expect(magicEdenBySlug?.provider.name).toBe("Magic Eden");
     expect(getFederationProviderReference("provider-opensea-mock")?.name).toBe("OpenSea");
     expect(getFederationProviderById("missing-provider")).toBeNull();

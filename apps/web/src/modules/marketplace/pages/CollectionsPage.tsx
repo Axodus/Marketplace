@@ -45,7 +45,9 @@ export function CollectionsPage() {
       ) : (
         <section className="rounded border border-slate-200 bg-white p-6 shadow-sm" role="status">
           <h2 className="text-xl font-semibold">No mock collections available</h2>
-          <p className="mt-2 text-sm text-slate-600">Collection import and federation remain future Phase 02 work.</p>
+          <p className="mt-2 text-sm text-slate-600">
+            No displayable native or federated mock collection records are available. No provider, indexer, chain read or settlement was attempted.
+          </p>
         </section>
       )}
     </div>

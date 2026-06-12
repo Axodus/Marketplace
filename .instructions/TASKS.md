@@ -1,19 +1,22 @@
 # Marketplace Roadmap
 
-# Phase 02 - Federation Layer Planning
+# Phase 02 - Federation Layer
 
-Status: PLANNING - BOUNDARY AUDIT COMPLETE
+Status: COMPLETED - MOCK-FIRST FEDERATION LAYER VALIDATED
 
 Planning artifact:
 - `docs/PHASE_02_FEDERATION_AUDIT.md`
 
+Closure artifact:
+- `docs/PHASE_02_CLOSURE_REPORT.md`
+
 Recommended implementation sequence:
 - MEP-02A - Federation Layer Planning and Boundary Audit - COMPLETED
-- MEP-REQ-020 - Contract Import
+- MEP-REQ-020 - Contract Import - IMPLEMENTED MOCK-FIRST
 - MEP-REQ-021 - Collection Import - IMPLEMENTED MOCK-FIRST
 - MEP-REQ-022 - Wallet Discovery - IMPLEMENTED MOCK-FIRST
 - MEP-REQ-023 - Federation Providers - IMPLEMENTED MOCK-FIRST
-- MEP-PHASE-02-CLOSURE - QA, navigation and internal/external asset validation
+- MEP-PHASE-02-CLOSURE - QA, navigation and internal/external asset validation - COMPLETED
 
 MEP-02A delivered:
 - mapped the post-Phase 01 Marketplace runtime and documentation state
@@ -21,6 +24,12 @@ MEP-02A delivered:
 - defined future conceptual boundaries for ExternalAsset, ExternalCollection, ExternalContract, ExternalMetadata and FederationProvider
 - recommended validation statuses, risk classifications, provider model, provenance model and trust boundaries
 - mapped gaps for MEP-REQ-020 through MEP-REQ-023 without implementing federation runtime
+
+MEP-REQ-020 delivered:
+- added mock-first External Contract references for ERC721 and ERC1155 collection records
+- represented provider id, chain id, chain name, contract address, token standard, external URL, validation status, risk classification and provenance
+- kept external contracts as referenced/read-only descriptors without on-chain reads, contract verification, wallet signatures, contract writes, custody, trading, bridge execution or settlement
+- covered external ERC721 and ERC1155 contract references with service tests and disabled trade, settlement and bridge flags
 
 MEP-REQ-021 delivered:
 - added External Collection mock data with provider, origin, external contract reference, External Metadata and provider-reported External Collection Statistics
@@ -44,6 +53,13 @@ MEP-REQ-023 delivered:
 - added a read-only providers route at `/marketplace/providers` for inspecting provider descriptors and boundaries
 - covered provider descriptors with service tests confirming read-only/non-executing status and disabled trade, settlement and bridge flags
 - no external calls, SDKs, API keys, env vars, scraping, sync jobs, indexers, subgraphs or provider health checks were added
+
+MEP-PHASE-02-CLOSURE delivered:
+- validated Contract Import, Collection Import, Wallet Discovery and Federation Providers as mock-first/read-only Phase 02 surfaces
+- confirmed internal/native and external/federated records are differentiated in collection listings, collection detail, wallet discovery and provider descriptor surfaces
+- confirmed external records carry origin, provider, validation status, provenance, risk classification and trust boundaries
+- confirmed no real external provider, API, SDK, indexer, subgraph, wallet signature, contract write, custody, settlement, bridge execution, tenant infrastructure, revenue sharing, tracking, BI or Marketplace Intelligence runtime was introduced
+- positioned Phase 03 - Tenant Infrastructure as future work
 
 Constraints:
 - keep Phase 02 read-only/mock-first until an explicit implementation request authorizes runtime changes

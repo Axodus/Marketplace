@@ -245,6 +245,100 @@ export const marketplaceCollections = [
     isNative: false,
     isExternal: true,
     isFederated: true
+  },
+  {
+    id: "external-collection-opensea-academy-badges",
+    name: "OpenSea Academy Badge Set",
+    slug: "opensea-academy-badge-set",
+    description:
+      "External Collection mock representing an ERC1155 badge set from an OpenSea-style provider descriptor. Metadata and statistics are provider-reported mock data only.",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+    chain: "Ethereum",
+    contractAddress: "0xExternalMockOpenSeaAcademyBadges",
+    assetType: "ERC1155",
+    origin: "external",
+    validationStatus: "under-review",
+    governanceStatus: "under-review",
+    sellerId: "seller-academy-guild",
+    metrics: {
+      volume: 0,
+      floorPrice: 0,
+      holders: 0,
+      recentActivity: 0
+    },
+    provider: {
+      id: "provider-opensea-mock",
+      name: "OpenSea Mock Provider",
+      type: "aggregator",
+      origin: "OpenSea provider descriptor mock",
+      trustLevel: "provider-reported"
+    },
+    externalContract: {
+      providerId: "provider-opensea-mock",
+      chainId: "1",
+      chainName: "Ethereum",
+      contractAddress: "0xExternalMockOpenSeaAcademyBadges",
+      tokenStandard: "ERC1155",
+      externalUrl: "https://provider.mock.axodus.local/opensea/collections/academy-badge-set",
+      validationStatus: "contract-referenced",
+      riskClassification: "contract-risk",
+      provenance: "Provider-reported mock ERC1155 contract descriptor; no OpenSea call, chain read, indexer or contract verification executed."
+    },
+    externalMetadata: {
+      source: "provider-reported-mock",
+      externalUrl: "https://provider.mock.axodus.local/opensea/collections/academy-badge-set",
+      metadataUrl: "ipfs://mock-provider/opensea-academy-badge-set/collection.json",
+      metadataHash: "mock-hash-opensea-academy-badge-set",
+      lastSyncedAt: "2026-06-12T10:00:00.000Z",
+      importedAt: "2026-06-12T10:20:00.000Z",
+      warnings: [
+        "External Metadata is provider-reported mock data.",
+        "ERC1155 badge metadata is not authenticated, cached or fetched by Axodus in Phase 02."
+      ],
+      disclaimers: [
+        "External ERC1155 metadata display does not imply native issuance, ownership guarantee, custody, license enforcement or settlement.",
+        "No metadata fetch, provider API call, SDK, indexer, subgraph or on-chain read is active."
+      ]
+    },
+    externalStatistics: {
+      source: "provider-reported-mock",
+      itemCount: 64,
+      volume: 160,
+      floorPrice: 6,
+      holders: 28,
+      listings: 0,
+      bids: 0,
+      recentActivity: 4,
+      lastSyncedAt: "2026-06-12T10:00:00.000Z",
+      disclaimers: [
+        "External Collection Statistics are mock/provider-reported and are not official market metrics.",
+        "ERC1155 floor price, holder count and volume are non-executing display data."
+      ]
+    },
+    federationValidationStatus: "contract-referenced",
+    riskClassification: "contract-risk",
+    provenance: "Collection referenced through a mock OpenSea provider descriptor for Phase 02 ERC1155 boundary validation.",
+    trustBoundary: {
+      origin: "OpenSea provider descriptor mock",
+      provider: "OpenSea Mock Provider",
+      validationStatus: "contract-referenced",
+      provenance: "Provider-reported mock ERC1155 collection descriptor; no live provider, indexer, API call, SDK or chain read.",
+      riskClassification: "contract-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federated ERC1155 Collection display is read-only and non-executing.",
+        "No external purchase, bid, settlement, custody, bridge execution, wallet signature or contract write is enabled.",
+        "Provider-reported ERC1155 data is not treated as trusted by default."
+      ]
+    },
+    displayStatus: "limited",
+    isNative: false,
+    isExternal: true,
+    isFederated: true
   }
 ];
 
