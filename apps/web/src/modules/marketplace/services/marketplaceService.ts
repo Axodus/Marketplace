@@ -13,6 +13,7 @@ import type {
   Chain,
   DiscoveredAsset,
   ExternalCollectionStatistics,
+  ExternalContractReference,
   DraftListingInput,
   DraftListingPreview,
   FederationProviderDescriptor,
@@ -346,6 +347,25 @@ export interface FederationProviderView {
   boundaryNotes: string[];
 }
 
+export interface ExternalContractView {
+  id: string;
+  name: string;
+  contract: ExternalContractReference;
+  collection: MarketplaceCollection;
+  provider: FederationProviderDescriptor | MarketplaceCollection["provider"] | null;
+  trustBoundary: FederationTrustBoundary;
+  importPreview: {
+    displayEligible: boolean;
+    importStatus: "preview-ready" | "blocked" | "quarantined";
+    dataSource: "local-mock";
+    lastImportedAt?: string;
+    lastSyncedAt?: string;
+    supportedCapabilities: string[];
+    warnings: string[];
+    disclaimers: string[];
+  };
+}
+
 export function normalizeMockWalletAddress(walletAddress?: string) {
   return walletAddress?.trim().toLowerCase() ?? "";
 }
@@ -406,6 +426,66 @@ export function getFederationProviderById(idOrSlug: string) {
 
 export function getFederationProviderReference(providerId: string) {
   return federationProviders.find((provider) => provider.id === providerId) ?? null;
+}
+
+function buildExternalContractId(collection: MarketplaceCollection, contract: ExternalContractReference) {
+  return `${contract.chainName.toLowerCase()}-${contract.tokenStandard.toLowerCase()}-${contract.contractAddress.toLowerCase()}-${collection.slug}`.replace(/[^a-z0-9-]/g, "-");
+}
+
+function buildExternalContractView(collection: MarketplaceCollection): ExternalContractView | null {
+  if (!collection.externalContract) return null;
+  const provider = getFederationProviderReference(collection.externalContract.providerId) ?? collection.provider ?? null;
+  const trustBoundary = getCollectionBoundary(collection);
+  const displayEligible = trustBoundary.canDisplay && collection.displayStatus !== "blocked" && collection.displayStatus !== "quarantined";
+  const importStatus: ExternalContractView["importPreview"]["importStatus"] =
+    collection.displayStatus === "blocked" ? "blocked" : collection.displayStatus === "quarantined" ? "quarantined" : "preview-ready";
+
+  return {
+    id: buildExternalContractId(collection, collection.externalContract),
+    name: `${collection.name} Contract`,
+    contract: collection.externalContract,
+    collection,
+    provider,
+    trustBoundary,
+    importPreview: {
+      displayEligible,
+      importStatus,
+      dataSource: "local-mock",
+      lastImportedAt: collection.externalMetadata?.importedAt,
+      lastSyncedAt: collection.externalMetadata?.lastSyncedAt ?? collection.externalStatistics?.lastSyncedAt,
+      supportedCapabilities: [
+        "contract-reference",
+        "collection-link",
+        "metadata-reference",
+        "display-eligibility-preview",
+        "read-only-boundary"
+      ],
+      warnings: [
+        ...(collection.externalMetadata?.warnings ?? []),
+        "External Contract is a mock-first/read-only descriptor and is not verified on-chain by Axodus."
+      ],
+      disclaimers: [
+        ...(collection.externalMetadata?.disclaimers ?? []),
+        "Contract Import preview does not enable trading, custody, settlement, wallet signatures, contract writes, bridge execution or royalties."
+      ]
+    }
+  };
+}
+
+export function listExternalContracts() {
+  return collections.map(buildExternalContractView).filter((contract): contract is ExternalContractView => Boolean(contract));
+}
+
+export function getExternalContractById(idOrAddress: string) {
+  const key = idOrAddress.trim().toLowerCase();
+  return (
+    listExternalContracts().find(
+      (view) =>
+        view.id.toLowerCase() === key ||
+        view.contract.contractAddress.toLowerCase() === key ||
+        view.collection.slug.toLowerCase() === key
+    ) ?? null
+  );
 }
 
 export function discoverWalletAssets(walletAddress?: string): WalletDiscoveryView {

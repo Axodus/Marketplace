@@ -8,10 +8,12 @@ import {
   buildSellerProfileView,
   calculateDashboardMetrics,
   discoverWalletAssets,
+  getExternalContractById,
   getFederationProviderById,
   getProductByItemRef,
   getCollectionBySlug,
   getSellerById,
+  listExternalContracts,
   listFederationProviders,
   listBoundaries,
   listCollections,
@@ -135,6 +137,34 @@ export function useFederationProvider(providerId?: string) {
       }
       traceMarketplaceLifecycle("marketplace-federation-provider-query", "completed", { providerId: provider.provider.id });
       return provider;
+    }
+  });
+}
+
+export function useExternalContracts() {
+  return useQuery({
+    queryKey: ["marketplace-external-contracts"],
+    queryFn: () => {
+      const contracts = listExternalContracts();
+      traceMarketplaceLifecycle("marketplace-external-contracts-query", "completed", { contractCount: contracts.length });
+      return contracts;
+    }
+  });
+}
+
+export function useExternalContract(contractId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-external-contract", contractId],
+    enabled: Boolean(contractId),
+    queryFn: () => {
+      const contract = getExternalContractById(contractId ?? "");
+      if (!contract) {
+        const error = new Error("External Contract not found");
+        instrumentMarketplaceError("marketplace-external-contract-query", error, { contractId: contractId ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-external-contract-query", "completed", { contractId: contract.id });
+      return contract;
     }
   });
 }

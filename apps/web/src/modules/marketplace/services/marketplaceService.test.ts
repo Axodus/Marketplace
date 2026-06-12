@@ -8,6 +8,7 @@ import {
   getCollectionBySlug,
   getCollectionForProduct,
   getCollectionSourceLabel,
+  getExternalContractById,
   getFederationProviderById,
   getFederationProviderReference,
   getProductByItemRef,
@@ -17,6 +18,7 @@ import {
   isExternalCollection,
   isValidMockWalletAddress,
   issueMockPurchase,
+  listExternalContracts,
   listWalletDiscoveryRecords,
   listFederationProviders,
   listCollections,
@@ -119,6 +121,23 @@ describe("marketplaceService", () => {
     expect(erc1155?.boundaries.canTrade).toBe(false);
     expect(erc1155?.boundaries.canSettle).toBe(false);
     expect(erc1155?.boundaries.canBridge).toBe(false);
+  });
+
+  it("lists External Contract import previews by id, address and collection slug", () => {
+    const contracts = listExternalContracts();
+    const erc721 = getExternalContractById("harmony-creator-keys");
+    const erc1155 = getExternalContractById("0xExternalMockOpenSeaAcademyBadges");
+
+    expect(contracts.map((view) => view.contract.tokenStandard)).toEqual(["ERC721", "ERC1155"]);
+    expect(erc721?.contract.validationStatus).toBe("contract-referenced");
+    expect(erc721?.provider?.name).toBe("Harmony Ecosystem");
+    expect(erc1155?.collection.slug).toBe("opensea-academy-badge-set");
+    expect(erc1155?.importPreview.displayEligible).toBe(true);
+    expect(erc1155?.importPreview.importStatus).toBe("preview-ready");
+    expect(erc1155?.importPreview.dataSource).toBe("local-mock");
+    expect(erc1155?.importPreview.supportedCapabilities).toContain("read-only-boundary");
+    expect(erc1155?.importPreview.disclaimers.join(" ")).toContain("does not enable trading");
+    expect(getExternalContractById("missing-contract")).toBeNull();
   });
 
   it("builds seller profile metrics, activity and collection relationships from mock data", () => {

@@ -29,6 +29,8 @@ MEP-REQ-020 delivered:
 - added mock-first External Contract references for ERC721 and ERC1155 collection records
 - represented provider id, chain id, chain name, contract address, token standard, external URL, validation status, risk classification and provenance
 - kept external contracts as referenced/read-only descriptors without on-chain reads, contract verification, wallet signatures, contract writes, custody, trading, bridge execution or settlement
+- added service helpers to list External Contract import previews and resolve a contract by preview id, address or collection slug
+- added a read-only Contract Import preview route at `/marketplace/contracts` and `/marketplace/contracts/:contractId`
 - covered external ERC721 and ERC1155 contract references with service tests and disabled trade, settlement and bridge flags
 
 MEP-REQ-021 delivered:

@@ -28,7 +28,7 @@ Revenue Sharing Domain prepares Attribution Model, Commission Model, Revenue Spl
 
 Marketplace Intelligence Domain prepares Commercial Analytics, Tenant Analytics, Product Analytics and Collection Analytics as interpretable, traceable and auditable intelligence concepts for future dashboards, telemetry pipelines and BI integration.
 
-Phase 00 is documentation-only. Phase 01 activates only mock-first NFT Marketplace runtime surfaces. Phase 02 activates only mock-first/read-only federation representation for External Contracts, External Collections, External Metadata, Wallet Discovery and Federation Providers. Phase 02 does not activate new backend APIs, contracts, indexers, persistence, GraphQL, real billing, external integrations, tracking, BI, wallet signatures, bridge execution, treasury routing, settlement, custody or on-chain execution.
+Phase 00 is documentation-only. Phase 01 activates only mock-first NFT Marketplace runtime surfaces. Phase 02 activates only mock-first/read-only federation representation for External Contracts, External Collections, External Metadata, Wallet Discovery and Federation Providers, including a Contract Import preview at `/marketplace/contracts`. Phase 02 does not activate new backend APIs, contracts, indexers, persistence, GraphQL, real billing, external integrations, tracking, BI, wallet signatures, bridge execution, treasury routing, settlement, custody or on-chain execution.
 
 Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 
