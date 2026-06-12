@@ -11,10 +11,13 @@ import {
   getExternalContractById,
   getFederationProviderById,
   getFederationProviderReference,
+  getGlobalTenant,
   getProductByItemRef,
   getProductBySlug,
   getSellerById,
   getSellerProfileById,
+  getTenantById,
+  getTenantBySlug,
   isExternalCollection,
   isValidMockWalletAddress,
   issueMockPurchase,
@@ -22,7 +25,9 @@ import {
   listWalletDiscoveryRecords,
   listFederationProviders,
   listCollections,
-  listProducts
+  listProducts,
+  listTenants,
+  resolveTenantContext
 } from "./marketplaceService";
 import { StorageAccessService, GreenfieldAccessAdapter } from "./boundaryAdapters";
 
@@ -230,6 +235,37 @@ describe("marketplaceService", () => {
     expect(magicEdenBySlug?.provider.name).toBe("Magic Eden");
     expect(getFederationProviderReference("provider-opensea-mock")?.name).toBe("OpenSea");
     expect(getFederationProviderById("missing-provider")).toBeNull();
+  });
+
+  it("lists tenants and resolves Tenant Registry records by id and slug", () => {
+    const tenants = listTenants();
+    const globalTenant = getGlobalTenant();
+    const academyById = getTenantById("tenant-academy-marketplace");
+    const academyBySlug = getTenantBySlug("academy");
+
+    expect(tenants.map((tenant) => tenant.slug)).toEqual(["global", "academy", "acs-services", "community-demo"]);
+    expect(globalTenant.slug).toBe("global");
+    expect(academyById?.identity.displayName).toBe("Axodus Academy Marketplace");
+    expect(academyBySlug?.tenantType).toBe("academy");
+    expect(academyBySlug?.configuration.canDisplay).toBe(true);
+    expect(academyBySlug?.configuration.canTrade).toBe(false);
+    expect(academyBySlug?.configuration.canSettle).toBe(false);
+    expect(academyBySlug?.configuration.canRouteCustomDomain).toBe(false);
+  });
+
+  it("resolves Tenant Context with global fallback and non-executing boundaries", () => {
+    const academy = resolveTenantContext("academy");
+    const fallback = resolveTenantContext("missing-tenant");
+
+    expect(academy.isGlobalMarketplace).toBe(false);
+    expect(academy.tenant.identity.operatorName).toBe("Academy Tutor Guild");
+    expect(academy.referencedProducts.map((product) => product.slug)).toContain("academy-certification-erc1155-bundle");
+    expect(academy.referencedCollections.map((view) => view.collection.slug)).toContain("opensea-academy-badge-set");
+    expect(academy.executionBoundaries.join(" ")).toContain("No settlement");
+    expect(academy.executionBoundaries.join(" ")).toContain("No custom DNS");
+    expect(fallback.isGlobalMarketplace).toBe(true);
+    expect(fallback.tenant.slug).toBe("global");
+    expect(fallback.executionBoundaries.join(" ")).toContain("does not create production tenant routing");
   });
 
   it("finds products by slug", () => {

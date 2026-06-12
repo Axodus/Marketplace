@@ -71,6 +71,7 @@ const router = createBrowserRouter([
       { path: "marketplace/sell", element: routeElement(<CreateSellPage />) },
       { path: "marketplace/products/:slug", element: routeElement(<ProductDetailPage />) },
       { path: "marketplace/sellers/:sellerId", element: routeElement(<SellerProfilePage />) },
+      { path: "marketplace/tenants", element: routeElement(<TenantStorefrontPage />) },
       { path: "marketplace/tenants/:tenantId", element: routeElement(<TenantStorefrontPage />) },
       { path: "marketplace/categories", element: routeElement(<ProductCategoriesPage />) },
       { path: "marketplace/governance", element: routeElement(<MarketplaceGovernancePage />) },

@@ -6,6 +6,7 @@ import {
   marketplaceLicenses,
   marketplaceProducts,
   marketplaceSellers,
+  marketplaceTenants,
   marketplaceWalletDiscoveryRecords
 } from "../../../data/mock/marketplace.mock";
 import type {
@@ -26,6 +27,7 @@ import type {
   ProductStanding,
   PurchaseRecord,
   Seller,
+  Tenant,
   TokenStandard,
   WalletDiscoveryRecord,
   WalletDiscoveryStatus
@@ -67,6 +69,7 @@ const products = marketplaceProducts as Product[];
 const collections = marketplaceCollections as MarketplaceCollection[];
 const sellers = marketplaceSellers as Seller[];
 const licenses = marketplaceLicenses as License[];
+const tenants = marketplaceTenants as Tenant[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
@@ -366,6 +369,15 @@ export interface ExternalContractView {
   };
 }
 
+export interface TenantContextView {
+  tenant: Tenant;
+  isGlobalMarketplace: boolean;
+  referencedProducts: Product[];
+  referencedCollections: CollectionView[];
+  enabledSections: string[];
+  executionBoundaries: string[];
+}
+
 export function normalizeMockWalletAddress(walletAddress?: string) {
   return walletAddress?.trim().toLowerCase() ?? "";
 }
@@ -486,6 +498,51 @@ export function getExternalContractById(idOrAddress: string) {
         view.collection.slug.toLowerCase() === key
     ) ?? null
   );
+}
+
+export function listTenants() {
+  return tenants;
+}
+
+export function getGlobalTenant() {
+  return tenants.find((tenant) => tenant.tenantType === "global") ?? tenants[0];
+}
+
+export function getTenantById(id: string) {
+  return tenants.find((tenant) => tenant.id === id) ?? null;
+}
+
+export function getTenantBySlug(slug: string) {
+  return tenants.find((tenant) => tenant.slug === slug) ?? null;
+}
+
+export function resolveTenantContext(idOrSlug?: string): TenantContextView {
+  const key = idOrSlug?.trim() ?? "";
+  const tenant = key ? getTenantById(key) ?? getTenantBySlug(key) ?? getGlobalTenant() : getGlobalTenant();
+  const referencedProductIds = new Set([...tenant.configuration.featuredProductIds, ...tenant.configuration.allowedProductIds]);
+  const referencedCollectionIds = new Set([
+    ...tenant.configuration.featuredCollectionIds,
+    ...tenant.configuration.allowedCollectionIds,
+    ...tenant.configuration.allowedExternalCollectionIds
+  ]);
+  const referencedProducts = products.filter((product) => referencedProductIds.has(product.id));
+  const referencedCollections = listCollections().filter((view) => referencedCollectionIds.has(view.collection.id));
+
+  return {
+    tenant,
+    isGlobalMarketplace: tenant.tenantType === "global",
+    referencedProducts,
+    referencedCollections,
+    enabledSections: tenant.configuration.enabledSections,
+    executionBoundaries: [
+      "Tenant Registry is mock/config-first and does not create production tenant routing.",
+      "Tenant Identity is display metadata only with no RBAC, authentication or KYC.",
+      "Tenant Configuration can display mock catalog references but does not create final catalog isolation.",
+      tenant.configuration.canTrade ? "Tenant trade flag is inherited from existing mock commerce previews only." : "Tenant trading is disabled for productive execution.",
+      tenant.configuration.canSettle ? "Unexpected settlement flag enabled." : "No settlement, tenant billing or treasury routing is active.",
+      tenant.configuration.canRouteCustomDomain ? "Unexpected custom domain routing flag enabled." : "No custom DNS, real subdomain routing or separate tenant deploy is active."
+    ]
+  };
 }
 
 export function discoverWalletAssets(walletAddress?: string): WalletDiscoveryView {

@@ -342,6 +342,205 @@ export const marketplaceCollections = [
   }
 ];
 
+export const marketplaceTenants = [
+  {
+    id: "tenant-global-marketplace",
+    slug: "global",
+    name: "Axodus Global Marketplace",
+    displayName: "Axodus Global Marketplace",
+    description: "Global mock/config-first Marketplace context for the full Axodus NFT foundation and federated display surfaces.",
+    status: "active-mock",
+    tenantType: "global",
+    visibility: "public-mock",
+    governanceStatus: "governance-aligned",
+    identity: {
+      displayName: "Axodus Global Marketplace",
+      shortName: "Axodus Global",
+      handle: "@axodus-marketplace",
+      description: "Sovereign global distribution context owned by the Axodus Marketplace infrastructure.",
+      operatorName: "Axodus Marketplace",
+      operatorType: "ecosystem-infrastructure",
+      supportLabel: "Global Marketplace support",
+      trustLabel: "Governance-aware global mock context",
+      governanceLabel: "Axodus governance root"
+    },
+    configuration: {
+      defaultRoute: "/marketplace",
+      enabledSections: ["explorer", "collections", "sellers", "asset-registry", "dashboard", "contracts", "providers", "wallet-discovery"],
+      featuredCollectionIds: ["collection-governance-access", "collection-academy-certifications", "external-collection-harmony-creator-keys"],
+      featuredProductIds: ["product-governance-dashboard-nft", "product-academy-cert-bundle", "product-trading-strategy-pass"],
+      allowedCategoryIds: ["Education", "Governance", "Trading", "Business", "MCPs", "Digital Assets"],
+      allowedCollectionIds: ["collection-governance-access", "collection-academy-certifications", "collection-strategy-license-passes"],
+      allowedProductIds: ["product-governance-dashboard-nft", "product-academy-cert-bundle", "product-mcp-agent-template", "product-trading-strategy-pass"],
+      allowedExternalCollectionIds: ["external-collection-harmony-creator-keys", "external-collection-opensea-academy-badges"],
+      blockedProductIds: [],
+      blockedCollectionIds: [],
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canRouteCustomDomain: false,
+      isWhiteLabel: false,
+      isCommunityMarketplace: false,
+      isFederatedCatalogEnabled: true,
+      isTenantCatalogEnabled: false
+    },
+    createdAt: "2026-06-12T10:00:00.000Z",
+    updatedAt: "2026-06-12T10:00:00.000Z",
+    warnings: ["Global marketplace context is mock/config-first and does not activate tenant isolation."],
+    disclaimers: [
+      "No settlement, tenant billing, treasury routing, custom DNS, production tenant routing, RBAC or isolated database is active.",
+      "Global marketplace fallback preserves the Axodus infrastructure context when no tenant is selected."
+    ]
+  },
+  {
+    id: "tenant-academy-marketplace",
+    slug: "academy",
+    name: "Axodus Academy Marketplace",
+    displayName: "Axodus Academy Marketplace",
+    description: "Mock tenant marketplace for Academy certifications, learning products and NFT-gated education previews.",
+    status: "configured-mock",
+    tenantType: "academy",
+    visibility: "public-mock",
+    governanceStatus: "governance-review",
+    identity: {
+      displayName: "Axodus Academy Marketplace",
+      shortName: "Academy",
+      handle: "@axodus-academy-marketplace",
+      description: "Tenant identity for Academy-oriented products and certification collections.",
+      operatorName: "Academy Tutor Guild",
+      operatorType: "academy-unit",
+      supportLabel: "Academy support queue mock",
+      trustLabel: "Academy governance review mock",
+      governanceLabel: "Academy DAO review"
+    },
+    configuration: {
+      defaultRoute: "/marketplace/tenants/academy",
+      enabledSections: ["explorer", "collections", "sellers", "asset-registry"],
+      featuredCollectionIds: ["collection-academy-certifications", "external-collection-opensea-academy-badges"],
+      featuredProductIds: ["product-academy-cert-bundle"],
+      allowedCategoryIds: ["Education", "Digital Assets"],
+      allowedCollectionIds: ["collection-academy-certifications"],
+      allowedProductIds: ["product-academy-cert-bundle"],
+      allowedExternalCollectionIds: ["external-collection-opensea-academy-badges"],
+      blockedProductIds: [],
+      blockedCollectionIds: [],
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canRouteCustomDomain: false,
+      isWhiteLabel: false,
+      isCommunityMarketplace: false,
+      isFederatedCatalogEnabled: true,
+      isTenantCatalogEnabled: true
+    },
+    createdAt: "2026-06-12T10:05:00.000Z",
+    updatedAt: "2026-06-12T10:05:00.000Z",
+    warnings: ["Academy tenant catalog references global products and collections; it does not duplicate product truth."],
+    disclaimers: [
+      "Tenant Marketplace display is mock/config-first.",
+      "Academy tenant configuration does not enable billing, settlement, custom DNS, RBAC or revenue sharing."
+    ]
+  },
+  {
+    id: "tenant-acs-services",
+    slug: "acs-services",
+    name: "ACS Services Marketplace",
+    displayName: "ACS Services Marketplace",
+    description: "Mock tenant marketplace for ACS and MCP service previews inside Axodus governance boundaries.",
+    status: "review-required",
+    tenantType: "acs",
+    visibility: "private-preview",
+    governanceStatus: "governance-review",
+    identity: {
+      displayName: "ACS Services Marketplace",
+      shortName: "ACS Services",
+      handle: "@acs-services-marketplace",
+      description: "Tenant identity for ACS service distribution and MCP runtime previews.",
+      operatorName: "MCP Runtime Labs",
+      operatorType: "acs-operator",
+      supportLabel: "ACS service support mock",
+      trustLabel: "Review-required ACS tenant mock",
+      governanceLabel: "ACS governance review"
+    },
+    configuration: {
+      defaultRoute: "/marketplace/tenants/acs-services",
+      enabledSections: ["explorer", "sellers", "asset-registry"],
+      featuredCollectionIds: [],
+      featuredProductIds: ["product-mcp-agent-template"],
+      allowedCategoryIds: ["MCPs", "Business"],
+      allowedCollectionIds: [],
+      allowedProductIds: ["product-mcp-agent-template"],
+      allowedExternalCollectionIds: [],
+      blockedProductIds: [],
+      blockedCollectionIds: [],
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canRouteCustomDomain: false,
+      isWhiteLabel: false,
+      isCommunityMarketplace: false,
+      isFederatedCatalogEnabled: false,
+      isTenantCatalogEnabled: true
+    },
+    createdAt: "2026-06-12T10:10:00.000Z",
+    updatedAt: "2026-06-12T10:10:00.000Z",
+    warnings: ["ACS Services tenant is private-preview and requires governance review before broader exposure."],
+    disclaimers: [
+      "No ACS service entitlement, billing execution, settlement or production authorization is created by this tenant record.",
+      "Tenant configuration is read-only mock data."
+    ]
+  },
+  {
+    id: "tenant-community-demo",
+    slug: "community-demo",
+    name: "Community Marketplace Demo",
+    displayName: "Community Marketplace Demo",
+    description: "Mock community marketplace tenant demonstrating configurable identity and catalog references without production isolation.",
+    status: "draft",
+    tenantType: "community",
+    visibility: "private-preview",
+    governanceStatus: "governance-review",
+    identity: {
+      displayName: "Community Marketplace Demo",
+      shortName: "Community Demo",
+      handle: "@community-marketplace-demo",
+      description: "Demo Tenant Marketplace for community curation planning.",
+      operatorName: "Community Operator Mock",
+      operatorType: "community-operator",
+      supportLabel: "Community support mock",
+      trustLabel: "Draft community marketplace mock",
+      governanceLabel: "Community governance review"
+    },
+    configuration: {
+      defaultRoute: "/marketplace/tenants/community-demo",
+      enabledSections: ["explorer", "collections"],
+      featuredCollectionIds: ["collection-governance-access", "external-collection-harmony-creator-keys"],
+      featuredProductIds: ["product-governance-dashboard-nft"],
+      allowedCategoryIds: ["Governance", "Digital Assets"],
+      allowedCollectionIds: ["collection-governance-access"],
+      allowedProductIds: ["product-governance-dashboard-nft"],
+      allowedExternalCollectionIds: ["external-collection-harmony-creator-keys"],
+      blockedProductIds: ["product-trading-strategy-pass"],
+      blockedCollectionIds: [],
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canRouteCustomDomain: false,
+      isWhiteLabel: false,
+      isCommunityMarketplace: true,
+      isFederatedCatalogEnabled: true,
+      isTenantCatalogEnabled: true
+    },
+    createdAt: "2026-06-12T10:15:00.000Z",
+    updatedAt: "2026-06-12T10:15:00.000Z",
+    warnings: ["Community tenant is draft and cannot be treated as a productive white-label marketplace."],
+    disclaimers: [
+      "Community Marketplace Demo does not create partner distribution, revenue sharing or custom domain routing.",
+      "Catalog references remain mock/config-first and non-executing."
+    ]
+  }
+];
+
 export const marketplaceProducts = [
   {
     id: "product-governance-dashboard-nft",

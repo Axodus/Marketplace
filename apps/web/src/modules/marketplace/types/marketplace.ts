@@ -14,6 +14,18 @@ export type ConstitutionalStanding = "aligned" | "requires-review" | "restricted
 export type ProductVisibility = "public" | "dao-gated" | "private-preview" | "restricted";
 export type SellerType = "Individual" | "DAO" | "Company" | "Tutor" | "Partner" | "Internal Axodus Nucleus";
 export type VerificationStatus = "verified" | "pending" | "rejected" | "internal";
+export type TenantStatus =
+  | "draft"
+  | "configured-mock"
+  | "active-mock"
+  | "review-required"
+  | "governance-review"
+  | "restricted"
+  | "disabled"
+  | "archived";
+export type TenantType = "global" | "community" | "creator" | "academy" | "acs" | "enterprise" | "dao" | "partner" | "demo";
+export type TenantVisibility = "public-mock" | "private-preview" | "restricted" | "archived";
+export type TenantGovernanceStatus = "governance-aligned" | "governance-review" | "restricted" | "disabled";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -73,6 +85,57 @@ export interface BridgeReadiness {
   sourceChain: Chain;
   destinationChains: Chain[];
   notes: string;
+}
+
+export interface TenantIdentity {
+  displayName: string;
+  shortName: string;
+  handle: string;
+  description: string;
+  operatorName: string;
+  operatorType: string;
+  supportLabel: string;
+  trustLabel: string;
+  governanceLabel: string;
+}
+
+export interface TenantConfiguration {
+  defaultRoute: string;
+  enabledSections: string[];
+  featuredCollectionIds: string[];
+  featuredProductIds: string[];
+  allowedCategoryIds: ProductCategory[];
+  allowedCollectionIds: string[];
+  allowedProductIds: string[];
+  allowedExternalCollectionIds: string[];
+  blockedProductIds: string[];
+  blockedCollectionIds: string[];
+  canDisplay: boolean;
+  canTrade: boolean;
+  canSettle: boolean;
+  canRouteCustomDomain: boolean;
+  isWhiteLabel: boolean;
+  isCommunityMarketplace: boolean;
+  isFederatedCatalogEnabled: boolean;
+  isTenantCatalogEnabled: boolean;
+}
+
+export interface Tenant {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  status: TenantStatus;
+  tenantType: TenantType;
+  visibility: TenantVisibility;
+  governanceStatus: TenantGovernanceStatus;
+  identity: TenantIdentity;
+  configuration: TenantConfiguration;
+  createdAt: string;
+  updatedAt: string;
+  warnings: string[];
+  disclaimers: string[];
 }
 
 export interface Product {

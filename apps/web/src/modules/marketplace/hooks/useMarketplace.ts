@@ -17,7 +17,9 @@ import {
   listFederationProviders,
   listBoundaries,
   listCollections,
-  listProducts
+  listProducts,
+  listTenants,
+  resolveTenantContext
 } from "../services/marketplaceService";
 import { instrumentMarketplaceError, traceMarketplaceLifecycle } from "../services/runtimeTelemetry";
 
@@ -167,6 +169,36 @@ export function useExternalContract(contractId?: string) {
       return contract;
     }
   });
+}
+
+export function useTenants() {
+  return useQuery({
+    queryKey: ["marketplace-tenants"],
+    queryFn: () => {
+      const tenants = listTenants();
+      traceMarketplaceLifecycle("marketplace-tenants-query", "completed", { tenantCount: tenants.length });
+      return tenants;
+    }
+  });
+}
+
+export function useTenant(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant", tenantIdOrSlug],
+    queryFn: () => {
+      const context = resolveTenantContext(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-tenant-query", "completed", {
+        tenantId: context.tenant.id,
+        tenantSlug: context.tenant.slug,
+        fallbackGlobal: !tenantIdOrSlug || context.isGlobalMarketplace
+      });
+      return context;
+    }
+  });
+}
+
+export function useTenantContext(tenantIdOrSlug?: string) {
+  return useTenant(tenantIdOrSlug);
 }
 
 export function useProduct(slug?: string) {

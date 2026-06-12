@@ -2,14 +2,14 @@
 
 # Phase 03 - Tenant Infrastructure Planning
 
-Status: PLANNING - ISOLATION AUDIT COMPLETE
+Status: IN PROGRESS - MULTI-TENANT FOUNDATION IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md`
 
 Recommended implementation sequence:
 - MEP-03A - Tenant Infrastructure Planning and Isolation Audit - COMPLETED
-- MEP-REQ-030 - Multi-Tenant Foundation
+- MEP-REQ-030 - Multi-Tenant Foundation - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-031 - Marketplace Branding
 - MEP-REQ-032 - Tenant Domains
 - MEP-REQ-033 - Tenant Isolation
@@ -22,6 +22,15 @@ MEP-03A delivered:
 - recommended tenant statuses and tenant types
 - defined catalog isolation, branding/theme, domain/subdomain simulation and governance/execution boundaries
 - mapped gaps for MEP-REQ-030 through MEP-REQ-033 without implementing tenant infrastructure runtime
+
+MEP-REQ-030 delivered:
+- added local mock/config-first Tenant Registry records for Axodus Global Marketplace, Axodus Academy Marketplace, ACS Services Marketplace and Community Marketplace Demo
+- added Tenant, TenantIdentity, TenantConfiguration, TenantStatus, TenantType, TenantVisibility and TenantGovernanceStatus frontend models
+- added service helpers to list tenants, resolve tenants by id or slug, resolve the global marketplace fallback and build Tenant Context views
+- added hooks for tenant registry and tenant context resolution
+- added `/marketplace/tenants` registry surface and reused `/marketplace/tenants/:tenantId` for tenant detail by id or slug
+- displayed tenant identity, configuration, enabled sections, referenced products/collections, warnings, disclaimers and execution boundaries
+- preserved mock/config-first boundaries with no tenant billing, settlement, treasury routing, custom DNS, production tenant routing, RBAC, isolated database or revenue sharing
 
 Constraints:
 - keep Phase 03 mock-first/read-model oriented until explicit implementation requests authorize runtime changes
