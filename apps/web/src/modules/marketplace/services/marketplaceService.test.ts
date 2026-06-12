@@ -3,6 +3,7 @@ import {
   buildSellerProfileView,
   buildMarketplaceAnalytics,
   createDraftListingPreview,
+  discoverWalletAssets,
   getAssetRegistryByProductSlug,
   getCollectionBySlug,
   getCollectionForProduct,
@@ -12,7 +13,9 @@ import {
   getSellerById,
   getSellerProfileById,
   isExternalCollection,
+  isValidMockWalletAddress,
   issueMockPurchase,
+  listWalletDiscoveryRecords,
   listCollections,
   listProducts
 } from "./marketplaceService";
@@ -118,6 +121,50 @@ describe("marketplaceService", () => {
 
   it("returns null for unknown seller profiles", () => {
     expect(getSellerProfileById("seller-missing")).toBeNull();
+  });
+
+  it("discovers NFT assets for a mock wallet without ownership verification", () => {
+    const discovery = discoverWalletAssets("0xMockOwnerGovernance001");
+
+    expect(discovery.status).toBe("ready");
+    expect(discovery.summary.nfts).toBe(1);
+    expect(discovery.assets[0].kind).toBe("nft");
+    expect(discovery.assets[0].ownershipState).toBe("owned-mock");
+    expect(discovery.assets[0].product?.slug).toBe("governance-dashboard-nft-access");
+    expect(discovery.assets[0].trustBoundary.canTrade).toBe(false);
+    expect(discovery.assets[0].trustBoundary.canSettle).toBe(false);
+    expect(discovery.assets[0].trustBoundary.canBridge).toBe(false);
+    expect(discovery.boundaries.join(" ")).toContain("No wallet signatures");
+  });
+
+  it("discovers certificate and license records as read-only mock assets", () => {
+    const certificateDiscovery = discoverWalletAssets("0xMockAcademyHolder1155");
+    const licenseDiscovery = discoverWalletAssets("0xMockMcpLicenseHolder");
+
+    expect(certificateDiscovery.summary.certificates).toBe(1);
+    expect(certificateDiscovery.assets[0].kind).toBe("certificate");
+    expect(certificateDiscovery.assets[0].validationStatus).toBe("collection-reviewed");
+    expect(licenseDiscovery.summary.licenses).toBe(1);
+    expect(licenseDiscovery.assets[0].kind).toBe("license");
+    expect(licenseDiscovery.assets[0].ownershipState).toBe("verified-ownership-unavailable");
+    expect(licenseDiscovery.assets[0].disclaimers.join(" ")).toContain("No custody");
+  });
+
+  it("handles empty, unknown and invalid mock wallets without external reads", () => {
+    expect(listWalletDiscoveryRecords().length).toBeGreaterThan(0);
+    expect(isValidMockWalletAddress("0xMockEmptyWallet")).toBe(true);
+    expect(isValidMockWalletAddress("not-a-wallet")).toBe(false);
+
+    const empty = discoverWalletAssets("0xMockEmptyWallet");
+    const unknown = discoverWalletAssets("0xMockUnknownWallet");
+    const invalid = discoverWalletAssets("not-a-wallet");
+
+    expect(empty.status).toBe("empty");
+    expect(empty.assets).toHaveLength(0);
+    expect(unknown.status).toBe("wallet-not-found");
+    expect(unknown.boundaries.join(" ")).toContain("external API");
+    expect(invalid.status).toBe("invalid-wallet");
+    expect(invalid.boundaries.join(" ")).toContain("No wallet signature");
   });
 
   it("finds products by slug", () => {

@@ -55,6 +55,11 @@ export function SellerProfilePage() {
             <p className="font-semibold text-slate-950">Mock identity</p>
             <p className="mt-2 break-all text-slate-600">{seller.mockAccount ?? seller.id}</p>
             <p className="mt-2 text-xs text-slate-500">Informational mock account only. No wallet signature or KYC validation is active.</p>
+            {seller.mockAccount && (
+              <Link to={`/marketplace/wallet-discovery/${seller.mockAccount}`} className="mt-3 inline-flex text-xs font-semibold text-teal-700">
+                Open Wallet Discovery
+              </Link>
+            )}
           </div>
         </div>
       </section>

@@ -4,11 +4,13 @@ import {
   marketplaceCollections,
   marketplaceLicenses,
   marketplaceProducts,
-  marketplaceSellers
+  marketplaceSellers,
+  marketplaceWalletDiscoveryRecords
 } from "../../../data/mock/marketplace.mock";
 import type {
   AssetRegistryRecord,
   Chain,
+  DiscoveredAsset,
   ExternalCollectionStatistics,
   DraftListingInput,
   DraftListingPreview,
@@ -21,7 +23,9 @@ import type {
   ProductStanding,
   PurchaseRecord,
   Seller,
-  TokenStandard
+  TokenStandard,
+  WalletDiscoveryRecord,
+  WalletDiscoveryStatus
 } from "../types/marketplace";
 import { getDeliveryTelemetrySummary } from "./deliveryRuntime";
 
@@ -62,6 +66,7 @@ const sellers = marketplaceSellers as Seller[];
 const licenses = marketplaceLicenses as License[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
+const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
 
 function normalizeSearch(value?: string) {
   return value?.trim().toLowerCase() ?? "";
@@ -302,6 +307,124 @@ export interface MarketplaceAnalyticsView {
     reputation: number;
   }>;
   notes: string[];
+}
+
+export interface WalletDiscoveryView {
+  walletAddress: string;
+  normalizedWallet: string;
+  label: string;
+  status: WalletDiscoveryStatus;
+  provider: WalletDiscoveryRecord["provider"] | null;
+  assets: Array<
+    DiscoveredAsset & {
+      product?: Product;
+      collection?: CollectionView | null;
+      license?: License;
+    }
+  >;
+  summary: {
+    total: number;
+    nfts: number;
+    certificates: number;
+    licenses: number;
+    ownedMock: number;
+    discoveredMock: number;
+    verifiedOwnershipUnavailable: number;
+  };
+  boundaries: string[];
+}
+
+export function normalizeMockWalletAddress(walletAddress?: string) {
+  return walletAddress?.trim().toLowerCase() ?? "";
+}
+
+export function isValidMockWalletAddress(walletAddress?: string) {
+  const value = walletAddress?.trim() ?? "";
+  return /^0x[a-fA-F0-9]{40}$/.test(value) || /^0xMock[A-Za-z0-9]+$/.test(value);
+}
+
+function buildWalletDiscoverySummary(assets: DiscoveredAsset[]) {
+  return {
+    total: assets.length,
+    nfts: assets.filter((asset) => asset.kind === "nft").length,
+    certificates: assets.filter((asset) => asset.kind === "certificate").length,
+    licenses: assets.filter((asset) => asset.kind === "license").length,
+    ownedMock: assets.filter((asset) => asset.ownershipState === "owned-mock").length,
+    discoveredMock: assets.filter((asset) => asset.ownershipState === "discovered-mock").length,
+    verifiedOwnershipUnavailable: assets.filter((asset) => asset.ownershipState === "verified-ownership-unavailable").length
+  };
+}
+
+function enrichDiscoveredAsset(asset: DiscoveredAsset) {
+  const product = asset.productId ? getProductBySlug(asset.productId) ?? products.find((item) => item.id === asset.productId) : undefined;
+  const collection = asset.collectionId ? listCollections().find((view) => view.collection.id === asset.collectionId || view.collection.slug === asset.collectionId) ?? null : null;
+  const license = asset.licenseId ? licenses.find((item) => item.id === asset.licenseId) : undefined;
+
+  return {
+    ...asset,
+    product,
+    collection,
+    license
+  };
+}
+
+export function listWalletDiscoveryRecords() {
+  return walletDiscoveryRecords;
+}
+
+export function discoverWalletAssets(walletAddress?: string): WalletDiscoveryView {
+  const normalizedWallet = normalizeMockWalletAddress(walletAddress);
+
+  if (!normalizedWallet || !isValidMockWalletAddress(walletAddress)) {
+    return {
+      walletAddress: walletAddress?.trim() ?? "",
+      normalizedWallet,
+      label: "Invalid mock wallet",
+      status: "invalid-wallet",
+      provider: null,
+      assets: [],
+      summary: buildWalletDiscoverySummary([]),
+      boundaries: [
+        "Wallet Discovery requires a mock wallet address.",
+        "No wallet signature, wallet connection, on-chain read, indexer, provider API, custody or settlement was attempted."
+      ]
+    };
+  }
+
+  const record = walletDiscoveryRecords.find((item) => normalizeMockWalletAddress(item.walletAddress) === normalizedWallet);
+
+  if (!record) {
+    return {
+      walletAddress: walletAddress?.trim() ?? "",
+      normalizedWallet,
+      label: "Wallet not found in mock discovery dataset",
+      status: "wallet-not-found",
+      provider: null,
+      assets: [],
+      summary: buildWalletDiscoverySummary([]),
+      boundaries: [
+        "Wallet was not found in the local mock discovery dataset.",
+        "Discovery does not query a wallet provider, blockchain, indexer, subgraph or external API."
+      ]
+    };
+  }
+
+  const assets = record.assets.map(enrichDiscoveredAsset);
+
+  return {
+    walletAddress: record.walletAddress,
+    normalizedWallet,
+    label: record.label,
+    status: assets.length ? "ready" : "empty",
+    provider: record.provider,
+    assets,
+    summary: buildWalletDiscoverySummary(record.assets),
+    boundaries: [
+      "Wallet Discovery is mock/read-only.",
+      "Discovered Asset records are not verified ownership, custody, permission, transfer authority or settlement eligibility.",
+      "No wallet signatures, wallet connection, on-chain reads, indexer, subgraph, external API, custody, transfer, bridge or settlement are active."
+    ]
+  };
 }
 
 export function isExternalCollection(collection: MarketplaceCollection) {

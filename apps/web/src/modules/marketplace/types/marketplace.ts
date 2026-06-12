@@ -229,6 +229,45 @@ export interface ExternalContractReference {
   provenance: string;
 }
 
+export type DiscoveredAssetKind = "nft" | "certificate" | "license";
+export type DiscoveredOwnershipState = "owned-mock" | "discovered-mock" | "verified-ownership-unavailable";
+export type WalletDiscoveryStatus = "ready" | "empty" | "wallet-not-found" | "invalid-wallet";
+
+export interface DiscoveredAsset {
+  id: string;
+  walletAddress: string;
+  kind: DiscoveredAssetKind;
+  name: string;
+  description: string;
+  image?: string;
+  productId?: string;
+  collectionId?: string;
+  licenseId?: string;
+  issuer: string;
+  provider: FederationProviderReference;
+  origin: CollectionOrigin | "mock-wallet";
+  chain?: Chain;
+  contractAddress?: string;
+  tokenId?: string;
+  tokenStandard?: TokenStandard;
+  discoverySource: "mock-wallet-discovery";
+  ownershipState: DiscoveredOwnershipState;
+  validationStatus: FederationValidationStatus;
+  riskClassification: FederationRiskClassification;
+  provenance: string;
+  trustBoundary: FederationTrustBoundary;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface WalletDiscoveryRecord {
+  walletAddress: string;
+  label: string;
+  status: WalletDiscoveryStatus;
+  provider: FederationProviderReference;
+  assets: DiscoveredAsset[];
+}
+
 export interface MarketplaceCollection {
   id: string;
   name: string;

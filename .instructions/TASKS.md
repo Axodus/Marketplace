@@ -11,7 +11,7 @@ Recommended implementation sequence:
 - MEP-02A - Federation Layer Planning and Boundary Audit - COMPLETED
 - MEP-REQ-020 - Contract Import
 - MEP-REQ-021 - Collection Import - IMPLEMENTED MOCK-FIRST
-- MEP-REQ-022 - Wallet Discovery
+- MEP-REQ-022 - Wallet Discovery - IMPLEMENTED MOCK-FIRST
 - MEP-REQ-023 - Federation Providers
 - MEP-PHASE-02-CLOSURE - QA, navigation and internal/external asset validation
 
@@ -28,6 +28,14 @@ MEP-REQ-021 delivered:
 - updated collection service normalization so native collections use native mock metrics and external collections use provider-reported mock metrics
 - displayed Federated Collection badges, provider/provenance context, validation status, risk classification and read-only/non-executing boundary notes in collection list and detail surfaces
 - covered external collection behavior with service tests, including `canTrade=false`, `canSettle=false` and `canBridge=false`
+
+MEP-REQ-022 delivered:
+- added a local Wallet Discovery mock dataset for NFTs, certificates, licenses and an empty mock wallet state
+- added Discovered Asset and Wallet Discovery types carrying provider, origin, provenance, validation status, risk classification and trust boundary fields
+- added service helpers for mock wallet normalization, validation, discovery lookup, empty wallet state, wallet-not-found state and invalid wallet state
+- added a read-only Wallet Discovery route at `/marketplace/wallet-discovery` and `/marketplace/wallet-discovery/:walletAddress`
+- linked seller mock accounts to Wallet Discovery without treating seller identity as verified ownership
+- covered Wallet Discovery helpers with service tests for NFT, certificate, license, empty wallet, unknown wallet and invalid wallet cases
 
 Constraints:
 - keep Phase 02 read-only/mock-first until an explicit implementation request authorizes runtime changes

@@ -7,6 +7,7 @@ import {
   buildMarketplaceAnalytics,
   buildSellerProfileView,
   calculateDashboardMetrics,
+  discoverWalletAssets,
   getProductByItemRef,
   getCollectionBySlug,
   getSellerById,
@@ -89,6 +90,21 @@ export function useCollection(slug?: string) {
       }
       traceMarketplaceLifecycle("marketplace-collection-query", "completed", { collectionId: collection.collection.id });
       return collection;
+    }
+  });
+}
+
+export function useWalletDiscovery(walletAddress?: string) {
+  return useQuery({
+    queryKey: ["marketplace-wallet-discovery", walletAddress],
+    queryFn: () => {
+      const discovery = discoverWalletAssets(walletAddress);
+      traceMarketplaceLifecycle("marketplace-wallet-discovery-query", "completed", {
+        walletAddress: discovery.walletAddress || null,
+        status: discovery.status,
+        discoveredAssets: discovery.summary.total
+      });
+      return discovery;
     }
   });
 }

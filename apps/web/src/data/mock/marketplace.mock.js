@@ -600,6 +600,205 @@ export const marketplaceAssetRegistry = [
   }
 ];
 
+export const marketplaceWalletDiscoveryRecords = [
+  {
+    walletAddress: "0xMockOwnerGovernance001",
+    label: "Governance holder mock wallet",
+    status: "ready",
+    provider: {
+      id: "provider-wallet-discovery-mock",
+      name: "Axodus Wallet Discovery Mock",
+      type: "wallet-discovery",
+      origin: "Axodus local mock dataset",
+      trustLevel: "mock-only"
+    },
+    assets: [
+      {
+        id: "discovered-governance-access-nft",
+        walletAddress: "0xMockOwnerGovernance001",
+        kind: "nft",
+        name: "Governance Dashboard NFT Access",
+        description: "Discovered Asset mock for an ERC721 governance access pass associated with the wallet in local mock data.",
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+        productId: "product-governance-dashboard-nft",
+        collectionId: "collection-governance-access",
+        licenseId: "license-personal-nft",
+        issuer: "Axodus Nucleus",
+        provider: {
+          id: "provider-wallet-discovery-mock",
+          name: "Axodus Wallet Discovery Mock",
+          type: "wallet-discovery",
+          origin: "Axodus local mock dataset",
+          trustLevel: "mock-only"
+        },
+        origin: "native",
+        chain: "Polygon",
+        contractAddress: "mock:governance-dashboard-access",
+        tokenId: "AXD-GOV-001",
+        tokenStandard: "ERC721",
+        discoverySource: "mock-wallet-discovery",
+        ownershipState: "owned-mock",
+        validationStatus: "governance-reviewed",
+        riskClassification: "low-mock",
+        provenance: "Derived from marketplaceAssetRegistry currentOwner and local product mock data; no ownership verification read was executed.",
+        trustBoundary: {
+          origin: "Axodus local mock dataset",
+          provider: "Axodus Wallet Discovery Mock",
+          validationStatus: "governance-reviewed",
+          provenance: "Mock wallet discovery record derived from Asset Registry preview data.",
+          riskClassification: "low-mock",
+          executionState: "read-only",
+          canDisplay: true,
+          canTrade: false,
+          canSettle: false,
+          canBridge: false,
+          notes: [
+            "Wallet Discovery is mock/read-only.",
+            "Discovery does not prove ownership, custody, transfer authority or settlement eligibility.",
+            "No wallet signature, on-chain read, indexer, provider API, transfer, bridge or settlement is executed."
+          ]
+        },
+        warnings: ["Ownership state is owned-mock, not verified ownership."],
+        disclaimers: ["No custody, no ownership guarantee, no wallet signatures and no settlement."]
+      }
+    ]
+  },
+  {
+    walletAddress: "0xMockAcademyHolder1155",
+    label: "Academy certificate holder mock wallet",
+    status: "ready",
+    provider: {
+      id: "provider-wallet-discovery-mock",
+      name: "Axodus Wallet Discovery Mock",
+      type: "wallet-discovery",
+      origin: "Axodus local mock dataset",
+      trustLevel: "mock-only"
+    },
+    assets: [
+      {
+        id: "discovered-academy-certificate",
+        walletAddress: "0xMockAcademyHolder1155",
+        kind: "certificate",
+        name: "Academy Certification ERC1155 Certificate",
+        description: "Discovered Asset mock for a certificate-style ERC1155 credential associated with a wallet account.",
+        image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+        productId: "product-academy-cert-bundle",
+        collectionId: "collection-academy-certifications",
+        licenseId: "license-personal-nft",
+        issuer: "Academy Tutor Guild",
+        provider: {
+          id: "provider-wallet-discovery-mock",
+          name: "Axodus Wallet Discovery Mock",
+          type: "wallet-discovery",
+          origin: "Axodus local mock dataset",
+          trustLevel: "mock-only"
+        },
+        origin: "native",
+        chain: "BNB",
+        contractAddress: "mock:academy-certification-bundle",
+        tokenId: "AXD-ACADEMY-1155",
+        tokenStandard: "ERC1155",
+        discoverySource: "mock-wallet-discovery",
+        ownershipState: "discovered-mock",
+        validationStatus: "collection-reviewed",
+        riskClassification: "medium-mock",
+        provenance: "Derived from mock ownership and license history for Academy certification assets; no ERC1155 balance read was executed.",
+        trustBoundary: {
+          origin: "Axodus local mock dataset",
+          provider: "Axodus Wallet Discovery Mock",
+          validationStatus: "collection-reviewed",
+          provenance: "Mock wallet discovery record derived from local certificate and license preview data.",
+          riskClassification: "medium-mock",
+          executionState: "read-only",
+          canDisplay: true,
+          canTrade: false,
+          canSettle: false,
+          canBridge: false,
+          notes: [
+            "Certificate discovery is informational and read-only.",
+            "Discovery does not enforce certificate rights, license access or governance permissions.",
+            "No wallet signature, on-chain read, indexer, provider API, transfer, bridge or settlement is executed."
+          ]
+        },
+        warnings: ["Certificate discovery is not certificate enforcement."],
+        disclaimers: ["No ownership guarantee, no license enforcement, no wallet signatures and no settlement."]
+      }
+    ]
+  },
+  {
+    walletAddress: "0xMockMcpLicenseHolder",
+    label: "MCP license holder mock wallet",
+    status: "ready",
+    provider: {
+      id: "provider-wallet-discovery-mock",
+      name: "Axodus Wallet Discovery Mock",
+      type: "wallet-discovery",
+      origin: "Axodus local mock dataset",
+      trustLevel: "mock-only"
+    },
+    assets: [
+      {
+        id: "discovered-mcp-dao-license",
+        walletAddress: "0xMockMcpLicenseHolder",
+        kind: "license",
+        name: "MCP Agent Template DAO License",
+        description: "Discovered Asset mock for an offchain DAO license associated with a wallet-like account record.",
+        image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+        productId: "product-mcp-agent-template",
+        licenseId: "license-dao-plugin",
+        issuer: "MCP Runtime Labs",
+        provider: {
+          id: "provider-wallet-discovery-mock",
+          name: "Axodus Wallet Discovery Mock",
+          type: "wallet-discovery",
+          origin: "Axodus local mock dataset",
+          trustLevel: "mock-only"
+        },
+        origin: "mock-wallet",
+        chain: "Arbitrum",
+        tokenStandard: "OffchainLicense",
+        discoverySource: "mock-wallet-discovery",
+        ownershipState: "verified-ownership-unavailable",
+        validationStatus: "unverified",
+        riskClassification: "high-mock",
+        provenance: "Derived from local licenseHistory mock data; there is no on-chain license, entitlement enforcement or wallet ownership proof.",
+        trustBoundary: {
+          origin: "Axodus local mock dataset",
+          provider: "Axodus Wallet Discovery Mock",
+          validationStatus: "unverified",
+          provenance: "Mock wallet discovery record derived from offchain license preview data.",
+          riskClassification: "high-mock",
+          executionState: "read-only",
+          canDisplay: true,
+          canTrade: false,
+          canSettle: false,
+          canBridge: false,
+          notes: [
+            "License discovery is visibility-only.",
+            "Discovery does not prove entitlement, permission, transferability or commercial eligibility.",
+            "No wallet signature, on-chain read, indexer, provider API, transfer, bridge or settlement is executed."
+          ]
+        },
+        warnings: ["Offchain license discovery has no verified ownership runtime."],
+        disclaimers: ["No custody, no permission grant, no ownership guarantee, no wallet signatures and no settlement."]
+      }
+    ]
+  },
+  {
+    walletAddress: "0xMockEmptyWallet",
+    label: "Empty mock wallet",
+    status: "empty",
+    provider: {
+      id: "provider-wallet-discovery-mock",
+      name: "Axodus Wallet Discovery Mock",
+      type: "wallet-discovery",
+      origin: "Axodus local mock dataset",
+      trustLevel: "mock-only"
+    },
+    assets: []
+  }
+];
+
 export const marketplaceBoundaries = [
   {
     id: "reown",

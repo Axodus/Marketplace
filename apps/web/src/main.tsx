@@ -17,6 +17,7 @@ const TenantStorefrontPage = lazy(() => import("./modules/marketplace/pages/Tena
 const ProductCategoriesPage = lazy(() => import("./modules/marketplace/pages/ProductCategoriesPage").then((module) => ({ default: module.ProductCategoriesPage })));
 const MarketplaceGovernancePage = lazy(() => import("./modules/marketplace/pages/MarketplaceGovernancePage").then((module) => ({ default: module.MarketplaceGovernancePage })));
 const MarketplaceLicensePage = lazy(() => import("./modules/marketplace/pages/MarketplaceLicensePage").then((module) => ({ default: module.MarketplaceLicensePage })));
+const WalletDiscoveryPage = lazy(() => import("./modules/marketplace/pages/WalletDiscoveryPage").then((module) => ({ default: module.WalletDiscoveryPage })));
 const EntitlementDashboardPage = lazy(() => import("./modules/marketplace/pages/EntitlementDashboardPage").then((module) => ({ default: module.EntitlementDashboardPage })));
 const BillingRuntimePage = lazy(() => import("./modules/marketplace/pages/BillingRuntimePage").then((module) => ({ default: module.BillingRuntimePage })));
 const TraceabilityDashboardPage = lazy(() => import("./modules/marketplace/pages/TraceabilityDashboardPage").then((module) => ({ default: module.TraceabilityDashboardPage })));
@@ -72,6 +73,8 @@ const router = createBrowserRouter([
       { path: "marketplace/categories", element: routeElement(<ProductCategoriesPage />) },
       { path: "marketplace/governance", element: routeElement(<MarketplaceGovernancePage />) },
       { path: "marketplace/licenses", element: routeElement(<MarketplaceLicensePage />) },
+      { path: "marketplace/wallet-discovery", element: routeElement(<WalletDiscoveryPage />) },
+      { path: "marketplace/wallet-discovery/:walletAddress", element: routeElement(<WalletDiscoveryPage />) },
       { path: "marketplace/entitlements", element: routeElement(<EntitlementDashboardPage />) },
       { path: "marketplace/orders", element: routeElement(<BillingRuntimePage />) },
       { path: "marketplace/audit", element: routeElement(<TraceabilityDashboardPage />) },
