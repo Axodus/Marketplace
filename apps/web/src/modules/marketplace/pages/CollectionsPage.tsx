@@ -31,8 +31,8 @@ export function CollectionsPage() {
         <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Collections</p>
         <h1 className="mt-2 text-3xl font-semibold">NFT collection ranking</h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-          Native mock collections for the Phase 01 NFT Marketplace foundation. Metrics and ranking are mock-derived and do not use
-          indexers, external providers, floor-price APIs or on-chain reads.
+          Native and External Collection mock records for the Phase 02 Federation Layer. External metadata and statistics are
+          provider-reported mock data only and do not use live providers, indexers, floor-price APIs or on-chain reads.
         </p>
       </div>
 

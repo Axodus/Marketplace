@@ -151,6 +151,100 @@ export const marketplaceCollections = [
       holders: 41,
       recentActivity: 8
     }
+  },
+  {
+    id: "external-collection-harmony-creator-keys",
+    name: "Harmony Creator Keys",
+    slug: "harmony-creator-keys",
+    description:
+      "External Collection mock imported from a Harmony ecosystem provider for federation display review. Metadata and statistics are provider-reported mock data only.",
+    image: "https://images.unsplash.com/photo-1634986666676-ec8fd927c23d?auto=format&fit=crop&w=1200&q=80",
+    chain: "Harmony",
+    contractAddress: "0xExternalMockHarmonyCreatorKeys",
+    assetType: "ERC721",
+    origin: "external",
+    validationStatus: "under-review",
+    governanceStatus: "under-review",
+    sellerId: "seller-mcp-labs",
+    metrics: {
+      volume: 0,
+      floorPrice: 0,
+      holders: 0,
+      recentActivity: 0
+    },
+    provider: {
+      id: "provider-harmony-ecosystem-mock",
+      name: "Harmony Ecosystem Mock Provider",
+      type: "ecosystem",
+      origin: "Harmony ecosystem provider mock",
+      trustLevel: "provider-reported"
+    },
+    externalContract: {
+      providerId: "provider-harmony-ecosystem-mock",
+      chainId: "1666600000",
+      chainName: "Harmony",
+      contractAddress: "0xExternalMockHarmonyCreatorKeys",
+      tokenStandard: "ERC721",
+      externalUrl: "https://provider.mock.axodus.local/harmony/collections/creator-keys",
+      validationStatus: "contract-referenced",
+      riskClassification: "unknown-external",
+      provenance: "Provider-reported mock contract descriptor; no on-chain read, indexer or contract verification executed."
+    },
+    externalMetadata: {
+      source: "provider-reported-mock",
+      externalUrl: "https://provider.mock.axodus.local/harmony/collections/creator-keys",
+      metadataUrl: "ipfs://mock-provider/harmony-creator-keys/collection.json",
+      metadataHash: "mock-hash-harmony-creator-keys",
+      lastSyncedAt: "2026-06-12T09:00:00.000Z",
+      importedAt: "2026-06-12T09:15:00.000Z",
+      warnings: [
+        "External Metadata is provider-reported mock data.",
+        "Images, descriptions and attributes are not authenticated by Axodus in Phase 02."
+      ],
+      disclaimers: [
+        "External metadata display does not imply native issuance, custody, ownership guarantee or marketplace settlement.",
+        "No metadata fetch, cache, indexer or provider API call is active."
+      ]
+    },
+    externalStatistics: {
+      source: "provider-reported-mock",
+      itemCount: 128,
+      volume: 420,
+      floorPrice: 14,
+      holders: 72,
+      listings: 0,
+      bids: 0,
+      recentActivity: 11,
+      lastSyncedAt: "2026-06-12T09:00:00.000Z",
+      disclaimers: [
+        "External Collection Statistics are mock/provider-reported and are not official market metrics.",
+        "Floor price, holder count and volume are non-executing display data."
+      ]
+    },
+    federationValidationStatus: "provider-reported",
+    riskClassification: "unknown-external",
+    provenance: "Collection discovered through a mock Harmony provider registry for Phase 02 display-boundary validation.",
+    trustBoundary: {
+      origin: "Harmony ecosystem provider mock",
+      provider: "Harmony Ecosystem Mock Provider",
+      validationStatus: "provider-reported",
+      provenance: "Provider-reported mock collection descriptor; no live provider, indexer, API call or chain read.",
+      riskClassification: "unknown-external",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federated Collection display is read-only and non-executing.",
+        "No external purchase, bid, settlement, custody, bridge execution, wallet signature or contract write is enabled.",
+        "Provider data is not treated as trusted by default."
+      ]
+    },
+    displayStatus: "limited",
+    isNative: false,
+    isExternal: true,
+    isFederated: true
   }
 ];
 

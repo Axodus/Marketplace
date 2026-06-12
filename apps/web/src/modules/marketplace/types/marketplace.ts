@@ -23,8 +23,28 @@ export type LicenseType =
 export type DeliveryType = "Greenfield" | "Signed URL" | "MCP Runtime" | "Dashboard Access" | "Manual Service";
 export type Chain = "Ethereum" | "BNB" | "Arbitrum" | "Harmony" | "Polygon";
 export type PurchaseStatus = "mock-issued" | "pending-governance-review" | "blocked";
-export type CollectionOrigin = "native" | "future-external";
+export type CollectionOrigin = "native" | "external" | "federated";
 export type AssetHistoryStatus = "mock-confirmed" | "mock-pending" | "mock-blocked";
+export type FederationValidationStatus =
+  | "unverified"
+  | "provider-reported"
+  | "metadata-validated"
+  | "contract-referenced"
+  | "contract-reviewed"
+  | "collection-reviewed"
+  | "governance-reviewed"
+  | "blocked"
+  | "quarantined";
+export type FederationRiskClassification =
+  | "low-mock"
+  | "medium-mock"
+  | "high-mock"
+  | "unknown-external"
+  | "metadata-risk"
+  | "contract-risk"
+  | "provider-risk"
+  | "phishing-risk"
+  | "blocked";
 
 export interface Pricing {
   amount: number;
@@ -151,6 +171,64 @@ export interface CollectionMetrics {
   recentActivity: number;
 }
 
+export interface FederationProviderReference {
+  id: string;
+  name: string;
+  type: "mock-provider" | "marketplace" | "ecosystem" | "wallet-discovery";
+  origin: string;
+  trustLevel: "mock-only" | "provider-reported" | "review-required" | "blocked";
+}
+
+export interface ExternalCollectionMetadata {
+  source: "provider-reported-mock" | "external-metadata-mock";
+  externalUrl: string;
+  metadataUrl: string;
+  metadataHash?: string;
+  lastSyncedAt: string;
+  importedAt: string;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ExternalCollectionStatistics {
+  source: "provider-reported-mock";
+  itemCount: number;
+  volume: number;
+  floorPrice: number;
+  holders: number;
+  listings: number;
+  bids: number;
+  recentActivity: number;
+  lastSyncedAt: string;
+  disclaimers: string[];
+}
+
+export interface FederationTrustBoundary {
+  origin: string;
+  provider: string;
+  validationStatus: FederationValidationStatus;
+  provenance: string;
+  riskClassification: FederationRiskClassification;
+  executionState: "read-only" | "non-executing" | "blocked";
+  canDisplay: boolean;
+  canTrade: boolean;
+  canSettle: boolean;
+  canBridge: boolean;
+  notes: string[];
+}
+
+export interface ExternalContractReference {
+  providerId: string;
+  chainId: string;
+  chainName: Chain;
+  contractAddress: string;
+  tokenStandard: Extract<TokenStandard, "ERC721" | "ERC1155">;
+  externalUrl: string;
+  validationStatus: FederationValidationStatus;
+  riskClassification: FederationRiskClassification;
+  provenance: string;
+}
+
 export interface MarketplaceCollection {
   id: string;
   name: string;
@@ -165,6 +243,18 @@ export interface MarketplaceCollection {
   governanceStatus: ProductStanding;
   sellerId: string;
   metrics?: Partial<CollectionMetrics>;
+  provider?: FederationProviderReference;
+  externalContract?: ExternalContractReference;
+  externalMetadata?: ExternalCollectionMetadata;
+  externalStatistics?: ExternalCollectionStatistics;
+  federationValidationStatus?: FederationValidationStatus;
+  riskClassification?: FederationRiskClassification;
+  provenance?: string;
+  trustBoundary?: FederationTrustBoundary;
+  displayStatus?: "displayable" | "limited" | "blocked" | "quarantined";
+  isNative?: boolean;
+  isExternal?: boolean;
+  isFederated?: boolean;
 }
 
 export interface Seller {

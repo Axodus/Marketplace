@@ -9,8 +9,10 @@ import {
 import type {
   AssetRegistryRecord,
   Chain,
+  ExternalCollectionStatistics,
   DraftListingInput,
   DraftListingPreview,
+  FederationTrustBoundary,
   License,
   MarketplaceBoundaryStatus,
   MarketplaceCollection,
@@ -200,7 +202,13 @@ export interface CollectionView {
     recentActivity: number;
     rankScore: number;
     ranking: number;
+    source: "native-mock" | "provider-reported-mock";
+    sourceLabel: string;
+    lastSyncedAt?: string;
   };
+  boundaries: FederationTrustBoundary;
+  labels: string[];
+  warnings: string[];
 }
 
 export interface SellerProfileView {
@@ -296,6 +304,42 @@ export interface MarketplaceAnalyticsView {
   notes: string[];
 }
 
+export function isExternalCollection(collection: MarketplaceCollection) {
+  return collection.origin === "external" || collection.origin === "federated" || collection.isExternal === true || collection.isFederated === true;
+}
+
+export function getCollectionSourceLabel(collection: MarketplaceCollection) {
+  return isExternalCollection(collection) ? "Federated Collection - provider-reported mock" : "Native Axodus mock collection";
+}
+
+function buildNativeCollectionBoundary(collection: MarketplaceCollection): FederationTrustBoundary {
+  return {
+    origin: "Axodus native mock collection",
+    provider: "Axodus Marketplace mock data",
+    validationStatus: collection.validationStatus === "compliant" ? "governance-reviewed" : "collection-reviewed",
+    provenance: "Collection is represented from centralized Axodus Marketplace mock data.",
+    riskClassification: collection.governanceStatus === "compliant" ? "low-mock" : "medium-mock",
+    executionState: "non-executing",
+    canDisplay: true,
+    canTrade: false,
+    canSettle: false,
+    canBridge: false,
+    notes: [
+      "Native collection metrics are mock-derived for Marketplace UI readiness.",
+      "No settlement, contract write, wallet signature, bridge execution or on-chain read is executed."
+    ]
+  };
+}
+
+function getCollectionBoundary(collection: MarketplaceCollection) {
+  return collection.trustBoundary ?? buildNativeCollectionBoundary(collection);
+}
+
+function buildExternalMetricValue(collection: MarketplaceCollection, key: keyof ExternalCollectionStatistics, fallback: number) {
+  const value = collection.externalStatistics?.[key];
+  return typeof value === "number" ? value : fallback;
+}
+
 function buildCollectionMetrics(collection: MarketplaceCollection, collectionProducts: Product[]) {
   const listings = collectionProducts.filter((product) => product.status === "listed").length;
   const bids = collectionProducts.reduce((sum, product) => sum + (product.auction?.bidCount ?? 0), 0);
@@ -303,32 +347,55 @@ function buildCollectionMetrics(collection: MarketplaceCollection, collectionPro
     if (lowest === null) return product.pricing.amount;
     return Math.min(lowest, product.pricing.amount);
   }, null);
-  const floorPrice = collection.metrics?.floorPrice ?? lowestProductPrice ?? 0;
-  const volume = collection.metrics?.volume ?? collectionProducts.reduce((sum, product) => sum + product.pricing.amount, 0);
-  const holders = collection.metrics?.holders ?? Math.max(collectionProducts.length, 0);
-  const recentActivity = collection.metrics?.recentActivity ?? bids + listings;
-  const rankScore = volume + bids * 10 + recentActivity * 5 + holders;
+  const external = isExternalCollection(collection);
+  const floorPrice = external ? buildExternalMetricValue(collection, "floorPrice", 0) : collection.metrics?.floorPrice ?? lowestProductPrice ?? 0;
+  const volume = external ? buildExternalMetricValue(collection, "volume", 0) : collection.metrics?.volume ?? collectionProducts.reduce((sum, product) => sum + product.pricing.amount, 0);
+  const holders = external ? buildExternalMetricValue(collection, "holders", 0) : collection.metrics?.holders ?? Math.max(collectionProducts.length, 0);
+  const recentActivity = external ? buildExternalMetricValue(collection, "recentActivity", 0) : collection.metrics?.recentActivity ?? bids + listings;
+  const itemCount = external ? buildExternalMetricValue(collection, "itemCount", collectionProducts.length) : collectionProducts.length;
+  const listingCount = external ? buildExternalMetricValue(collection, "listings", listings) : listings;
+  const bidCount = external ? buildExternalMetricValue(collection, "bids", bids) : bids;
+  const rankScore = volume + bidCount * 10 + recentActivity * 5 + holders;
+  const source: CollectionView["metrics"]["source"] = external ? "provider-reported-mock" : "native-mock";
 
   return {
-    itemCount: collectionProducts.length,
-    listings,
-    bids,
+    itemCount,
+    listings: listingCount,
+    bids: bidCount,
     volume,
     holders,
     floorPrice,
     recentActivity,
     rankScore,
-    ranking: 0
+    ranking: 0,
+    source,
+    sourceLabel: getCollectionSourceLabel(collection),
+    lastSyncedAt: collection.externalStatistics?.lastSyncedAt ?? collection.externalMetadata?.lastSyncedAt
   };
 }
 
 export function listCollections(): CollectionView[] {
-  const views = collections.map((collection) => {
+  const displayableCollections = collections.filter((collection) => collection.trustBoundary?.canDisplay !== false && collection.displayStatus !== "blocked" && collection.displayStatus !== "quarantined");
+  const views = displayableCollections.map((collection) => {
     const collectionProducts = products.filter((product) => product.collectionId === collection.id);
+    const externalWarnings = [
+      ...(collection.externalMetadata?.warnings ?? []),
+      ...(collection.externalMetadata?.disclaimers ?? []),
+      ...(collection.externalStatistics?.disclaimers ?? [])
+    ];
     return {
       collection,
       products: collectionProducts,
-      metrics: buildCollectionMetrics(collection, collectionProducts)
+      metrics: buildCollectionMetrics(collection, collectionProducts),
+      boundaries: getCollectionBoundary(collection),
+      labels: [
+        collection.assetType,
+        collection.chain,
+        isExternalCollection(collection) ? "Federated Collection" : "Native Collection",
+        collection.federationValidationStatus ?? collection.validationStatus,
+        collection.riskClassification ?? "low-mock"
+      ],
+      warnings: externalWarnings
     };
   });
 

@@ -27,8 +27,8 @@ export function CollectionDetailPage() {
       <section className="rounded border border-amber-200 bg-amber-50 p-6 text-amber-900 shadow-sm" role="status">
         <h1 className="text-xl font-semibold">Collection not found in mock registry</h1>
         <p className="mt-2 text-sm">
-          The collection route is active, but Phase 01 only resolves native mock collections. No external provider, indexer or on-chain
-          lookup was attempted.
+          The collection route is active, but it only resolves local mock collection records. No external provider, indexer or on-chain lookup
+          was attempted.
         </p>
         <Link to="/marketplace/collections" className="mt-4 inline-flex text-sm font-semibold text-teal-800">
           Back to collections
@@ -38,6 +38,7 @@ export function CollectionDetailPage() {
   }
 
   const { collection, products, metrics } = data;
+  const isExternal = collection.isExternal || collection.isFederated || collection.origin !== "native";
   const relatedRanking = ranking?.filter((view) => view.collection.id !== collection.id).slice(0, 2) ?? [];
 
   return (
@@ -50,24 +51,51 @@ export function CollectionDetailPage() {
             <NeutralBadge>{collection.assetType}</NeutralBadge>
             <NeutralBadge>{collection.origin}</NeutralBadge>
             <NeutralBadge>{collection.chain}</NeutralBadge>
+            {isExternal && <NeutralBadge>Federated Collection</NeutralBadge>}
+            {isExternal && <NeutralBadge>{collection.federationValidationStatus ?? "provider-reported"}</NeutralBadge>}
+            {isExternal && <NeutralBadge>{collection.riskClassification ?? "unknown-external"}</NeutralBadge>}
           </div>
           <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-slate-500">Rank #{metrics.ranking}</p>
           <h1 className="mt-2 text-4xl font-semibold">{collection.name}</h1>
           <p className="mt-4 text-base leading-7 text-slate-600">{collection.description}</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <Metric label="Volume mock" value={`${metrics.volume} USDC`} />
-            <Metric label="Floor mock" value={`${metrics.floorPrice} USDC`} />
+            <Metric label={isExternal ? "Volume provider-reported" : "Volume mock"} value={`${metrics.volume} USDC`} />
+            <Metric label={isExternal ? "Floor provider-reported" : "Floor mock"} value={`${metrics.floorPrice} USDC`} />
             <Metric label="Items" value={metrics.itemCount} />
-            <Metric label="Holders mock" value={metrics.holders} />
+            <Metric label={isExternal ? "Holders provider-reported" : "Holders mock"} value={metrics.holders} />
             <Metric label="Listings" value={metrics.listings} />
             <Metric label="Bids" value={metrics.bids} />
           </div>
           <div className="mt-5 rounded border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
             <p className="font-semibold">Collection boundary</p>
             <p className="mt-2 break-all">Contract: {collection.contractAddress}</p>
-            <p>Validation: {collection.validationStatus}</p>
-            <p>Origin: native mock collection. Future external collections remain Phase 02 Federation Layer work.</p>
+            <p>Origin: {data.boundaries.origin}</p>
+            <p>Provider: {data.boundaries.provider}</p>
+            <p>Validation status: {data.boundaries.validationStatus}</p>
+            <p>Risk classification: {data.boundaries.riskClassification}</p>
+            <p>Provenance: {data.boundaries.provenance}</p>
+            <p>Execution: {data.boundaries.executionState}; trade {data.boundaries.canTrade ? "enabled" : "disabled"}, settlement {data.boundaries.canSettle ? "enabled" : "disabled"}, bridge {data.boundaries.canBridge ? "enabled" : "disabled"}.</p>
+            {metrics.lastSyncedAt && <p>Last synced/imported reference: {metrics.lastSyncedAt}</p>}
+            <p className="mt-2 font-medium">
+              {isExternal
+                ? "External Collection display is read-only and non-executing; no provider API, metadata fetch, indexer, floor-price service, wallet signature, contract write or settlement is active."
+                : "Native collection display is mock-first; no settlement, contract write, wallet signature, bridge execution or on-chain read is active."}
+            </p>
           </div>
+          {isExternal && (
+            <div className="mt-5 rounded border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
+              <p className="font-semibold">External Metadata and Statistics</p>
+              <p>Metadata source: {collection.externalMetadata?.source ?? "provider-reported-mock"}</p>
+              <p className="break-all">Metadata URL: {collection.externalMetadata?.metadataUrl ?? "not provided"}</p>
+              <p>Statistics source: {collection.externalStatistics?.source ?? "provider-reported-mock"}</p>
+              <p>Provider-reported metrics are not official market metrics, verified floor price, verified holder count or Axodus custody proof.</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                {data.warnings.map((warning) => (
+                  <li key={warning}>{warning}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </section>
 
@@ -97,7 +125,11 @@ export function CollectionDetailPage() {
         ) : (
           <section className="rounded border border-slate-200 bg-white p-6 shadow-sm" role="status">
             <h3 className="text-xl font-semibold">No assets in this mock collection</h3>
-            <p className="mt-2 text-sm text-slate-600">Collection asset ingestion remains mock-first and local to Phase 01.</p>
+            <p className="mt-2 text-sm text-slate-600">
+              {isExternal
+                ? "External collection item discovery remains mock-first/read-only and does not imply custody, ownership guarantee, trading, settlement or provider sync."
+                : "Collection asset ingestion remains mock-first and local to the NFT Marketplace foundation."}
+            </p>
           </section>
         )}
       </section>

@@ -10,7 +10,7 @@ Planning artifact:
 Recommended implementation sequence:
 - MEP-02A - Federation Layer Planning and Boundary Audit - COMPLETED
 - MEP-REQ-020 - Contract Import
-- MEP-REQ-021 - Collection Import
+- MEP-REQ-021 - Collection Import - IMPLEMENTED MOCK-FIRST
 - MEP-REQ-022 - Wallet Discovery
 - MEP-REQ-023 - Federation Providers
 - MEP-PHASE-02-CLOSURE - QA, navigation and internal/external asset validation
@@ -21,6 +21,13 @@ MEP-02A delivered:
 - defined future conceptual boundaries for ExternalAsset, ExternalCollection, ExternalContract, ExternalMetadata and FederationProvider
 - recommended validation statuses, risk classifications, provider model, provenance model and trust boundaries
 - mapped gaps for MEP-REQ-020 through MEP-REQ-023 without implementing federation runtime
+
+MEP-REQ-021 delivered:
+- added External Collection mock data with provider, origin, external contract reference, External Metadata and provider-reported External Collection Statistics
+- represented federation validation status, risk classification, provenance, display status and trust boundary on collection records
+- updated collection service normalization so native collections use native mock metrics and external collections use provider-reported mock metrics
+- displayed Federated Collection badges, provider/provenance context, validation status, risk classification and read-only/non-executing boundary notes in collection list and detail surfaces
+- covered external collection behavior with service tests, including `canTrade=false`, `canSettle=false` and `canBridge=false`
 
 Constraints:
 - keep Phase 02 read-only/mock-first until an explicit implementation request authorizes runtime changes

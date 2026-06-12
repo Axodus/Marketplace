@@ -6,10 +6,12 @@ import {
   getAssetRegistryByProductSlug,
   getCollectionBySlug,
   getCollectionForProduct,
+  getCollectionSourceLabel,
   getProductByItemRef,
   getProductBySlug,
   getSellerById,
   getSellerProfileById,
+  isExternalCollection,
   issueMockPurchase,
   listCollections,
   listProducts
@@ -59,11 +61,12 @@ describe("marketplaceService", () => {
   it("lists ranked native mock collections with derived metrics", () => {
     const collections = listCollections();
 
-    expect(collections).toHaveLength(3);
-    expect(collections.map((view) => view.metrics.ranking)).toEqual([1, 2, 3]);
+    expect(collections).toHaveLength(4);
+    expect(collections.map((view) => view.metrics.ranking)).toEqual([1, 2, 3, 4]);
     expect(collections[0].collection.slug).toBe("axodus-governance-access");
     expect(collections[0].metrics.itemCount).toBe(1);
     expect(collections[0].metrics.listings).toBe(1);
+    expect(collections[0].metrics.source).toBe("native-mock");
   });
 
   it("resolves collection detail and product collection relationship", () => {
@@ -73,6 +76,28 @@ describe("marketplaceService", () => {
     expect(collection?.collection.assetType).toBe("ERC1155");
     expect(collection?.products.map((item) => item.slug)).toContain("academy-certification-erc1155-bundle");
     expect(getCollectionForProduct(product!)?.collection.slug).toBe("academy-certification-packs");
+  });
+
+  it("represents external collections with provider-reported metadata and non-executing trust boundaries", () => {
+    const collection = getCollectionBySlug("harmony-creator-keys");
+
+    expect(collection).toBeDefined();
+    expect(collection?.collection.origin).toBe("external");
+    expect(collection?.collection.provider?.name).toBe("Harmony Ecosystem Mock Provider");
+    expect(collection?.collection.externalMetadata?.source).toBe("provider-reported-mock");
+    expect(collection?.collection.externalStatistics?.source).toBe("provider-reported-mock");
+    expect(collection?.collection.federationValidationStatus).toBe("provider-reported");
+    expect(collection?.collection.riskClassification).toBe("unknown-external");
+    expect(collection?.metrics.source).toBe("provider-reported-mock");
+    expect(collection?.metrics.itemCount).toBe(128);
+    expect(collection?.metrics.floorPrice).toBe(14);
+    expect(collection?.boundaries.canDisplay).toBe(true);
+    expect(collection?.boundaries.canTrade).toBe(false);
+    expect(collection?.boundaries.canSettle).toBe(false);
+    expect(collection?.boundaries.canBridge).toBe(false);
+    expect(collection?.warnings.join(" ")).toContain("provider-reported");
+    expect(collection && isExternalCollection(collection.collection)).toBe(true);
+    expect(collection && getCollectionSourceLabel(collection.collection)).toContain("Federated Collection");
   });
 
   it("builds seller profile metrics, activity and collection relationships from mock data", () => {
