@@ -8,9 +8,11 @@ import {
   buildSellerProfileView,
   calculateDashboardMetrics,
   discoverWalletAssets,
+  getFederationProviderById,
   getProductByItemRef,
   getCollectionBySlug,
   getSellerById,
+  listFederationProviders,
   listBoundaries,
   listCollections,
   listProducts
@@ -105,6 +107,34 @@ export function useWalletDiscovery(walletAddress?: string) {
         discoveredAssets: discovery.summary.total
       });
       return discovery;
+    }
+  });
+}
+
+export function useFederationProviders() {
+  return useQuery({
+    queryKey: ["marketplace-federation-providers"],
+    queryFn: () => {
+      const providers = listFederationProviders();
+      traceMarketplaceLifecycle("marketplace-federation-providers-query", "completed", { providerCount: providers.length });
+      return providers;
+    }
+  });
+}
+
+export function useFederationProvider(providerId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-federation-provider", providerId],
+    enabled: Boolean(providerId),
+    queryFn: () => {
+      const provider = getFederationProviderById(providerId ?? "");
+      if (!provider) {
+        const error = new Error("Federation Provider not found");
+        instrumentMarketplaceError("marketplace-federation-provider-query", error, { providerId: providerId ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-federation-provider-query", "completed", { providerId: provider.provider.id });
+      return provider;
     }
   });
 }

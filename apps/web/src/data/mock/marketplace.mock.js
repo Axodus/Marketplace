@@ -799,6 +799,209 @@ export const marketplaceWalletDiscoveryRecords = [
   }
 ];
 
+export const marketplaceFederationProviders = [
+  {
+    id: "provider-opensea-mock",
+    slug: "opensea",
+    name: "OpenSea",
+    type: "marketplace",
+    origin: "OpenSea provider descriptor mock",
+    trustLevel: "provider-reported",
+    description: "Mock-first Federation Provider descriptor for future OpenSea collection, asset, metadata and statistics references.",
+    supportedChains: ["Ethereum", "Polygon", "Arbitrum"],
+    supportedStandards: ["ERC721", "ERC1155"],
+    capabilities: ["contract-reference", "collection-reference", "asset-reference", "metadata-reference", "statistics-reference"],
+    supportedOperations: ["read-contract", "read-collection", "read-asset", "read-metadata", "read-statistics"],
+    dataScope: ["collection descriptors", "asset descriptors", "contract references", "provider-reported metadata", "provider-reported statistics"],
+    limitations: [
+      "No OpenSea API call is active.",
+      "No API key, SDK, scraping, sync job, cache, indexer or subgraph is configured.",
+      "Provider-reported data is not a guarantee of authenticity, ownership, metadata quality, royalties, trading availability or custody."
+    ],
+    rateLimitNotes: "Rate limits are documented as future provider concerns only; no request budget is consumed in mock mode.",
+    validationLimits: [
+      "Descriptor can reference metadata but cannot verify it.",
+      "Descriptor can reference contracts but cannot validate bytecode or collection authenticity.",
+      "Descriptor cannot authorize trading, settlement, custody, bridge execution or wallet signatures."
+    ],
+    health: {
+      status: "healthy-mock",
+      lastCheckedAt: "2026-06-12T10:00:00.000Z",
+      notes: ["Mock health only; no external dependency was checked."]
+    },
+    trustBoundary: {
+      origin: "OpenSea provider descriptor mock",
+      provider: "OpenSea",
+      validationStatus: "provider-reported",
+      provenance: "Static mock provider descriptor authored inside Axodus Marketplace mock data.",
+      riskClassification: "provider-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federation Provider descriptor is read-only and non-executing.",
+        "No external calls, SDKs, API keys, scraping, indexer, subgraph or sync job are active.",
+        "Provider is not treated as an absolute source of truth."
+      ]
+    },
+    externalDependencyWarning: "OpenSea availability, API behavior and data quality are external dependencies for future phases only.",
+    readOnly: true,
+    executionEnabled: false
+  },
+  {
+    id: "provider-rarible-mock",
+    slug: "rarible",
+    name: "Rarible",
+    type: "marketplace",
+    origin: "Rarible provider descriptor mock",
+    trustLevel: "provider-reported",
+    description: "Mock-first Federation Provider descriptor for future Rarible contract, collection, asset and metadata references.",
+    supportedChains: ["Ethereum", "Polygon"],
+    supportedStandards: ["ERC721", "ERC1155"],
+    capabilities: ["contract-reference", "collection-reference", "asset-reference", "metadata-reference"],
+    supportedOperations: ["read-contract", "read-collection", "read-asset", "read-metadata"],
+    dataScope: ["contract references", "collection descriptors", "asset descriptors", "provider-reported metadata"],
+    limitations: [
+      "No Rarible API call is active.",
+      "No API key, SDK, scraping, sync job, cache, indexer or subgraph is configured.",
+      "Provider-reported data remains untrusted until explicit validation and governance review."
+    ],
+    rateLimitNotes: "Rate limit behavior is a future integration concern; mock descriptors do not call Rarible.",
+    validationLimits: [
+      "Cannot validate collection authenticity.",
+      "Cannot verify metadata integrity.",
+      "Cannot enable external trading, royalties, settlement or custody."
+    ],
+    health: {
+      status: "healthy-mock",
+      lastCheckedAt: "2026-06-12T10:00:00.000Z",
+      notes: ["Mock health only; no Rarible endpoint was contacted."]
+    },
+    trustBoundary: {
+      origin: "Rarible provider descriptor mock",
+      provider: "Rarible",
+      validationStatus: "provider-reported",
+      provenance: "Static mock provider descriptor authored inside Axodus Marketplace mock data.",
+      riskClassification: "provider-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federation Provider descriptor is read-only and non-executing.",
+        "No external calls, SDKs, API keys, scraping, indexer, subgraph or sync job are active.",
+        "Provider is not treated as an absolute source of truth."
+      ]
+    },
+    externalDependencyWarning: "Rarible availability, API behavior and data quality are external dependencies for future phases only.",
+    readOnly: true,
+    executionEnabled: false
+  },
+  {
+    id: "provider-magic-eden-mock",
+    slug: "magic-eden",
+    name: "Magic Eden",
+    type: "marketplace",
+    origin: "Magic Eden provider descriptor mock",
+    trustLevel: "provider-reported",
+    description: "Mock-first Federation Provider descriptor for future Magic Eden asset, collection and metadata references.",
+    supportedChains: ["Ethereum", "Polygon"],
+    supportedStandards: ["ERC721", "ERC1155"],
+    capabilities: ["collection-reference", "asset-reference", "metadata-reference", "statistics-reference"],
+    supportedOperations: ["read-collection", "read-asset", "read-metadata", "read-statistics"],
+    dataScope: ["collection descriptors", "asset descriptors", "provider-reported metadata", "provider-reported statistics"],
+    limitations: [
+      "No Magic Eden API call is active.",
+      "No API key, SDK, scraping, sync job, cache, indexer or subgraph is configured.",
+      "Provider-reported listings and statistics cannot be treated as official market state."
+    ],
+    rateLimitNotes: "Rate limits remain future documentation only; mock mode does not consume provider traffic.",
+    validationLimits: [
+      "Cannot verify ownership or listings.",
+      "Cannot validate metadata or collection authenticity.",
+      "Cannot enable trading, bids, settlement, custody or wallet signatures."
+    ],
+    health: {
+      status: "degraded-mock",
+      lastCheckedAt: "2026-06-12T10:00:00.000Z",
+      notes: ["Mock degraded state demonstrates provider health visibility without real checks."]
+    },
+    trustBoundary: {
+      origin: "Magic Eden provider descriptor mock",
+      provider: "Magic Eden",
+      validationStatus: "provider-reported",
+      provenance: "Static mock provider descriptor authored inside Axodus Marketplace mock data.",
+      riskClassification: "provider-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federation Provider descriptor is read-only and non-executing.",
+        "No external calls, SDKs, API keys, scraping, indexer, subgraph or sync job are active.",
+        "Provider is not treated as an absolute source of truth."
+      ]
+    },
+    externalDependencyWarning: "Magic Eden availability, API behavior and data quality are external dependencies for future phases only.",
+    readOnly: true,
+    executionEnabled: false
+  },
+  {
+    id: "provider-harmony-ecosystem-mock",
+    slug: "harmony-ecosystem",
+    name: "Harmony Ecosystem",
+    type: "ecosystem",
+    origin: "Harmony ecosystem provider descriptor mock",
+    trustLevel: "provider-reported",
+    description: "Mock-first Federation Provider descriptor for Harmony ecosystem collection, contract, asset and wallet discovery references.",
+    supportedChains: ["Harmony"],
+    supportedStandards: ["ERC721", "ERC1155"],
+    capabilities: ["contract-reference", "collection-reference", "asset-reference", "metadata-reference", "statistics-reference", "wallet-discovery-reference"],
+    supportedOperations: ["read-contract", "read-collection", "read-asset", "read-metadata", "read-statistics", "read-wallet-assets"],
+    dataScope: ["Harmony contract references", "collection descriptors", "asset descriptors", "provider-reported metadata", "wallet discovery descriptors"],
+    limitations: [
+      "No Harmony provider API call is active.",
+      "No API key, SDK, scraping, sync job, cache, indexer or subgraph is configured.",
+      "Provider-reported Harmony data remains display-only until validation and governance review."
+    ],
+    rateLimitNotes: "Harmony provider rate limits are future integration notes only; mock descriptors do not call external systems.",
+    validationLimits: [
+      "Cannot verify Harmony contract authenticity.",
+      "Cannot verify wallet ownership or custody.",
+      "Cannot enable external trading, settlement, bridge execution or wallet signatures."
+    ],
+    health: {
+      status: "healthy-mock",
+      lastCheckedAt: "2026-06-12T10:00:00.000Z",
+      notes: ["Mock health only; no Harmony endpoint was contacted."]
+    },
+    trustBoundary: {
+      origin: "Harmony ecosystem provider descriptor mock",
+      provider: "Harmony Ecosystem",
+      validationStatus: "provider-reported",
+      provenance: "Static mock provider descriptor authored inside Axodus Marketplace mock data.",
+      riskClassification: "provider-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federation Provider descriptor is read-only and non-executing.",
+        "No external calls, SDKs, API keys, scraping, indexer, subgraph or sync job are active.",
+        "Provider is not treated as an absolute source of truth."
+      ]
+    },
+    externalDependencyWarning: "Harmony ecosystem availability, API behavior and data quality are external dependencies for future phases only.",
+    readOnly: true,
+    executionEnabled: false
+  }
+];
+
 export const marketplaceBoundaries = [
   {
     id: "reown",

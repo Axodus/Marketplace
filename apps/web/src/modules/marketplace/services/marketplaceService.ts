@@ -2,6 +2,7 @@ import {
   marketplaceAssetRegistry,
   marketplaceBoundaries,
   marketplaceCollections,
+  marketplaceFederationProviders,
   marketplaceLicenses,
   marketplaceProducts,
   marketplaceSellers,
@@ -14,6 +15,7 @@ import type {
   ExternalCollectionStatistics,
   DraftListingInput,
   DraftListingPreview,
+  FederationProviderDescriptor,
   FederationTrustBoundary,
   License,
   MarketplaceBoundaryStatus,
@@ -67,6 +69,7 @@ const licenses = marketplaceLicenses as License[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
+const federationProviders = marketplaceFederationProviders as FederationProviderDescriptor[];
 
 function normalizeSearch(value?: string) {
   return value?.trim().toLowerCase() ?? "";
@@ -334,6 +337,15 @@ export interface WalletDiscoveryView {
   boundaries: string[];
 }
 
+export interface FederationProviderView {
+  provider: FederationProviderDescriptor;
+  references: {
+    collections: MarketplaceCollection[];
+    walletDiscoveryRecords: WalletDiscoveryRecord[];
+  };
+  boundaryNotes: string[];
+}
+
 export function normalizeMockWalletAddress(walletAddress?: string) {
   return walletAddress?.trim().toLowerCase() ?? "";
 }
@@ -370,6 +382,30 @@ function enrichDiscoveredAsset(asset: DiscoveredAsset) {
 
 export function listWalletDiscoveryRecords() {
   return walletDiscoveryRecords;
+}
+
+export function listFederationProviders(): FederationProviderView[] {
+  return federationProviders.map((provider) => ({
+    provider,
+    references: {
+      collections: collections.filter((collection) => collection.provider?.id === provider.id || collection.externalContract?.providerId === provider.id),
+      walletDiscoveryRecords: walletDiscoveryRecords.filter((record) => record.provider.id === provider.id)
+    },
+    boundaryNotes: [
+      ...provider.trustBoundary.notes,
+      provider.externalDependencyWarning,
+      "Provider descriptors are mock-first and do not execute external calls, SDKs, API keys, scraping, sync jobs, indexers or subgraphs."
+    ]
+  }));
+}
+
+export function getFederationProviderById(idOrSlug: string) {
+  const key = idOrSlug.trim().toLowerCase();
+  return listFederationProviders().find((view) => view.provider.id.toLowerCase() === key || view.provider.slug.toLowerCase() === key) ?? null;
+}
+
+export function getFederationProviderReference(providerId: string) {
+  return federationProviders.find((provider) => provider.id === providerId) ?? null;
 }
 
 export function discoverWalletAssets(walletAddress?: string): WalletDiscoveryView {

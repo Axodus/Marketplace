@@ -8,6 +8,8 @@ import {
   getCollectionBySlug,
   getCollectionForProduct,
   getCollectionSourceLabel,
+  getFederationProviderById,
+  getFederationProviderReference,
   getProductByItemRef,
   getProductBySlug,
   getSellerById,
@@ -16,6 +18,7 @@ import {
   isValidMockWalletAddress,
   issueMockPurchase,
   listWalletDiscoveryRecords,
+  listFederationProviders,
   listCollections,
   listProducts
 } from "./marketplaceService";
@@ -165,6 +168,32 @@ describe("marketplaceService", () => {
     expect(unknown.boundaries.join(" ")).toContain("external API");
     expect(invalid.status).toBe("invalid-wallet");
     expect(invalid.boundaries.join(" ")).toContain("No wallet signature");
+  });
+
+  it("lists mock Federation Providers with capabilities, limitations and disabled execution", () => {
+    const providers = listFederationProviders();
+
+    expect(providers.map((view) => view.provider.name)).toEqual(["OpenSea", "Rarible", "Magic Eden", "Harmony Ecosystem"]);
+    expect(providers.every((view) => view.provider.readOnly)).toBe(true);
+    expect(providers.every((view) => view.provider.executionEnabled === false)).toBe(true);
+    expect(providers.every((view) => view.provider.trustBoundary.canTrade === false)).toBe(true);
+    expect(providers.every((view) => view.provider.trustBoundary.canSettle === false)).toBe(true);
+    expect(providers.every((view) => view.provider.trustBoundary.canBridge === false)).toBe(true);
+    expect(providers.flatMap((view) => view.provider.supportedStandards)).toContain("ERC721");
+    expect(providers.flatMap((view) => view.provider.supportedStandards)).toContain("ERC1155");
+    expect(providers[0].boundaryNotes.join(" ")).toContain("No external calls");
+    expect(providers[0].provider.limitations.join(" ")).toContain("No API key");
+  });
+
+  it("resolves Federation Providers by id or slug and exposes mock references", () => {
+    const harmonyById = getFederationProviderById("provider-harmony-ecosystem-mock");
+    const magicEdenBySlug = getFederationProviderById("magic-eden");
+
+    expect(harmonyById?.provider.name).toBe("Harmony Ecosystem");
+    expect(harmonyById?.references.collections.map((collection) => collection.slug)).toContain("harmony-creator-keys");
+    expect(magicEdenBySlug?.provider.name).toBe("Magic Eden");
+    expect(getFederationProviderReference("provider-opensea-mock")?.name).toBe("OpenSea");
+    expect(getFederationProviderById("missing-provider")).toBeNull();
   });
 
   it("finds products by slug", () => {

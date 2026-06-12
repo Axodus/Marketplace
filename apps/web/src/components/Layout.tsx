@@ -10,6 +10,7 @@ const links = [
   { to: "/marketplace/tenants/tenant-axodus-dao", label: "DAO Storefront", icon: Building2 },
   { to: "/marketplace/governance", label: "Governance", icon: ShieldCheck },
   { to: "/marketplace/licenses", label: "Licenses", icon: WalletCards },
+  { to: "/marketplace/providers", label: "Providers", icon: RadioTower },
   { to: "/marketplace/wallet-discovery", label: "Discovery", icon: WalletCards },
   { to: "/marketplace/entitlements", label: "Entitlements", icon: WalletCards },
   { to: "/marketplace/orders", label: "Billing", icon: ReceiptText },

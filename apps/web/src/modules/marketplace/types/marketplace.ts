@@ -174,9 +174,41 @@ export interface CollectionMetrics {
 export interface FederationProviderReference {
   id: string;
   name: string;
-  type: "mock-provider" | "marketplace" | "ecosystem" | "wallet-discovery";
+  type: "mock-provider" | "marketplace" | "ecosystem" | "wallet-discovery" | "aggregator";
   origin: string;
   trustLevel: "mock-only" | "provider-reported" | "review-required" | "blocked";
+}
+
+export type FederationProviderHealthStatus = "healthy-mock" | "degraded-mock" | "paused-mock" | "blocked-mock";
+export type FederationProviderCapability =
+  | "contract-reference"
+  | "collection-reference"
+  | "asset-reference"
+  | "metadata-reference"
+  | "statistics-reference"
+  | "wallet-discovery-reference";
+export type FederationProviderOperation = "read-contract" | "read-collection" | "read-asset" | "read-metadata" | "read-statistics" | "read-wallet-assets";
+
+export interface FederationProviderDescriptor extends FederationProviderReference {
+  slug: string;
+  description: string;
+  supportedChains: Chain[];
+  supportedStandards: Array<Extract<TokenStandard, "ERC721" | "ERC1155">>;
+  capabilities: FederationProviderCapability[];
+  supportedOperations: FederationProviderOperation[];
+  dataScope: string[];
+  limitations: string[];
+  rateLimitNotes: string;
+  validationLimits: string[];
+  health: {
+    status: FederationProviderHealthStatus;
+    lastCheckedAt: string;
+    notes: string[];
+  };
+  trustBoundary: FederationTrustBoundary;
+  externalDependencyWarning: string;
+  readOnly: boolean;
+  executionEnabled: boolean;
 }
 
 export interface ExternalCollectionMetadata {
