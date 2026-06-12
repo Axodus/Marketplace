@@ -2,17 +2,18 @@ import { Link, useParams } from "react-router-dom";
 import { Building2, Globe2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import type { CSSProperties } from "react";
 import { ProductCard } from "../components/ProductCard";
-import type { Tenant, TenantBranding } from "../types/marketplace";
+import type { Tenant, TenantBranding, TenantDomain, TenantDomainAlias } from "../types/marketplace";
 import { useTenant, useTenants } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 
 export function TenantStorefrontPage() {
-  const { tenantId } = useParams();
-  useMarketplaceTelemetry("tenant-foundation-page", { tenantId: tenantId ?? "registry" });
+  const { tenantId, tenantSlug } = useParams();
+  const tenantRouteInput = tenantSlug ? `/marketplace/t/${tenantSlug}` : tenantId;
+  useMarketplaceTelemetry("tenant-foundation-page", { tenantId: tenantRouteInput ?? "registry" });
 
-  if (!tenantId) return <TenantRegistrySurface />;
+  if (!tenantRouteInput) return <TenantRegistrySurface />;
 
-  return <TenantDetailSurface tenantIdOrSlug={tenantId} />;
+  return <TenantDetailSurface tenantIdOrSlug={tenantRouteInput} />;
 }
 
 function TenantRegistrySurface() {
@@ -45,7 +46,18 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
 
   if (!data) return null;
 
-  const { tenant, isGlobalMarketplace, branding, theme, usesGlobalBrandingFallback, referencedProducts, referencedCollections, enabledSections, executionBoundaries } = data;
+  const {
+    tenant,
+    routingContext,
+    isGlobalMarketplace,
+    branding,
+    theme,
+    usesGlobalBrandingFallback,
+    referencedProducts,
+    referencedCollections,
+    enabledSections,
+    executionBoundaries
+  } = data;
 
   return (
     <div className="space-y-6">
@@ -73,6 +85,7 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
           <Stat label="Tenant visibility" value={tenant.visibility} />
           <Stat label="Tenant slug" value={tenant.slug} />
           <Stat label="Theme mode" value={theme.themeMode} />
+          <Stat label="Routing mode" value={routingContext.resolution.routingMode} />
         </div>
       </section>
 
@@ -144,6 +157,8 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
           </div>
       </section>
 
+      <TenantDomainsPanel tenant={tenant} activeDomain={routingContext.domain} />
+
       <section className="grid gap-4 lg:grid-cols-2">
         <BoundaryPanel title="Warnings" tone="amber" items={[...tenant.warnings, ...branding.warnings]} />
         <BoundaryPanel title="Disclaimers" tone="slate" items={[...tenant.disclaimers, ...branding.disclaimers]} />
@@ -152,7 +167,7 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
       <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-xl font-semibold">Execution boundaries</h2>
         <ul className="mt-3 space-y-2 text-sm text-slate-600">
-          {executionBoundaries.map((boundary) => (
+          {[...executionBoundaries, ...routingContext.disclaimers].map((boundary) => (
             <li key={boundary}>- {boundary}</li>
           ))}
         </ul>
@@ -226,9 +241,95 @@ function TenantCard({ tenant }: { tenant: Tenant }) {
         <Row label="Branding" value={branding?.brandStatus ?? "global branding fallback"} />
       </div>
       <p className="mt-4 rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
-        mock branding / config-first branding / no settlement
+        mock routing / read-only routing / no DNS real
       </p>
     </Link>
+  );
+}
+
+function TenantDomainsPanel({ tenant, activeDomain }: { tenant: Tenant; activeDomain: TenantDomain | null }) {
+  const domains = tenant.domains ?? [];
+  const aliases = tenant.domainAliases ?? [];
+
+  return (
+    <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold">Tenant Domains</h2>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Tenant Domains are simulated domain and tenant alias records for mock routing only. Domain verification mock never means DNS real,
+            TLS certificate, proxy, edge routing, backend routing or production tenant routing.
+          </p>
+        </div>
+        <Link to={`/marketplace/t/${tenant.slug}`} className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100">
+          Open mock tenant route
+        </Link>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_0.75fr]">
+        <div className="space-y-3">
+          {domains.map((domain) => (
+            <DomainCard key={domain.id} domain={domain} active={activeDomain?.id === domain.id} />
+          ))}
+        </div>
+        <div className="rounded border border-slate-200 bg-slate-50 p-4">
+          <h3 className="font-semibold">Tenant aliases</h3>
+          <div className="mt-3 space-y-3">
+            {aliases.length ? (
+              aliases.map((alias) => <AliasRow key={alias.id} alias={alias} />)
+            ) : (
+              <p className="text-sm text-slate-600">No tenant alias records configured.</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="font-semibold">Domain boundary</p>
+        <p className="mt-1">
+          custom domain simulated and subdomain simulated records are read-only routing descriptors. No DNS real, no custom DNS, no TLS
+          certificate, no proxy routing, no edge routing, no backend routing and no separate tenant deploy is active.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function DomainCard({ domain, active }: { domain: TenantDomain; active: boolean }) {
+  return (
+    <div className={`rounded border p-4 ${active ? "border-teal-300 bg-teal-50" : "border-slate-200 bg-white"}`}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{domain.domainType}</p>
+          <h3 className="mt-1 font-semibold text-slate-950">{domain.displayLabel}</h3>
+          <p className="mt-1 text-sm text-slate-600">{domain.hostname ?? domain.slug ?? domain.alias ?? "global fallback"}</p>
+        </div>
+        <span className="rounded border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700">
+          {domain.status} / {domain.verificationStatus}
+        </span>
+      </div>
+      <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+        <Row label="Routing mode" value={domain.routingMode} />
+        <Row label="Primary" value={domain.isPrimary ? "yes" : "no"} />
+        <Row label="Can route" value={domain.canRoute ? "mock route only" : "disabled"} />
+      </dl>
+      <p className="mt-3 text-xs text-slate-500">{domain.disclaimers.join(" ")}</p>
+    </div>
+  );
+}
+
+function AliasRow({ alias }: { alias: TenantDomainAlias }) {
+  return (
+    <div className="rounded border border-slate-200 bg-white p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="font-semibold">{alias.alias}</p>
+        <span className="rounded border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700">{alias.status}</span>
+      </div>
+      <p className="mt-1 text-sm text-slate-600">
+        {alias.aliasType} to {alias.targetTenantSlug}
+      </p>
+      <p className="mt-2 text-xs text-slate-500">{alias.disclaimers.join(" ")}</p>
+    </div>
   );
 }
 

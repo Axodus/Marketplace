@@ -29,6 +29,11 @@ import type {
   Seller,
   Tenant,
   TenantBranding,
+  TenantDomain,
+  TenantDomainAlias,
+  TenantDomainInputType,
+  TenantDomainResolutionStatus,
+  TenantRoutingContext,
   TenantTheme,
   TokenStandard,
   WalletDiscoveryRecord,
@@ -373,6 +378,7 @@ export interface ExternalContractView {
 
 export interface TenantContextView {
   tenant: Tenant;
+  routingContext: TenantRoutingContext;
   isGlobalMarketplace: boolean;
   branding: TenantBranding;
   theme: TenantTheme;
@@ -521,6 +527,207 @@ export function getTenantBySlug(slug: string) {
   return tenants.find((tenant) => tenant.slug === slug) ?? null;
 }
 
+export function listTenantDomains() {
+  return tenants.flatMap((tenant) => tenant.domains ?? []);
+}
+
+export function listTenantAliases() {
+  return tenants.flatMap((tenant) => tenant.domainAliases ?? []);
+}
+
+export function getTenantDomains(tenantIdOrSlug: string) {
+  const tenant = getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug);
+  return tenant?.domains ?? [];
+}
+
+export function getPrimaryTenantDomain(tenantIdOrSlug: string) {
+  return getTenantDomains(tenantIdOrSlug).find((domain) => domain.isPrimary) ?? null;
+}
+
+export function isValidTenantSlug(value?: string) {
+  return Boolean(value && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value));
+}
+
+export function isValidTenantAlias(value?: string) {
+  return Boolean(value && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value));
+}
+
+export function isValidSimulatedHostname(value?: string) {
+  return Boolean(value && /^[a-z0-9.-]+\.mock(?:\.axodus\.local)?$/i.test(value));
+}
+
+function normalizeTenantRouteInput(value?: string) {
+  return value?.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/$/, "") ?? "";
+}
+
+function routeBoundaryNotes() {
+  return {
+    warnings: [
+      "Tenant Domains are simulated mock/read-only routing descriptors.",
+      "Domain verification mock does not represent DNS ownership, TLS certificate issuance, proxy routing or production tenant routing."
+    ],
+    disclaimers: [
+      "No DNS real, no custom DNS, no TLS certificate, no proxy, no edge routing, no backend routing and no separate tenant deploy is active.",
+      "canRoute means only SPA mock routing eligibility and never productive infrastructure routing."
+    ]
+  };
+}
+
+function getInputType(input: string): TenantDomainInputType {
+  if (!input) return "global";
+  if (input.startsWith("/marketplace/t/")) return "route";
+  if (input.includes(".")) return "hostname";
+  if (listTenantAliases().some((alias) => alias.alias === input)) return "alias";
+  return "slug";
+}
+
+function isBlockedTenant(tenant: Tenant) {
+  return tenant.status === "disabled" || tenant.status === "restricted" || tenant.governanceStatus === "disabled" || tenant.governanceStatus === "restricted";
+}
+
+function isBlockedDomain(domain?: TenantDomain | null) {
+  return Boolean(domain && (domain.status === "disabled" || domain.status === "restricted" || domain.status === "conflict" || !domain.canRoute));
+}
+
+function buildRoutingContext(args: {
+  input: string;
+  inputType: TenantDomainInputType;
+  tenant: Tenant;
+  domain: TenantDomain | null;
+  resolutionStatus: TenantDomainResolutionStatus;
+  isFallback: boolean;
+}): TenantRoutingContext {
+  const notes = routeBoundaryNotes();
+  const resolution = {
+    input: args.input,
+    inputType: args.inputType,
+    matchedTenantId: args.tenant.id,
+    matchedTenantSlug: args.tenant.slug,
+    matchedDomainId: args.domain?.id,
+    resolutionStatus: args.resolutionStatus,
+    routingMode: "mock-read-only" as const,
+    isFallback: args.isFallback,
+    warnings: [...notes.warnings, ...(args.domain?.warnings ?? [])],
+    disclaimers: [...notes.disclaimers, ...(args.domain?.disclaimers ?? [])]
+  };
+
+  return {
+    tenant: args.tenant,
+    domain: args.domain,
+    resolution,
+    isTenantRoute: !args.isFallback && args.tenant.tenantType !== "global",
+    isGlobalRoute: args.tenant.tenantType === "global",
+    isSimulatedRoute: args.domain?.isSimulated ?? true,
+    canRoute: !args.isFallback && args.resolutionStatus === "resolved" && !isBlockedDomain(args.domain),
+    warnings: resolution.warnings,
+    disclaimers: resolution.disclaimers
+  };
+}
+
+function fallbackRoutingContext(input: string, inputType: TenantDomainInputType, status: TenantDomainResolutionStatus): TenantRoutingContext {
+  return buildRoutingContext({
+    input,
+    inputType,
+    tenant: getGlobalTenant(),
+    domain: getPrimaryTenantDomain("global"),
+    resolutionStatus: status,
+    isFallback: true
+  });
+}
+
+export function resolveTenantBySlug(slug: string) {
+  if (!isValidTenantSlug(slug)) return null;
+  return getTenantBySlug(slug);
+}
+
+export function resolveTenantByAlias(aliasValue: string) {
+  if (!isValidTenantAlias(aliasValue)) return null;
+  const matches = listTenantAliases().filter((alias) => alias.alias === aliasValue);
+  if (matches.length !== 1 || matches[0].status === "conflict" || matches[0].status === "disabled" || matches[0].status === "restricted") return null;
+  return getTenantBySlug(matches[0].targetTenantSlug);
+}
+
+export function resolveTenantBySimulatedDomain(hostname: string) {
+  const normalized = normalizeTenantRouteInput(hostname);
+  if (!isValidSimulatedHostname(normalized)) return null;
+  const matches = listTenantDomains().filter((domain) => domain.hostname?.toLowerCase() === normalized);
+  if (matches.length !== 1 || isBlockedDomain(matches[0])) return null;
+  return getTenantById(matches[0].tenantId);
+}
+
+export function resolveTenantRoutingContext(input?: string): TenantRoutingContext {
+  const normalized = normalizeTenantRouteInput(input);
+  const inputType = getInputType(normalized);
+  if (!normalized || inputType === "global") return fallbackRoutingContext(normalized, inputType, "global-fallback");
+
+  const routeSlug = inputType === "route" ? normalized.replace(/^\/marketplace\/t\//, "") : normalized;
+  const aliasMatches = inputType === "alias" ? listTenantAliases().filter((alias) => alias.alias === routeSlug) : [];
+  if (aliasMatches.length > 1 || aliasMatches.some((alias) => alias.status === "conflict")) {
+    return fallbackRoutingContext(normalized, inputType, "conflict");
+  }
+  if (aliasMatches.some((alias) => alias.status === "disabled" || alias.status === "restricted")) {
+    return fallbackRoutingContext(normalized, inputType, aliasMatches[0].status === "disabled" ? "disabled" : "restricted");
+  }
+
+  const domainMatches = inputType === "hostname" ? listTenantDomains().filter((domain) => domain.hostname?.toLowerCase() === routeSlug) : [];
+  if (domainMatches.length > 1 || domainMatches.some((domain) => domain.status === "conflict")) {
+    return fallbackRoutingContext(normalized, inputType, "conflict");
+  }
+  if (domainMatches.some(isBlockedDomain)) {
+    return fallbackRoutingContext(
+      normalized,
+      inputType,
+      domainMatches[0].status === "disabled" ? "disabled" : domainMatches[0].status === "restricted" ? "restricted" : "conflict"
+    );
+  }
+
+  const tenant =
+    inputType === "hostname"
+      ? resolveTenantBySimulatedDomain(routeSlug)
+      : inputType === "alias"
+        ? resolveTenantByAlias(routeSlug)
+        : getTenantById(routeSlug) ?? resolveTenantBySlug(routeSlug);
+
+  if (!tenant) return fallbackRoutingContext(normalized, inputType, "not-found");
+  if (isBlockedTenant(tenant)) return fallbackRoutingContext(normalized, inputType, tenant.status === "disabled" ? "disabled" : "restricted");
+
+  const domain =
+    inputType === "hostname"
+      ? domainMatches[0]
+      : inputType === "alias"
+        ? tenant.domainAliases?.find((alias) => alias.alias === routeSlug)
+          ? ({
+              id: `alias-domain-${routeSlug}`,
+              tenantId: tenant.id,
+              domainType: "alias",
+              alias: routeSlug,
+              displayLabel: `Tenant alias ${routeSlug}`,
+              status: "active-mock",
+              verificationStatus: "not-required-mock",
+              routingMode: "mock-read-only",
+              isPrimary: false,
+              isSimulated: true,
+              canRoute: true,
+              createdAt: tenant.createdAt,
+              updatedAt: tenant.updatedAt,
+              warnings: ["tenant alias resolved through mock/read-only routing."],
+              disclaimers: ["tenant alias does not create DNS real, backend routing or production tenant routing."]
+            } satisfies TenantDomain)
+          : null
+        : getPrimaryTenantDomain(tenant.slug);
+
+  if (isBlockedDomain(domain)) return fallbackRoutingContext(normalized, inputType, domain?.status === "disabled" ? "disabled" : domain?.status === "restricted" ? "restricted" : "conflict");
+
+  return buildRoutingContext({
+    input: normalized,
+    inputType,
+    tenant,
+    domain,
+    resolutionStatus: "resolved",
+    isFallback: false
+  });
+}
+
 function isValidThemeColor(color?: string) {
   return Boolean(color && /^#[0-9a-fA-F]{6}$/.test(color));
 }
@@ -591,8 +798,8 @@ export function getTenantLogo(idOrSlug?: string) {
 }
 
 export function resolveTenantContext(idOrSlug?: string): TenantContextView {
-  const key = idOrSlug?.trim() ?? "";
-  const tenant = key ? getTenantById(key) ?? getTenantBySlug(key) ?? getGlobalTenant() : getGlobalTenant();
+  const routingContext = resolveTenantRoutingContext(idOrSlug);
+  const tenant = routingContext.tenant;
   const branding = resolveTenantBranding(tenant.slug);
   const referencedProductIds = new Set([...tenant.configuration.featuredProductIds, ...tenant.configuration.allowedProductIds]);
   const referencedCollectionIds = new Set([
@@ -605,6 +812,7 @@ export function resolveTenantContext(idOrSlug?: string): TenantContextView {
 
   return {
     tenant,
+    routingContext,
     isGlobalMarketplace: tenant.tenantType === "global",
     branding: branding.branding,
     theme: branding.theme,

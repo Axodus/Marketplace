@@ -18,9 +18,11 @@ import {
   listBoundaries,
   listCollections,
   listProducts,
+  getTenantDomains,
   listTenants,
   resolveTenantBranding,
   resolveTenantContext,
+  resolveTenantRoutingContext,
   resolveTenantTheme
 } from "../services/marketplaceService";
 import { instrumentMarketplaceError, traceMarketplaceLifecycle } from "../services/runtimeTelemetry";
@@ -201,6 +203,40 @@ export function useTenant(tenantIdOrSlug?: string) {
 
 export function useTenantContext(tenantIdOrSlug?: string) {
   return useTenant(tenantIdOrSlug);
+}
+
+export function useTenantDomains(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-domains", tenantIdOrSlug],
+    queryFn: () => {
+      const domains = tenantIdOrSlug ? getTenantDomains(tenantIdOrSlug) : [];
+      traceMarketplaceLifecycle("marketplace-tenant-domains-query", "completed", {
+        tenantIdOrSlug: tenantIdOrSlug ?? null,
+        domainCount: domains.length
+      });
+      return domains;
+    }
+  });
+}
+
+export function useTenantRoutingContext(input?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-routing-context", input],
+    queryFn: () => {
+      const context = resolveTenantRoutingContext(input);
+      traceMarketplaceLifecycle("marketplace-tenant-routing-query", "completed", {
+        input: input ?? null,
+        tenantId: context.tenant.id,
+        resolutionStatus: context.resolution.resolutionStatus,
+        fallback: context.resolution.isFallback
+      });
+      return context;
+    }
+  });
+}
+
+export function useResolvedTenant(input?: string) {
+  return useTenantRoutingContext(input);
 }
 
 export function useTenantBranding(tenantIdOrSlug?: string) {

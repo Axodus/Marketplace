@@ -2,7 +2,7 @@
 
 # Phase 03 - Tenant Infrastructure Planning
 
-Status: IN PROGRESS - TENANT BRANDING IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - TENANT DOMAINS IMPLEMENTED MOCK/READ-ONLY
 
 Planning artifact:
 - `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md`
@@ -11,7 +11,7 @@ Recommended implementation sequence:
 - MEP-03A - Tenant Infrastructure Planning and Isolation Audit - COMPLETED
 - MEP-REQ-030 - Multi-Tenant Foundation - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-031 - Marketplace Branding - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-032 - Tenant Domains
+- MEP-REQ-032 - Tenant Domains - IMPLEMENTED MOCK/READ-ONLY
 - MEP-REQ-033 - Tenant Isolation
 - MEP-PHASE-03-CLOSURE - QA, navigation and Marketplace-as-a-Service validation
 
@@ -40,6 +40,15 @@ MEP-REQ-031 delivered:
 - applied controlled branding on Tenant Registry, Tenant Detail and Layout tenant context using local display hints and safe fallback
 - displayed tenant logo placeholders, tenant display name, theme mode, primary color, secondary color, accent color, brand status, trust labels and branding boundary notes
 - preserved no white-label production, custom DNS, production tenant routing, tenant billing, tenant settlement, RBAC, isolated database, backend, revenue sharing, tracking or BI boundaries
+
+MEP-REQ-032 delivered:
+- added Tenant Domain, Tenant Domain Alias, Tenant Domain Resolution and Tenant Routing Context mock/read-only models
+- added simulated slug, tenant alias, subdomain simulated and custom domain simulated records for Phase 03 tenants
+- added service helpers for domain listing, primary domain resolution, slug/alias/hostname validation, simulated hostname resolution and Tenant Routing Context resolution
+- added hooks for tenant domain and tenant routing context read models
+- added `/marketplace/t/:tenantSlug` as a mock tenant route without DNS, TLS, proxy, edge routing, backend routing or separate deploy behavior
+- displayed domains, aliases, routing mode, verification status mock, canRoute mock status and no DNS real boundary notes in Tenant Detail
+- preserved no custom DNS, real subdomain routing, TLS certificate, proxy routing, backend routing, tenant billing, tenant settlement, RBAC, isolated database or revenue sharing boundaries
 
 Constraints:
 - keep Phase 03 mock-first/read-model oriented until explicit implementation requests authorize runtime changes

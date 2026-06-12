@@ -19,7 +19,12 @@ import {
   getSellerProfileById,
   getTenantById,
   getTenantBySlug,
+  getTenantDomains,
+  getPrimaryTenantDomain,
   isExternalCollection,
+  isValidSimulatedHostname,
+  isValidTenantAlias,
+  isValidTenantSlug,
   isValidMockWalletAddress,
   issueMockPurchase,
   listExternalContracts,
@@ -30,8 +35,12 @@ import {
   listTenants,
   getTenantDisplayName,
   getTenantLogo,
+  resolveTenantByAlias,
+  resolveTenantBySimulatedDomain,
+  resolveTenantBySlug,
   resolveTenantBranding,
-  resolveTenantContext
+  resolveTenantContext,
+  resolveTenantRoutingContext
 } from "./marketplaceService";
 import { StorageAccessService, GreenfieldAccessAdapter } from "./boundaryAdapters";
 
@@ -291,6 +300,38 @@ describe("marketplaceService", () => {
     expect(fallbackBranding.branding.displayName).toBe(globalBranding.displayName);
     expect(fallbackBranding.usesGlobalBrandingFallback).toBe(true);
     expect(globalBranding.disclaimers.join(" ")).toContain("custom DNS");
+  });
+
+  it("resolves Tenant Domains through slug, alias, simulated hostname and global fallback", () => {
+    const slugContext = resolveTenantRoutingContext("/marketplace/t/academy");
+    const aliasContext = resolveTenantRoutingContext("learning");
+    const subdomainContext = resolveTenantRoutingContext("academy.marketplace.mock.axodus.local");
+    const customDomainContext = resolveTenantRoutingContext("academy.example.mock");
+    const disabledDomainContext = resolveTenantRoutingContext("community.example.mock");
+    const conflictContext = resolveTenantRoutingContext("community");
+    const missingContext = resolveTenantRoutingContext("missing-tenant");
+
+    expect(isValidTenantSlug("academy")).toBe(true);
+    expect(isValidTenantAlias("learning")).toBe(true);
+    expect(isValidSimulatedHostname("academy.example.mock")).toBe(true);
+    expect(resolveTenantBySlug("academy")?.id).toBe("tenant-academy-marketplace");
+    expect(resolveTenantByAlias("learning")?.slug).toBe("academy");
+    expect(resolveTenantBySimulatedDomain("academy.marketplace.mock.axodus.local")?.slug).toBe("academy");
+    expect(getTenantDomains("academy").map((domain) => domain.domainType)).toContain("custom-domain-simulated");
+    expect(getPrimaryTenantDomain("academy")?.domainType).toBe("slug");
+    expect(slugContext.tenant.slug).toBe("academy");
+    expect(slugContext.canRoute).toBe(true);
+    expect(aliasContext.tenant.slug).toBe("academy");
+    expect(aliasContext.domain?.domainType).toBe("alias");
+    expect(subdomainContext.domain?.domainType).toBe("subdomain-simulated");
+    expect(subdomainContext.resolution.disclaimers.join(" ")).toContain("No DNS real");
+    expect(customDomainContext.resolution.resolutionStatus).toBe("conflict");
+    expect(customDomainContext.resolution.isFallback).toBe(true);
+    expect(disabledDomainContext.resolution.resolutionStatus).toBe("disabled");
+    expect(disabledDomainContext.tenant.slug).toBe("global");
+    expect(conflictContext.resolution.resolutionStatus).toBe("conflict");
+    expect(missingContext.resolution.resolutionStatus).toBe("not-found");
+    expect(missingContext.tenant.slug).toBe("global");
   });
 
   it("finds products by slug", () => {

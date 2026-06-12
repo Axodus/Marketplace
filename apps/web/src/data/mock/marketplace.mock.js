@@ -431,6 +431,26 @@ export const marketplaceTenants = [
       isFederatedCatalogEnabled: true,
       isTenantCatalogEnabled: false
     },
+    domains: [
+      {
+        id: "domain-global-slug",
+        tenantId: "tenant-global-marketplace",
+        domainType: "global",
+        slug: "global",
+        displayLabel: "Global Marketplace route",
+        status: "active-mock",
+        verificationStatus: "not-required-mock",
+        routingMode: "mock-read-only",
+        isPrimary: true,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:00:00.000Z",
+        updatedAt: "2026-06-12T10:00:00.000Z",
+        warnings: ["Global route is the fallback for unresolved tenant domains."],
+        disclaimers: ["Global fallback does not activate DNS, proxy, TLS, edge routing or separate deploy."]
+      }
+    ],
+    domainAliases: [],
     createdAt: "2026-06-12T10:00:00.000Z",
     updatedAt: "2026-06-12T10:00:00.000Z",
     warnings: ["Global marketplace context is mock/config-first and does not activate tenant isolation."],
@@ -527,6 +547,85 @@ export const marketplaceTenants = [
       isFederatedCatalogEnabled: true,
       isTenantCatalogEnabled: true
     },
+    domains: [
+      {
+        id: "domain-academy-slug",
+        tenantId: "tenant-academy-marketplace",
+        domainType: "slug",
+        slug: "academy",
+        displayLabel: "Academy tenant slug",
+        status: "active-mock",
+        verificationStatus: "not-required-mock",
+        routingMode: "mock-read-only",
+        isPrimary: true,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:05:00.000Z",
+        updatedAt: "2026-06-12T10:05:00.000Z",
+        warnings: ["Tenant slug resolves only inside the SPA mock router."],
+        disclaimers: ["Slug routing does not create production tenant routing or DNS."]
+      },
+      {
+        id: "domain-academy-subdomain",
+        tenantId: "tenant-academy-marketplace",
+        domainType: "subdomain-simulated",
+        hostname: "academy.marketplace.mock.axodus.local",
+        displayLabel: "Academy subdomain simulated",
+        status: "configured-mock",
+        verificationStatus: "verified-mock",
+        routingMode: "mock-read-only",
+        isPrimary: false,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:05:00.000Z",
+        updatedAt: "2026-06-12T10:05:00.000Z",
+        warnings: ["verified-mock is a simulated domain verification status."],
+        disclaimers: ["No DNS real, TLS certificate, proxy, edge routing or custom domain provisioning is active."]
+      },
+      {
+        id: "domain-academy-custom",
+        tenantId: "tenant-academy-marketplace",
+        domainType: "custom-domain-simulated",
+        hostname: "academy.example.mock",
+        displayLabel: "Academy custom domain simulated",
+        status: "review-required",
+        verificationStatus: "pending-mock",
+        routingMode: "mock-read-only",
+        isPrimary: false,
+        isSimulated: true,
+        canRoute: false,
+        createdAt: "2026-06-12T10:05:00.000Z",
+        updatedAt: "2026-06-12T10:05:00.000Z",
+        warnings: ["Custom domain simulated record requires governance and domain review."],
+        disclaimers: ["custom domain simulated does not activate custom DNS, TLS certificate or production tenant routing."]
+      }
+    ],
+    domainAliases: [
+      {
+        id: "alias-academy-learning",
+        tenantId: "tenant-academy-marketplace",
+        alias: "learning",
+        aliasType: "slug-alias",
+        targetTenantSlug: "academy",
+        status: "active-mock",
+        isPrimary: false,
+        isSimulated: true,
+        warnings: ["tenant alias resolves to Academy only in mock routing."],
+        disclaimers: ["Alias routing is read-only routing and does not create DNS real or backend routing."]
+      },
+      {
+        id: "alias-academy-conflict",
+        tenantId: "tenant-academy-marketplace",
+        alias: "community",
+        aliasType: "slug-alias",
+        targetTenantSlug: "academy",
+        status: "conflict",
+        isPrimary: false,
+        isSimulated: true,
+        warnings: ["Alias is intentionally marked conflict for mock QA."],
+        disclaimers: ["Conflict records cannot route and fall back to the global marketplace."]
+      }
+    ],
     createdAt: "2026-06-12T10:05:00.000Z",
     updatedAt: "2026-06-12T10:05:00.000Z",
     warnings: ["Academy tenant catalog references global products and collections; it does not duplicate product truth."],
@@ -623,6 +722,56 @@ export const marketplaceTenants = [
       isFederatedCatalogEnabled: false,
       isTenantCatalogEnabled: true
     },
+    domains: [
+      {
+        id: "domain-acs-slug",
+        tenantId: "tenant-acs-services",
+        domainType: "slug",
+        slug: "acs-services",
+        displayLabel: "ACS Services tenant slug",
+        status: "active-mock",
+        verificationStatus: "not-required-mock",
+        routingMode: "mock-read-only",
+        isPrimary: true,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:10:00.000Z",
+        updatedAt: "2026-06-12T10:10:00.000Z",
+        warnings: ["ACS Services is private-preview; route visibility remains read-only."],
+        disclaimers: ["Slug routing does not authorize service delivery, billing, settlement or production routing."]
+      },
+      {
+        id: "domain-acs-subdomain",
+        tenantId: "tenant-acs-services",
+        domainType: "subdomain-simulated",
+        hostname: "acs.marketplace.mock.axodus.local",
+        displayLabel: "ACS subdomain simulated",
+        status: "review-required",
+        verificationStatus: "pending-mock",
+        routingMode: "mock-read-only",
+        isPrimary: false,
+        isSimulated: true,
+        canRoute: false,
+        createdAt: "2026-06-12T10:10:00.000Z",
+        updatedAt: "2026-06-12T10:10:00.000Z",
+        warnings: ["ACS simulated hostname is review-required."],
+        disclaimers: ["No DNS real, TLS, proxy or edge routing is active."]
+      }
+    ],
+    domainAliases: [
+      {
+        id: "alias-acs",
+        tenantId: "tenant-acs-services",
+        alias: "acs",
+        aliasType: "slug-alias",
+        targetTenantSlug: "acs-services",
+        status: "active-mock",
+        isPrimary: false,
+        isSimulated: true,
+        warnings: ["tenant alias resolves to ACS Services only in mock routing."],
+        disclaimers: ["Alias routing is read-only and does not create DNS real."]
+      }
+    ],
     createdAt: "2026-06-12T10:10:00.000Z",
     updatedAt: "2026-06-12T10:10:00.000Z",
     warnings: ["ACS Services tenant is private-preview and requires governance review before broader exposure."],
@@ -719,6 +868,56 @@ export const marketplaceTenants = [
       isFederatedCatalogEnabled: true,
       isTenantCatalogEnabled: true
     },
+    domains: [
+      {
+        id: "domain-community-slug",
+        tenantId: "tenant-community-demo",
+        domainType: "slug",
+        slug: "community-demo",
+        displayLabel: "Community Demo tenant slug",
+        status: "draft",
+        verificationStatus: "not-required-mock",
+        routingMode: "mock-read-only",
+        isPrimary: true,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:15:00.000Z",
+        updatedAt: "2026-06-12T10:15:00.000Z",
+        warnings: ["Community route is draft and cannot be treated as production tenant routing."],
+        disclaimers: ["Draft tenant route is simulated and does not create custom DNS, TLS or deploy isolation."]
+      },
+      {
+        id: "domain-community-disabled-custom",
+        tenantId: "tenant-community-demo",
+        domainType: "custom-domain-simulated",
+        hostname: "community.example.mock",
+        displayLabel: "Community custom domain simulated",
+        status: "disabled",
+        verificationStatus: "disabled",
+        routingMode: "mock-read-only",
+        isPrimary: false,
+        isSimulated: true,
+        canRoute: false,
+        createdAt: "2026-06-12T10:15:00.000Z",
+        updatedAt: "2026-06-12T10:15:00.000Z",
+        warnings: ["Disabled custom domain simulated record cannot route."],
+        disclaimers: ["Disabled domain confirms no custom DNS enabled, no TLS certificate enabled and no proxy routing enabled."]
+      }
+    ],
+    domainAliases: [
+      {
+        id: "alias-community-primary",
+        tenantId: "tenant-community-demo",
+        alias: "community",
+        aliasType: "slug-alias",
+        targetTenantSlug: "community-demo",
+        status: "conflict",
+        isPrimary: true,
+        isSimulated: true,
+        warnings: ["Alias intentionally conflicts with another mock alias."],
+        disclaimers: ["Conflict aliases cannot route and must fall back to the global marketplace."]
+      }
+    ],
     createdAt: "2026-06-12T10:15:00.000Z",
     updatedAt: "2026-06-12T10:15:00.000Z",
     warnings: ["Community tenant is draft and cannot be treated as a productive white-label marketplace."],

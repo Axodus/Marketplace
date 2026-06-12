@@ -28,6 +28,18 @@ export type TenantVisibility = "public-mock" | "private-preview" | "restricted" 
 export type TenantGovernanceStatus = "governance-aligned" | "governance-review" | "restricted" | "disabled";
 export type TenantThemeStatus = "global-default" | "configured-mock" | "tenant-custom-mock" | "review-required" | "restricted" | "disabled";
 export type TenantThemeMode = "light" | "dark-preview" | "system";
+export type TenantDomainType = "slug" | "alias" | "subdomain-simulated" | "custom-domain-simulated" | "global";
+export type TenantDomainStatus = "active-mock" | "configured-mock" | "draft" | "review-required" | "restricted" | "disabled" | "conflict" | "not-found";
+export type TenantDomainVerificationStatus =
+  | "not-required-mock"
+  | "pending-mock"
+  | "verified-mock"
+  | "review-required"
+  | "restricted"
+  | "disabled"
+  | "not-verified";
+export type TenantDomainResolutionStatus = "resolved" | "global-fallback" | "not-found" | "restricted" | "disabled" | "conflict" | "invalid";
+export type TenantDomainInputType = "slug" | "alias" | "hostname" | "route" | "global";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -174,6 +186,64 @@ export interface TenantBranding {
   visualIdentity: TenantVisualIdentity;
 }
 
+export interface TenantDomain {
+  id: string;
+  tenantId: string;
+  domainType: TenantDomainType;
+  hostname?: string;
+  slug?: string;
+  alias?: string;
+  displayLabel: string;
+  status: TenantDomainStatus;
+  verificationStatus: TenantDomainVerificationStatus;
+  routingMode: "mock-read-only";
+  isPrimary: boolean;
+  isSimulated: boolean;
+  canRoute: boolean;
+  createdAt: string;
+  updatedAt: string;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantDomainAlias {
+  id: string;
+  tenantId: string;
+  alias: string;
+  aliasType: "slug-alias" | "display-alias" | "domain-alias";
+  targetTenantSlug: string;
+  status: TenantDomainStatus;
+  isPrimary: boolean;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantDomainResolution {
+  input: string;
+  inputType: TenantDomainInputType;
+  matchedTenantId?: string;
+  matchedTenantSlug?: string;
+  matchedDomainId?: string;
+  resolutionStatus: TenantDomainResolutionStatus;
+  routingMode: "mock-read-only";
+  isFallback: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantRoutingContext {
+  tenant: Tenant;
+  domain: TenantDomain | null;
+  resolution: TenantDomainResolution;
+  isTenantRoute: boolean;
+  isGlobalRoute: boolean;
+  isSimulatedRoute: boolean;
+  canRoute: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
 export interface Tenant {
   id: string;
   slug: string;
@@ -187,6 +257,8 @@ export interface Tenant {
   identity: TenantIdentity;
   configuration: TenantConfiguration;
   branding?: TenantBranding;
+  domains?: TenantDomain[];
+  domainAliases?: TenantDomainAlias[];
   createdAt: string;
   updatedAt: string;
   warnings: string[];

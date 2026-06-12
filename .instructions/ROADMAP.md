@@ -135,7 +135,7 @@ Implementation boundary:
 
 # Phase 03 — Tenant Infrastructure
 
-Status: IN PROGRESS — TENANT BRANDING IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS — TENANT DOMAINS IMPLEMENTED MOCK/READ-ONLY
 
 Objectives:
 - introduce Marketplace-as-a-Service tenant infrastructure
@@ -148,6 +148,7 @@ Objectives:
 Deliverables:
 - Multi-Tenant Foundation mock/config-first runtime
 - Marketplace Branding mock/config-first runtime
+- Tenant Domains mock/read-only runtime
 - tenant catalog model
 - Curated Catalog readiness
 - white-label marketplace capability boundaries
@@ -166,7 +167,7 @@ Linked requirements:
 - MEP-03A — Tenant Infrastructure Planning and Isolation Audit — completed
 - MEP-REQ-030 — Multi-Tenant Foundation — completed mock/config-first
 - MEP-REQ-031 — Marketplace Branding — completed mock/config-first
-- MEP-REQ-032 — Tenant Domains
+- MEP-REQ-032 — Tenant Domains — completed mock/read-only
 - MEP-REQ-033 — Tenant Isolation
 
 Dependencies:
@@ -183,6 +184,8 @@ Implementation boundary:
 - MEP-REQ-030 introduces Tenant Registry, Tenant Identity and Tenant Configuration as mock/config-first runtime surfaces only
 - MEP-REQ-031 introduces Tenant Branding, Tenant Theme and Tenant Visual Identity as mock/config-first display surfaces only
 - MEP-REQ-031 does not introduce white-label production, custom DNS, subdomain routing, production tenant routing, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated database, backend schema, tracking, BI or separate tenant deploy
+- MEP-REQ-032 introduces Tenant Domains, aliases and Tenant Routing Context as mock/read-only SPA routing surfaces only
+- MEP-REQ-032 does not introduce DNS real, custom DNS, real subdomain routing, TLS certificate, proxy routing, edge routing, backend routing, separate tenant deploy, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated database, backend schema, tracking or BI
 - MEP-REQ-002 is documentation-only
 - no real multi-tenancy, tenant registry, domain routing, custom domain, subdomain, frontend route, database schema, API, GraphQL schema, persistence, tenant billing, tenant settlement, tenant revenue sharing, financial isolation, complete data isolation, tenant authentication, RBAC or tenant dashboard is introduced by Phase 00
 
