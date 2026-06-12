@@ -1,0 +1,1819 @@
+# Marketplace Architecture
+
+# Architectural Mission
+
+The Marketplace workspace is the official federated digital distribution infrastructure for the Axodus ecosystem.
+
+Marketplace is no longer limited to a mock-first NFT marketplace. The NFT marketplace remains the first commercial vertical and the foundational asset primitive, but the architecture now extends to ecosystem-wide distribution of:
+- digital assets
+- NFT collections
+- products
+- licenses
+- subscriptions
+- ACS capabilities
+- Academy courses
+- enterprise offers
+- tenant catalogs
+- white-label marketplaces
+- partner and affiliate offers
+- revenue sharing models
+- commercial intelligence
+
+Marketplace coordinates:
+- product access
+- service distribution
+- ACS infrastructure access
+- educational commerce
+- subscriptions
+- licensing
+- operational settlements
+- commercial discovery
+- tenant and partner distribution
+
+while remaining:
+- governance-compatible
+- treasury-aware
+- operationally transparent
+- modular
+- security-first
+
+Phase 00 is documentation-only. It does not implement runtime code, API surfaces, contracts, indexers, React components, persistence, GraphQL, billing execution, external integrations or on-chain execution.
+
+Phase 00 is closed as an architecture revision after documenting Marketplace Federation Domain, Marketplace-as-a-Service Domain, Distribution Network Domain, Revenue Sharing Domain and Marketplace Intelligence Domain. Phase 01 — NFT Marketplace Consolidation is the next implementation phase and remains limited to the foundational NFT marketplace vertical.
+
+---
+
+# Foundational NFT Vertical
+
+The NFT marketplace nucleus remains the first vertical of Marketplace.
+
+The following primitives remain foundational:
+- ERC721 assets
+- ERC1155 assets
+- EIP-2981 royalty metadata and royalty previews
+- fixed listings
+- bids
+- english auctions
+- dutch auctions
+- buy-now previews
+- seller profiles
+- collections
+- asset registry records
+
+Federation, tenants, distribution, revenue sharing and intelligence extend this nucleus. They do not replace it.
+
+---
+
+# Marketplace Topology
+
+Core marketplace layers:
+- product layer
+- subscription layer
+- ACS services layer
+- educational layer
+- licensing layer
+- billing layer
+- operational telemetry layer
+- federation layer
+- marketplace-as-a-service layer
+- distribution network layer
+- revenue sharing layer
+- intelligence layer
+
+---
+
+# Phase 00 Federated Architecture Domains
+
+Phase 00 introduces five architecture domains that prepare future implementation without activating runtime behavior.
+
+## Marketplace Federation Domain
+
+The Marketplace Federation Domain coordinates how internal Axodus assets and external assets are represented as governed, traceable and searchable distribution surfaces.
+
+Federation allows Marketplace to consume, represent, organize and display assets, collections, contracts and metadata that originate outside native Axodus infrastructure. Federation is a visibility, interoperability, discovery, import and progressive validation capability.
+
+Federation does not imply automatic custody, automatic liquidation, automatic execution, automatic validation, automatic trust, automatic settlement, wallet signature authorization, bridge execution or on-chain execution.
+
+Responsibilities:
+- define tenant and storefront boundaries
+- preserve DAO and governance context per storefront
+- model cross-tenant catalog visibility
+- prepare constitutional inheritance and restriction visibility
+- preserve the NFT vertical as a federation participant
+- represent external collections
+- represent external assets
+- reference external contracts
+- normalize external metadata
+- classify federation providers
+- expose origin, provider, validation status, provenance and trust boundaries for every federated asset
+
+Core concepts:
+
+### External Collections
+
+External Collections represent collections originated outside native Axodus infrastructure that may be visible, searchable, referencable, classified or displayed inside Axodus Marketplace.
+
+External Collections must expose:
+- origin
+- provider
+- source chain or source system
+- collection identifier
+- validation status
+- provenance
+- metadata quality
+- risk classification
+- trust boundaries
+
+### External Assets
+
+External Assets represent NFTs, certificates, licenses or digital assets originated from external contracts, external wallets, external collections or Federation Providers.
+
+External Assets may be discovered or imported for visibility, interoperability and progressive validation. They are not native Axodus assets unless a future approved process explicitly issues, controls, licenses or operates them inside Axodus infrastructure.
+
+External Assets must expose:
+- origin
+- provider
+- asset identifier
+- source collection or source contract
+- validation status
+- provenance
+- risk classification
+- authenticity signals
+- trust boundaries
+
+### External Contracts
+
+External Contracts represent ERC721, ERC1155 or other compatible contracts that may be indexed, imported, referenced, analyzed or displayed by Marketplace.
+
+External Contract visibility does not authorize contract writes, wallet signatures, execution, settlement, custody, bridge execution, treasury routing or automatic trust.
+
+External Contracts must expose:
+- contract address or external contract identifier
+- chain origin or source system
+- contract source classification
+- provider
+- validation status
+- compatibility notes
+- risk classification
+- trust boundaries
+
+### External Metadata
+
+External Metadata represents metadata obtained outside Axodus infrastructure, including images, attributes, descriptions, statistics, declared royalties, provenance, origin, validation state and risk information.
+
+External Metadata must be treated as untrusted until validation status and provenance are explicit. Metadata quality, source reliability, image or media origin, declared royalty source, contract source, chain origin and validation state are architecturally relevant.
+
+### Federation Providers
+
+Federation Providers represent external providers, connectors, data sources or integration systems responsible for discovery, import, enrichment, classification or validation of external assets and external collections.
+
+Federation Providers may include future external data systems, ecosystem partner systems, chain data sources, wallet discovery sources or collection discovery sources. Phase 00 does not implement real providers, SDKs, endpoints, HTTP calls, schemas, credentials or integrations.
+
+Federation Providers must expose:
+- provider identity
+- source type
+- origin scope
+- supported asset types
+- validation role
+- reliability classification
+- risk notes
+- trust boundaries
+
+Internal and external asset boundaries:
+- internal assets are originated, issued, controlled, licensed or operated inside Axodus infrastructure
+- external assets are originated outside Axodus infrastructure but may be visible or referencable through federation
+- federated assets are external or mixed-origin assets represented by Marketplace with explicit origin, provider, validation status, provenance and trust boundaries
+- external assets must not be displayed as native Axodus assets
+- external metadata must not be treated as authoritative by default
+- validation state must be visible before a federated asset is presented as validated
+
+External Asset Validation must account for:
+- origin
+- provider
+- validation status
+- provenance
+- risk classification
+- authenticity signals
+- metadata quality
+- contract source
+- chain origin
+- trust boundaries
+
+Boundaries:
+- no public storefront activation
+- no live tenant isolation enforcement
+- no cross-tenant settlement
+- no governance write execution
+- no external marketplace integration
+- no real federation provider integration
+- no connector implementation
+- no external HTTP calls
+- no indexer activation
+- no automatic custody
+- no automatic liquidation
+- no automatic execution
+- no automatic validation
+- no automatic trust
+- no on-chain execution
+
+## Marketplace-as-a-Service Domain
+
+The Marketplace-as-a-Service Domain prepares Marketplace to support multiple specialized commercial experiences over the same sovereign Axodus distribution infrastructure.
+
+The global Marketplace remains the ecosystem-level infrastructure for distribution, discovery, governance awareness, observability and treasury-compatible commercial boundaries. Tenant Marketplaces are configurable logical instances operating inside that infrastructure. A Tenant Marketplace is not necessarily a separate application.
+
+Core concepts:
+
+### Tenant Marketplace
+
+A Tenant Marketplace represents a logical marketplace instance operated by a tenant, community, partner, business unit, DAO, enterprise, ecosystem vertical, product, ACS initiative, Academy front or authorized commercial channel.
+
+Tenant Marketplaces may have their own catalog scope, curation rules, branding, theme, domain identity and exposure rules. They remain inside Axodus governance, security, observability, product policy, licensing policy and treasury boundaries.
+
+### White Label Marketplace
+
+A White Label Marketplace represents a tenant marketplace with its own brand, positioning, catalog and user-facing experience, sustained by Axodus infrastructure.
+
+White label does not mean sovereign independence outside Axodus rules. It does not bypass governance, treasury boundaries, observability, product restrictions, licensing restrictions, security policy or constitutional limits.
+
+### Marketplace Branding
+
+Marketplace Branding represents identity and presentation configuration, including:
+- marketplace name
+- logo
+- description
+- visual identity
+- positioning
+- institutional text
+- trust elements
+- commercial messaging
+- presentation configuration
+- images and media references
+
+Branding is tenant-scoped configuration. It is not a separate runtime, independent authority or permission to violate ecosystem policy.
+
+### Marketplace Domains
+
+Marketplace Domains represent future domain, subdomain, slug, alias and tenant routing concepts.
+
+Marketplace Domains may define how a tenant marketplace is addressed or discovered in a future implementation phase. MEP-REQ-002 does not implement real routing, DNS, custom domains, subdomains, web infrastructure or multi-tenant route handling.
+
+### Marketplace Themes
+
+Marketplace Themes represent visual experience configuration, including:
+- colors
+- typography
+- layout
+- visual style
+- interface density
+- navigation
+- section order
+- exposure preferences
+- tenant experience variations
+
+Themes must remain compatible with accessibility, ecosystem trust requirements, product policy and observability requirements.
+
+Catalog boundaries:
+
+### Global Catalog
+
+The Global Catalog represents the broad set of products, assets, collections, licenses, subscriptions and digital capabilities available in Axodus Marketplace infrastructure.
+
+### Tenant Catalog
+
+The Tenant Catalog represents the subset of products, assets, collections or capabilities exposed, enabled or configured inside a specific Tenant Marketplace.
+
+### Curated Catalog
+
+The Curated Catalog represents an editorial, commercial, community or strategic selection of items organized by a tenant, community, partner or authorized operation.
+
+### Federated Catalog
+
+The Federated Catalog represents assets, collections or products originated outside Axodus infrastructure but displayed or referenced through the Marketplace Federation Domain.
+
+Tenant isolation boundaries:
+- isolated tenant configuration
+- isolated or segmented catalog scope
+- isolated branding configuration
+- isolated domain, subdomain, slug or alias configuration
+- isolated theme configuration
+- tenant-scoped analytics visibility
+- tenant-scoped product exposure rules
+- tenant-scoped governance and restriction visibility
+
+Deferred tenant capabilities:
+- financial isolation
+- tenant billing
+- tenant settlement
+- tenant revenue sharing
+- tenant treasury routing
+- complete tenant data isolation
+- tenant authentication or RBAC
+- tenant dashboards
+- real domain routing
+- custom DNS or subdomain infrastructure
+
+Tenants cannot violate governance, permissions, product restrictions, licensing rules, security policy, observability requirements or treasury limits.
+
+Responsibilities:
+- define Tenant Marketplace boundaries
+- define white-label marketplace capability boundaries
+- define Marketplace Branding concepts
+- define Marketplace Domains concepts
+- define Marketplace Themes concepts
+- model tenant-scoped product catalogs
+- model Global Catalog, Tenant Catalog, Curated Catalog and Federated Catalog relationships
+- prepare configurable commercial policies
+- separate platform services from tenant authority
+- prepare operational dashboards and access packages
+- preserve the NFT vertical as a tenant-displayable foundation
+
+Boundaries:
+- no tenant provisioning runtime
+- no tenant registry implementation
+- no multi-tenancy implementation
+- no domain routing
+- no custom domain or subdomain implementation
+- no frontend route or component change
+- no database schema
+- no API or GraphQL schema
+- no tenant persistence
+- no production billing
+- no billing by tenant
+- no settlement by tenant
+- no revenue sharing by tenant
+- no financial isolation
+- no complete data isolation
+- no tenant authentication or RBAC
+- no tenant dashboard implementation
+- no external customer onboarding
+- no managed marketplace deployment
+- no hardcoded commercial policy
+
+## Distribution Network Domain
+
+The Distribution Network Domain prepares Marketplace to operate as a distributed commercial network for commercialization, discovery, curation and ecosystem expansion.
+
+Marketplace remains governance-aware, treasury-compatible, operationally transparent and modular. Distribution Network expands where products can be discovered and originated, but it does not create opaque commercial authority or invisible commercial flows.
+
+Core concepts:
+
+### Tenant
+
+A Tenant is a logical marketplace instance or isolated configuration inside Axodus infrastructure. Tenants can expose configured catalogs, branding, themes and commercial surfaces while remaining inside Axodus governance, observability, product policy, licensing policy and treasury boundaries.
+
+### Partner
+
+A Partner represents an organization, entity, community, company, DAO, institution or participant with a commercial, institutional, strategic or operational relationship with Axodus Marketplace.
+
+Partners may participate in distribution, curation, onboarding, ecosystem expansion or specialized commercial operations. Partner status does not grant authority to bypass governance, product policy, licensing restrictions, treasury boundaries, validation or observability.
+
+### Distributor
+
+A Distributor represents a participant, operator, channel or authorized entity that can distribute products, collections, licenses, subscriptions, digital assets, Academy products, ACS capabilities, enterprise offers or other Axodus ecosystem digital capabilities.
+
+Distributor activity must be traceable, auditable, observable and compatible with governance.
+
+### Agency
+
+An Agency represents an entity capable of operating distribution channels, campaigns, commercial onboarding, curation, client management, distribution for multiple clients, distribution for multiple communities or delegated commercial operations inside Axodus rules.
+
+Agency activity must preserve product restrictions, licensing rules, governance validation, operational responsibility and future attribution boundaries.
+
+### Affiliate
+
+An Affiliate represents an originator of traffic, leads, conversions, registrations, sales or commercial opportunities, normally tied to future invitation, link, campaign, referral or attribution mechanisms.
+
+Affiliate status does not activate real referral tracking, affiliate links, commissions, payouts, settlement, revenue sharing or payment rights in Phase 00.
+
+### Community Marketplace
+
+A Community Marketplace represents a marketplace associated with a community, vertical, DAO, creator group, project, specific network, educational initiative, ACS front, partner or distribution group.
+
+A Community Marketplace may operate as a Tenant Marketplace, Distribution Channel or Curated Catalog depending on configuration and governance.
+
+Distribution relationship model:
+- Tenant: logical marketplace instance or isolated configuration
+- Partner: commercial, institutional, strategic or operational relationship
+- Distributor: authorized participant or channel for distributing products or digital capabilities
+- Agency: delegated commercial operator for campaigns, onboarding, curation or multi-client distribution
+- Affiliate: originator of traffic, leads, referrals, conversions or sales for future attribution
+- Community Marketplace: community-linked marketplace that may act as tenant, channel or curated catalog
+
+Commercial distribution must preserve:
+- Commercial Origin
+- Distribution Channel
+- Distribution Eligibility
+- Traceability
+- Commercial Governance
+- product policy validation
+- licensing validation
+- governance validation
+- observability requirements
+- future attribution context
+
+Responsibilities:
+- model distribution channels for NFTs, ACS, Academy, enterprise offers and DAO services
+- prepare partner, affiliate and referral distribution concepts
+- separate discovery, offer routing and entitlement activation
+- define commercial catalog propagation boundaries
+- preserve auditability across distribution paths
+- preserve commercial origin for future Attribution Engine, Referral System, Partner Network, Revenue Sharing and Marketplace Intelligence
+- define distributor, partner, agency, affiliate and community marketplace boundaries
+- define commercial governance and distribution eligibility boundaries
+
+Future domain relationships:
+- Attribution Engine will use preserved Commercial Origin, Distribution Channel and traceability data
+- Referral System will use approved affiliate or referral relationships only after a future implementation phase
+- Partner Network will organize partner, distributor, agency and community marketplace relationships
+- Revenue Sharing Domain may consume attribution and eligibility outputs in future phases
+- Marketplace Intelligence Domain may consume distribution telemetry and commercial traceability in future phases
+
+Boundaries:
+- no affiliate payout execution
+- no partner integration
+- no external catalog sync
+- no real campaign routing
+- no entitlement mutation
+- no tracking implementation
+- no referral implementation
+- no commission engine
+- no partner dashboard
+- no affiliate link generation
+- no payment or payout execution
+- no commercial permission automation
+- no API or GraphQL schema
+- no database or persistence change
+- no frontend route or component change
+- no tracking events
+- no external integration
+- no settlement
+- no treasury routing
+- no revenue sharing execution
+
+## Revenue Sharing Domain
+
+The Revenue Sharing Domain prepares Marketplace to model future economic participation in sales, subscriptions, licenses, digital assets, Academy products, ACS capabilities, enterprise offers and distributed products.
+
+Revenue Sharing is a rules, traceability, auditability and visibility layer. It is not financial execution in Phase 00.
+
+Revenue Sharing relates to:
+- Attribution: identifies commercial origin or economic contribution
+- Commission: defines conceptual remuneration rules for authorized participants
+- Revenue Split: defines how future revenue may be divided among eligible participants
+- Billing: remains responsible for accounting, billing visibility, settlement visibility, reconciliation and future treasury integration
+- Treasury: remains the governed boundary for treasury-compatible movement and routing in future phases
+- Governance: validates whether rules, participants and product policies are allowed
+- Telemetry: provides audit trail, commercial traceability and operational visibility
+- Marketplace Intelligence: consumes revenue, attribution and performance visibility after approved implementation phases
+
+Core concepts:
+
+### Attribution Model
+
+Attribution Model represents how the commercial origin of a sale, subscription, license, conversion, lead, bid, purchase, renewal or transaction is identified.
+
+Attribution may involve:
+- global marketplace
+- Tenant Marketplace
+- referral
+- campaign
+- affiliate
+- partner
+- distributor
+- agency
+- community
+- Distribution Channel
+- collection
+- product
+- seller
+- creator
+- federated source
+
+Attribution Model depends on traceable Commercial Origin from Distribution Network. Attribution does not activate tracking events, commission calculation, settlement or payouts in Phase 00.
+
+### Commission Model
+
+Commission Model represents conceptual remuneration rules for authorized participants.
+
+Commission models may include:
+- fixed commission
+- percentage commission
+- product-based commission
+- channel-based commission
+- tenant-based commission
+- campaign-based commission
+- partner commission
+- affiliate commission
+- distributor commission
+- category-based commission
+
+Commission Model definitions are conceptual until an approved future implementation introduces calculation, review, activation and settlement boundaries.
+
+### Revenue Split Rules
+
+Revenue Split Rules represent how future revenue may be divided between eligible participants such as:
+- creator
+- seller
+- tenant
+- marketplace
+- distributor
+- affiliate
+- partner
+- agency
+- community
+- treasury
+- other authorized participants
+
+Revenue Split Rules are architectural rules in Phase 00. They do not execute payment, payout, settlement, treasury routing, smart contract splits, billing, definitive financial calculation or revenue sharing activation.
+
+### Tenant Participation
+
+Tenant Participation represents future economic participation of a tenant in the sale, distribution, curation, exposure, operation or support of a catalog, product, collection, subscription, license or offer inside a Tenant Marketplace.
+
+Tenant Participation must depend on attribution, eligibility, explicit rules, governance validation, billing visibility and treasury validation before any future activation.
+
+Revenue sharing prerequisites:
+- audit trail
+- traceable Commercial Origin
+- identified participants
+- explicit Commercial Rules
+- Distribution Eligibility
+- product policy validation
+- licensing validation
+- governance validation
+- Treasury Validation
+- Billing Visibility
+- Settlement Visibility
+- telemetry requirements
+- review before activation
+
+No revenue division may occur without audit trail, traceable commercial origin, identified participants, explicit rules and governance validation.
+
+Revenue Sharing must not create hidden financial flows, opaque commercial authority, treasury bypass, governance bypass, automatic liquidation or automatic settlement.
+
+Domain relationships:
+- Distribution Network Domain supplies participants, channels, Commercial Origin and Distribution Eligibility
+- Marketplace-as-a-Service Domain supplies tenants, tenant catalogs and Tenant Participation context
+- Billing supplies accounting, billing visibility, settlement visibility and future reconciliation boundaries
+- Treasury supplies governed future treasury routing boundaries
+- Marketplace Intelligence supplies visibility, analytics, audit support and performance analysis after approved implementation phases
+
+Responsibilities:
+- model revenue share participants
+- preserve EIP-2981 royalty compatibility
+- define split preview boundaries
+- separate allocation previews from payout execution
+- expose treasury-compatible accounting visibility
+- define Attribution Model boundaries
+- define Commission Model boundaries
+- define Revenue Split Rules boundaries
+- define Tenant Participation boundaries
+- require auditability, billing visibility, settlement visibility and treasury validation before activation
+
+Boundaries:
+- no payment settlement
+- no treasury movement
+- no royalty distribution execution
+- no partner payout execution
+- no tax or fiat reconciliation execution
+- no real billing
+- no Commission Engine
+- no split engine
+- no Revenue Dashboard
+- no smart contract split
+- no definitive financial calculation
+- no pricing model activation
+- no API or GraphQL schema
+- no database or persistence change
+- no frontend route or component change
+- no tracking events
+- no settlement
+- no treasury routing
+- no revenue sharing activation
+
+## Marketplace Intelligence Domain
+
+The Marketplace Intelligence Domain prepares Marketplace to transform future product, collection, tenant, channel, distribution, revenue, activity and telemetry data into commercial and operational intelligence.
+
+Marketplace Intelligence is a transversal analysis, commercial observability and operational intelligence layer. It is not a source of commercial authority, does not replace governance, does not replace audit, does not replace accounting, does not replace billing and does not replace product, licensing or treasury validation.
+
+Core concepts:
+
+### Commercial Analytics
+
+Commercial Analytics represents aggregated and operational marketplace metrics, including volume, future revenue visibility, conversion, activity, distribution, sales, channels, funnel behavior, commercial performance, Commercial Origin, commercial participation and overall distribution network health.
+
+Commercial Analytics must be interpretable, traceable, auditable and governance-compatible.
+
+### Tenant Analytics
+
+Tenant Analytics represents metrics for each Tenant Marketplace, including catalog activity, traffic, sales, conversion, curation, channels, tenant performance, distribution, commercial participation, product exposure, tenant activity and ecosystem contribution.
+
+Tenant Analytics must preserve tenant context without creating tenant authority outside Axodus governance, observability and treasury boundaries.
+
+### Product Analytics
+
+Product Analytics represents product metrics, including views, conversions, sales, subscriptions, licenses, renewals, future revenue visibility, retention, distribution, channel performance, tenant performance, Distribution Eligibility, commercial activity, lifecycle state, operational contribution and validation status.
+
+Product Analytics must not automatically alter product eligibility, governance status, licensing rules, billing, settlement, revenue sharing or Commercial Rules.
+
+### Collection Analytics
+
+Collection Analytics represents NFT collection or digital collection metrics, including volume, holders, activity, floor price, listings, bids, sales, transfers, ranking, validation, origin, provenance, metadata quality and performance across tenants or channels.
+
+Collection Analytics for federated or external collections must preserve origin, provider, validation status, metadata quality, risk and trust boundaries.
+
+Domain relationships:
+- Product Domain supplies product categories, eligibility, exposure, licensing, lifecycle state and performance context
+- Marketplace Federation Domain supplies external origin, provider, validation status, provenance, metadata quality, risk and trust boundaries
+- Marketplace-as-a-Service Domain supplies tenant context, Tenant Catalog, Marketplace Themes, Marketplace Domains, Marketplace Branding, curation and marketplace-specific exposure
+- Distribution Network Domain supplies Distribution Channels, partners, agencies, affiliates, Community Marketplaces and Commercial Origin
+- Revenue Sharing Domain supplies future Attribution Model, Tenant Participation, Commission Model and Revenue Split Rules visibility requirements
+- Billing Layer supplies future accounting, Billing Visibility, Settlement Visibility, charging, reconciliation and treasury compatibility data
+- Telemetry Layer supplies operational traceability, future events, metrics, logs and activity signals
+- Governance Integration supplies policy, restriction, approval, constitutional and review context
+
+Analytics principles:
+- metrics must preserve transparency
+- metrics must preserve auditability
+- metrics must preserve traceability
+- metrics must be governance-compatible
+- metrics should be interpretable and linked to data origin whenever possible
+- metrics, rankings and indicators must have documented criteria, explicit data origin and known limitations
+- analytics must support transparency, operational improvement, audit, performance visibility and strategic intelligence
+
+Marketplace Intelligence must not create opaque authority, undocumented automated decisions, unreviewable rankings, hidden product eligibility changes, hidden commercial policy changes or automated governance bypass.
+
+Responsibilities:
+- define intelligence read models
+- support catalog, tenant, seller and distribution analytics
+- prepare recommendation and ranking boundaries
+- expose telemetry without hidden commercial authority
+- separate insights from automated execution
+- define Commercial Analytics boundaries
+- define Tenant Analytics boundaries
+- define Product Analytics boundaries
+- define Collection Analytics boundaries
+- define Distribution Analytics boundaries
+- preserve Interpretability, Traceability, Auditability and Operational Intelligence boundaries
+
+Boundaries:
+- no automated pricing
+- no autonomous promotion
+- no hidden ranking authority
+- no external analytics export
+- no user profiling beyond approved future policy
+- no real tracking
+- no dashboards
+- no analytics events
+- no analytics schema
+- no analytics database
+- no telemetry pipeline
+- no BI integration
+- no sensitive data collection
+- no API or GraphQL schema
+- no database or persistence change
+- no frontend route or component change
+- no automatic ranking execution
+- no automated decision execution
+- no billing analytics runtime
+- no partner analytics runtime
+- no tenant dashboard runtime
+
+---
+
+# Official Distribution Scope
+
+Marketplace is the official Axodus infrastructure for:
+- distribution
+- commercialization
+- licensing
+- subscription access
+- commercial discovery
+- tenant catalog exposure
+- ecosystem capability packaging
+
+This scope includes NFTs and extends to ACS, Academy, enterprise, DAO and partner products. All future implementation must preserve governance awareness, treasury compatibility, operational transparency and modular boundaries.
+
+---
+
+# Product Layer
+
+The product layer coordinates:
+- ecosystem products
+- operational services
+- digital assets
+- infrastructure access
+- capability distribution
+
+Products must remain observable and accountable.
+
+---
+
+# Subscription Layer
+
+Subscriptions coordinate:
+- recurring access
+- operational plans
+- enterprise access
+- premium services
+- ecosystem memberships
+
+Subscription systems must expose accounting visibility.
+
+---
+
+# ACS Services Layer
+
+ACS service distribution includes:
+- MCP access
+- orchestration systems
+- workflow systems
+- AI agents
+- compute access
+
+ACS systems remain bounded and governance-aware.
+
+---
+
+# Educational Layer
+
+Educational commerce coordinates:
+- course access
+- certification access
+- governance education
+- specialization tracks
+- Academy subscriptions
+
+Educational systems remain capability-oriented.
+
+---
+
+# Licensing Layer
+
+Licensing coordinates:
+- enterprise access
+- DAO access
+- ACS provisioning rights
+- operational usage rights
+
+Licensing systems must remain transparent and auditable.
+
+---
+
+# Billing Layer
+
+Billing coordinates:
+- settlements
+- subscription accounting
+- ACS usage accounting
+- operational payments
+- treasury integration
+
+Billing systems must expose telemetry and accounting consistency.
+
+---
+
+# Telemetry Layer
+
+Telemetry coordinates:
+- commerce visibility
+- operational analytics
+- subscription telemetry
+- ACS usage telemetry
+- billing telemetry
+
+Telemetry is mandatory infrastructure.
+
+---
+
+# Backend Architecture
+
+Backend responsibilities:
+- product aggregation
+- subscription coordination
+- billing aggregation
+- operational telemetry
+- ACS service tracking
+
+Backends must not become hidden commercial authorities.
+
+---
+
+# Frontend Architecture
+
+Frontend responsibilities:
+- marketplace visibility
+- subscription management
+- product discovery
+- ACS service access
+- billing visibility
+
+Business logic should remain outside frontend state whenever possible.
+
+---
+
+# Historical Runtime Notes Boundary
+
+The sections below preserve previous sprint/runtime architecture notes for continuity. They do not change the Phase 00 closure status and do not approve new runtime, API, schema, contract, indexer, connector, dashboard, billing, settlement, tracking, tenant routing, wallet signature, bridge or on-chain execution.
+
+## Phase 1 Web App Architecture
+
+The MVP web app is React + Vite and mock-first.
+
+The Marketplace web module lives under `src/modules/marketplace` and owns:
+- product, seller, license and purchase types
+- marketplace service/query helpers
+- mock contract, royalty, auction, storage and bridge adapters
+- marketplace pages and components
+
+Centralized mock data lives in `src/data/mock/marketplace.mock.js`.
+
+The frontend must keep NFT marketplace primitives explicit:
+- ERC721/1155
+- EIP-2981 royalties
+- fixed listings
+- english/dutch auctions
+- bids
+- buy-now
+- item detail pages
+- create/sell adapter boundaries
+
+No Phase 1 UI flow may execute live payments, wallet signatures, contract writes, bridge transfers or treasury routing.
+
+## Phase 1 Delivery & Entitlement Runtime
+
+Sprint 04 adds mock-first delivery infrastructure under `apps/web/src/modules/marketplace/services/deliveryRuntime.ts`.
+
+Delivery runtime prepares:
+- downloadable assets
+- protected assets
+- streamed assets
+- ACS packages
+- educational assets
+- enterprise bundles
+
+Greenfield delivery remains adapter-shaped through `StorageAccessService` and `GreenfieldAccessAdapter`.
+
+Signed URL previews expose:
+- lifecycle state
+- authorization state
+- expiration preview
+- revocation preview
+- blocked delivery state
+
+Entitlement enforcement prepares boundaries for:
+- ownership validation
+- subscription-gated delivery
+- license-gated delivery
+- DAO-gated delivery
+- governance-restricted delivery
+
+Delivery telemetry exposes:
+- entitlement checks
+- access attempts
+- revocations
+- signed URL preview issuance
+- blocked delivery events
+
+No production Greenfield call, production signed URL, live ownership validation, real entitlement enforcement, file download, stream delivery, ACS provisioning or access revocation execution is implemented in Sprint 04.
+
+## Phase 1 Runtime Hardening
+
+Sprint 05 hardens the web runtime before any real settlement phase.
+
+Runtime hardening includes:
+- route-level code splitting through `React.lazy` and `Suspense`
+- isolated dashboard and product detail chunks
+- wallet runtime isolation from the global layout chunk
+- QueryClient defaults for bounded retry and stable refetch behavior
+- route loading fallback states
+- in-memory Marketplace runtime telemetry
+- lifecycle tracing
+- adapter tracing
+- route and runtime error instrumentation
+- dialog, badge, table and form accessibility improvements
+- empty states for product discovery and governance review queues
+
+The production build must avoid large chunk warnings where practical. Sprint 05 reduces the initial web bundle by splitting Marketplace pages and services into lazy chunks.
+
+Observability remains preview-only. No external telemetry export, settlement monitoring, wallet execution, contract tracing, production adapter invocation or live Greenfield tracing is enabled.
+
+## Sprint 06 API Runtime & Persistence Layer
+
+Sprint 06 introduces a backend-owned Marketplace runtime while preserving mock-first execution.
+
+The API module lives under `apps/api/src/modules/marketplace` and owns:
+- HTTP controllers for Marketplace runtime routes
+- service orchestration and validation boundaries
+- repository abstractions for products, sellers, tenants, licenses, purchases, subscriptions, billing previews, governance validations, draft listings, delivery previews and runtime events
+- a file-backed local persistence adapter at `.runtime/marketplace-store.json`
+- deterministic seed data shaped after the web Marketplace mock model
+
+The web app now consumes `apps/web/src/services/apiClient.ts` for Marketplace hydration and preview mutations. If the API runtime is unavailable, the client falls back to the centralized frontend mock services.
+
+Persisted Sprint 06 previews include:
+- draft listings
+- purchase previews
+- billing previews
+- subscription previews
+- delivery previews
+- governance validation requests
+- runtime events
+
+Every persisted runtime record remains explicitly preview-only:
+- no settlement
+- no wallet execution
+- no blockchain writes
+- no contract write
+- no production Greenfield delivery
+- no treasury movement
+
+The file repository is a development persistence boundary, not a production database strategy. Future phases may replace it with SQLite/Postgres/indexer adapters behind the same repository contract.
+
+## Sprint 07 Registry Infrastructure
+
+Sprint 07 establishes canonical registry read models for products, sellers, tenants and storefronts.
+
+Registry infrastructure lives in `apps/api/src/modules/marketplace/services/registryReadModels.ts` and derives:
+- `ProductRegistryRecord`
+- `SellerRegistryRecord`
+- `TenantRegistryRecord`
+- `StorefrontViewEntity`
+
+The registry layer normalizes:
+- canonical product IDs
+- seller/publisher identity
+- DAO/tenant ownership
+- tenant-scoped product relationships
+- storefront ownership
+- governance standing
+- constitutional metadata
+- federation tier
+- lifecycle, archival and deprecation state
+- NFT metadata compatibility
+- royalty metadata
+- delivery metadata
+
+Storefront routes are preview-only and read-only. They expose DAO and seller storefront readiness without enabling public activation, settlement, minting, publishing or governance execution.
+
+Frontend storefront infrastructure is available at `/marketplace/tenants/:tenantId` and consumes the API registry/storefront read models through `apiClient`.
+
+## Sprint 08 License, Entitlement & Subscription Runtime
+
+Sprint 08 moves entitlement visibility into backend-backed lifecycle state.
+
+The API now persists:
+- issued license runtime records
+- license lifecycle transitions
+- subscription lifecycle records
+- renewal previews
+- cancellation previews
+- entitlement aggregation snapshots
+- access enforcement readiness metadata
+
+Entitlement aggregation lives in `apps/api/src/modules/marketplace/services/entitlementRuntime.ts`.
+
+The aggregation runtime resolves:
+- owned products
+- active licenses
+- active subscriptions
+- governance restrictions
+- tenant restrictions
+- delivery permissions
+- future NFT ownership merge readiness
+- future wallet ownership merge readiness
+
+Access enforcement remains preparation only. The runtime exposes license-gated, subscription-gated, DAO-restricted, governance-restricted and entitlement-based delivery boundaries with `realBlockingEnabled: false`.
+
+Frontend user access visibility is available at `/marketplace/entitlements`.
+
+## Sprint 09 Billing, Invoice & Treasury Preview Runtime
+
+Sprint 09 establishes backend-backed accounting preview infrastructure.
+
+The API now persists:
+- invoice previews
+- invoice line items
+- invoice lifecycle state
+- royalty preview accounting
+- platform fee previews
+- ecosystem fee previews
+- treasury split previews
+- creator split previews
+- accounting telemetry
+- reconciliation preview state
+
+Accounting runtime lives in `apps/api/src/modules/marketplace/services/accountingRuntime.ts`.
+
+Invoice state supports:
+- draft
+- preview
+- pending
+- mock_paid
+- failed
+- cancelled
+- refunded_preview
+
+All accounting remains non-settlement:
+- no payment execution
+- no treasury movement
+- no royalty distribution
+- no tax calculation execution
+- no external reconciliation
+
+Frontend billing visibility is available at `/marketplace/orders`.
+
+## Sprint 10 Audit, Events & Reconciliation Readiness
+
+Sprint 10 makes Marketplace operationally traceable and reconciliation-ready.
+
+The API now persists:
+- audit logs
+- replay-safe runtime events
+- event categories
+- reconciliation preview snapshots
+- indexer readiness snapshots
+
+Audit records include:
+- actor
+- entity
+- action
+- timestamp
+- tenant
+- governance context
+- runtime metadata
+- correlation id
+
+Reconciliation snapshots prepare future:
+- blockchain reads
+- ownership verification
+- treasury verification
+- settlement verification
+- license verification
+
+Indexer snapshots prepare future:
+- entity sync counts
+- contract ingestion readiness
+- runtime snapshot metadata
+- ownership merge readiness
+- NFT event ingestion readiness
+
+All reconciliation and indexer flows remain preview-only. No chain read, queue publish, treasury verification, ownership verification or live ingestion is enabled.
+
+Frontend operational traceability is available at `/marketplace/audit`.
+
+## Sprint 11 Governance Runtime Authority
+
+Sprint 11 makes governance authority first-class runtime data for Marketplace.
+
+The API now hydrates a read-only governance authority snapshot for:
+- products
+- sellers
+- tenants/DAOs
+
+Authority records include:
+- constitutional standing
+- governance status
+- federation tier
+- warnings
+- sanctions
+- operational approval
+- restriction state
+- emergency state
+- authority layers
+- read-only execution metadata
+
+The authority boundary is implemented by `GovernanceRuntimeAuthorityAdapter`. It currently derives a local Governance-compatible read model and can be pointed at a future Governance runtime API through `GOVERNANCE_RUNTIME_URL`.
+
+Endpoints:
+- `GET /api/marketplace/governance-authority`
+- `GET /api/marketplace/governance-authority/:entityId`
+
+Frontend governance authority panels are visible in:
+- product detail
+- seller profile
+- tenant storefront
+- entitlement dashboard
+- billing dashboard
+
+This layer is strictly read-only:
+- no governance write execution
+- no sanctions mutation
+- no approval mutation
+- no emergency action execution
+- no Marketplace bypass of Governance authority
+
+## Sprint 12 Governance Enforcement Boundaries
+
+Sprint 12 introduces runtime governance enforcement boundaries without destructive enforcement.
+
+The API now derives a governance enforcement snapshot from Governance authority for:
+- product visibility behavior
+- seller storefront behavior
+- tenant/DAO storefront behavior
+- commerce preview allowance
+- bid preview allowance
+- listing preview allowance
+- entitlement invalidation previews
+- subscription restriction previews
+- license restriction previews
+- governance override visibility
+- review queue routing
+
+Endpoints:
+- `GET /api/marketplace/governance-enforcement`
+- `GET /api/marketplace/governance-enforcement/:entityId`
+
+Enforcement records expose:
+- effective visibility state
+- public explorer visibility
+- detail page visibility
+- storefront visibility
+- purchase/bid/listing preview allowance
+- entitlement impact preview
+- review queue metadata
+- reason codes
+- hard blocking status
+- destructive action status
+
+Current mode remains preview-only:
+- no product deletion
+- no entitlement revocation
+- no subscription cancellation
+- no license suspension execution
+- no seller or tenant freeze execution
+- no live Governance mutation
+
+## Sprint 13 DAO Federation Runtime
+
+Sprint 13 makes Marketplace a DAO federation runtime instead of only a set of isolated storefronts.
+
+The API now derives a DAO federation snapshot from:
+- tenant registry
+- seller registry
+- product registry
+- governance authority
+- governance enforcement
+- billing previews/invoices
+- license runtime
+- subscription runtime
+- entitlement snapshots
+
+Endpoints:
+- `GET /api/marketplace/dao-federation`
+- `GET /api/marketplace/dao-federation/tenants/:tenantId`
+
+Federation runtime exposes:
+- DAO storefront activation state
+- storefront operational status
+- storefront governance visibility
+- DAO-owned product IDs
+- tenant-scoped products
+- tenant-scoped billing
+- tenant-scoped entitlements
+- tenant-scoped governance records
+- constitutional inheritance records
+- inherited restrictions
+- inherited visibility rules
+- federation health metrics
+- tenant and storefront telemetry
+
+Current mode remains preview-only:
+- no public storefront activation
+- no cross-tenant settlement
+- no live tenant isolation enforcement
+- no constitutional write execution
+- no destructive freeze of tenant operations
+
+## Sprint 14 Governance Workflow Runtime
+
+Sprint 14 adds operational governance workflow infrastructure.
+
+The API now exposes:
+- review queues for products, sellers, storefronts, entitlements and billing
+- approval lifecycle state
+- constitutional reason codes
+- moderation runtime metrics
+- persisted governance workflow actions
+- governance workflow audit records
+
+Endpoints:
+- `GET /api/marketplace/governance-workflow`
+- `POST /api/marketplace/governance-workflow/actions`
+
+Approval lifecycle states:
+- pending_approval
+- approved
+- rejected
+- restricted
+- escalated
+- emergency_review
+
+Constitutional reason code categories:
+- warning
+- sanction
+- restriction
+- escalation
+
+Workflow actions are persisted as moderation/audit records only. They do not execute Governance writes, sanctions, settlements, entitlement revocations, product removals or tenant freezes.
+
+## Sprint 15 Governance Observability & Emergency Controls
+
+Sprint 15 adds governance emergency runtime and operator observability.
+
+The API now exposes:
+- emergency restriction controls
+- emergency freeze controls
+- emergency suspension controls
+- emergency visibility controls
+- governance action telemetry
+- restriction telemetry
+- moderation telemetry
+- emergency event telemetry
+- operator console readiness
+
+Endpoint:
+- `GET /api/marketplace/governance-observability`
+
+The operator console reports:
+- governance visibility
+- moderation visibility
+- restriction visibility
+- federation visibility
+- federation health
+- emergency controls
+- telemetry counters and records
+
+Emergency controls are preview-only. They do not execute live Governance writes, product removals, seller/tenant freezes, license suspensions, entitlement revocations or settlement actions.
+
+## Sprint 16 Reown/AppKit Readonly Wallet Runtime
+
+Sprint 16 replaces the Marketplace wallet mock with a real readonly wallet runtime.
+
+The web runtime now owns:
+- Reown/AppKit provider discovery through an isolated adapter boundary
+- EIP-1193 browser provider fallback
+- wallet session hydration with `eth_accounts`
+- account connection with `eth_requestAccounts`
+- chain hydration with `eth_chainId`
+- chain switching with `wallet_switchEthereumChain`
+- disconnect handling
+- local wallet session persistence
+- provider event handling for account, chain and disconnect changes
+
+Wallet visibility exposes:
+- connected and disconnected state
+- active account
+- active chain
+- supported chain state
+- restricted or unsupported chain state
+- provider source
+- readonly execution flags
+
+This layer is strictly readonly for Marketplace commerce:
+- no transaction execution
+- no contract write
+- no wallet signature request
+- no NFT transfer
+- no settlement
+- no treasury movement
+
+If a Reown/AppKit package/runtime is available, Marketplace uses its wallet provider. If not, Marketplace falls back to the injected EIP-1193 wallet provider while preserving the same readonly state contract.
+
+## Sprint 17 Readonly NFT Ownership Runtime
+
+Sprint 17 adds readonly NFT ownership verification on top of the wallet runtime.
+
+The web runtime now supports:
+- ERC721 `ownerOf` reads through `eth_call`
+- ERC1155 `balanceOf` reads through `eth_call`
+- governance NFT classification
+- license/access NFT classification
+- disconnected wallet visibility
+- unsupported or restricted chain visibility
+- ownership mismatch visibility
+- unreadable mock/offchain contract visibility
+
+Ownership reads are implemented under `apps/web/src/modules/marketplace/services/nftOwnershipRuntime.ts`.
+
+Product detail pages expose ownership state through a dedicated NFT ownership panel. The panel reports read method, wallet, chain, contract, token, owner/balance when available and explicit no-write labels.
+
+Current boundaries:
+- no mint
+- no transfer
+- no approval
+- no wallet signature
+- no contract write
+- no settlement
+- no entitlement mutation
+
+## Sprint 18 Readonly Listing Runtime
+
+Sprint 18 adds live-read listing hydration boundaries for Marketplace contracts.
+
+The web runtime now supports:
+- fixed listing readonly state hydration
+- english auction readonly state hydration
+- dutch auction readonly state hydration
+- bid count and highest bid hydration
+- expiration state hydration
+- EIP-2981 `royaltyInfo` readonly hydration
+- marketplace contract read adapter boundaries
+- auction contract read adapter boundaries
+- royalty/NFT contract read adapter boundaries
+
+Listing runtime lives in `apps/web/src/modules/marketplace/services/listingRuntime.ts` and is surfaced on product detail pages through a dedicated listing runtime panel.
+
+The current model requires production-shaped contract metadata before live reads execute:
+- `marketplaceContractAddress`
+- `listingId`
+- optional `auctionContractAddress`
+- optional `royaltyContractAddress`
+- numeric `tokenId` for EIP-2981 reads
+
+Mock products without those fields remain visible as readiness-only.
+
+Current boundaries:
+- no buy execution
+- no bid placement
+- no auction settlement
+- no listing cancellation
+- no contract write
+- no wallet signature
+- no treasury movement
+
+## Sprint 19 Signature Preparation Runtime
+
+Sprint 19 adds safe transaction/signature preparation infrastructure without enabling signing or sending.
+
+The web runtime now supports:
+- transaction payload preview
+- calldata preview for buy-now, bid and create-listing intents
+- optional gas estimation preview through `eth_estimateGas`
+- contract visibility
+- wallet and chain visibility
+- permission visibility
+- risk and warning visibility
+- confirmation preview UI
+
+Signature intent runtime lives in `apps/web/src/modules/marketplace/services/signatureRuntime.ts` and is surfaced through a product detail signature intent panel.
+
+Current boundaries:
+- no `eth_sendTransaction`
+- no `personal_sign`
+- no `eth_signTypedData`
+- no wallet signature request
+- no transaction submission
+- no contract write
+- no settlement
+- no treasury movement
+
+## Sprint 20 Wallet Security Hardening
+
+Sprint 20 adds wallet and ownership security awareness on top of readonly wallet, ownership, listing and signature runtimes.
+
+The web runtime now supports:
+- chain mismatch protection visibility
+- restricted/unsupported chain protection visibility
+- suspicious or malformed asset metadata warnings
+- symbolic mock contract warnings
+- invalid NFT runtime visibility
+- readonly `isApprovedForAll` approval visibility
+- dangerous operator permission warnings
+- fake ownership suspicion from ownership mismatch state
+- stale ownership visibility when ownership cannot be verified
+- permission visibility for purchase/bid previews
+
+Wallet security runtime lives in `apps/web/src/modules/marketplace/services/walletSecurityRuntime.ts` and is surfaced on product detail pages through a dedicated wallet security panel.
+
+Current boundaries:
+- no approval revocation
+- no transaction blocking execution
+- no ownership mutation
+- no wallet signature request
+- no transaction submission
+- no contract write
+
+## Sprint 21 Marketplace Indexer Runtime
+
+Sprint 21 adds backend-owned Marketplace chain ingestion runtime.
+
+The API now supports persistent ingestion for:
+- NFT events
+- listing events
+- auction events
+- bid events
+- ownership events
+
+The runtime persists:
+- chain ingestion events
+- chain snapshots
+- ownership snapshots
+- listing snapshots
+- aggregate Marketplace indexer runtime snapshots
+
+Endpoints:
+- `POST /api/marketplace/indexer/events`
+- `GET /api/marketplace/indexer/events`
+- `GET /api/marketplace/indexer/runtime`
+- `GET /api/marketplace/indexer/chain-snapshots`
+- `GET /api/marketplace/indexer/ownership-snapshots`
+- `GET /api/marketplace/indexer/listing-snapshots`
+
+Ingestion records are replay-safe and deduplicated by chain, transaction hash, log index and event kind.
+
+Current boundaries:
+- no live node subscription
+- no production queue
+- no contract write
+- no settlement reconciliation
+- no treasury execution
+- no ownership enforcement mutation
+
+## Sprint 22 Ownership Reconciliation Runtime
+
+Sprint 22 adds backend-owned ownership reconciliation over persisted indexer snapshots.
+
+The API now supports:
+- ownership verification against runtime holders
+- stale ownership detection by block lag
+- runtime consistency checks across ownership snapshots, purchases and license runtime
+- mismatch visibility
+- missing snapshot visibility
+- invalid asset visibility
+
+Endpoints:
+- `POST /api/marketplace/reconciliation/ownership`
+- `GET /api/marketplace/reconciliation/ownership`
+
+Ownership reconciliation compares NFT-bound products against the latest ownership snapshots and expected holders derived from purchase/license runtime. It persists reconciliation snapshots and records audit/runtime events.
+
+Current boundaries:
+- no live chain reads
+- no ownership mutation
+- no entitlement enforcement mutation
+- no settlement reconciliation execution
+- no wallet execution
+
+## Sprint 23 Billing/Treasury Reconciliation Runtime
+
+Sprint 23 adds backend-owned treasury and accounting reconciliation previews over persisted invoice runtime.
+
+The API now supports:
+- royalty reconciliation against product royalty metadata
+- treasury split verification
+- platform fee consistency checks
+- ecosystem fee consistency checks
+- creator split verification
+- invoice accounting consistency visibility
+- mismatch reason codes and aggregate metrics
+
+Endpoints:
+- `POST /api/marketplace/reconciliation/treasury`
+- `GET /api/marketplace/reconciliation/treasury`
+
+Treasury reconciliation compares persisted invoice previews with deterministic product pricing, EIP-2981 royalty metadata and Axodus fee policy previews. It persists reconciliation snapshots and records audit/runtime events categorized as treasury preview.
+
+Current boundaries:
+- no real treasury movement
+- no royalty distribution
+- no payment settlement
+- no external accounting reconciliation
+- no contract write
+- no wallet execution
+
+## Sprint 24 Event Streaming Runtime
+
+Sprint 24 adds realtime Marketplace infrastructure over persisted runtime state.
+
+The API now supports:
+- realtime snapshot aggregation
+- Server-Sent Events preview streaming
+- readonly WebSocket handshake
+- live listing update aggregation
+- live bid update aggregation
+- governance update aggregation
+- telemetry update aggregation
+
+Endpoints:
+- `GET /api/marketplace/live`
+- `GET /api/marketplace/live/stream`
+- `GET /api/marketplace/live/ws`
+
+Realtime runtime is derived from persisted Marketplace events, indexer ingestion previews, governance events and telemetry records. It records a realtime snapshot event for auditability.
+
+Current boundaries:
+- no external broker
+- no production queue
+- no live chain node subscription
+- no settlement execution
+- no contract write
+- no wallet execution
+
+## Sprint 25 Operational Resilience Runtime
+
+Sprint 25 adds operational resilience read models over persisted Marketplace runtime state.
+
+The API now supports:
+- retry queue previews
+- reconciliation retry readiness
+- treasury retry readiness
+- realtime stream retry readiness
+- degraded mode visibility
+- failover readiness flags
+- stale snapshot recovery previews
+
+Endpoint:
+- `GET /api/marketplace/resilience`
+
+Operational resilience derives retry queues from ownership reconciliation, treasury reconciliation, realtime snapshots and indexer snapshots. It exposes degraded/recovery modes and recovery recommendations while keeping all retry and failover execution disabled.
+
+Current boundaries:
+- no automatic retry execution
+- no production failover switch
+- no external queue publish
+- no live indexer recovery
+- no settlement execution
+- no contract write
+- no wallet execution
+
+## Sprint 26 Greenfield Authentication Runtime
+
+Sprint 26 starts Block D by adding Greenfield authentication runtime boundaries over Marketplace delivery and entitlement state.
+
+The API now supports:
+- bucket access runtime
+- auth runtime records
+- holder access verification
+- license and subscription entitlement checks
+- NFT ownership snapshot readiness
+- signed URL preview lifecycle under auth checks
+
+Endpoints:
+- `POST /api/marketplace/greenfield/auth`
+- `GET /api/marketplace/greenfield/auth`
+
+Greenfield auth derives access from product bucket metadata, entitlement snapshots, active license/subscription runtime and persisted ownership snapshots. It records auth events as delivery telemetry.
+
+Current boundaries:
+- no production Greenfield call
+- no production signed URL issuance
+- no bucket policy mutation
+- no live ownership enforcement
+- no asset movement
+- no contract write
+- no wallet execution
+
+## Sprint 27 Signed URL Runtime
+
+Sprint 27 adds backend-real signed URL issuance over the Greenfield auth runtime.
+
+The API now supports:
+- HMAC-SHA256 signed URL generation
+- TTL and expiration visibility
+- revocation visibility
+- signed URL runtime snapshots
+- signed URL delivery telemetry
+
+Endpoints:
+- `POST /api/marketplace/greenfield/signed-urls`
+- `POST /api/marketplace/greenfield/signed-urls/revoke`
+- `GET /api/marketplace/greenfield/signed-urls`
+
+Signed URL issuance requires Greenfield auth preview verification. The signer uses `MARKETPLACE_SIGNED_URL_SECRET` when configured and falls back to an ephemeral runtime key for local mock-persistent operation.
+
+Current boundaries:
+- no production Greenfield call
+- no bucket policy mutation
+- no production CDN/object-store integration
+- no asset movement
+- no contract write
+- no wallet execution
+
+## Sprint 28 Entitlement Enforcement Runtime
+
+Sprint 28 makes Marketplace entitlement enforcement operational for backend access decisions.
+
+The API now supports:
+- license access validation
+- subscription access validation
+- DAO/tenant access validation
+- governance review/blocking decisions
+- delivery and signed URL allow/deny flags
+- enforcement snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/entitlements/enforce`
+- `GET /api/marketplace/entitlements/enforcement`
+
+Greenfield auth and signed URL issuance now consume entitlement enforcement decisions before exposing access or issuing signed URLs.
+
+Current boundaries:
+- no payment execution
+- no treasury movement
+- no contract write
+- no wallet execution
+- no production object-store asset movement
+
+## Sprint 29 Secure Asset Delivery Runtime
+
+Sprint 29 adds secure delivery preparation for protected Marketplace assets.
+
+The API now supports:
+- encrypted download manifests
+- secure stream manifests
+- ACS package delivery manifests
+- entitlement-gated delivery preparation
+- delivery snapshot metrics
+- secure delivery telemetry
+
+Endpoints:
+- `POST /api/marketplace/delivery/secure`
+- `GET /api/marketplace/delivery/secure`
+
+Secure delivery depends on entitlement enforcement decisions. Prepared delivery records include AES-256-GCM metadata, HMAC-wrapped access tokens, HLS preview stream tokens, and ACS package manifests.
+
+Current boundaries:
+- no file transfer
+- no live media streaming
+- no ACS runtime provisioning
+- no production object-store call
+- no asset movement
+- no contract write
+- no wallet execution
+
+## Sprint 30 Delivery Observability Runtime
+
+Sprint 30 makes secure delivery observable and auditable.
+
+The API now supports:
+- download telemetry
+- secure stream telemetry
+- ACS package access telemetry
+- entitlement traceability
+- delivery audit records
+- access analytics
+
+Endpoints:
+- `POST /api/marketplace/delivery/telemetry`
+- `GET /api/marketplace/delivery/observability`
+
+Delivery observability correlates secure delivery records, entitlement enforcement ids, holder/product context, delivery mode, telemetry outcome and audit metadata.
+
+Current boundaries:
+- no file transfer
+- no live media streaming
+- no ACS runtime provisioning
+- no production object-store reads
+- no settlement execution
+- no contract write
+- no wallet execution
+
+## Sprint 31 Settlement Runtime Activation
+
+Sprint 31 starts Block E by enabling controlled Marketplace-internal settlement runtime.
+
+The API now supports:
+- controlled purchase execution
+- settlement confirmation records
+- transaction lifecycle records
+- purchase and license issuance from settlement runtime
+- settlement snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/settlements/execute`
+- `GET /api/marketplace/settlements`
+
+Settlement execution requires `controlledRollout: true`. The runtime creates Marketplace-owned purchase and license records and confirms an internal transaction lifecycle.
+
+Current boundaries:
+- no wallet transaction
+- no blockchain write
+- no external payment gateway
+- no treasury movement
+- no fiat checkout
+- no contract settlement
+
+## Sprint 32 Royalty Distribution Runtime
+
+Sprint 32 makes royalty distribution operational inside Marketplace accounting after controlled settlement confirmation.
+
+The API now supports:
+- EIP-2981 royalty allocation
+- creator payout allocation
+- platform fee allocation
+- ecosystem fee allocation
+- treasury split allocation
+- royalty distribution snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/royalties/distributions`
+- `GET /api/marketplace/royalties/distributions`
+
+Royalty distribution requires `controlledRollout: true` and a confirmed Marketplace settlement. The runtime allocates internal accounting records from product royalty metadata and Axodus fee policy.
+
+Current boundaries:
+- no external creator payout
+- no treasury movement
+- no contract royalty settlement
+- no wallet transaction
+- no blockchain write
+
+## Sprint 33 Auction & Bid Runtime
+
+Sprint 33 activates operational auction runtime inside the Marketplace API.
+
+The API now supports:
+- live bid placement
+- accepted and rejected bid records
+- controlled auction settlement
+- auction expiration execution
+- auction runtime snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/auctions/bids`
+- `POST /api/marketplace/auctions/settle`
+- `POST /api/marketplace/auctions/expire`
+- `GET /api/marketplace/auctions`
+
+Auction settlement and expiration require `controlledRollout: true`. Settlement can issue Marketplace-owned purchase and license records from the winning bid.
+
+Current boundaries:
+- no contract auction settlement
+- no wallet transaction
+- no blockchain write
+- no external treasury movement
+
+## Sprint 34 Treasury Execution Runtime
+
+Sprint 34 activates governance-aware operational treasury routing inside the Marketplace API.
+
+The API now supports:
+- DAO treasury routing
+- ecosystem fee routing
+- platform fee routing
+- creator royalty routing
+- treasury execution reconciliation
+- governance-aware execution gates
+
+Endpoints:
+- `POST /api/marketplace/treasury/execute`
+- `GET /api/marketplace/treasury/executions`
+
+Treasury execution requires `controlledRollout: true` and an allocated royalty distribution. The runtime executes Marketplace-internal routing records and reconciliation only.
+
+Current boundaries:
+- no external treasury movement
+- no wallet transaction
+- no blockchain write
+
+## Sprint 35 Crosschain & LayerZero Runtime
+
+Sprint 35 activates crosschain Marketplace infrastructure inside the API runtime.
+
+The API now supports:
+- LayerZero message preparation
+- bridge runtime execution
+- crosschain ownership synchronization
+- crosschain inventory synchronization
+- crosschain runtime snapshot metrics
+
+Endpoints:
+- `POST /api/marketplace/crosschain/messages`
+- `POST /api/marketplace/crosschain/bridge`
+- `POST /api/marketplace/crosschain/sync`
+- `GET /api/marketplace/crosschain`
+
+Bridge execution requires `controlledRollout: true` and a prepared crosschain message. The runtime persists bridge and inventory state only.
+
+Current boundaries:
+- no production LayerZero message
+- no external bridge execution
+- no wallet transaction
+- no blockchain write
+
+---
+
+# Governance Integration
+
+Marketplace remains subordinate to governance sovereignty.
+
+Governance may:
+- restrict products
+- restrict subscriptions
+- restrict operational access
+- restrict licensing
+
+Marketplace systems must never bypass governance authority.
+
+---
+
+# Architecture Constraints
+
+- no opaque settlements
+- no hidden subscriptions
+- no governance bypass
+- no centralized operational authority
+- no hidden billing systems

@@ -1,0 +1,1716 @@
+export const marketplaceSellers = [
+  {
+    id: "seller-axodus-core",
+    name: "Axodus Nucleus",
+    handle: "@axodus-core",
+    avatar: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
+    mockAccount: "0xMockSellerAxodusCore",
+    type: "Internal Axodus Nucleus",
+    verificationStatus: "internal",
+    verificationNote: "Internal mock publisher with governance-aware product stewardship.",
+    governanceStanding: "verified",
+    reputation: 98,
+    registeredDAOs: ["Axodus DAO"],
+    productsPublished: 12,
+    constitutionalBound: true,
+    treasuryLinked: true,
+    riskScore: 4,
+    description: "Internal marketplace publisher for governance-approved ecosystem capabilities."
+  },
+  {
+    id: "seller-academy-guild",
+    name: "Academy Tutor Guild",
+    handle: "@academy-tutors",
+    avatar: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=600&q=80",
+    mockAccount: "0xMockSellerAcademyGuild",
+    type: "DAO",
+    verificationStatus: "verified",
+    verificationNote: "Mock DAO seller reviewed for Academy certification and learning access distribution.",
+    governanceStanding: "verified",
+    reputation: 91,
+    registeredDAOs: ["Academy DAO"],
+    productsPublished: 8,
+    constitutionalBound: true,
+    treasuryLinked: true,
+    riskScore: 9,
+    description: "Tutor collective distributing certification packs and NFT-gated learning assets."
+  },
+  {
+    id: "seller-mcp-labs",
+    name: "MCP Runtime Labs",
+    handle: "@mcp-runtime-labs",
+    avatar: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80",
+    mockAccount: "0xMockSellerMcpLabs",
+    type: "Partner",
+    verificationStatus: "pending",
+    verificationNote: "Mock partner identity remains pending governance review before broader distribution.",
+    governanceStanding: "warning",
+    reputation: 76,
+    registeredDAOs: ["MCP Working Group"],
+    productsPublished: 4,
+    constitutionalBound: true,
+    treasuryLinked: false,
+    riskScore: 28,
+    description: "Partner team preparing agent templates and runtime integrations for governance review."
+  }
+];
+
+export const marketplaceLicenses = [
+  {
+    id: "license-personal-nft",
+    type: "NFT Access License",
+    transferable: true,
+    revokable: false,
+    nftBound: true,
+    expiration: null,
+    governanceControlled: true,
+    permissions: ["view-content", "request-signed-url", "secondary-transfer-preview"],
+    ownershipModel: "wallet"
+  },
+  {
+    id: "license-dao-plugin",
+    type: "DAO License",
+    transferable: false,
+    revokable: true,
+    nftBound: true,
+    expiration: "2027-01-01T00:00:00.000Z",
+    governanceControlled: true,
+    permissions: ["install-plugin", "dao-seat-access", "audit-log-export"],
+    ownershipModel: "dao"
+  },
+  {
+    id: "license-enterprise",
+    type: "Enterprise License",
+    transferable: false,
+    revokable: true,
+    nftBound: false,
+    expiration: "2026-12-31T00:00:00.000Z",
+    governanceControlled: true,
+    permissions: ["team-access", "signed-url-preview", "support-routing"],
+    ownershipModel: "enterprise-seat"
+  }
+];
+
+export const marketplaceCollections = [
+  {
+    id: "collection-governance-access",
+    name: "Axodus Governance Access",
+    slug: "axodus-governance-access",
+    description: "Native mock ERC721 collection for governance dashboards, treasury visibility previews and Axodus access passes.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+    chain: "Polygon",
+    contractAddress: "mock:collection:governance-access",
+    assetType: "ERC721",
+    origin: "native",
+    validationStatus: "compliant",
+    governanceStatus: "compliant",
+    sellerId: "seller-axodus-core",
+    metrics: {
+      volume: 1240,
+      floorPrice: 120,
+      holders: 86,
+      recentActivity: 14
+    }
+  },
+  {
+    id: "collection-academy-certifications",
+    name: "Academy Certification Packs",
+    slug: "academy-certification-packs",
+    description: "Native mock ERC1155 collection for Academy certification bundles, PoK-compatible learning credentials and DAO-gated education.",
+    image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+    chain: "BNB",
+    contractAddress: "mock:collection:academy-certifications",
+    assetType: "ERC1155",
+    origin: "native",
+    validationStatus: "under-review",
+    governanceStatus: "under-review",
+    sellerId: "seller-academy-guild",
+    metrics: {
+      volume: 920,
+      floorPrice: 80,
+      holders: 144,
+      recentActivity: 22
+    }
+  },
+  {
+    id: "collection-strategy-license-passes",
+    name: "Strategy License Passes",
+    slug: "strategy-license-passes",
+    description: "Native mock ERC721 collection for trading strategy access passes, risk-reviewed licenses and auction previews.",
+    image: "https://images.unsplash.com/photo-1642790551116-18e150f248e5?auto=format&fit=crop&w=1200&q=80",
+    chain: "Arbitrum",
+    contractAddress: "mock:collection:strategy-license-passes",
+    assetType: "ERC721",
+    origin: "native",
+    validationStatus: "under-review",
+    governanceStatus: "under-review",
+    sellerId: "seller-axodus-core",
+    metrics: {
+      volume: 680,
+      floorPrice: 180,
+      holders: 41,
+      recentActivity: 8
+    }
+  },
+  {
+    id: "external-collection-harmony-creator-keys",
+    name: "Harmony Creator Keys",
+    slug: "harmony-creator-keys",
+    description:
+      "External Collection mock imported from a Harmony ecosystem provider for federation display review. Metadata and statistics are provider-reported mock data only.",
+    image: "https://images.unsplash.com/photo-1634986666676-ec8fd927c23d?auto=format&fit=crop&w=1200&q=80",
+    chain: "Harmony",
+    contractAddress: "0xExternalMockHarmonyCreatorKeys",
+    assetType: "ERC721",
+    origin: "external",
+    validationStatus: "under-review",
+    governanceStatus: "under-review",
+    sellerId: "seller-mcp-labs",
+    metrics: {
+      volume: 0,
+      floorPrice: 0,
+      holders: 0,
+      recentActivity: 0
+    },
+    provider: {
+      id: "provider-harmony-ecosystem-mock",
+      name: "Harmony Ecosystem Mock Provider",
+      type: "ecosystem",
+      origin: "Harmony ecosystem provider mock",
+      trustLevel: "provider-reported"
+    },
+    externalContract: {
+      providerId: "provider-harmony-ecosystem-mock",
+      chainId: "1666600000",
+      chainName: "Harmony",
+      contractAddress: "0xExternalMockHarmonyCreatorKeys",
+      tokenStandard: "ERC721",
+      externalUrl: "https://provider.mock.axodus.local/harmony/collections/creator-keys",
+      validationStatus: "contract-referenced",
+      riskClassification: "unknown-external",
+      provenance: "Provider-reported mock contract descriptor; no on-chain read, indexer or contract verification executed."
+    },
+    externalMetadata: {
+      source: "provider-reported-mock",
+      externalUrl: "https://provider.mock.axodus.local/harmony/collections/creator-keys",
+      metadataUrl: "ipfs://mock-provider/harmony-creator-keys/collection.json",
+      metadataHash: "mock-hash-harmony-creator-keys",
+      lastSyncedAt: "2026-06-12T09:00:00.000Z",
+      importedAt: "2026-06-12T09:15:00.000Z",
+      warnings: [
+        "External Metadata is provider-reported mock data.",
+        "Images, descriptions and attributes are not authenticated by Axodus in Phase 02."
+      ],
+      disclaimers: [
+        "External metadata display does not imply native issuance, custody, ownership guarantee or marketplace settlement.",
+        "No metadata fetch, cache, indexer or provider API call is active."
+      ]
+    },
+    externalStatistics: {
+      source: "provider-reported-mock",
+      itemCount: 128,
+      volume: 420,
+      floorPrice: 14,
+      holders: 72,
+      listings: 0,
+      bids: 0,
+      recentActivity: 11,
+      lastSyncedAt: "2026-06-12T09:00:00.000Z",
+      disclaimers: [
+        "External Collection Statistics are mock/provider-reported and are not official market metrics.",
+        "Floor price, holder count and volume are non-executing display data."
+      ]
+    },
+    federationValidationStatus: "provider-reported",
+    riskClassification: "unknown-external",
+    provenance: "Collection discovered through a mock Harmony provider registry for Phase 02 display-boundary validation.",
+    trustBoundary: {
+      origin: "Harmony ecosystem provider mock",
+      provider: "Harmony Ecosystem Mock Provider",
+      validationStatus: "provider-reported",
+      provenance: "Provider-reported mock collection descriptor; no live provider, indexer, API call or chain read.",
+      riskClassification: "unknown-external",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federated Collection display is read-only and non-executing.",
+        "No external purchase, bid, settlement, custody, bridge execution, wallet signature or contract write is enabled.",
+        "Provider data is not treated as trusted by default."
+      ]
+    },
+    displayStatus: "limited",
+    isNative: false,
+    isExternal: true,
+    isFederated: true
+  },
+  {
+    id: "external-collection-opensea-academy-badges",
+    name: "OpenSea Academy Badge Set",
+    slug: "opensea-academy-badge-set",
+    description:
+      "External Collection mock representing an ERC1155 badge set from an OpenSea-style provider descriptor. Metadata and statistics are provider-reported mock data only.",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+    chain: "Ethereum",
+    contractAddress: "0xExternalMockOpenSeaAcademyBadges",
+    assetType: "ERC1155",
+    origin: "external",
+    validationStatus: "under-review",
+    governanceStatus: "under-review",
+    sellerId: "seller-academy-guild",
+    metrics: {
+      volume: 0,
+      floorPrice: 0,
+      holders: 0,
+      recentActivity: 0
+    },
+    provider: {
+      id: "provider-opensea-mock",
+      name: "OpenSea Mock Provider",
+      type: "aggregator",
+      origin: "OpenSea provider descriptor mock",
+      trustLevel: "provider-reported"
+    },
+    externalContract: {
+      providerId: "provider-opensea-mock",
+      chainId: "1",
+      chainName: "Ethereum",
+      contractAddress: "0xExternalMockOpenSeaAcademyBadges",
+      tokenStandard: "ERC1155",
+      externalUrl: "https://provider.mock.axodus.local/opensea/collections/academy-badge-set",
+      validationStatus: "contract-referenced",
+      riskClassification: "contract-risk",
+      provenance: "Provider-reported mock ERC1155 contract descriptor; no OpenSea call, chain read, indexer or contract verification executed."
+    },
+    externalMetadata: {
+      source: "provider-reported-mock",
+      externalUrl: "https://provider.mock.axodus.local/opensea/collections/academy-badge-set",
+      metadataUrl: "ipfs://mock-provider/opensea-academy-badge-set/collection.json",
+      metadataHash: "mock-hash-opensea-academy-badge-set",
+      lastSyncedAt: "2026-06-12T10:00:00.000Z",
+      importedAt: "2026-06-12T10:20:00.000Z",
+      warnings: [
+        "External Metadata is provider-reported mock data.",
+        "ERC1155 badge metadata is not authenticated, cached or fetched by Axodus in Phase 02."
+      ],
+      disclaimers: [
+        "External ERC1155 metadata display does not imply native issuance, ownership guarantee, custody, license enforcement or settlement.",
+        "No metadata fetch, provider API call, SDK, indexer, subgraph or on-chain read is active."
+      ]
+    },
+    externalStatistics: {
+      source: "provider-reported-mock",
+      itemCount: 64,
+      volume: 160,
+      floorPrice: 6,
+      holders: 28,
+      listings: 0,
+      bids: 0,
+      recentActivity: 4,
+      lastSyncedAt: "2026-06-12T10:00:00.000Z",
+      disclaimers: [
+        "External Collection Statistics are mock/provider-reported and are not official market metrics.",
+        "ERC1155 floor price, holder count and volume are non-executing display data."
+      ]
+    },
+    federationValidationStatus: "contract-referenced",
+    riskClassification: "contract-risk",
+    provenance: "Collection referenced through a mock OpenSea provider descriptor for Phase 02 ERC1155 boundary validation.",
+    trustBoundary: {
+      origin: "OpenSea provider descriptor mock",
+      provider: "OpenSea Mock Provider",
+      validationStatus: "contract-referenced",
+      provenance: "Provider-reported mock ERC1155 collection descriptor; no live provider, indexer, API call, SDK or chain read.",
+      riskClassification: "contract-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federated ERC1155 Collection display is read-only and non-executing.",
+        "No external purchase, bid, settlement, custody, bridge execution, wallet signature or contract write is enabled.",
+        "Provider-reported ERC1155 data is not treated as trusted by default."
+      ]
+    },
+    displayStatus: "limited",
+    isNative: false,
+    isExternal: true,
+    isFederated: true
+  }
+];
+
+export const marketplaceTenants = [
+  {
+    id: "tenant-global-marketplace",
+    slug: "global",
+    name: "Axodus Global Marketplace",
+    displayName: "Axodus Global Marketplace",
+    description: "Global mock/config-first Marketplace context for the full Axodus NFT foundation and federated display surfaces.",
+    status: "active-mock",
+    tenantType: "global",
+    visibility: "public-mock",
+    governanceStatus: "governance-aligned",
+    identity: {
+      displayName: "Axodus Global Marketplace",
+      shortName: "Axodus Global",
+      handle: "@axodus-marketplace",
+      description: "Sovereign global distribution context owned by the Axodus Marketplace infrastructure.",
+      operatorName: "Axodus Marketplace",
+      operatorType: "ecosystem-infrastructure",
+      supportLabel: "Global Marketplace support",
+      trustLabel: "Governance-aware global mock context",
+      governanceLabel: "Axodus governance root"
+    },
+    branding: {
+      logoUrl: "",
+      logoAlt: "Axodus Global Marketplace logo placeholder",
+      iconUrl: "",
+      displayName: "Axodus Global Marketplace",
+      shortName: "Axodus Global",
+      tagline: "Federated digital distribution infrastructure",
+      description: "Global branding fallback for Marketplace-as-a-Service surfaces.",
+      primaryColor: "#0f172a",
+      secondaryColor: "#0f766e",
+      accentColor: "#f59e0b",
+      backgroundHint: "#f8fafc",
+      surfaceHint: "#ffffff",
+      textHint: "#0f172a",
+      themeMode: "light",
+      visualStyle: "global-default",
+      brandStatus: "global-default",
+      isBrandingEnabled: true,
+      usesGlobalFallback: false,
+      warnings: ["Global branding fallback is mock/config-first."],
+      disclaimers: ["Global branding does not activate white-label production, custom DNS, tenant billing, settlement or RBAC."],
+      theme: {
+        themeId: "theme-global-default",
+        themeName: "Axodus Global Default",
+        themeMode: "light",
+        primaryColor: "#0f172a",
+        secondaryColor: "#0f766e",
+        accentColor: "#f59e0b",
+        backgroundHint: "#f8fafc",
+        surfaceHint: "#ffffff",
+        textHint: "#0f172a",
+        borderRadius: "sm",
+        density: "comfortable",
+        contrastLevel: "high",
+        isCustomTheme: false,
+        isMockTheme: true
+      },
+      visualIdentity: {
+        headline: "Axodus Global Marketplace",
+        subheadline: "Global Marketplace fallback for the Axodus ecosystem.",
+        badgeLabel: "Global Marketplace",
+        trustLabel: "Governance-aware",
+        operatorLabel: "Axodus Marketplace",
+        governanceLabel: "Axodus governance root",
+        marketplaceLabel: "Marketplace-as-a-Service base"
+      }
+    },
+    configuration: {
+      defaultRoute: "/marketplace",
+      enabledSections: ["explorer", "collections", "sellers", "asset-registry", "dashboard", "contracts", "providers", "wallet-discovery"],
+      featuredCollectionIds: ["collection-governance-access", "collection-academy-certifications", "external-collection-harmony-creator-keys"],
+      featuredProductIds: ["product-governance-dashboard-nft", "product-academy-cert-bundle", "product-trading-strategy-pass"],
+      allowedCategoryIds: ["Education", "Governance", "Trading", "Business", "MCPs", "Digital Assets"],
+      allowedCollectionIds: ["collection-governance-access", "collection-academy-certifications", "collection-strategy-license-passes"],
+      allowedProductIds: ["product-governance-dashboard-nft", "product-academy-cert-bundle", "product-mcp-agent-template", "product-trading-strategy-pass"],
+      allowedExternalCollectionIds: ["external-collection-harmony-creator-keys", "external-collection-opensea-academy-badges"],
+      blockedProductIds: [],
+      blockedCollectionIds: [],
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canRouteCustomDomain: false,
+      isWhiteLabel: false,
+      isCommunityMarketplace: false,
+      isFederatedCatalogEnabled: true,
+      isTenantCatalogEnabled: false
+    },
+    domains: [
+      {
+        id: "domain-global-slug",
+        tenantId: "tenant-global-marketplace",
+        domainType: "global",
+        slug: "global",
+        displayLabel: "Global Marketplace route",
+        status: "active-mock",
+        verificationStatus: "not-required-mock",
+        routingMode: "mock-read-only",
+        isPrimary: true,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:00:00.000Z",
+        updatedAt: "2026-06-12T10:00:00.000Z",
+        warnings: ["Global route is the fallback for unresolved tenant domains."],
+        disclaimers: ["Global fallback does not activate DNS, proxy, TLS, edge routing or separate deploy."]
+      }
+    ],
+    domainAliases: [],
+    createdAt: "2026-06-12T10:00:00.000Z",
+    updatedAt: "2026-06-12T10:00:00.000Z",
+    warnings: ["Global marketplace context is mock/config-first and does not activate tenant isolation."],
+    disclaimers: [
+      "No settlement, tenant billing, treasury routing, custom DNS, production tenant routing, RBAC or isolated database is active.",
+      "Global marketplace fallback preserves the Axodus infrastructure context when no tenant is selected."
+    ]
+  },
+  {
+    id: "tenant-academy-marketplace",
+    slug: "academy",
+    name: "Axodus Academy Marketplace",
+    displayName: "Axodus Academy Marketplace",
+    description: "Mock tenant marketplace for Academy certifications, learning products and NFT-gated education previews.",
+    status: "configured-mock",
+    tenantType: "academy",
+    visibility: "public-mock",
+    governanceStatus: "governance-review",
+    identity: {
+      displayName: "Axodus Academy Marketplace",
+      shortName: "Academy",
+      handle: "@axodus-academy-marketplace",
+      description: "Tenant identity for Academy-oriented products and certification collections.",
+      operatorName: "Academy Tutor Guild",
+      operatorType: "academy-unit",
+      supportLabel: "Academy support queue mock",
+      trustLabel: "Academy governance review mock",
+      governanceLabel: "Academy DAO review"
+    },
+    branding: {
+      logoUrl: "",
+      logoAlt: "Axodus Academy Marketplace logo placeholder",
+      iconUrl: "",
+      displayName: "Axodus Academy Marketplace",
+      shortName: "Academy",
+      tagline: "Certification and learning access marketplace",
+      description: "Tenant Branding mock for Academy learning products and certification collections.",
+      primaryColor: "#1d4ed8",
+      secondaryColor: "#0f766e",
+      accentColor: "#f97316",
+      backgroundHint: "#eff6ff",
+      surfaceHint: "#ffffff",
+      textHint: "#111827",
+      themeMode: "light",
+      visualStyle: "academy",
+      brandStatus: "tenant-custom-mock",
+      isBrandingEnabled: true,
+      usesGlobalFallback: false,
+      warnings: ["Academy tenant colors are mock branding tokens and are not a production white-label theme."],
+      disclaimers: ["Config-first branding does not create custom DNS, tenant billing, settlement, RBAC or isolated infrastructure."],
+      theme: {
+        themeId: "theme-academy-mock",
+        themeName: "Academy Blue Mock",
+        themeMode: "light",
+        primaryColor: "#1d4ed8",
+        secondaryColor: "#0f766e",
+        accentColor: "#f97316",
+        backgroundHint: "#eff6ff",
+        surfaceHint: "#ffffff",
+        textHint: "#111827",
+        borderRadius: "sm",
+        density: "comfortable",
+        contrastLevel: "high",
+        isCustomTheme: true,
+        isMockTheme: true
+      },
+      visualIdentity: {
+        headline: "Academy Marketplace",
+        subheadline: "Learning credentials and certification access in mock/config-first mode.",
+        badgeLabel: "Tenant Marketplace",
+        trustLabel: "Academy governance review",
+        operatorLabel: "Academy Tutor Guild",
+        governanceLabel: "Academy DAO review",
+        marketplaceLabel: "Academy tenant branding"
+      }
+    },
+    configuration: {
+      defaultRoute: "/marketplace/tenants/academy",
+      enabledSections: ["explorer", "collections", "sellers", "asset-registry"],
+      featuredCollectionIds: ["collection-academy-certifications", "external-collection-opensea-academy-badges"],
+      featuredProductIds: ["product-academy-cert-bundle"],
+      allowedCategoryIds: ["Education", "Digital Assets"],
+      allowedCollectionIds: ["collection-academy-certifications"],
+      allowedProductIds: ["product-academy-cert-bundle"],
+      allowedExternalCollectionIds: ["external-collection-opensea-academy-badges"],
+      blockedProductIds: [],
+      blockedCollectionIds: [],
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canRouteCustomDomain: false,
+      isWhiteLabel: false,
+      isCommunityMarketplace: false,
+      isFederatedCatalogEnabled: true,
+      isTenantCatalogEnabled: true
+    },
+    domains: [
+      {
+        id: "domain-academy-slug",
+        tenantId: "tenant-academy-marketplace",
+        domainType: "slug",
+        slug: "academy",
+        displayLabel: "Academy tenant slug",
+        status: "active-mock",
+        verificationStatus: "not-required-mock",
+        routingMode: "mock-read-only",
+        isPrimary: true,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:05:00.000Z",
+        updatedAt: "2026-06-12T10:05:00.000Z",
+        warnings: ["Tenant slug resolves only inside the SPA mock router."],
+        disclaimers: ["Slug routing does not create production tenant routing or DNS."]
+      },
+      {
+        id: "domain-academy-subdomain",
+        tenantId: "tenant-academy-marketplace",
+        domainType: "subdomain-simulated",
+        hostname: "academy.marketplace.mock.axodus.local",
+        displayLabel: "Academy subdomain simulated",
+        status: "configured-mock",
+        verificationStatus: "verified-mock",
+        routingMode: "mock-read-only",
+        isPrimary: false,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:05:00.000Z",
+        updatedAt: "2026-06-12T10:05:00.000Z",
+        warnings: ["verified-mock is a simulated domain verification status."],
+        disclaimers: ["No DNS real, TLS certificate, proxy, edge routing or custom domain provisioning is active."]
+      },
+      {
+        id: "domain-academy-custom",
+        tenantId: "tenant-academy-marketplace",
+        domainType: "custom-domain-simulated",
+        hostname: "academy.example.mock",
+        displayLabel: "Academy custom domain simulated",
+        status: "review-required",
+        verificationStatus: "pending-mock",
+        routingMode: "mock-read-only",
+        isPrimary: false,
+        isSimulated: true,
+        canRoute: false,
+        createdAt: "2026-06-12T10:05:00.000Z",
+        updatedAt: "2026-06-12T10:05:00.000Z",
+        warnings: ["Custom domain simulated record requires governance and domain review."],
+        disclaimers: ["custom domain simulated does not activate custom DNS, TLS certificate or production tenant routing."]
+      }
+    ],
+    domainAliases: [
+      {
+        id: "alias-academy-learning",
+        tenantId: "tenant-academy-marketplace",
+        alias: "learning",
+        aliasType: "slug-alias",
+        targetTenantSlug: "academy",
+        status: "active-mock",
+        isPrimary: false,
+        isSimulated: true,
+        warnings: ["tenant alias resolves to Academy only in mock routing."],
+        disclaimers: ["Alias routing is read-only routing and does not create DNS real or backend routing."]
+      },
+      {
+        id: "alias-academy-conflict",
+        tenantId: "tenant-academy-marketplace",
+        alias: "community",
+        aliasType: "slug-alias",
+        targetTenantSlug: "academy",
+        status: "conflict",
+        isPrimary: false,
+        isSimulated: true,
+        warnings: ["Alias is intentionally marked conflict for mock QA."],
+        disclaimers: ["Conflict records cannot route and fall back to the global marketplace."]
+      }
+    ],
+    createdAt: "2026-06-12T10:05:00.000Z",
+    updatedAt: "2026-06-12T10:05:00.000Z",
+    warnings: ["Academy tenant catalog references global products and collections; it does not duplicate product truth."],
+    disclaimers: [
+      "Tenant Marketplace display is mock/config-first.",
+      "Academy tenant configuration does not enable billing, settlement, custom DNS, RBAC or revenue sharing."
+    ]
+  },
+  {
+    id: "tenant-acs-services",
+    slug: "acs-services",
+    name: "ACS Services Marketplace",
+    displayName: "ACS Services Marketplace",
+    description: "Mock tenant marketplace for ACS and MCP service previews inside Axodus governance boundaries.",
+    status: "review-required",
+    tenantType: "acs",
+    visibility: "private-preview",
+    governanceStatus: "governance-review",
+    identity: {
+      displayName: "ACS Services Marketplace",
+      shortName: "ACS Services",
+      handle: "@acs-services-marketplace",
+      description: "Tenant identity for ACS service distribution and MCP runtime previews.",
+      operatorName: "MCP Runtime Labs",
+      operatorType: "acs-operator",
+      supportLabel: "ACS service support mock",
+      trustLabel: "Review-required ACS tenant mock",
+      governanceLabel: "ACS governance review"
+    },
+    branding: {
+      logoUrl: "",
+      logoAlt: "ACS Services Marketplace logo placeholder",
+      iconUrl: "",
+      displayName: "ACS Services Marketplace",
+      shortName: "ACS Services",
+      tagline: "Cognitive infrastructure service marketplace",
+      description: "Tenant Branding mock for ACS and MCP service previews.",
+      primaryColor: "#4338ca",
+      secondaryColor: "#0369a1",
+      accentColor: "#14b8a6",
+      backgroundHint: "#eef2ff",
+      surfaceHint: "#ffffff",
+      textHint: "#111827",
+      themeMode: "light",
+      visualStyle: "acs",
+      brandStatus: "review-required",
+      isBrandingEnabled: true,
+      usesGlobalFallback: false,
+      warnings: ["ACS tenant branding is review-required and remains a mock presentation layer."],
+      disclaimers: ["Branding does not authorize ACS service delivery, billing execution, settlement, RBAC or production routing."],
+      theme: {
+        themeId: "theme-acs-review-mock",
+        themeName: "ACS Service Mock",
+        themeMode: "light",
+        primaryColor: "#4338ca",
+        secondaryColor: "#0369a1",
+        accentColor: "#14b8a6",
+        backgroundHint: "#eef2ff",
+        surfaceHint: "#ffffff",
+        textHint: "#111827",
+        borderRadius: "sm",
+        density: "compact",
+        contrastLevel: "high",
+        isCustomTheme: true,
+        isMockTheme: true
+      },
+      visualIdentity: {
+        headline: "ACS Services Marketplace",
+        subheadline: "Service previews for ACS and MCP runtime distribution planning.",
+        badgeLabel: "Branding review-required",
+        trustLabel: "ACS governance review",
+        operatorLabel: "MCP Runtime Labs",
+        governanceLabel: "ACS governance review",
+        marketplaceLabel: "ACS tenant branding"
+      }
+    },
+    configuration: {
+      defaultRoute: "/marketplace/tenants/acs-services",
+      enabledSections: ["explorer", "sellers", "asset-registry"],
+      featuredCollectionIds: [],
+      featuredProductIds: ["product-mcp-agent-template"],
+      allowedCategoryIds: ["MCPs", "Business"],
+      allowedCollectionIds: [],
+      allowedProductIds: ["product-mcp-agent-template"],
+      allowedExternalCollectionIds: [],
+      blockedProductIds: [],
+      blockedCollectionIds: [],
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canRouteCustomDomain: false,
+      isWhiteLabel: false,
+      isCommunityMarketplace: false,
+      isFederatedCatalogEnabled: false,
+      isTenantCatalogEnabled: true
+    },
+    domains: [
+      {
+        id: "domain-acs-slug",
+        tenantId: "tenant-acs-services",
+        domainType: "slug",
+        slug: "acs-services",
+        displayLabel: "ACS Services tenant slug",
+        status: "active-mock",
+        verificationStatus: "not-required-mock",
+        routingMode: "mock-read-only",
+        isPrimary: true,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:10:00.000Z",
+        updatedAt: "2026-06-12T10:10:00.000Z",
+        warnings: ["ACS Services is private-preview; route visibility remains read-only."],
+        disclaimers: ["Slug routing does not authorize service delivery, billing, settlement or production routing."]
+      },
+      {
+        id: "domain-acs-subdomain",
+        tenantId: "tenant-acs-services",
+        domainType: "subdomain-simulated",
+        hostname: "acs.marketplace.mock.axodus.local",
+        displayLabel: "ACS subdomain simulated",
+        status: "review-required",
+        verificationStatus: "pending-mock",
+        routingMode: "mock-read-only",
+        isPrimary: false,
+        isSimulated: true,
+        canRoute: false,
+        createdAt: "2026-06-12T10:10:00.000Z",
+        updatedAt: "2026-06-12T10:10:00.000Z",
+        warnings: ["ACS simulated hostname is review-required."],
+        disclaimers: ["No DNS real, TLS, proxy or edge routing is active."]
+      }
+    ],
+    domainAliases: [
+      {
+        id: "alias-acs",
+        tenantId: "tenant-acs-services",
+        alias: "acs",
+        aliasType: "slug-alias",
+        targetTenantSlug: "acs-services",
+        status: "active-mock",
+        isPrimary: false,
+        isSimulated: true,
+        warnings: ["tenant alias resolves to ACS Services only in mock routing."],
+        disclaimers: ["Alias routing is read-only and does not create DNS real."]
+      }
+    ],
+    createdAt: "2026-06-12T10:10:00.000Z",
+    updatedAt: "2026-06-12T10:10:00.000Z",
+    warnings: ["ACS Services tenant is private-preview and requires governance review before broader exposure."],
+    disclaimers: [
+      "No ACS service entitlement, billing execution, settlement or production authorization is created by this tenant record.",
+      "Tenant configuration is read-only mock data."
+    ]
+  },
+  {
+    id: "tenant-community-demo",
+    slug: "community-demo",
+    name: "Community Marketplace Demo",
+    displayName: "Community Marketplace Demo",
+    description: "Mock community marketplace tenant demonstrating configurable identity and catalog references without production isolation.",
+    status: "draft",
+    tenantType: "community",
+    visibility: "private-preview",
+    governanceStatus: "governance-review",
+    identity: {
+      displayName: "Community Marketplace Demo",
+      shortName: "Community Demo",
+      handle: "@community-marketplace-demo",
+      description: "Demo Tenant Marketplace for community curation planning.",
+      operatorName: "Community Operator Mock",
+      operatorType: "community-operator",
+      supportLabel: "Community support mock",
+      trustLabel: "Draft community marketplace mock",
+      governanceLabel: "Community governance review"
+    },
+    branding: {
+      logoUrl: "",
+      logoAlt: "Community Marketplace Demo logo placeholder",
+      iconUrl: "",
+      displayName: "Community Marketplace Demo",
+      shortName: "Community Demo",
+      tagline: "Community curation demo",
+      description: "Tenant Branding mock for a draft community marketplace.",
+      primaryColor: "#be123c",
+      secondaryColor: "#475569",
+      accentColor: "#ca8a04",
+      backgroundHint: "#fff1f2",
+      surfaceHint: "#ffffff",
+      textHint: "#111827",
+      themeMode: "light",
+      visualStyle: "community",
+      brandStatus: "configured-mock",
+      isBrandingEnabled: true,
+      usesGlobalFallback: false,
+      warnings: ["Community tenant branding is draft-only and cannot be treated as white-label production enabled."],
+      disclaimers: ["Community branding does not create custom DNS, production tenant routing, revenue sharing, settlement or billing."],
+      theme: {
+        themeId: "theme-community-demo-mock",
+        themeName: "Community Demo Mock",
+        themeMode: "light",
+        primaryColor: "#be123c",
+        secondaryColor: "#475569",
+        accentColor: "#ca8a04",
+        backgroundHint: "#fff1f2",
+        surfaceHint: "#ffffff",
+        textHint: "#111827",
+        borderRadius: "sm",
+        density: "comfortable",
+        contrastLevel: "standard",
+        isCustomTheme: true,
+        isMockTheme: true
+      },
+      visualIdentity: {
+        headline: "Community Marketplace Demo",
+        subheadline: "Draft Tenant Marketplace for controlled community curation planning.",
+        badgeLabel: "Draft Tenant Marketplace",
+        trustLabel: "Community governance review",
+        operatorLabel: "Community Operator Mock",
+        governanceLabel: "Community governance review",
+        marketplaceLabel: "Community tenant branding"
+      }
+    },
+    configuration: {
+      defaultRoute: "/marketplace/tenants/community-demo",
+      enabledSections: ["explorer", "collections"],
+      featuredCollectionIds: ["collection-governance-access", "external-collection-harmony-creator-keys"],
+      featuredProductIds: ["product-governance-dashboard-nft"],
+      allowedCategoryIds: ["Governance", "Digital Assets"],
+      allowedCollectionIds: ["collection-governance-access"],
+      allowedProductIds: ["product-governance-dashboard-nft"],
+      allowedExternalCollectionIds: ["external-collection-harmony-creator-keys"],
+      blockedProductIds: ["product-trading-strategy-pass"],
+      blockedCollectionIds: [],
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canRouteCustomDomain: false,
+      isWhiteLabel: false,
+      isCommunityMarketplace: true,
+      isFederatedCatalogEnabled: true,
+      isTenantCatalogEnabled: true
+    },
+    domains: [
+      {
+        id: "domain-community-slug",
+        tenantId: "tenant-community-demo",
+        domainType: "slug",
+        slug: "community-demo",
+        displayLabel: "Community Demo tenant slug",
+        status: "draft",
+        verificationStatus: "not-required-mock",
+        routingMode: "mock-read-only",
+        isPrimary: true,
+        isSimulated: true,
+        canRoute: true,
+        createdAt: "2026-06-12T10:15:00.000Z",
+        updatedAt: "2026-06-12T10:15:00.000Z",
+        warnings: ["Community route is draft and cannot be treated as production tenant routing."],
+        disclaimers: ["Draft tenant route is simulated and does not create custom DNS, TLS or deploy isolation."]
+      },
+      {
+        id: "domain-community-disabled-custom",
+        tenantId: "tenant-community-demo",
+        domainType: "custom-domain-simulated",
+        hostname: "community.example.mock",
+        displayLabel: "Community custom domain simulated",
+        status: "disabled",
+        verificationStatus: "disabled",
+        routingMode: "mock-read-only",
+        isPrimary: false,
+        isSimulated: true,
+        canRoute: false,
+        createdAt: "2026-06-12T10:15:00.000Z",
+        updatedAt: "2026-06-12T10:15:00.000Z",
+        warnings: ["Disabled custom domain simulated record cannot route."],
+        disclaimers: ["Disabled domain confirms no custom DNS enabled, no TLS certificate enabled and no proxy routing enabled."]
+      }
+    ],
+    domainAliases: [
+      {
+        id: "alias-community-primary",
+        tenantId: "tenant-community-demo",
+        alias: "community",
+        aliasType: "slug-alias",
+        targetTenantSlug: "community-demo",
+        status: "conflict",
+        isPrimary: true,
+        isSimulated: true,
+        warnings: ["Alias intentionally conflicts with another mock alias."],
+        disclaimers: ["Conflict aliases cannot route and must fall back to the global marketplace."]
+      }
+    ],
+    createdAt: "2026-06-12T10:15:00.000Z",
+    updatedAt: "2026-06-12T10:15:00.000Z",
+    warnings: ["Community tenant is draft and cannot be treated as a productive white-label marketplace."],
+    disclaimers: [
+      "Community Marketplace Demo does not create partner distribution, revenue sharing or custom domain routing.",
+      "Catalog references remain mock/config-first and non-executing."
+    ]
+  }
+];
+
+export const marketplaceProducts = [
+  {
+    id: "product-governance-dashboard-nft",
+    title: "Governance Dashboard NFT Access",
+    slug: "governance-dashboard-nft-access",
+    category: "Governance",
+    subcategory: "Governance dashboards",
+    collectionId: "collection-governance-access",
+    sellerId: "seller-axodus-core",
+    description:
+      "ERC721-gated access pass for governance dashboard modules, treasury visibility previews, and voting analytics.",
+    shortDescription: "NFT access pass for governance dashboards and treasury visibility.",
+    tags: ["governance", "dashboard", "erc721", "treasury"],
+    images: ["https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"],
+    media: [],
+    version: "0.1.0",
+    status: "listed",
+    governanceStatus: "compliant",
+    constitutionalStanding: "aligned",
+    visibility: "public",
+    pricing: { amount: 120, currency: "USDC", settlementMode: "mock-only" },
+    acceptedCurrencies: ["USDC", "NRS"],
+    royaltyModel: { standard: "EIP-2981", bps: 500, recipient: "Axodus Treasury", previewAmount: 6 },
+    accessModel: "wallet-gated",
+    deliveryType: "Signed URL",
+    licenseType: "NFT Access License",
+    supportedChains: ["Ethereum", "Polygon", "Arbitrum"],
+    nftBound: true,
+    governanceRequired: true,
+    maturity: "beta",
+    createdAt: "2026-05-01T12:00:00.000Z",
+    updatedAt: "2026-05-14T15:00:00.000Z",
+    tokenStandard: "ERC721",
+    contractAddress: "mock:governance-dashboard-access",
+    tokenId: "AXD-GOV-001",
+    listingType: "fixed",
+    bridgeReadiness: {
+      layerZeroReady: true,
+      sourceChain: "Polygon",
+      destinationChains: ["Ethereum", "Arbitrum"],
+      notes: "Bridge boundary prepared; no live bridge execution in MVP."
+    },
+    greenfieldBucket: "mock-greenfield-governance-access",
+    signedUrlPreviewAvailable: true,
+    metadataAttributes: [
+      { traitType: "Access", value: "Governance Dashboard" },
+      { traitType: "Token Standard", value: "ERC721" },
+      { traitType: "Boundary", value: "Signed URL Preview" }
+    ]
+  },
+  {
+    id: "product-academy-cert-bundle",
+    title: "Academy Certification ERC1155 Bundle",
+    slug: "academy-certification-erc1155-bundle",
+    category: "Education",
+    subcategory: "Certification packs",
+    collectionId: "collection-academy-certifications",
+    sellerId: "seller-academy-guild",
+    description:
+      "ERC1155 certification pack for governance education, Proof of Knowledge compatibility, and gated learning content.",
+    shortDescription: "ERC1155 certification pack with Academy and PoK compatibility.",
+    tags: ["academy", "certification", "erc1155", "pok"],
+    images: ["https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80"],
+    media: [],
+    version: "0.2.0",
+    status: "listed",
+    governanceStatus: "under-review",
+    constitutionalStanding: "requires-review",
+    visibility: "dao-gated",
+    pricing: { amount: 80, currency: "USDC", settlementMode: "mock-only" },
+    acceptedCurrencies: ["USDC", "NRS"],
+    royaltyModel: { standard: "EIP-2981", bps: 700, recipient: "Academy DAO", previewAmount: 5.6 },
+    accessModel: "dao-gated",
+    deliveryType: "Greenfield",
+    licenseType: "Subscription License",
+    supportedChains: ["BNB", "Polygon"],
+    nftBound: true,
+    governanceRequired: true,
+    maturity: "beta",
+    createdAt: "2026-04-21T10:00:00.000Z",
+    updatedAt: "2026-05-12T09:30:00.000Z",
+    tokenStandard: "ERC1155",
+    contractAddress: "mock:academy-certification-bundle",
+    tokenId: "AXD-ACADEMY-1155",
+    listingType: "english-auction",
+    auction: {
+      type: "english-auction",
+      status: "active",
+      reservePrice: 60,
+      highestBid: 92,
+      bidCount: 17,
+      endsAt: "2026-06-01T18:00:00.000Z"
+    },
+    bridgeReadiness: {
+      layerZeroReady: true,
+      sourceChain: "BNB",
+      destinationChains: ["Polygon"],
+      notes: "LayerZero compatibility tracked as metadata only."
+    },
+    greenfieldBucket: "mock-greenfield-academy-content",
+    signedUrlPreviewAvailable: true,
+    metadataAttributes: [
+      { traitType: "Access", value: "Academy Certification" },
+      { traitType: "Token Standard", value: "ERC1155" },
+      { traitType: "Governance", value: "Review Required" }
+    ]
+  },
+  {
+    id: "product-mcp-agent-template",
+    title: "MCP Agent Template License",
+    slug: "mcp-agent-template-license",
+    category: "MCPs",
+    subcategory: "Agent templates",
+    sellerId: "seller-mcp-labs",
+    description:
+      "Governance-reviewed agent template package with plugin compatibility checks and future DAO installation rights.",
+    shortDescription: "MCP agent template license with plugin review status.",
+    tags: ["mcp", "agent", "plugin", "runtime"],
+    images: ["https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80"],
+    media: [],
+    version: "0.1.0",
+    status: "listed",
+    governanceStatus: "restricted",
+    constitutionalStanding: "requires-review",
+    visibility: "private-preview",
+    pricing: { amount: 250, currency: "USDC", settlementMode: "mock-only" },
+    acceptedCurrencies: ["USDC"],
+    royaltyModel: { standard: "Custom Split", bps: 1000, recipient: "MCP Working Group", previewAmount: 25 },
+    accessModel: "license-key",
+    deliveryType: "MCP Runtime",
+    licenseType: "DAO License",
+    supportedChains: ["Arbitrum", "Polygon"],
+    nftBound: false,
+    governanceRequired: true,
+    maturity: "alpha",
+    createdAt: "2026-05-07T11:00:00.000Z",
+    updatedAt: "2026-05-16T20:00:00.000Z",
+    tokenStandard: "OffchainLicense",
+    listingType: "license-preview",
+    bridgeReadiness: {
+      layerZeroReady: false,
+      sourceChain: "Arbitrum",
+      destinationChains: [],
+      notes: "Bridge unavailable until plugin audit completes."
+    },
+    signedUrlPreviewAvailable: false,
+    metadataAttributes: [
+      { traitType: "Access", value: "MCP Runtime" },
+      { traitType: "Token Standard", value: "OffchainLicense" },
+      { traitType: "Validation", value: "Restricted Preview" }
+    ]
+  },
+  {
+    id: "product-trading-strategy-pass",
+    title: "Strategy License Dutch Auction",
+    slug: "strategy-license-dutch-auction",
+    category: "Trading",
+    subcategory: "Strategy licenses",
+    collectionId: "collection-strategy-license-passes",
+    sellerId: "seller-axodus-core",
+    description:
+      "Mock dutch auction for a strategy license NFT, with risk-aware listing metadata and no live trading execution.",
+    shortDescription: "Dutch auction preview for a risk-reviewed strategy license NFT.",
+    tags: ["trading", "strategy", "auction", "erc721"],
+    images: ["https://images.unsplash.com/photo-1642790551116-18e150f248e5?auto=format&fit=crop&w=1200&q=80"],
+    media: [],
+    version: "0.1.0",
+    status: "listed",
+    governanceStatus: "under-review",
+    constitutionalStanding: "requires-review",
+    visibility: "public",
+    pricing: { amount: 300, currency: "USDC", settlementMode: "mock-only" },
+    acceptedCurrencies: ["USDC"],
+    royaltyModel: { standard: "EIP-2981", bps: 400, recipient: "Axodus Treasury", previewAmount: 12 },
+    accessModel: "wallet-gated",
+    deliveryType: "Dashboard Access",
+    licenseType: "Personal Use",
+    supportedChains: ["Ethereum", "Arbitrum"],
+    nftBound: true,
+    governanceRequired: true,
+    maturity: "alpha",
+    createdAt: "2026-05-11T08:00:00.000Z",
+    updatedAt: "2026-05-17T13:00:00.000Z",
+    tokenStandard: "ERC721",
+    contractAddress: "mock:strategy-license-pass",
+    tokenId: "AXD-STRAT-007",
+    listingType: "dutch-auction",
+    auction: {
+      type: "dutch-auction",
+      status: "active",
+      reservePrice: 180,
+      highestBid: 220,
+      bidCount: 6,
+      endsAt: "2026-05-30T18:00:00.000Z"
+    },
+    bridgeReadiness: {
+      layerZeroReady: true,
+      sourceChain: "Arbitrum",
+      destinationChains: ["Ethereum"],
+      notes: "Future cross-chain ownership sync boundary only."
+    },
+    signedUrlPreviewAvailable: false,
+    metadataAttributes: [
+      { traitType: "Access", value: "Strategy License" },
+      { traitType: "Token Standard", value: "ERC721" },
+      { traitType: "Listing", value: "Dutch Auction" }
+    ]
+  }
+];
+
+export const marketplaceAssetRegistry = [
+  {
+    productId: "product-governance-dashboard-nft",
+    currentOwner: "0xMockOwnerGovernance001",
+    ownershipHistory: [
+      {
+        id: "ownership-governance-001",
+        timestamp: "2026-05-01T12:05:00.000Z",
+        actor: "asset-registry-mock",
+        status: "mock-confirmed",
+        owner: "0xMockOwnerGovernance001",
+        note: "Initial mock owner assigned for governance access pass."
+      }
+    ],
+    transferHistory: [
+      {
+        id: "transfer-governance-001",
+        timestamp: "2026-05-03T14:00:00.000Z",
+        actor: "transfer-preview",
+        status: "mock-confirmed",
+        from: "0xMockTreasuryIssuer",
+        to: "0xMockOwnerGovernance001",
+        chain: "Polygon",
+        note: "Mock transfer preview recorded without contract write."
+      }
+    ],
+    licenseHistory: [
+      {
+        id: "license-governance-001",
+        timestamp: "2026-05-04T09:00:00.000Z",
+        actor: "license-preview",
+        status: "mock-confirmed",
+        licenseType: "NFT Access License",
+        holder: "0xMockOwnerGovernance001",
+        note: "NFT access license preview attached to mock holder."
+      }
+    ],
+    validation: {
+      metadata: "compliant",
+      contract: "compliant",
+      collection: "compliant",
+      origin: "compliant",
+      royalty: "compliant",
+      notes: ["Native mock asset", "EIP-2981 royalty preview available", "No on-chain validation executed"]
+    }
+  },
+  {
+    productId: "product-academy-cert-bundle",
+    currentOwner: "0xMockAcademyHolder1155",
+    ownershipHistory: [
+      {
+        id: "ownership-academy-001",
+        timestamp: "2026-04-22T10:00:00.000Z",
+        actor: "asset-registry-mock",
+        status: "mock-confirmed",
+        owner: "0xMockAcademyHolder1155",
+        note: "Mock ERC1155 holder balance represented as registry ownership."
+      }
+    ],
+    transferHistory: [],
+    licenseHistory: [
+      {
+        id: "license-academy-001",
+        timestamp: "2026-04-24T09:00:00.000Z",
+        actor: "license-preview",
+        status: "mock-pending",
+        licenseType: "Subscription License",
+        holder: "0xMockAcademyHolder1155",
+        note: "Subscription license preview remains pending governance review."
+      }
+    ],
+    validation: {
+      metadata: "under-review",
+      contract: "under-review",
+      collection: "under-review",
+      origin: "compliant",
+      royalty: "compliant",
+      notes: ["Native mock ERC1155 asset", "Academy collection requires governance review", "No indexer or chain read executed"]
+    }
+  },
+  {
+    productId: "product-mcp-agent-template",
+    currentOwner: "0xMockMcpLicenseHolder",
+    ownershipHistory: [],
+    transferHistory: [],
+    licenseHistory: [
+      {
+        id: "license-mcp-001",
+        timestamp: "2026-05-08T11:00:00.000Z",
+        actor: "license-preview",
+        status: "mock-blocked",
+        licenseType: "DAO License",
+        holder: "0xMockMcpLicenseHolder",
+        note: "DAO license preview blocked by governance restriction."
+      }
+    ],
+    validation: {
+      metadata: "restricted",
+      contract: "restricted",
+      collection: "restricted",
+      origin: "under-review",
+      royalty: "under-review",
+      notes: ["Offchain license asset", "Plugin audit incomplete", "No license enforcement executed"]
+    }
+  },
+  {
+    productId: "product-trading-strategy-pass",
+    currentOwner: "0xMockStrategyHolder007",
+    ownershipHistory: [
+      {
+        id: "ownership-strategy-001",
+        timestamp: "2026-05-11T08:15:00.000Z",
+        actor: "asset-registry-mock",
+        status: "mock-confirmed",
+        owner: "0xMockStrategyHolder007",
+        note: "Mock owner assigned for strategy license pass."
+      }
+    ],
+    transferHistory: [
+      {
+        id: "transfer-strategy-001",
+        timestamp: "2026-05-12T13:30:00.000Z",
+        actor: "auction-preview",
+        status: "mock-pending",
+        from: "0xMockTreasuryIssuer",
+        to: "0xMockStrategyHolder007",
+        chain: "Arbitrum",
+        note: "Dutch auction transfer remains preview-only."
+      }
+    ],
+    licenseHistory: [],
+    validation: {
+      metadata: "under-review",
+      contract: "under-review",
+      collection: "under-review",
+      origin: "compliant",
+      royalty: "compliant",
+      notes: ["Native mock ERC721 asset", "Risk-reviewed trading license", "No trading or settlement execution"]
+    }
+  }
+];
+
+export const marketplaceWalletDiscoveryRecords = [
+  {
+    walletAddress: "0xMockOwnerGovernance001",
+    label: "Governance holder mock wallet",
+    status: "ready",
+    provider: {
+      id: "provider-wallet-discovery-mock",
+      name: "Axodus Wallet Discovery Mock",
+      type: "wallet-discovery",
+      origin: "Axodus local mock dataset",
+      trustLevel: "mock-only"
+    },
+    assets: [
+      {
+        id: "discovered-governance-access-nft",
+        walletAddress: "0xMockOwnerGovernance001",
+        kind: "nft",
+        name: "Governance Dashboard NFT Access",
+        description: "Discovered Asset mock for an ERC721 governance access pass associated with the wallet in local mock data.",
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+        productId: "product-governance-dashboard-nft",
+        collectionId: "collection-governance-access",
+        licenseId: "license-personal-nft",
+        issuer: "Axodus Nucleus",
+        provider: {
+          id: "provider-wallet-discovery-mock",
+          name: "Axodus Wallet Discovery Mock",
+          type: "wallet-discovery",
+          origin: "Axodus local mock dataset",
+          trustLevel: "mock-only"
+        },
+        origin: "native",
+        chain: "Polygon",
+        contractAddress: "mock:governance-dashboard-access",
+        tokenId: "AXD-GOV-001",
+        tokenStandard: "ERC721",
+        discoverySource: "mock-wallet-discovery",
+        ownershipState: "owned-mock",
+        validationStatus: "governance-reviewed",
+        riskClassification: "low-mock",
+        provenance: "Derived from marketplaceAssetRegistry currentOwner and local product mock data; no ownership verification read was executed.",
+        trustBoundary: {
+          origin: "Axodus local mock dataset",
+          provider: "Axodus Wallet Discovery Mock",
+          validationStatus: "governance-reviewed",
+          provenance: "Mock wallet discovery record derived from Asset Registry preview data.",
+          riskClassification: "low-mock",
+          executionState: "read-only",
+          canDisplay: true,
+          canTrade: false,
+          canSettle: false,
+          canBridge: false,
+          notes: [
+            "Wallet Discovery is mock/read-only.",
+            "Discovery does not prove ownership, custody, transfer authority or settlement eligibility.",
+            "No wallet signature, on-chain read, indexer, provider API, transfer, bridge or settlement is executed."
+          ]
+        },
+        warnings: ["Ownership state is owned-mock, not verified ownership."],
+        disclaimers: ["No custody, no ownership guarantee, no wallet signatures and no settlement."]
+      }
+    ]
+  },
+  {
+    walletAddress: "0xMockAcademyHolder1155",
+    label: "Academy certificate holder mock wallet",
+    status: "ready",
+    provider: {
+      id: "provider-wallet-discovery-mock",
+      name: "Axodus Wallet Discovery Mock",
+      type: "wallet-discovery",
+      origin: "Axodus local mock dataset",
+      trustLevel: "mock-only"
+    },
+    assets: [
+      {
+        id: "discovered-academy-certificate",
+        walletAddress: "0xMockAcademyHolder1155",
+        kind: "certificate",
+        name: "Academy Certification ERC1155 Certificate",
+        description: "Discovered Asset mock for a certificate-style ERC1155 credential associated with a wallet account.",
+        image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+        productId: "product-academy-cert-bundle",
+        collectionId: "collection-academy-certifications",
+        licenseId: "license-personal-nft",
+        issuer: "Academy Tutor Guild",
+        provider: {
+          id: "provider-wallet-discovery-mock",
+          name: "Axodus Wallet Discovery Mock",
+          type: "wallet-discovery",
+          origin: "Axodus local mock dataset",
+          trustLevel: "mock-only"
+        },
+        origin: "native",
+        chain: "BNB",
+        contractAddress: "mock:academy-certification-bundle",
+        tokenId: "AXD-ACADEMY-1155",
+        tokenStandard: "ERC1155",
+        discoverySource: "mock-wallet-discovery",
+        ownershipState: "discovered-mock",
+        validationStatus: "collection-reviewed",
+        riskClassification: "medium-mock",
+        provenance: "Derived from mock ownership and license history for Academy certification assets; no ERC1155 balance read was executed.",
+        trustBoundary: {
+          origin: "Axodus local mock dataset",
+          provider: "Axodus Wallet Discovery Mock",
+          validationStatus: "collection-reviewed",
+          provenance: "Mock wallet discovery record derived from local certificate and license preview data.",
+          riskClassification: "medium-mock",
+          executionState: "read-only",
+          canDisplay: true,
+          canTrade: false,
+          canSettle: false,
+          canBridge: false,
+          notes: [
+            "Certificate discovery is informational and read-only.",
+            "Discovery does not enforce certificate rights, license access or governance permissions.",
+            "No wallet signature, on-chain read, indexer, provider API, transfer, bridge or settlement is executed."
+          ]
+        },
+        warnings: ["Certificate discovery is not certificate enforcement."],
+        disclaimers: ["No ownership guarantee, no license enforcement, no wallet signatures and no settlement."]
+      }
+    ]
+  },
+  {
+    walletAddress: "0xMockMcpLicenseHolder",
+    label: "MCP license holder mock wallet",
+    status: "ready",
+    provider: {
+      id: "provider-wallet-discovery-mock",
+      name: "Axodus Wallet Discovery Mock",
+      type: "wallet-discovery",
+      origin: "Axodus local mock dataset",
+      trustLevel: "mock-only"
+    },
+    assets: [
+      {
+        id: "discovered-mcp-dao-license",
+        walletAddress: "0xMockMcpLicenseHolder",
+        kind: "license",
+        name: "MCP Agent Template DAO License",
+        description: "Discovered Asset mock for an offchain DAO license associated with a wallet-like account record.",
+        image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+        productId: "product-mcp-agent-template",
+        licenseId: "license-dao-plugin",
+        issuer: "MCP Runtime Labs",
+        provider: {
+          id: "provider-wallet-discovery-mock",
+          name: "Axodus Wallet Discovery Mock",
+          type: "wallet-discovery",
+          origin: "Axodus local mock dataset",
+          trustLevel: "mock-only"
+        },
+        origin: "mock-wallet",
+        chain: "Arbitrum",
+        tokenStandard: "OffchainLicense",
+        discoverySource: "mock-wallet-discovery",
+        ownershipState: "verified-ownership-unavailable",
+        validationStatus: "unverified",
+        riskClassification: "high-mock",
+        provenance: "Derived from local licenseHistory mock data; there is no on-chain license, entitlement enforcement or wallet ownership proof.",
+        trustBoundary: {
+          origin: "Axodus local mock dataset",
+          provider: "Axodus Wallet Discovery Mock",
+          validationStatus: "unverified",
+          provenance: "Mock wallet discovery record derived from offchain license preview data.",
+          riskClassification: "high-mock",
+          executionState: "read-only",
+          canDisplay: true,
+          canTrade: false,
+          canSettle: false,
+          canBridge: false,
+          notes: [
+            "License discovery is visibility-only.",
+            "Discovery does not prove entitlement, permission, transferability or commercial eligibility.",
+            "No wallet signature, on-chain read, indexer, provider API, transfer, bridge or settlement is executed."
+          ]
+        },
+        warnings: ["Offchain license discovery has no verified ownership runtime."],
+        disclaimers: ["No custody, no permission grant, no ownership guarantee, no wallet signatures and no settlement."]
+      }
+    ]
+  },
+  {
+    walletAddress: "0xMockEmptyWallet",
+    label: "Empty mock wallet",
+    status: "empty",
+    provider: {
+      id: "provider-wallet-discovery-mock",
+      name: "Axodus Wallet Discovery Mock",
+      type: "wallet-discovery",
+      origin: "Axodus local mock dataset",
+      trustLevel: "mock-only"
+    },
+    assets: []
+  }
+];
+
+export const marketplaceFederationProviders = [
+  {
+    id: "provider-opensea-mock",
+    slug: "opensea",
+    name: "OpenSea",
+    type: "marketplace",
+    origin: "OpenSea provider descriptor mock",
+    trustLevel: "provider-reported",
+    description: "Mock-first Federation Provider descriptor for future OpenSea collection, asset, metadata and statistics references.",
+    supportedChains: ["Ethereum", "Polygon", "Arbitrum"],
+    supportedStandards: ["ERC721", "ERC1155"],
+    capabilities: ["contract-reference", "collection-reference", "asset-reference", "metadata-reference", "statistics-reference"],
+    supportedOperations: ["read-contract", "read-collection", "read-asset", "read-metadata", "read-statistics"],
+    dataScope: ["collection descriptors", "asset descriptors", "contract references", "provider-reported metadata", "provider-reported statistics"],
+    limitations: [
+      "No OpenSea API call is active.",
+      "No API key, SDK, scraping, sync job, cache, indexer or subgraph is configured.",
+      "Provider-reported data is not a guarantee of authenticity, ownership, metadata quality, royalties, trading availability or custody."
+    ],
+    rateLimitNotes: "Rate limits are documented as future provider concerns only; no request budget is consumed in mock mode.",
+    validationLimits: [
+      "Descriptor can reference metadata but cannot verify it.",
+      "Descriptor can reference contracts but cannot validate bytecode or collection authenticity.",
+      "Descriptor cannot authorize trading, settlement, custody, bridge execution or wallet signatures."
+    ],
+    health: {
+      status: "healthy-mock",
+      lastCheckedAt: "2026-06-12T10:00:00.000Z",
+      notes: ["Mock health only; no external dependency was checked."]
+    },
+    trustBoundary: {
+      origin: "OpenSea provider descriptor mock",
+      provider: "OpenSea",
+      validationStatus: "provider-reported",
+      provenance: "Static mock provider descriptor authored inside Axodus Marketplace mock data.",
+      riskClassification: "provider-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federation Provider descriptor is read-only and non-executing.",
+        "No external calls, SDKs, API keys, scraping, indexer, subgraph or sync job are active.",
+        "Provider is not treated as an absolute source of truth."
+      ]
+    },
+    externalDependencyWarning: "OpenSea availability, API behavior and data quality are external dependencies for future phases only.",
+    readOnly: true,
+    executionEnabled: false
+  },
+  {
+    id: "provider-rarible-mock",
+    slug: "rarible",
+    name: "Rarible",
+    type: "marketplace",
+    origin: "Rarible provider descriptor mock",
+    trustLevel: "provider-reported",
+    description: "Mock-first Federation Provider descriptor for future Rarible contract, collection, asset and metadata references.",
+    supportedChains: ["Ethereum", "Polygon"],
+    supportedStandards: ["ERC721", "ERC1155"],
+    capabilities: ["contract-reference", "collection-reference", "asset-reference", "metadata-reference"],
+    supportedOperations: ["read-contract", "read-collection", "read-asset", "read-metadata"],
+    dataScope: ["contract references", "collection descriptors", "asset descriptors", "provider-reported metadata"],
+    limitations: [
+      "No Rarible API call is active.",
+      "No API key, SDK, scraping, sync job, cache, indexer or subgraph is configured.",
+      "Provider-reported data remains untrusted until explicit validation and governance review."
+    ],
+    rateLimitNotes: "Rate limit behavior is a future integration concern; mock descriptors do not call Rarible.",
+    validationLimits: [
+      "Cannot validate collection authenticity.",
+      "Cannot verify metadata integrity.",
+      "Cannot enable external trading, royalties, settlement or custody."
+    ],
+    health: {
+      status: "healthy-mock",
+      lastCheckedAt: "2026-06-12T10:00:00.000Z",
+      notes: ["Mock health only; no Rarible endpoint was contacted."]
+    },
+    trustBoundary: {
+      origin: "Rarible provider descriptor mock",
+      provider: "Rarible",
+      validationStatus: "provider-reported",
+      provenance: "Static mock provider descriptor authored inside Axodus Marketplace mock data.",
+      riskClassification: "provider-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federation Provider descriptor is read-only and non-executing.",
+        "No external calls, SDKs, API keys, scraping, indexer, subgraph or sync job are active.",
+        "Provider is not treated as an absolute source of truth."
+      ]
+    },
+    externalDependencyWarning: "Rarible availability, API behavior and data quality are external dependencies for future phases only.",
+    readOnly: true,
+    executionEnabled: false
+  },
+  {
+    id: "provider-magic-eden-mock",
+    slug: "magic-eden",
+    name: "Magic Eden",
+    type: "marketplace",
+    origin: "Magic Eden provider descriptor mock",
+    trustLevel: "provider-reported",
+    description: "Mock-first Federation Provider descriptor for future Magic Eden asset, collection and metadata references.",
+    supportedChains: ["Ethereum", "Polygon"],
+    supportedStandards: ["ERC721", "ERC1155"],
+    capabilities: ["collection-reference", "asset-reference", "metadata-reference", "statistics-reference"],
+    supportedOperations: ["read-collection", "read-asset", "read-metadata", "read-statistics"],
+    dataScope: ["collection descriptors", "asset descriptors", "provider-reported metadata", "provider-reported statistics"],
+    limitations: [
+      "No Magic Eden API call is active.",
+      "No API key, SDK, scraping, sync job, cache, indexer or subgraph is configured.",
+      "Provider-reported listings and statistics cannot be treated as official market state."
+    ],
+    rateLimitNotes: "Rate limits remain future documentation only; mock mode does not consume provider traffic.",
+    validationLimits: [
+      "Cannot verify ownership or listings.",
+      "Cannot validate metadata or collection authenticity.",
+      "Cannot enable trading, bids, settlement, custody or wallet signatures."
+    ],
+    health: {
+      status: "degraded-mock",
+      lastCheckedAt: "2026-06-12T10:00:00.000Z",
+      notes: ["Mock degraded state demonstrates provider health visibility without real checks."]
+    },
+    trustBoundary: {
+      origin: "Magic Eden provider descriptor mock",
+      provider: "Magic Eden",
+      validationStatus: "provider-reported",
+      provenance: "Static mock provider descriptor authored inside Axodus Marketplace mock data.",
+      riskClassification: "provider-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federation Provider descriptor is read-only and non-executing.",
+        "No external calls, SDKs, API keys, scraping, indexer, subgraph or sync job are active.",
+        "Provider is not treated as an absolute source of truth."
+      ]
+    },
+    externalDependencyWarning: "Magic Eden availability, API behavior and data quality are external dependencies for future phases only.",
+    readOnly: true,
+    executionEnabled: false
+  },
+  {
+    id: "provider-harmony-ecosystem-mock",
+    slug: "harmony-ecosystem",
+    name: "Harmony Ecosystem",
+    type: "ecosystem",
+    origin: "Harmony ecosystem provider descriptor mock",
+    trustLevel: "provider-reported",
+    description: "Mock-first Federation Provider descriptor for Harmony ecosystem collection, contract, asset and wallet discovery references.",
+    supportedChains: ["Harmony"],
+    supportedStandards: ["ERC721", "ERC1155"],
+    capabilities: ["contract-reference", "collection-reference", "asset-reference", "metadata-reference", "statistics-reference", "wallet-discovery-reference"],
+    supportedOperations: ["read-contract", "read-collection", "read-asset", "read-metadata", "read-statistics", "read-wallet-assets"],
+    dataScope: ["Harmony contract references", "collection descriptors", "asset descriptors", "provider-reported metadata", "wallet discovery descriptors"],
+    limitations: [
+      "No Harmony provider API call is active.",
+      "No API key, SDK, scraping, sync job, cache, indexer or subgraph is configured.",
+      "Provider-reported Harmony data remains display-only until validation and governance review."
+    ],
+    rateLimitNotes: "Harmony provider rate limits are future integration notes only; mock descriptors do not call external systems.",
+    validationLimits: [
+      "Cannot verify Harmony contract authenticity.",
+      "Cannot verify wallet ownership or custody.",
+      "Cannot enable external trading, settlement, bridge execution or wallet signatures."
+    ],
+    health: {
+      status: "healthy-mock",
+      lastCheckedAt: "2026-06-12T10:00:00.000Z",
+      notes: ["Mock health only; no Harmony endpoint was contacted."]
+    },
+    trustBoundary: {
+      origin: "Harmony ecosystem provider descriptor mock",
+      provider: "Harmony Ecosystem",
+      validationStatus: "provider-reported",
+      provenance: "Static mock provider descriptor authored inside Axodus Marketplace mock data.",
+      riskClassification: "provider-risk",
+      executionState: "read-only",
+      canDisplay: true,
+      canTrade: false,
+      canSettle: false,
+      canBridge: false,
+      notes: [
+        "Federation Provider descriptor is read-only and non-executing.",
+        "No external calls, SDKs, API keys, scraping, indexer, subgraph or sync job are active.",
+        "Provider is not treated as an absolute source of truth."
+      ]
+    },
+    externalDependencyWarning: "Harmony ecosystem availability, API behavior and data quality are external dependencies for future phases only.",
+    readOnly: true,
+    executionEnabled: false
+  }
+];
+
+export const marketplaceBoundaries = [
+  {
+    id: "reown",
+    label: "Reown AppKit wallet state",
+    status: "mocked",
+    description: "Wallet connection, account and chain state are mocked for UI readiness."
+  },
+  {
+    id: "contracts",
+    label: "MarketplaceContractAdapter",
+    status: "ready-boundary",
+    description: "Fixed listings, buy-now, auctions and bid methods are interface-ready with mock responses."
+  },
+  {
+    id: "royalties",
+    label: "RoyaltyService",
+    status: "ready-boundary",
+    description: "EIP-2981 royalty previews are calculated from mock listing prices."
+  },
+  {
+    id: "greenfield",
+    label: "Greenfield delivery",
+    status: "mocked",
+    description: "Greenfield buckets and signed URL previews are shown after mock purchase."
+  },
+  {
+    id: "layerzero",
+    label: "LayerZero bridge readiness",
+    status: "deferred",
+    description: "Supported chains and bridge readiness are exposed without bridge execution."
+  }
+];
