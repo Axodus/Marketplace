@@ -29,6 +29,11 @@ import type {
   Seller,
   Tenant,
   TenantBranding,
+  TenantCatalog,
+  TenantCatalogItem,
+  TenantCatalogResolution,
+  TenantCatalogRule,
+  TenantCatalogSource,
   TenantDomain,
   TenantDomainAlias,
   TenantDomainInputType,
@@ -379,6 +384,8 @@ export interface ExternalContractView {
 export interface TenantContextView {
   tenant: Tenant;
   routingContext: TenantRoutingContext;
+  catalog: TenantCatalog;
+  catalogResolution: TenantCatalogResolution;
   isGlobalMarketplace: boolean;
   branding: TenantBranding;
   theme: TenantTheme;
@@ -797,22 +804,277 @@ export function getTenantLogo(idOrSlug?: string) {
   };
 }
 
+function buildFallbackTenantCatalog(tenant: Tenant): TenantCatalog {
+  return {
+    id: `catalog-${tenant.id}`,
+    tenantId: tenant.id,
+    name: `${tenant.identity.displayName} Catalog`,
+    description: "Fallback Tenant Catalog derived from Tenant Configuration.",
+    status: tenant.configuration.canDisplay ? "configured-mock" : "disabled",
+    scope: tenant.tenantType === "global" ? "global" : "tenant",
+    inheritsGlobalCatalog: tenant.tenantType === "global",
+    allowsFederatedAssets: tenant.configuration.isFederatedCatalogEnabled,
+    allowsExternalCollections: tenant.configuration.isFederatedCatalogEnabled,
+    allowsNativeProducts: true,
+    featuredProductIds: tenant.configuration.featuredProductIds,
+    featuredCollectionIds: tenant.configuration.featuredCollectionIds,
+    allowedProductIds: tenant.configuration.allowedProductIds,
+    blockedProductIds: tenant.configuration.blockedProductIds,
+    allowedCollectionIds: tenant.configuration.allowedCollectionIds,
+    blockedCollectionIds: tenant.configuration.blockedCollectionIds,
+    allowedExternalCollectionIds: tenant.configuration.allowedExternalCollectionIds,
+    blockedExternalCollectionIds: [],
+    allowedCategoryIds: tenant.configuration.allowedCategoryIds,
+    blockedCategoryIds: [],
+    exposureRules: [],
+    rules: [],
+    warnings: ["Fallback catalog was derived from Tenant Configuration."],
+    disclaimers: ["Tenant Catalog fallback is mock isolation and does not create financial isolation, settlement isolation, RBAC enforcement or isolated database."],
+    createdAt: tenant.createdAt,
+    updatedAt: tenant.updatedAt
+  };
+}
+
+export function getTenantCatalog(tenantIdOrSlug: string) {
+  const tenant = getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug) ?? getGlobalTenant();
+  return tenant.catalog ?? buildFallbackTenantCatalog(tenant);
+}
+
+export function listTenantCatalogRules(tenantIdOrSlug: string) {
+  const catalog = getTenantCatalog(tenantIdOrSlug);
+  return [...catalog.rules, ...catalog.exposureRules].sort((left, right) => left.priority - right.priority || left.id.localeCompare(right.id));
+}
+
+function isBlockedCatalogTenant(tenant: Tenant, catalog: TenantCatalog) {
+  return isBlockedTenant(tenant) || catalog.status === "disabled" || catalog.status === "restricted" || tenant.visibility === "archived";
+}
+
+function isProductExplicitlyAllowed(product: Product, catalog: TenantCatalog) {
+  return (
+    catalog.allowedProductIds.includes(product.id) ||
+    catalog.allowedCategoryIds.includes(product.category) ||
+    (product.collectionId ? catalog.allowedCollectionIds.includes(product.collectionId) : false)
+  );
+}
+
+function isProductBlocked(product: Product, catalog: TenantCatalog) {
+  const collection = product.collectionId ? collections.find((item) => item.id === product.collectionId) : undefined;
+  return (
+    catalog.blockedProductIds.includes(product.id) ||
+    catalog.blockedCategoryIds.includes(product.category) ||
+    Boolean(product.collectionId && catalog.blockedCollectionIds.includes(product.collectionId)) ||
+    Boolean(collection && isExternalCollection(collection) && !catalog.allowsFederatedAssets)
+  );
+}
+
+function getProductCatalogSource(product: Product, catalog: TenantCatalog): TenantCatalogSource {
+  if (catalog.featuredProductIds.includes(product.id)) return "tenant featured rule";
+  if (catalog.allowedProductIds.includes(product.id)) return "tenant explicit allow rule";
+  if (product.collectionId && catalog.allowedCollectionIds.includes(product.collectionId)) return "collection allow rule";
+  if (catalog.allowedCategoryIds.includes(product.category)) return "category allow rule";
+  if (catalog.inheritsGlobalCatalog) return "global catalog inheritance";
+  return "tenant explicit allow rule";
+}
+
+function getCollectionCatalogSource(collection: MarketplaceCollection, catalog: TenantCatalog): TenantCatalogSource {
+  if (catalog.featuredCollectionIds.includes(collection.id)) return "tenant featured rule";
+  if (isExternalCollection(collection) && catalog.allowedExternalCollectionIds.includes(collection.id)) return "external collection rule";
+  if (catalog.allowedCollectionIds.includes(collection.id)) return "collection allow rule";
+  if (catalog.inheritsGlobalCatalog) return "global catalog inheritance";
+  if (isExternalCollection(collection)) return "federated catalog rule";
+  return "collection allow rule";
+}
+
+function buildProductCatalogItem(product: Product, tenant: Tenant, catalog: TenantCatalog, source: TenantCatalogSource): TenantCatalogItem {
+  const collection = product.collectionId ? collections.find((item) => item.id === product.collectionId) : undefined;
+  const external = collection ? isExternalCollection(collection) : false;
+  return {
+    productId: product.id,
+    collectionId: product.collectionId,
+    tenantId: tenant.id,
+    source,
+    inclusionReason: source,
+    isFeatured: catalog.featuredProductIds.includes(product.id),
+    isFederated: external,
+    isExternal: external,
+    isNative: !external,
+    canDisplay: true,
+    canTrade: false,
+    canSettle: false,
+    warnings: external ? ["Federated catalog rule preserves provider-reported trust boundaries."] : [],
+    disclaimers: ["Tenant Catalog item is mock/config-first and does not enable settlement isolation, tenant billing, RBAC enforcement or isolated database."]
+  };
+}
+
+function buildCollectionCatalogItem(collection: MarketplaceCollection, tenant: Tenant, catalog: TenantCatalog, source: TenantCatalogSource): TenantCatalogItem {
+  const external = isExternalCollection(collection);
+  return {
+    collectionId: collection.id,
+    tenantId: tenant.id,
+    source,
+    inclusionReason: source,
+    isFeatured: catalog.featuredCollectionIds.includes(collection.id),
+    isFederated: external,
+    isExternal: external,
+    isNative: !external,
+    canDisplay: true,
+    canTrade: false,
+    canSettle: false,
+    warnings: external ? ["External collection preserves origin, provider, validation status, provenance, risk classification and trust boundaries."] : [],
+    disclaimers: ["Tenant Collection item is mock/config-first and does not enable financial isolation or settlement isolation."]
+  };
+}
+
+export function applyTenantCatalogRules(tenant: Tenant, catalog: TenantCatalog): TenantCatalogResolution {
+  const blockedRules = listTenantCatalogRules(tenant.id).filter((rule) => rule.status === "disabled" || rule.status === "restricted" || rule.effect === "exclude" || rule.effect === "restrict");
+  const appliedRules = listTenantCatalogRules(tenant.id).filter((rule) => !blockedRules.includes(rule));
+
+  if (isBlockedCatalogTenant(tenant, catalog)) {
+    return {
+      tenantId: tenant.id,
+      resolvedAt: new Date(0).toISOString(),
+      includedProductIds: [],
+      excludedProductIds: products.map((product) => product.id),
+      includedCollectionIds: [],
+      excludedCollectionIds: collections.filter((collection) => !isExternalCollection(collection)).map((collection) => collection.id),
+      includedExternalCollectionIds: [],
+      excludedExternalCollectionIds: collections.filter(isExternalCollection).map((collection) => collection.id),
+      featuredProductIds: [],
+      featuredCollectionIds: [],
+      appliedRules,
+      blockedRules,
+      productItems: [],
+      collectionItems: [],
+      warnings: ["Tenant disabled/restricted status prevents catalog display."],
+      disclaimers: ["Tenant Isolation is mock/config-first and does not enable RBAC enforcement, production data isolation, financial isolation or isolated databases."]
+    };
+  }
+
+  const includedProducts = products.filter((product) => {
+    if (isProductBlocked(product, catalog)) return false;
+    if (catalog.inheritsGlobalCatalog) return catalog.allowsNativeProducts || product.nftBound;
+    return isProductExplicitlyAllowed(product, catalog);
+  });
+  const excludedProducts = products.filter((product) => !includedProducts.includes(product));
+  const productCollectionIds = new Set(includedProducts.map((product) => product.collectionId).filter(Boolean));
+  const includedCollections = listCollections()
+    .map((view) => view.collection)
+    .filter((collection) => {
+      if (catalog.blockedCollectionIds.includes(collection.id) || catalog.blockedExternalCollectionIds.includes(collection.id)) return false;
+      if (isExternalCollection(collection) && !catalog.allowsExternalCollections) return false;
+      return (
+        productCollectionIds.has(collection.id) ||
+        catalog.allowedCollectionIds.includes(collection.id) ||
+        catalog.allowedExternalCollectionIds.includes(collection.id) ||
+        catalog.featuredCollectionIds.includes(collection.id) ||
+        catalog.inheritsGlobalCatalog
+      );
+    });
+  const excludedCollections = collections.filter((collection) => !includedCollections.includes(collection));
+  const productItems = includedProducts.map((product) => buildProductCatalogItem(product, tenant, catalog, getProductCatalogSource(product, catalog)));
+  const collectionItems = includedCollections.map((collection) => buildCollectionCatalogItem(collection, tenant, catalog, getCollectionCatalogSource(collection, catalog)));
+
+  return {
+    tenantId: tenant.id,
+    resolvedAt: new Date(0).toISOString(),
+    includedProductIds: includedProducts.map((product) => product.id),
+    excludedProductIds: excludedProducts.map((product) => product.id),
+    includedCollectionIds: includedCollections.filter((collection) => !isExternalCollection(collection)).map((collection) => collection.id),
+    excludedCollectionIds: excludedCollections.filter((collection) => !isExternalCollection(collection)).map((collection) => collection.id),
+    includedExternalCollectionIds: includedCollections.filter(isExternalCollection).map((collection) => collection.id),
+    excludedExternalCollectionIds: excludedCollections.filter(isExternalCollection).map((collection) => collection.id),
+    featuredProductIds: catalog.featuredProductIds.filter((id) => includedProducts.some((product) => product.id === id)),
+    featuredCollectionIds: catalog.featuredCollectionIds.filter((id) => includedCollections.some((collection) => collection.id === id)),
+    appliedRules,
+    blockedRules,
+    productItems,
+    collectionItems,
+    warnings: [...catalog.warnings],
+    disclaimers: [
+      ...catalog.disclaimers,
+      "Tenant Isolation is mock/config-first isolation only.",
+      "No financial isolation, no settlement isolation, no RBAC enforcement, no isolated database, no tenant billing and no revenue sharing are active."
+    ]
+  };
+}
+
+export function resolveTenantCatalog(tenantIdOrSlug?: string) {
+  const tenant = tenantIdOrSlug ? getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug) ?? getGlobalTenant() : getGlobalTenant();
+  const catalog = getTenantCatalog(tenant.id);
+  const resolution = applyTenantCatalogRules(tenant, catalog);
+  return { tenant, catalog, resolution };
+}
+
+export function getTenantVisibleProducts(tenantIdOrSlug?: string) {
+  const { resolution } = resolveTenantCatalog(tenantIdOrSlug);
+  return products.filter((product) => resolution.includedProductIds.includes(product.id));
+}
+
+export function getTenantVisibleCollections(tenantIdOrSlug?: string) {
+  const { resolution } = resolveTenantCatalog(tenantIdOrSlug);
+  const visibleIds = new Set([...resolution.includedCollectionIds, ...resolution.includedExternalCollectionIds]);
+  return listCollections().filter((view) => visibleIds.has(view.collection.id));
+}
+
+export function getTenantFeaturedProducts(tenantIdOrSlug?: string) {
+  const { resolution } = resolveTenantCatalog(tenantIdOrSlug);
+  return products.filter((product) => resolution.featuredProductIds.includes(product.id));
+}
+
+export function getTenantFeaturedCollections(tenantIdOrSlug?: string) {
+  const { resolution } = resolveTenantCatalog(tenantIdOrSlug);
+  return listCollections().filter((view) => resolution.featuredCollectionIds.includes(view.collection.id));
+}
+
+export function isProductVisibleForTenant(tenantIdOrSlug: string, productId: string) {
+  return resolveTenantCatalog(tenantIdOrSlug).resolution.includedProductIds.includes(productId);
+}
+
+export function isCollectionVisibleForTenant(tenantIdOrSlug: string, collectionId: string) {
+  const resolution = resolveTenantCatalog(tenantIdOrSlug).resolution;
+  return [...resolution.includedCollectionIds, ...resolution.includedExternalCollectionIds].includes(collectionId);
+}
+
+export function explainTenantCatalogInclusion(tenantIdOrSlug: string, targetId: string) {
+  const { catalog } = resolveTenantCatalog(tenantIdOrSlug);
+  if (catalog.featuredProductIds.includes(targetId) || catalog.featuredCollectionIds.includes(targetId)) return "Tenant featured rule";
+  if (catalog.allowedProductIds.includes(targetId)) return "Tenant explicit allow rule";
+  if (catalog.allowedCollectionIds.includes(targetId)) return "Collection allow rule";
+  if (catalog.allowedExternalCollectionIds.includes(targetId)) return "External collection rule";
+  if (catalog.allowedCategoryIds.includes(targetId as ProductCategory)) return "Category allow rule";
+  if (catalog.inheritsGlobalCatalog) return "Global catalog inheritance";
+  return "Tenant catalog rule";
+}
+
+export function explainTenantCatalogExclusion(tenantIdOrSlug: string, targetId: string) {
+  const { tenant, catalog, resolution } = resolveTenantCatalog(tenantIdOrSlug);
+  if (isBlockedCatalogTenant(tenant, catalog)) return "Tenant disabled/restricted status";
+  if (catalog.blockedProductIds.includes(targetId)) return "Product block rule";
+  if (catalog.blockedCollectionIds.includes(targetId)) return "Collection block rule";
+  if (catalog.blockedExternalCollectionIds.includes(targetId)) return "External asset restriction";
+  if (catalog.blockedCategoryIds.includes(targetId as ProductCategory)) return "Category block rule";
+  if (resolution.excludedProductIds.includes(targetId) || resolution.excludedCollectionIds.includes(targetId) || resolution.excludedExternalCollectionIds.includes(targetId)) {
+    return "Tenant catalog rule excluded this item";
+  }
+  return "No exclusion found";
+}
+
 export function resolveTenantContext(idOrSlug?: string): TenantContextView {
   const routingContext = resolveTenantRoutingContext(idOrSlug);
   const tenant = routingContext.tenant;
   const branding = resolveTenantBranding(tenant.slug);
-  const referencedProductIds = new Set([...tenant.configuration.featuredProductIds, ...tenant.configuration.allowedProductIds]);
-  const referencedCollectionIds = new Set([
-    ...tenant.configuration.featuredCollectionIds,
-    ...tenant.configuration.allowedCollectionIds,
-    ...tenant.configuration.allowedExternalCollectionIds
-  ]);
-  const referencedProducts = products.filter((product) => referencedProductIds.has(product.id));
-  const referencedCollections = listCollections().filter((view) => referencedCollectionIds.has(view.collection.id));
+  const catalog = getTenantCatalog(tenant.id);
+  const catalogResolution = applyTenantCatalogRules(tenant, catalog);
+  const referencedProducts = products.filter((product) => catalogResolution.includedProductIds.includes(product.id));
+  const referencedCollections = listCollections().filter((view) =>
+    [...catalogResolution.includedCollectionIds, ...catalogResolution.includedExternalCollectionIds].includes(view.collection.id)
+  );
 
   return {
     tenant,
     routingContext,
+    catalog,
+    catalogResolution,
     isGlobalMarketplace: tenant.tenantType === "global",
     branding: branding.branding,
     theme: branding.theme,
@@ -823,7 +1085,7 @@ export function resolveTenantContext(idOrSlug?: string): TenantContextView {
     executionBoundaries: [
       "Tenant Registry is mock/config-first and does not create production tenant routing.",
       "Tenant Identity is display metadata only with no RBAC, authentication or KYC.",
-      "Tenant Configuration can display mock catalog references but does not create final catalog isolation.",
+      "Tenant Configuration can resolve mock/config-first catalog isolation without production permissions.",
       tenant.configuration.canTrade ? "Tenant trade flag is inherited from existing mock commerce previews only." : "Tenant trading is disabled for productive execution.",
       tenant.configuration.canSettle ? "Unexpected settlement flag enabled." : "No settlement, tenant billing or treasury routing is active.",
       tenant.configuration.canRouteCustomDomain ? "Unexpected custom domain routing flag enabled." : "No custom DNS, real subdomain routing or separate tenant deploy is active."

@@ -135,7 +135,7 @@ Implementation boundary:
 
 # Phase 03 — Tenant Infrastructure
 
-Status: IN PROGRESS — TENANT DOMAINS IMPLEMENTED MOCK/READ-ONLY
+Status: COMPLETED — MARKETPLACE-AS-A-SERVICE MOCK/CONFIG-FIRST VALIDATED
 
 Objectives:
 - introduce Marketplace-as-a-Service tenant infrastructure
@@ -149,6 +149,7 @@ Deliverables:
 - Multi-Tenant Foundation mock/config-first runtime
 - Marketplace Branding mock/config-first runtime
 - Tenant Domains mock/read-only runtime
+- Tenant Isolation mock/config-first runtime
 - tenant catalog model
 - Curated Catalog readiness
 - white-label marketplace capability boundaries
@@ -163,12 +164,16 @@ Deliverables:
 Planning artifact:
 - `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md`
 
+Closure artifact:
+- `docs/PHASE_03_CLOSURE_REPORT.md`
+
 Linked requirements:
 - MEP-03A — Tenant Infrastructure Planning and Isolation Audit — completed
 - MEP-REQ-030 — Multi-Tenant Foundation — completed mock/config-first
 - MEP-REQ-031 — Marketplace Branding — completed mock/config-first
 - MEP-REQ-032 — Tenant Domains — completed mock/read-only
-- MEP-REQ-033 — Tenant Isolation
+- MEP-REQ-033 — Tenant Isolation — completed mock/config-first
+- MEP-PHASE-03-CLOSURE — QA, navigation and Marketplace-as-a-Service validation — completed
 
 Dependencies:
 - PHASE 00 — Marketplace Architecture Revision
@@ -180,12 +185,17 @@ Relationship to Phase 04:
 - Phase 04 — Curated Catalogs depends on Tenant Infrastructure for tenant-specific catalog selection, product exposure and curation rules
 
 Implementation boundary:
+- Phase 03 is closed as a mock/config-first Marketplace-as-a-Service phase
 - MEP-03A is audit and planning only
 - MEP-REQ-030 introduces Tenant Registry, Tenant Identity and Tenant Configuration as mock/config-first runtime surfaces only
 - MEP-REQ-031 introduces Tenant Branding, Tenant Theme and Tenant Visual Identity as mock/config-first display surfaces only
 - MEP-REQ-031 does not introduce white-label production, custom DNS, subdomain routing, production tenant routing, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated database, backend schema, tracking, BI or separate tenant deploy
 - MEP-REQ-032 introduces Tenant Domains, aliases and Tenant Routing Context as mock/read-only SPA routing surfaces only
 - MEP-REQ-032 does not introduce DNS real, custom DNS, real subdomain routing, TLS certificate, proxy routing, edge routing, backend routing, separate tenant deploy, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated database, backend schema, tracking or BI
+- MEP-REQ-033 introduces Tenant Catalog, Tenant Catalog Rule, Tenant Exposure Rule and Tenant Catalog Resolution as mock/config-first catalog isolation surfaces only
+- MEP-REQ-033 does not introduce financial isolation, settlement isolation, billing by tenant, revenue sharing, treasury routing by tenant, RBAC enforcement, real multi-tenant auth, isolated database, physical data isolation, backend schema, GraphQL schema, tracking or BI
+- MEP-PHASE-03-CLOSURE validates tenant registry, identity, configuration, branding, themes, simulated domains, tenant routing, catalog isolation, exposure rules, tenant-aware navigation and global fallback
+- no billing by tenant, settlement by tenant, revenue sharing, custom DNS real, subdomain real, TLS certificate, proxy/edge routing, backend routing, isolated database, physical data isolation, production RBAC, real multi-tenant auth, provider real, tracking, BI, wallet signature, contract write, payment, bridge or custody is introduced by Phase 03
 - MEP-REQ-002 is documentation-only
 - no real multi-tenancy, tenant registry, domain routing, custom domain, subdomain, frontend route, database schema, API, GraphQL schema, persistence, tenant billing, tenant settlement, tenant revenue sharing, financial isolation, complete data isolation, tenant authentication, RBAC or tenant dashboard is introduced by Phase 00
 

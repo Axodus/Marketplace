@@ -40,6 +40,35 @@ export type TenantDomainVerificationStatus =
   | "not-verified";
 export type TenantDomainResolutionStatus = "resolved" | "global-fallback" | "not-found" | "restricted" | "disabled" | "conflict" | "invalid";
 export type TenantDomainInputType = "slug" | "alias" | "hostname" | "route" | "global";
+export type TenantCatalogStatus = "configured-mock" | "active-mock" | "draft" | "review-required" | "restricted" | "disabled" | "empty" | "conflict";
+export type TenantCatalogScope = "global" | "tenant" | "curated" | "federated" | "mixed";
+export type TenantCatalogRuleType =
+  | "allow-product"
+  | "block-product"
+  | "allow-collection"
+  | "block-collection"
+  | "allow-category"
+  | "block-category"
+  | "allow-external-collection"
+  | "block-external-collection"
+  | "feature-product"
+  | "feature-collection"
+  | "inherit-global"
+  | "allow-federated-assets"
+  | "block-federated-assets"
+  | "allow-native-products"
+  | "block-native-products";
+export type TenantCatalogRuleEffect = "include" | "exclude" | "feature" | "inherit" | "restrict" | "warn";
+export type TenantCatalogRuleTargetType = "product" | "collection" | "external-collection" | "category" | "catalog" | "asset-origin";
+export type TenantCatalogSource =
+  | "global catalog inheritance"
+  | "tenant explicit allow rule"
+  | "tenant featured rule"
+  | "collection allow rule"
+  | "category allow rule"
+  | "federated catalog rule"
+  | "external collection rule"
+  | "global catalog";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -132,6 +161,54 @@ export interface TenantConfiguration {
   isCommunityMarketplace: boolean;
   isFederatedCatalogEnabled: boolean;
   isTenantCatalogEnabled: boolean;
+}
+
+export interface TenantCatalogRule {
+  id: string;
+  tenantId: string;
+  ruleType: TenantCatalogRuleType;
+  targetType: TenantCatalogRuleTargetType;
+  targetId: string;
+  effect: TenantCatalogRuleEffect;
+  reason: string;
+  priority: number;
+  status: TenantCatalogStatus;
+  source: TenantCatalogSource | "tenant catalog rule";
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantExposureRule extends TenantCatalogRule {
+  exposureLabel: string;
+}
+
+export interface TenantCatalog {
+  id: string;
+  tenantId: string;
+  name: string;
+  description: string;
+  status: TenantCatalogStatus;
+  scope: TenantCatalogScope;
+  inheritsGlobalCatalog: boolean;
+  allowsFederatedAssets: boolean;
+  allowsExternalCollections: boolean;
+  allowsNativeProducts: boolean;
+  featuredProductIds: string[];
+  featuredCollectionIds: string[];
+  allowedProductIds: string[];
+  blockedProductIds: string[];
+  allowedCollectionIds: string[];
+  blockedCollectionIds: string[];
+  allowedExternalCollectionIds: string[];
+  blockedExternalCollectionIds: string[];
+  allowedCategoryIds: ProductCategory[];
+  blockedCategoryIds: ProductCategory[];
+  exposureRules: TenantExposureRule[];
+  rules: TenantCatalogRule[];
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface TenantTheme {
@@ -244,6 +321,43 @@ export interface TenantRoutingContext {
   disclaimers: string[];
 }
 
+export interface TenantCatalogItem {
+  productId?: string;
+  collectionId?: string;
+  tenantId: string;
+  source: TenantCatalogSource;
+  inclusionReason: string;
+  exclusionReason?: string;
+  isFeatured: boolean;
+  isFederated: boolean;
+  isExternal: boolean;
+  isNative: boolean;
+  canDisplay: boolean;
+  canTrade: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCatalogResolution {
+  tenantId: string;
+  resolvedAt: string;
+  includedProductIds: string[];
+  excludedProductIds: string[];
+  includedCollectionIds: string[];
+  excludedCollectionIds: string[];
+  includedExternalCollectionIds: string[];
+  excludedExternalCollectionIds: string[];
+  featuredProductIds: string[];
+  featuredCollectionIds: string[];
+  appliedRules: TenantCatalogRule[];
+  blockedRules: TenantCatalogRule[];
+  productItems: TenantCatalogItem[];
+  collectionItems: TenantCatalogItem[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
 export interface Tenant {
   id: string;
   slug: string;
@@ -259,6 +373,7 @@ export interface Tenant {
   branding?: TenantBranding;
   domains?: TenantDomain[];
   domainAliases?: TenantDomainAlias[];
+  catalog?: TenantCatalog;
   createdAt: string;
   updatedAt: string;
   warnings: string[];

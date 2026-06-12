@@ -19,7 +19,10 @@ import {
   listCollections,
   listProducts,
   getTenantDomains,
+  getTenantVisibleCollections,
+  getTenantVisibleProducts,
   listTenants,
+  resolveTenantCatalog,
   resolveTenantBranding,
   resolveTenantContext,
   resolveTenantRoutingContext,
@@ -237,6 +240,53 @@ export function useTenantRoutingContext(input?: string) {
 
 export function useResolvedTenant(input?: string) {
   return useTenantRoutingContext(input);
+}
+
+export function useTenantCatalog(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-catalog", tenantIdOrSlug],
+    queryFn: () => {
+      const catalog = resolveTenantCatalog(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-tenant-catalog-query", "completed", {
+        tenantId: catalog.tenant.id,
+        catalogStatus: catalog.catalog.status,
+        includedProducts: catalog.resolution.includedProductIds.length
+      });
+      return catalog;
+    }
+  });
+}
+
+export function useTenantCatalogResolution(tenantIdOrSlug?: string) {
+  return useTenantCatalog(tenantIdOrSlug);
+}
+
+export function useTenantVisibleProducts(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-visible-products", tenantIdOrSlug],
+    queryFn: () => {
+      const products = getTenantVisibleProducts(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-tenant-visible-products-query", "completed", {
+        tenantIdOrSlug: tenantIdOrSlug ?? null,
+        productCount: products.length
+      });
+      return products;
+    }
+  });
+}
+
+export function useTenantVisibleCollections(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-visible-collections", tenantIdOrSlug],
+    queryFn: () => {
+      const collections = getTenantVisibleCollections(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-tenant-visible-collections-query", "completed", {
+        tenantIdOrSlug: tenantIdOrSlug ?? null,
+        collectionCount: collections.length
+      });
+      return collections;
+    }
+  });
 }
 
 export function useTenantBranding(tenantIdOrSlug?: string) {

@@ -21,7 +21,10 @@ import {
   getTenantBySlug,
   getTenantDomains,
   getPrimaryTenantDomain,
+  getTenantCatalog,
   isExternalCollection,
+  isCollectionVisibleForTenant,
+  isProductVisibleForTenant,
   isValidSimulatedHostname,
   isValidTenantAlias,
   isValidTenantSlug,
@@ -34,11 +37,18 @@ import {
   listProducts,
   listTenants,
   getTenantDisplayName,
+  getTenantFeaturedCollections,
+  getTenantFeaturedProducts,
   getTenantLogo,
+  getTenantVisibleCollections,
+  getTenantVisibleProducts,
+  explainTenantCatalogExclusion,
+  explainTenantCatalogInclusion,
   resolveTenantByAlias,
   resolveTenantBySimulatedDomain,
   resolveTenantBySlug,
   resolveTenantBranding,
+  resolveTenantCatalog,
   resolveTenantContext,
   resolveTenantRoutingContext
 } from "./marketplaceService";
@@ -332,6 +342,38 @@ describe("marketplaceService", () => {
     expect(conflictContext.resolution.resolutionStatus).toBe("conflict");
     expect(missingContext.resolution.resolutionStatus).toBe("not-found");
     expect(missingContext.tenant.slug).toBe("global");
+  });
+
+  it("resolves Tenant Catalog and Tenant Isolation rules without duplicating products", () => {
+    const global = resolveTenantCatalog("global");
+    const academy = resolveTenantCatalog("academy");
+    const acs = resolveTenantCatalog("acs-services");
+    const community = resolveTenantCatalog("community-demo");
+
+    expect(getTenantCatalog("academy").scope).toBe("mixed");
+    expect(global.catalog.inheritsGlobalCatalog).toBe(true);
+    expect(global.resolution.includedProductIds).toContain("product-trading-strategy-pass");
+    expect(academy.resolution.includedProductIds).toEqual(["product-academy-cert-bundle"]);
+    expect(academy.resolution.includedExternalCollectionIds).toContain("external-collection-opensea-academy-badges");
+    expect(academy.resolution.excludedProductIds).toContain("product-trading-strategy-pass");
+    expect(academy.resolution.appliedRules.map((rule) => rule.ruleType)).toContain("allow-external-collection");
+    expect(acs.catalog.allowsFederatedAssets).toBe(false);
+    expect(acs.resolution.includedProductIds).toEqual(["product-mcp-agent-template"]);
+    expect(acs.resolution.excludedExternalCollectionIds).toContain("external-collection-harmony-creator-keys");
+    expect(community.resolution.includedProductIds).toEqual(["product-governance-dashboard-nft"]);
+    expect(community.resolution.excludedProductIds).toContain("product-trading-strategy-pass");
+    expect(community.resolution.blockedRules.map((rule) => rule.ruleType)).toContain("block-product");
+    expect(getTenantFeaturedProducts("community-demo").map((product) => product.id)).toContain("product-governance-dashboard-nft");
+    expect(getTenantFeaturedCollections("community-demo").map((view) => view.collection.id)).toContain("external-collection-harmony-creator-keys");
+    expect(getTenantVisibleProducts("academy").map((product) => product.id)).toEqual(["product-academy-cert-bundle"]);
+    expect(getTenantVisibleCollections("academy").map((view) => view.collection.id)).toContain("external-collection-opensea-academy-badges");
+    expect(isProductVisibleForTenant("community-demo", "product-trading-strategy-pass")).toBe(false);
+    expect(isCollectionVisibleForTenant("community-demo", "external-collection-harmony-creator-keys")).toBe(true);
+    expect(explainTenantCatalogInclusion("academy", "product-academy-cert-bundle")).toBe("Tenant featured rule");
+    expect(explainTenantCatalogExclusion("community-demo", "product-trading-strategy-pass")).toBe("Product block rule");
+    expect(academy.resolution.productItems.every((item) => item.canSettle === false && item.canTrade === false)).toBe(true);
+    expect(community.resolution.collectionItems.find((item) => item.collectionId === "external-collection-harmony-creator-keys")?.warnings.join(" ")).toContain("origin");
+    expect(academy.resolution.disclaimers.join(" ")).toContain("No financial isolation");
   });
 
   it("finds products by slug", () => {

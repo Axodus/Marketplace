@@ -2,18 +2,21 @@
 
 # Phase 03 - Tenant Infrastructure Planning
 
-Status: IN PROGRESS - TENANT DOMAINS IMPLEMENTED MOCK/READ-ONLY
+Status: COMPLETED - TENANT INFRASTRUCTURE VALIDATED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md`
+
+Closure artifact:
+- `docs/PHASE_03_CLOSURE_REPORT.md`
 
 Recommended implementation sequence:
 - MEP-03A - Tenant Infrastructure Planning and Isolation Audit - COMPLETED
 - MEP-REQ-030 - Multi-Tenant Foundation - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-031 - Marketplace Branding - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-032 - Tenant Domains - IMPLEMENTED MOCK/READ-ONLY
-- MEP-REQ-033 - Tenant Isolation
-- MEP-PHASE-03-CLOSURE - QA, navigation and Marketplace-as-a-Service validation
+- MEP-REQ-033 - Tenant Isolation - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-PHASE-03-CLOSURE - QA, navigation and Marketplace-as-a-Service validation - COMPLETED
 
 MEP-03A delivered:
 - mapped existing tenant-adjacent runtime surfaces after Phase 02, including DAO storefront previews, API tenant registry read models, product tenant ids and governance tenant projections
@@ -49,6 +52,23 @@ MEP-REQ-032 delivered:
 - added `/marketplace/t/:tenantSlug` as a mock tenant route without DNS, TLS, proxy, edge routing, backend routing or separate deploy behavior
 - displayed domains, aliases, routing mode, verification status mock, canRoute mock status and no DNS real boundary notes in Tenant Detail
 - preserved no custom DNS, real subdomain routing, TLS certificate, proxy routing, backend routing, tenant billing, tenant settlement, RBAC, isolated database or revenue sharing boundaries
+
+MEP-REQ-033 delivered:
+- added Tenant Catalog, Tenant Catalog Rule, Tenant Exposure Rule, Tenant Catalog Resolution and Tenant Catalog Item mock/config-first models
+- added catalog/rule mock data for global, Academy, ACS Services and Community Demo tenants
+- added service helpers for catalog resolution, rule application, tenant visible products, tenant visible collections, featured products/collections, inclusion/exclusion explanations and visibility checks
+- added hooks for tenant catalog, tenant catalog resolution, tenant visible products and tenant visible collections
+- displayed resolved Tenant Catalog, isolated configuration, isolated catalog, applied rules, blocked rules, visible products/collections and mock isolation boundary notes in Tenant Detail
+- preserved federated collection origin, provider, validation status, provenance, risk classification and trust boundaries by referencing existing global/federated records instead of duplicating product truth
+- preserved no financial isolation, no settlement isolation, no RBAC enforcement, no isolated database, no tenant billing, no treasury routing and no revenue sharing boundaries
+
+MEP-PHASE-03-CLOSURE delivered:
+- validated Tenant Registry, Tenant Identity, Tenant Configuration, Marketplace Branding, Tenant Themes, Tenant Domains, Tenant Isolation, Tenant Catalog and Tenant Exposure Rules
+- confirmed tenant-aware navigation through `/marketplace/tenants`, `/marketplace/tenants/:tenantId`, `/marketplace/t/:tenantSlug` and global fallback behavior
+- confirmed tenant catalogs derive visible products and collections through rules instead of duplicating product, collection or federated record truth
+- confirmed federated records inside tenant catalogs preserve origin, provider, validation status, provenance, risk classification and trust boundaries
+- confirmed no billing, settlement, revenue sharing, treasury routing, custom DNS real, subdomain real, TLS, proxy routing, edge routing, backend routing, RBAC, isolated database, tracking, BI, provider real, contract writes, wallet signatures, payments, bridge or custody was introduced
+- positioned Phase 04 - Curated Catalogs as future work
 
 Constraints:
 - keep Phase 03 mock-first/read-model oriented until explicit implementation requests authorize runtime changes
