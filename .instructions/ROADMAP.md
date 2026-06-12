@@ -135,7 +135,7 @@ Implementation boundary:
 
 # Phase 03 — Tenant Infrastructure
 
-Status: PLANNED
+Status: PLANNING — ISOLATION AUDIT COMPLETE
 
 Objectives:
 - introduce Marketplace-as-a-Service tenant infrastructure
@@ -158,7 +158,11 @@ Deliverables:
 - tenant operational telemetry
 - tenant access and entitlement readiness
 
+Planning artifact:
+- `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md`
+
 Linked requirements:
+- MEP-03A — Tenant Infrastructure Planning and Isolation Audit — completed
 - MEP-REQ-030 — Multi-Tenant Foundation
 - MEP-REQ-031 — Marketplace Branding
 - MEP-REQ-032 — Tenant Domains
@@ -174,7 +178,10 @@ Relationship to Phase 04:
 - Phase 04 — Curated Catalogs depends on Tenant Infrastructure for tenant-specific catalog selection, product exposure and curation rules
 
 Implementation boundary:
-- Phase 03 implementation is future work
+- Phase 03 implementation remains future work after MEP-03A planning
+- MEP-03A is audit and planning only
+- no Tenant Registry, Tenant Identity, Tenant Configuration, Marketplace Branding, Tenant Themes, Tenant Domains or Tenant Isolation runtime is introduced by MEP-03A
+- no real custom DNS, subdomain routing, production tenant routing, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated database, backend schema, tracking, BI or separate tenant deploy is introduced by MEP-03A
 - MEP-REQ-002 is documentation-only
 - no real multi-tenancy, tenant registry, domain routing, custom domain, subdomain, frontend route, database schema, API, GraphQL schema, persistence, tenant billing, tenant settlement, tenant revenue sharing, financial isolation, complete data isolation, tenant authentication, RBAC or tenant dashboard is introduced by Phase 00
 

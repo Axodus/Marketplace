@@ -2,7 +2,7 @@
 
 Axodus Marketplace is the federated digital distribution infrastructure for the Axodus ecosystem.
 
-Phase 00 — Marketplace Architecture Revision is complete as a documentation and architecture phase. Phase 01 — NFT Marketplace Consolidation is complete as a mock-first runtime phase with `docs/PHASE_01_RUNTIME_AUDIT.md` as the planning artifact and `docs/PHASE_01_CLOSURE_REPORT.md` as the closure artifact. Phase 02 — Federation Layer is complete as a mock-first/read-only federation phase with `docs/PHASE_02_FEDERATION_AUDIT.md` as the boundary audit artifact and `docs/PHASE_02_CLOSURE_REPORT.md` as the closure artifact; it does not activate real external integration.
+Phase 00 — Marketplace Architecture Revision is complete as a documentation and architecture phase. Phase 01 — NFT Marketplace Consolidation is complete as a mock-first runtime phase with `docs/PHASE_01_RUNTIME_AUDIT.md` as the planning artifact and `docs/PHASE_01_CLOSURE_REPORT.md` as the closure artifact. Phase 02 — Federation Layer is complete as a mock-first/read-only federation phase with `docs/PHASE_02_FEDERATION_AUDIT.md` as the boundary audit artifact and `docs/PHASE_02_CLOSURE_REPORT.md` as the closure artifact; it does not activate real external integration. Phase 03 — Tenant Infrastructure is in planning with `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md` as the isolation audit artifact; it does not activate production multi-tenancy.
 
 The NFT marketplace remains the first commercial vertical and preserves:
 - ERC721 and ERC1155 assets
@@ -29,6 +29,8 @@ Revenue Sharing Domain prepares Attribution Model, Commission Model, Revenue Spl
 Marketplace Intelligence Domain prepares Commercial Analytics, Tenant Analytics, Product Analytics and Collection Analytics as interpretable, traceable and auditable intelligence concepts for future dashboards, telemetry pipelines and BI integration.
 
 Phase 00 is documentation-only. Phase 01 activates only mock-first NFT Marketplace runtime surfaces. Phase 02 activates only mock-first/read-only federation representation for External Contracts, External Collections, External Metadata, Wallet Discovery and Federation Providers, including a Contract Import preview at `/marketplace/contracts`. Phase 02 does not activate new backend APIs, contracts, indexers, persistence, GraphQL, real billing, external integrations, tracking, BI, wallet signatures, bridge execution, treasury routing, settlement, custody or on-chain execution.
+
+Phase 03 planning prepares Tenant Marketplace, Tenant Registry, Tenant Identity, Tenant Configuration, Marketplace Branding, Tenant Domains, Tenant Themes, Tenant Catalog and Tenant Isolation concepts. It does not activate real custom DNS, subdomain routing, production tenant routing, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated databases, tracking, BI or separate tenant deploys.
 
 Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 

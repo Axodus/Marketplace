@@ -1,5 +1,36 @@
 # Marketplace Roadmap
 
+# Phase 03 - Tenant Infrastructure Planning
+
+Status: PLANNING - ISOLATION AUDIT COMPLETE
+
+Planning artifact:
+- `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md`
+
+Recommended implementation sequence:
+- MEP-03A - Tenant Infrastructure Planning and Isolation Audit - COMPLETED
+- MEP-REQ-030 - Multi-Tenant Foundation
+- MEP-REQ-031 - Marketplace Branding
+- MEP-REQ-032 - Tenant Domains
+- MEP-REQ-033 - Tenant Isolation
+- MEP-PHASE-03-CLOSURE - QA, navigation and Marketplace-as-a-Service validation
+
+MEP-03A delivered:
+- mapped existing tenant-adjacent runtime surfaces after Phase 02, including DAO storefront previews, API tenant registry read models, product tenant ids and governance tenant projections
+- defined Marketplace global vs Tenant Marketplace conceptual boundaries
+- recommended models for Tenant, TenantIdentity, TenantConfiguration, TenantBranding, TenantTheme, TenantDomain, TenantCatalog and TenantCatalogRule
+- recommended tenant statuses and tenant types
+- defined catalog isolation, branding/theme, domain/subdomain simulation and governance/execution boundaries
+- mapped gaps for MEP-REQ-030 through MEP-REQ-033 without implementing tenant infrastructure runtime
+
+Constraints:
+- keep Phase 03 mock-first/read-model oriented until explicit implementation requests authorize runtime changes
+- do not activate real custom DNS, subdomain routing, production tenant routing, tenant billing, tenant settlement, tenant treasury routing, tenant revenue sharing, real multi-tenant auth, production RBAC, isolated database, backend schema, tracking, BI or separate tenant deploys
+- tenant catalogs must reference global products, collections and federated records without duplicating product truth or changing origin, provider, validation status, licensing, billing, settlement or revenue sharing
+- `canTrade`, `canSettle` and `canRouteCustomDomain` must remain false or explicitly simulated/non-executing unless a later approved phase changes that boundary
+
+---
+
 # Phase 02 - Federation Layer
 
 Status: COMPLETED - MOCK-FIRST FEDERATION LAYER VALIDATED
