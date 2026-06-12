@@ -83,7 +83,7 @@ Implementation boundary:
 
 # Phase 02 — Federation Layer
 
-Status: PLANNED
+Status: PLANNING — BOUNDARY AUDIT COMPLETE
 
 Objectives:
 - introduce Marketplace Federation Domain implementation boundaries
@@ -105,7 +105,11 @@ Deliverables:
 - external metadata normalization readiness
 - federation provider registry readiness
 
+Planning artifact:
+- `docs/PHASE_02_FEDERATION_AUDIT.md`
+
 Linked requirements:
+- MEP-02A — Federation Layer Planning and Boundary Audit — completed
 - MEP-REQ-020 — Contract Import
 - MEP-REQ-021 — Collection Import
 - MEP-REQ-022 — Wallet Discovery
@@ -117,8 +121,10 @@ Dependencies:
 
 Implementation boundary:
 - Phase 02 implementation is future work
-- MEP-REQ-001 is documentation-only
-- no real provider integration, connector, SDK, endpoint, indexer, GraphQL schema, HTTP call, contract change, custody, settlement, bridge execution, treasury routing or on-chain execution is introduced by Phase 00
+- MEP-02A is audit and planning only
+- no Contract Import, Collection Import, Wallet Discovery or Federation Provider runtime was implemented by MEP-02A
+- no real provider integration, connector, SDK, endpoint, indexer, GraphQL schema, HTTP call, contract change, wallet signature, custody, settlement, bridge execution, treasury routing, tracking, BI or on-chain execution is introduced by Phase 02 planning
+- federated assets must remain read-only/mock-first and carry origin, provider, validation status, provenance, risk classification and trust boundaries before user-facing exposure
 
 ---
 

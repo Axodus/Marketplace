@@ -1,5 +1,35 @@
 # Marketplace Roadmap
 
+# Phase 02 - Federation Layer Planning
+
+Status: PLANNING - BOUNDARY AUDIT COMPLETE
+
+Planning artifact:
+- `docs/PHASE_02_FEDERATION_AUDIT.md`
+
+Recommended implementation sequence:
+- MEP-02A - Federation Layer Planning and Boundary Audit - COMPLETED
+- MEP-REQ-020 - Contract Import
+- MEP-REQ-021 - Collection Import
+- MEP-REQ-022 - Wallet Discovery
+- MEP-REQ-023 - Federation Providers
+- MEP-PHASE-02-CLOSURE - QA, navigation and internal/external asset validation
+
+MEP-02A delivered:
+- mapped the post-Phase 01 Marketplace runtime and documentation state
+- identified federation entry points in Explorer, Product Detail, Collection pages, Seller Profiles, Asset Registry, Marketplace Dashboard, License Viewer, Governance Validation, Create/Sell Preview, Buy-now modal and Bid modal
+- defined future conceptual boundaries for ExternalAsset, ExternalCollection, ExternalContract, ExternalMetadata and FederationProvider
+- recommended validation statuses, risk classifications, provider model, provenance model and trust boundaries
+- mapped gaps for MEP-REQ-020 through MEP-REQ-023 without implementing federation runtime
+
+Constraints:
+- keep Phase 02 read-only/mock-first until an explicit implementation request authorizes runtime changes
+- do not activate real external integration, SDK, HTTP calls, API routes, GraphQL schemas, databases, indexers, subgraphs, wallet signatures, contract writes, custody, settlement, bridge execution, tenant infrastructure, revenue sharing, tracking, BI or Marketplace Intelligence runtime
+- external/federated records must carry origin, provider, validation status, provenance, risk classification and trust boundaries before user-facing exposure
+- `canTrade`, `canSettle` and `canBridge` must remain false or explicitly non-executing for federated records unless a later approved phase changes that boundary
+
+---
+
 # Phase 01 — NFT Marketplace Consolidation
 
 Status: COMPLETED — MOCK-FIRST RUNTIME VALIDATED
