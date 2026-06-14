@@ -111,6 +111,10 @@ export type CurationReviewStatus =
 export type CurationWorkflowState = "draft-mock" | "editorial-review-mock" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
 export type CurationDecision = "include" | "exclude" | "feature" | "restrict" | "warn" | "needs-review";
 export type CurationReason = "inclusion reason" | "exclusion reason" | "governance reason" | "review reason" | "restriction reason";
+export type CatalogSegmentStatus = "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
+export type FeaturedCatalogStatus = "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
+export type CatalogSegmentType = "academy" | "acs" | "enterprise" | "community" | "creator" | "dao" | "federated" | "seasonal" | "demo";
+export type FeaturedCatalogPlacement = "hero" | "section" | "tenant-preview" | "segment-highlight" | "federated-feature";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -445,6 +449,39 @@ export interface CurationNote {
   reviewStatus: CurationReviewStatus;
   governanceLabel: string;
   createdAt: string;
+}
+
+export interface CatalogSegment {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  segmentType: CatalogSegmentType;
+  status: CatalogSegmentStatus;
+  visibility: CuratedCatalogVisibility;
+  featuredCatalogIds: string[];
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FeaturedCatalog {
+  id: string;
+  catalogId: string;
+  segmentId: string;
+  placement: FeaturedCatalogPlacement;
+  position: number;
+  featuredReason: string;
+  editorialStatus: CurationReviewStatus;
+  governanceStatus: CuratedCatalogGovernanceStatus;
+  status: FeaturedCatalogStatus;
+  visibility: CuratedCatalogVisibility;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CuratedCatalogSection {

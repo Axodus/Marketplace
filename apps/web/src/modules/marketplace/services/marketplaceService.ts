@@ -1,9 +1,11 @@
 import {
   marketplaceAssetRegistry,
   marketplaceBoundaries,
+  marketplaceCatalogSegments,
   marketplaceCollections,
   marketplaceCuratedCatalogs,
   marketplaceFederationProviders,
+  marketplaceFeaturedCatalogs,
   marketplaceLicenses,
   marketplaceProducts,
   marketplaceSellers,
@@ -17,6 +19,7 @@ import type {
   CuratedCatalogItem,
   CuratedCatalogSection,
   EditorialRule,
+  CatalogSegment,
   DiscoveredAsset,
   ExternalCollectionStatistics,
   ExternalContractReference,
@@ -24,6 +27,7 @@ import type {
   DraftListingPreview,
   FederationProviderDescriptor,
   FederationTrustBoundary,
+  FeaturedCatalog,
   License,
   MarketplaceBoundaryStatus,
   MarketplaceCollection,
@@ -88,6 +92,8 @@ const sellers = marketplaceSellers as Seller[];
 const licenses = marketplaceLicenses as License[];
 const tenants = marketplaceTenants as Tenant[];
 const curatedCatalogs = marketplaceCuratedCatalogs as CuratedCatalog[];
+const catalogSegments = marketplaceCatalogSegments as CatalogSegment[];
+const featuredCatalogs = marketplaceFeaturedCatalogs as FeaturedCatalog[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
@@ -437,6 +443,20 @@ export interface CuratedCatalogView {
   };
   featuredProducts: Product[];
   featuredCollections: CollectionView[];
+  boundaryNotes: string[];
+}
+
+export interface FeaturedCatalogView {
+  featured: FeaturedCatalog;
+  catalog: CuratedCatalogView | null;
+  segment: CatalogSegment | null;
+  boundaryNotes: string[];
+}
+
+export interface CatalogSegmentView {
+  segment: CatalogSegment;
+  featuredCatalogs: FeaturedCatalogView[];
+  catalogs: CuratedCatalogView[];
   boundaryNotes: string[];
 }
 
@@ -1243,6 +1263,65 @@ function buildCuratedCatalogView(catalog: CuratedCatalog): CuratedCatalogView {
 
 export function listCuratedCatalogs() {
   return curatedCatalogs.map(buildCuratedCatalogView);
+}
+
+function buildFeaturedCatalogView(featured: FeaturedCatalog): FeaturedCatalogView {
+  const catalog = resolveCuratedCatalog(featured.catalogId);
+  const segment = catalogSegments.find((item) => item.id === featured.segmentId) ?? null;
+
+  return {
+    featured,
+    catalog,
+    segment,
+    boundaryNotes: [
+      ...featured.warnings,
+      ...featured.disclaimers,
+      ...(segment?.warnings ?? []),
+      ...(segment?.disclaimers ?? []),
+      "Featured Catalog is manual mock/config-first editorial placement.",
+      "Featured does not mean ranking real, performance real, recommendation engine, marketplace intelligence, analytics real, scoring real, distribution, revenue sharing, billing or settlement."
+    ]
+  };
+}
+
+function buildCatalogSegmentView(segment: CatalogSegment): CatalogSegmentView {
+  const featuredViews = featuredCatalogs
+    .filter((featured) => featured.segmentId === segment.id)
+    .sort((left, right) => left.position - right.position || left.id.localeCompare(right.id))
+    .map(buildFeaturedCatalogView);
+
+  return {
+    segment,
+    featuredCatalogs: featuredViews,
+    catalogs: featuredViews.map((view) => view.catalog).filter((catalog): catalog is CuratedCatalogView => Boolean(catalog)),
+    boundaryNotes: [
+      ...segment.warnings,
+      ...segment.disclaimers,
+      "Catalog Segment is mock/config-first grouping only.",
+      "Catalog Segment does not activate automatic segmentation, real analytics, Marketplace Intelligence, recommendation engine, ranking real, billing or settlement."
+    ]
+  };
+}
+
+export function listFeaturedCatalogs() {
+  return featuredCatalogs
+    .slice()
+    .sort((left, right) => left.position - right.position || left.id.localeCompare(right.id))
+    .map(buildFeaturedCatalogView);
+}
+
+export function listCatalogSegments() {
+  return catalogSegments.map(buildCatalogSegmentView);
+}
+
+export function getCatalogSegmentBySlug(slug: string) {
+  const segment = catalogSegments.find((item) => item.slug === slug || item.id === slug);
+  return segment ? buildCatalogSegmentView(segment) : null;
+}
+
+export function listCatalogsBySegment(segmentIdOrSlug: string) {
+  const segment = getCatalogSegmentBySlug(segmentIdOrSlug);
+  return segment?.catalogs ?? [];
 }
 
 export function listEditorialRules(catalogIdOrSlug?: string) {

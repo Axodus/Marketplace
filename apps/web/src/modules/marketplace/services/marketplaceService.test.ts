@@ -36,6 +36,9 @@ import {
   listCuratedCatalogs,
   listEditorialRules,
   listExternalContracts,
+  listCatalogSegments,
+  listCatalogsBySegment,
+  listFeaturedCatalogs,
   listWalletDiscoveryRecords,
   listFederationProviders,
   listCollections,
@@ -433,6 +436,32 @@ describe("marketplaceService", () => {
     expect(foundational?.workflowSummary.disclaimers.join(" ")).toContain("No productive approval workflow");
     expect(academyExplanations.map((entry) => entry.rule.reviewStatus)).toContain("governance-review-mock");
     expect(explainEditorialRules("missing-catalog")).toEqual([]);
+  });
+
+  it("groups Curated Catalogs into Featured Catalogs and Catalog Segments without ranking", () => {
+    const featured = listFeaturedCatalogs();
+    const segments = listCatalogSegments();
+    const academyCatalogs = listCatalogsBySegment("academy");
+    const federatedSegment = segments.find((view) => view.segment.slug === "federated");
+    const acsSegment = segments.find((view) => view.segment.slug === "acs");
+
+    expect(featured.map((view) => view.featured.id)).toContain("featured-catalog-foundational-nft");
+    expect(featured.map((view) => view.featured.id)).toContain("featured-catalog-academy-onboarding");
+    expect(featured.map((view) => view.featured.position)).toEqual([1, 2, 3]);
+    expect(featured.every((view) => view.boundaryNotes.join(" ").includes("Featured does not mean ranking real"))).toBe(true);
+    expect(featured.every((view) => view.boundaryNotes.join(" ").includes("recommendation engine"))).toBe(true);
+    expect(featured.every((view) => view.boundaryNotes.join(" ").includes("marketplace intelligence"))).toBe(true);
+    expect(segments.map((view) => view.segment.segmentType)).toEqual(["academy", "acs", "community", "enterprise", "creator", "dao", "federated", "demo"]);
+    expect(segments.every((view) => view.boundaryNotes.join(" ").includes("Catalog Segment is mock/config-first"))).toBe(true);
+    expect(academyCatalogs.map((view) => view.catalog.slug)).toContain("academy-onboarding");
+    expect(acsSegment?.catalogs).toHaveLength(0);
+    expect(segments.find((view) => view.segment.slug === "enterprise")?.segment.displayName).toBe("Enterprise Catalogs");
+    expect(segments.find((view) => view.segment.slug === "creator")?.catalogs).toHaveLength(0);
+    expect(segments.find((view) => view.segment.slug === "dao")?.catalogs).toHaveLength(0);
+    expect(segments.find((view) => view.segment.slug === "demo")?.catalogs).toHaveLength(0);
+    expect(federatedSegment?.featuredCatalogs[0].featured.placement).toBe("federated-feature");
+    expect(federatedSegment?.catalogs[0].items.some((entry) => entry.item.isFederated && entry.trustBoundary?.provider.includes("Harmony"))).toBe(true);
+    expect(listCatalogsBySegment("missing-segment")).toEqual([]);
   });
 
   it("finds products by slug", () => {

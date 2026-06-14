@@ -203,7 +203,7 @@ Implementation boundary:
 
 # Phase 04 — Curated Catalogs
 
-Status: IN PROGRESS — EDITORIAL CURATION RULES IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS — FEATURED CATALOG SEGMENTS IMPLEMENTED MOCK/CONFIG-FIRST
 
 Objectives:
 - model tenant, partner, community, DAO, Academy, ACS and enterprise curated catalogs
@@ -215,6 +215,7 @@ Deliverables:
 - curated catalog model
 - Curated Catalog Model mock/config-first runtime
 - Editorial Rules and Curation Workflow mock/config-first runtime
+- Featured Catalogs and Catalog Segments mock/config-first runtime
 - tenant product selection rules
 - catalog eligibility boundaries
 - product exposure policy readiness
@@ -227,7 +228,7 @@ Linked requirements:
 - MEP-04A — Curated Catalogs Planning and Governance Audit — completed
 - MEP-REQ-040 — Curated Catalog Model — completed mock/config-first
 - MEP-REQ-041 — Editorial Rules — completed mock/config-first
-- MEP-REQ-042 — Featured Catalogs
+- MEP-REQ-042 — Featured Catalogs — completed mock/config-first
 - MEP-REQ-043 — Catalog Segments and Eligibility
 - MEP-PHASE-04-CLOSURE — QA, governance and no-execution validation
 
@@ -249,7 +250,9 @@ Implementation boundary:
 - MEP-REQ-040 does not introduce advanced editorial workflow, featured catalog engine, full tenant-curated integration, real ranking, recommendation engine, marketplace intelligence, scoring real, productive approval, compliance real, revenue sharing, billing, settlement, backend, API, GraphQL schema, database, tracking or BI
 - MEP-REQ-041 introduces Editorial Rule, Curation Workflow, Curation Note, Curation Reason, inclusion/exclusion explanations, mock review statuses and governance labels as mock/config-first read-only surfaces only
 - MEP-REQ-041 does not introduce productive approval workflow, compliance real, certification real, AI curation, scoring real, real ranking, recommendation engine, Marketplace Intelligence, backend, API, database, tracking, BI, revenue sharing, billing or settlement
-- Featured Catalog and Catalog Segment remain planned concepts until explicit implementation requests
+- MEP-REQ-042 introduces Featured Catalogs, Featured Catalog placement and Catalog Segments as mock/config-first editorial grouping surfaces only
+- MEP-REQ-042 does not introduce ranking real, performance real, recommendation engine, Marketplace Intelligence, analytics real, automatic segmentation, scoring real, Distribution Network, revenue sharing, billing, settlement, backend, API, database, tracking or BI
+- Catalog Segment eligibility remains a planned concept until explicit implementation requests
 - no curated catalog runtime, approval workflow, AI curation, automated recommendation, real ranking, Marketplace Intelligence, Distribution Network, Revenue Sharing, billing, settlement, tracking, BI, API, database, GraphQL schema, provider call, indexer, contract write, wallet signature, payment, bridge or custody is introduced by MEP-04A
 - future curated catalogs must preserve product truth, tenant boundaries and federated origin, provider, validation status, provenance, risk classification and trust boundaries
 

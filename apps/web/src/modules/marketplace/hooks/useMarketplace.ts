@@ -25,7 +25,10 @@ import {
   getTenantDomains,
   getTenantVisibleCollections,
   getTenantVisibleProducts,
+  listCatalogSegments,
   listTenants,
+  listFeaturedCatalogs,
+  listCatalogsBySegment,
   resolveTenantCatalog,
   resolveTenantBranding,
   resolveTenantContext,
@@ -148,6 +151,43 @@ export function useEditorialRules(catalogIdOrSlug?: string) {
         ruleCount: rules.length
       });
       return rules;
+    }
+  });
+}
+
+export function useFeaturedCatalogs() {
+  return useQuery({
+    queryKey: ["marketplace-featured-catalogs"],
+    queryFn: () => {
+      const featured = listFeaturedCatalogs();
+      traceMarketplaceLifecycle("marketplace-featured-catalogs-query", "completed", { featuredCount: featured.length });
+      return featured;
+    }
+  });
+}
+
+export function useCatalogSegments() {
+  return useQuery({
+    queryKey: ["marketplace-catalog-segments"],
+    queryFn: () => {
+      const segments = listCatalogSegments();
+      traceMarketplaceLifecycle("marketplace-catalog-segments-query", "completed", { segmentCount: segments.length });
+      return segments;
+    }
+  });
+}
+
+export function useCatalogsBySegment(segmentIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-catalogs-by-segment", segmentIdOrSlug],
+    enabled: Boolean(segmentIdOrSlug),
+    queryFn: () => {
+      const catalogs = listCatalogsBySegment(segmentIdOrSlug ?? "");
+      traceMarketplaceLifecycle("marketplace-catalogs-by-segment-query", "completed", {
+        segmentIdOrSlug: segmentIdOrSlug ?? null,
+        catalogCount: catalogs.length
+      });
+      return catalogs;
     }
   });
 }

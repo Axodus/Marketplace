@@ -1743,6 +1743,180 @@ export const marketplaceCuratedCatalogs = [
   }
 ];
 
+export const marketplaceCatalogSegments = [
+  {
+    id: "catalog-segment-academy",
+    slug: "academy",
+    name: "Academy Catalogs",
+    displayName: "Academy Catalogs",
+    description: "Academy catalog segment for learning credentials, certificates and onboarding catalog visibility.",
+    segmentType: "academy",
+    status: "active-mock",
+    visibility: "public-mock",
+    featuredCatalogIds: ["featured-catalog-academy-onboarding"],
+    warnings: ["Academy Catalog Segment is manual mock/config-first segmentation."],
+    disclaimers: ["Academy catalog grouping is not ranking real, recommendation engine, marketplace intelligence, billing or settlement."],
+    createdAt: "2026-06-14T10:20:00.000Z",
+    updatedAt: "2026-06-14T10:20:00.000Z"
+  },
+  {
+    id: "catalog-segment-acs",
+    slug: "acs",
+    name: "ACS Catalogs",
+    displayName: "ACS Catalogs",
+    description: "ACS catalog segment reserved for capabilities and operational services without activating service delivery.",
+    segmentType: "acs",
+    status: "configured-mock",
+    visibility: "private-preview",
+    featuredCatalogIds: [],
+    warnings: ["ACS Catalog Segment is a placeholder segment until ACS curated catalogs are explicitly implemented."],
+    disclaimers: ["ACS segment does not activate billing, settlement, service entitlement, Marketplace Intelligence or Distribution Network."],
+    createdAt: "2026-06-14T10:20:00.000Z",
+    updatedAt: "2026-06-14T10:20:00.000Z"
+  },
+  {
+    id: "catalog-segment-community",
+    slug: "community",
+    name: "Community Catalogs",
+    displayName: "Community Catalogs",
+    description: "Community catalog segment for DAO, creator and community marketplace curation previews.",
+    segmentType: "community",
+    status: "configured-mock",
+    visibility: "tenant-preview",
+    featuredCatalogIds: ["featured-catalog-foundational-nft"],
+    warnings: ["Community Catalog Segment is editorial mock segmentation."],
+    disclaimers: ["Community feature placement does not create Distribution Network, partner attribution, revenue sharing or paid placement."],
+    createdAt: "2026-06-14T10:20:00.000Z",
+    updatedAt: "2026-06-14T10:20:00.000Z"
+  },
+  {
+    id: "catalog-segment-enterprise",
+    slug: "enterprise",
+    name: "Enterprise Catalogs",
+    displayName: "Enterprise Catalogs",
+    description: "Enterprise catalog segment reserved for future enterprise curated catalogs and governed offer previews.",
+    segmentType: "enterprise",
+    status: "configured-mock",
+    visibility: "private-preview",
+    featuredCatalogIds: [],
+    warnings: ["Enterprise Catalog Segment is configured as an empty mock segment."],
+    disclaimers: ["Enterprise segment does not activate enterprise billing, settlement, procurement workflow, recommendation engine or Marketplace Intelligence."],
+    createdAt: "2026-06-14T10:20:00.000Z",
+    updatedAt: "2026-06-14T10:20:00.000Z"
+  },
+  {
+    id: "catalog-segment-creator",
+    slug: "creator",
+    name: "Creator Catalogs",
+    displayName: "Creator Catalogs",
+    description: "Creator catalog segment for future creator-led curated catalog surfaces.",
+    segmentType: "creator",
+    status: "configured-mock",
+    visibility: "tenant-preview",
+    featuredCatalogIds: [],
+    warnings: ["Creator Catalog Segment is a mock grouping boundary only."],
+    disclaimers: ["Creator segment does not activate paid placement, creator revenue sharing, distribution attribution or automated recommendation."],
+    createdAt: "2026-06-14T10:20:00.000Z",
+    updatedAt: "2026-06-14T10:20:00.000Z"
+  },
+  {
+    id: "catalog-segment-dao",
+    slug: "dao",
+    name: "DAO Catalogs",
+    displayName: "DAO Catalogs",
+    description: "DAO catalog segment for future governance and community-owned curated catalog surfaces.",
+    segmentType: "dao",
+    status: "configured-mock",
+    visibility: "tenant-preview",
+    featuredCatalogIds: [],
+    warnings: ["DAO Catalog Segment is mock/config-first and does not create governance execution."],
+    disclaimers: ["DAO segment does not activate proposal execution, treasury routing, revenue sharing, settlement or Marketplace Intelligence."],
+    createdAt: "2026-06-14T10:20:00.000Z",
+    updatedAt: "2026-06-14T10:20:00.000Z"
+  },
+  {
+    id: "catalog-segment-federated",
+    slug: "federated",
+    name: "Federated Featured Catalogs",
+    displayName: "Federated Featured Catalogs",
+    description: "Federated catalog segment for provider-reported collections that must retain trust boundary labels.",
+    segmentType: "federated",
+    status: "active-mock",
+    visibility: "public-mock",
+    featuredCatalogIds: ["featured-catalog-foundational-federated"],
+    warnings: ["Federated Featured Catalog Segment preserves Phase 02 trust boundaries."],
+    disclaimers: ["Federated featured catalog is provider-reported mock display and not ownership, metadata, royalty or settlement guarantee."],
+    createdAt: "2026-06-14T10:20:00.000Z",
+    updatedAt: "2026-06-14T10:20:00.000Z"
+  },
+  {
+    id: "catalog-segment-demo",
+    slug: "demo",
+    name: "Demo Catalogs",
+    displayName: "Demo Catalogs",
+    description: "Demo catalog segment for safe mock catalog previews and QA flows.",
+    segmentType: "demo",
+    status: "configured-mock",
+    visibility: "public-mock",
+    featuredCatalogIds: [],
+    warnings: ["Demo Catalog Segment exists for mock/config-first preview only."],
+    disclaimers: ["Demo segment does not activate ranking real, recommendation engine, analytics real, billing or settlement."],
+    createdAt: "2026-06-14T10:20:00.000Z",
+    updatedAt: "2026-06-14T10:20:00.000Z"
+  }
+];
+
+export const marketplaceFeaturedCatalogs = [
+  {
+    id: "featured-catalog-foundational-nft",
+    catalogId: "curated-catalog-foundational-nft",
+    segmentId: "catalog-segment-community",
+    placement: "hero",
+    position: 1,
+    featuredReason: "Foundational NFT catalog is manually featured as the primary Phase 04 catalog surface.",
+    editorialStatus: "approved-mock",
+    governanceStatus: "governance-aligned",
+    status: "active-mock",
+    visibility: "public-mock",
+    warnings: ["Featured Catalog placement is manual and mock/config-first."],
+    disclaimers: ["Featured Catalog is not ranking real, paid placement, recommendation engine, Marketplace Intelligence, billing or settlement."],
+    createdAt: "2026-06-14T10:25:00.000Z",
+    updatedAt: "2026-06-14T10:25:00.000Z"
+  },
+  {
+    id: "featured-catalog-academy-onboarding",
+    catalogId: "curated-catalog-academy-onboarding",
+    segmentId: "catalog-segment-academy",
+    placement: "segment-highlight",
+    position: 2,
+    featuredReason: "Academy onboarding catalog is featured for learning credential discovery in mock/config-first mode.",
+    editorialStatus: "editorial-review-mock",
+    governanceStatus: "governance-review",
+    status: "configured-mock",
+    visibility: "tenant-preview",
+    warnings: ["Academy featured placement remains tenant-preview."],
+    disclaimers: ["Academy Catalog feature does not create recommendation engine, certification real, entitlement, billing or settlement."],
+    createdAt: "2026-06-14T10:25:00.000Z",
+    updatedAt: "2026-06-14T10:25:00.000Z"
+  },
+  {
+    id: "featured-catalog-foundational-federated",
+    catalogId: "curated-catalog-foundational-nft",
+    segmentId: "catalog-segment-federated",
+    placement: "federated-feature",
+    position: 3,
+    featuredReason: "Federated section is highlighted to validate provider, origin, validation, provenance, risk and trust boundary display.",
+    editorialStatus: "governance-review-mock",
+    governanceStatus: "governance-review",
+    status: "active-mock",
+    visibility: "public-mock",
+    warnings: ["Federated Featured Catalog uses provider-reported mock metadata."],
+    disclaimers: ["Federated featured catalog does not create external provider call, ranking real, settlement, custody or metadata guarantee."],
+    createdAt: "2026-06-14T10:25:00.000Z",
+    updatedAt: "2026-06-14T10:25:00.000Z"
+  }
+];
+
 export const marketplaceProducts = [
   {
     id: "product-governance-dashboard-nft",

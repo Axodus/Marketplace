@@ -1,18 +1,33 @@
 import { Link, useParams } from "react-router-dom";
 import { BookMarked, ShieldAlert, Sparkles } from "lucide-react";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useCuratedCatalog, useCuratedCatalogs, useEditorialRules } from "../hooks/useMarketplace";
+import { useCatalogSegments, useCuratedCatalog, useCuratedCatalogs, useEditorialRules, useFeaturedCatalogs } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
-import type { CuratedCatalogResolvedItem, CuratedCatalogSectionView, CuratedCatalogView } from "../services/marketplaceService";
+import type {
+  CatalogSegmentView,
+  CuratedCatalogResolvedItem,
+  CuratedCatalogSectionView,
+  CuratedCatalogView,
+  FeaturedCatalogView
+} from "../services/marketplaceService";
 
 export function CuratedCatalogsPage() {
   const { catalogId } = useParams();
   const listQuery = useCuratedCatalogs();
   const detailQuery = useCuratedCatalog(catalogId);
   const editorialRulesQuery = useEditorialRules(catalogId);
+  const featuredQuery = useFeaturedCatalogs();
+  const segmentsQuery = useCatalogSegments();
   const catalogs = listQuery.data ?? [];
+  const featuredCatalogs = featuredQuery.data ?? [];
+  const segments = segmentsQuery.data ?? [];
   const selected = catalogId ? detailQuery.data : null;
-  useMarketplaceTelemetry("curated-catalogs-page", { catalogCount: catalogs.length, catalogId: catalogId ?? null });
+  useMarketplaceTelemetry("curated-catalogs-page", {
+    catalogCount: catalogs.length,
+    featuredCount: featuredCatalogs.length,
+    segmentCount: segments.length,
+    catalogId: catalogId ?? null
+  });
 
   if (listQuery.isLoading) {
     return (
@@ -51,13 +66,19 @@ export function CuratedCatalogsPage() {
         <div className="mt-5 flex flex-wrap gap-2">
           <NeutralBadge>mock curation</NeutralBadge>
           <NeutralBadge>config-first curation</NeutralBadge>
+          <NeutralBadge>featured is editorial mock</NeutralBadge>
+          <NeutralBadge>catalog segments</NeutralBadge>
           <NeutralBadge>no ranking real</NeutralBadge>
+          <NeutralBadge>no recommendation engine</NeutralBadge>
           <NeutralBadge>no marketplace intelligence</NeutralBadge>
           <NeutralBadge>no revenue sharing</NeutralBadge>
           <NeutralBadge>no settlement</NeutralBadge>
           <NeutralBadge>no billing</NeutralBadge>
         </div>
       </section>
+
+      <FeaturedCatalogsSection featuredCatalogs={featuredCatalogs} />
+      <CatalogSegmentsSection segments={segments} />
 
       {selected && <CuratedCatalogDetail view={selected} editorialRules={editorialRulesQuery.data ?? selected.editorialRules.map((rule) => ({
         rule,
@@ -74,6 +95,94 @@ export function CuratedCatalogsPage() {
         ))}
       </section>
     </div>
+  );
+}
+
+function FeaturedCatalogsSection({ featuredCatalogs }: { featuredCatalogs: FeaturedCatalogView[] }) {
+  return (
+    <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">Featured Catalogs</p>
+          <h2 className="mt-1 text-2xl font-semibold">Manual featured catalog placements</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+            Featured Catalogs highlight curated catalogs by editorial placement and segment. Featured does not mean ranking real,
+            performance real, recommendation engine, Marketplace Intelligence, analytics real, revenue sharing, billing or settlement.
+          </p>
+        </div>
+        <NeutralBadge>{featuredCatalogs.length} featured</NeutralBadge>
+      </div>
+      <div className="mt-4 grid gap-4 lg:grid-cols-3">
+        {featuredCatalogs.map((view) => (
+          <article key={view.featured.id} className="rounded border border-slate-200 bg-slate-50 p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{view.segment?.displayName ?? "Unsegmented"}</p>
+                <Link to={`/marketplace/curated/${view.catalog?.catalog.slug ?? view.featured.catalogId}`} className="mt-1 block font-semibold text-slate-950 hover:text-teal-700">
+                  {view.catalog?.catalog.displayName ?? view.featured.catalogId}
+                </Link>
+              </div>
+              <NeutralBadge>{view.featured.placement}</NeutralBadge>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-600">Featured reason: {view.featured.featuredReason}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <NeutralBadge>{view.featured.editorialStatus}</NeutralBadge>
+              <NeutralBadge>{view.featured.governanceStatus}</NeutralBadge>
+              <NeutralBadge>{view.featured.visibility}</NeutralBadge>
+            </div>
+            <p className="mt-3 rounded border border-amber-200 bg-amber-50 p-2 text-xs leading-5 text-amber-900">
+              {view.boundaryNotes[view.boundaryNotes.length - 1]}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CatalogSegmentsSection({ segments }: { segments: CatalogSegmentView[] }) {
+  return (
+    <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Catalog Segments</p>
+          <h2 className="mt-1 text-2xl font-semibold">Vertical and community grouping</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+            Catalog Segments group featured catalogs by Academy, ACS, Community, Federated and other vertical contexts in mock/config-first
+            mode. They do not create automatic segmentation or analytics real.
+          </p>
+        </div>
+        <NeutralBadge>{segments.length} segments</NeutralBadge>
+      </div>
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        {segments.map((view) => (
+          <article key={view.segment.id} className="rounded border border-slate-200 bg-slate-50 p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-semibold">{view.segment.displayName}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{view.segment.description}</p>
+              </div>
+              <NeutralBadge>{view.segment.segmentType}</NeutralBadge>
+            </div>
+            <div className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+              <Metric label="Featured" value={view.featuredCatalogs.length} />
+              <Metric label="Catalogs" value={view.catalogs.length} />
+              <Metric label="Status" value={view.segment.status} />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <NeutralBadge>{view.segment.visibility}</NeutralBadge>
+              {view.featuredCatalogs.some((featured) => featured.featured.placement === "federated-feature") ? <NeutralBadge>federated featured catalog</NeutralBadge> : null}
+              {view.segment.segmentType === "academy" ? <NeutralBadge>academy catalog</NeutralBadge> : null}
+              {view.segment.segmentType === "acs" ? <NeutralBadge>acs catalog</NeutralBadge> : null}
+              {view.segment.segmentType === "community" ? <NeutralBadge>community catalog</NeutralBadge> : null}
+            </div>
+            <p className="mt-3 rounded border border-amber-200 bg-amber-50 p-2 text-xs leading-5 text-amber-900">
+              {view.boundaryNotes[view.boundaryNotes.length - 1]}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 

@@ -2,7 +2,7 @@
 
 # Phase 04 - Curated Catalogs Planning
 
-Status: IN PROGRESS - EDITORIAL CURATION RULES IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - FEATURED CATALOG SEGMENTS IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_04_CURATED_CATALOGS_AUDIT.md`
@@ -11,7 +11,7 @@ Recommended implementation sequence:
 - MEP-04A - Curated Catalogs Planning and Governance Audit - COMPLETED
 - MEP-REQ-040 - Curated Catalog Model - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-041 - Editorial Rules - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-042 - Featured Catalogs
+- MEP-REQ-042 - Featured Catalogs - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-043 - Catalog Segments and Eligibility
 - MEP-PHASE-04-CLOSURE - QA, governance and no-execution validation
 
@@ -42,6 +42,16 @@ MEP-REQ-041 delivered:
 - displayed Curation Workflow state, curation notes, inclusion reasons, exclusion reasons, review statuses and governance labels in the Curated Catalog UI
 - preserved approved-mock as non-productive approval that does not imply compliance real, certification real or financial/commercial recommendation
 - preserved no productive approval workflow, no compliance real, no certification real, no ranking real, no recommendation engine, no Marketplace Intelligence, no billing, no settlement and no revenue sharing boundaries
+
+MEP-REQ-042 delivered:
+- added Featured Catalog and Catalog Segment mock/config-first models
+- added mock segments for Academy Catalogs, ACS Catalogs, Community Catalogs and Federated Featured Catalogs
+- added mock Featured Catalog placements for foundational, Academy and federated catalog visibility
+- added service helpers to list featured catalogs, list catalog segments and resolve catalogs by segment
+- added hooks for Featured Catalogs, Catalog Segments and catalogs by segment
+- displayed Featured Catalogs and Catalog Segments in the Curated Catalog UI
+- preserved Featured Catalog as manual editorial placement, not ranking real, performance real, recommendation engine, Marketplace Intelligence, analytics real, scoring real, distribution, revenue sharing, billing or settlement
+- preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries through segment/featured views
 
 Constraints:
 - keep Phase 04 planning and future runtime mock/config-first until explicit implementation requests authorize changes
