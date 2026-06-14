@@ -8,9 +8,12 @@ import {
   buildSellerProfileView,
   calculateDashboardMetrics,
   discoverWalletAssets,
+  listCuratedCatalogs,
   getExternalContractById,
   getFederationProviderById,
   getProductByItemRef,
+  resolveCuratedCatalog,
+  resolveCuratedCatalogItems,
   getCollectionBySlug,
   getSellerById,
   listExternalContracts,
@@ -86,6 +89,49 @@ export function useCollections() {
     queryFn: () => {
       traceMarketplaceLifecycle("marketplace-collections-query", "completed");
       return listCollections();
+    }
+  });
+}
+
+export function useCuratedCatalogs() {
+  return useQuery({
+    queryKey: ["marketplace-curated-catalogs"],
+    queryFn: () => {
+      const catalogs = listCuratedCatalogs();
+      traceMarketplaceLifecycle("marketplace-curated-catalogs-query", "completed", { catalogCount: catalogs.length });
+      return catalogs;
+    }
+  });
+}
+
+export function useCuratedCatalog(catalogIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-curated-catalog", catalogIdOrSlug],
+    enabled: Boolean(catalogIdOrSlug),
+    queryFn: () => {
+      const catalog = resolveCuratedCatalog(catalogIdOrSlug ?? "");
+      if (!catalog) {
+        const error = new Error("Curated Catalog not found");
+        instrumentMarketplaceError("marketplace-curated-catalog-query", error, { catalogIdOrSlug: catalogIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-curated-catalog-query", "completed", { catalogId: catalog.catalog.id });
+      return catalog;
+    }
+  });
+}
+
+export function useCuratedCatalogItems(catalogIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-curated-catalog-items", catalogIdOrSlug],
+    enabled: Boolean(catalogIdOrSlug),
+    queryFn: () => {
+      const items = resolveCuratedCatalogItems(catalogIdOrSlug ?? "");
+      traceMarketplaceLifecycle("marketplace-curated-catalog-items-query", "completed", {
+        catalogIdOrSlug: catalogIdOrSlug ?? null,
+        itemCount: items.length
+      });
+      return items;
     }
   });
 }

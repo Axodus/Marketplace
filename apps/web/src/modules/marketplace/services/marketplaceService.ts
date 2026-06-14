@@ -2,6 +2,7 @@ import {
   marketplaceAssetRegistry,
   marketplaceBoundaries,
   marketplaceCollections,
+  marketplaceCuratedCatalogs,
   marketplaceFederationProviders,
   marketplaceLicenses,
   marketplaceProducts,
@@ -12,6 +13,9 @@ import {
 import type {
   AssetRegistryRecord,
   Chain,
+  CuratedCatalog,
+  CuratedCatalogItem,
+  CuratedCatalogSection,
   DiscoveredAsset,
   ExternalCollectionStatistics,
   ExternalContractReference,
@@ -82,6 +86,7 @@ const collections = marketplaceCollections as MarketplaceCollection[];
 const sellers = marketplaceSellers as Seller[];
 const licenses = marketplaceLicenses as License[];
 const tenants = marketplaceTenants as Tenant[];
+const curatedCatalogs = marketplaceCuratedCatalogs as CuratedCatalog[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
@@ -394,6 +399,28 @@ export interface TenantContextView {
   referencedCollections: CollectionView[];
   enabledSections: string[];
   executionBoundaries: string[];
+}
+
+export interface CuratedCatalogResolvedItem {
+  item: CuratedCatalogItem;
+  product?: Product;
+  collection?: CollectionView;
+  trustBoundary?: FederationTrustBoundary;
+  boundaryNotes: string[];
+}
+
+export interface CuratedCatalogSectionView {
+  section: CuratedCatalogSection;
+  items: CuratedCatalogResolvedItem[];
+}
+
+export interface CuratedCatalogView {
+  catalog: CuratedCatalog;
+  sections: CuratedCatalogSectionView[];
+  items: CuratedCatalogResolvedItem[];
+  featuredProducts: Product[];
+  featuredCollections: CollectionView[];
+  boundaryNotes: string[];
 }
 
 export function normalizeMockWalletAddress(walletAddress?: string) {
@@ -1091,6 +1118,94 @@ export function resolveTenantContext(idOrSlug?: string): TenantContextView {
       tenant.configuration.canRouteCustomDomain ? "Unexpected custom domain routing flag enabled." : "No custom DNS, real subdomain routing or separate tenant deploy is active."
     ]
   };
+}
+
+function getCollectionViewById(collectionId?: string) {
+  if (!collectionId) return null;
+  return listCollections().find((view) => view.collection.id === collectionId) ?? null;
+}
+
+function resolveCuratedCatalogItem(item: CuratedCatalogItem): CuratedCatalogResolvedItem {
+  const product = item.productId ? products.find((record) => record.id === item.productId) : undefined;
+  const collectionId = item.externalCollectionId ?? item.collectionId ?? product?.collectionId;
+  const collection = getCollectionViewById(collectionId) ?? undefined;
+  const trustBoundary = collection?.boundaries;
+  const external = Boolean(collection && isExternalCollection(collection.collection));
+  const boundaryNotes = [
+    ...item.warnings,
+    ...item.disclaimers,
+    ...(trustBoundary?.notes ?? []),
+    external
+      ? "Curated Catalog preserves origin, provider, validation status, provenance, risk classification and trust boundaries for federated assets."
+      : "Curated Catalog item references existing native mock records without duplicating product truth.",
+    "mock curation / config-first curation / no ranking real / no marketplace intelligence / no revenue sharing / no settlement / no billing"
+  ];
+
+  return {
+    item: {
+      ...item,
+      isExternal: external || item.isExternal,
+      isFederated: external || item.isFederated,
+      isNative: !external && item.isNative,
+      canDisplay: item.canDisplay && trustBoundary?.canDisplay !== false,
+      canTrade: false,
+      canSettle: false
+    },
+    product,
+    collection,
+    trustBoundary,
+    boundaryNotes
+  };
+}
+
+export function resolveCuratedCatalogItems(catalogIdOrSlug: string) {
+  const catalog = getCuratedCatalogById(catalogIdOrSlug) ?? getCuratedCatalogBySlug(catalogIdOrSlug);
+  if (!catalog) return [];
+  return catalog.items.map(resolveCuratedCatalogItem);
+}
+
+function buildCuratedCatalogView(catalog: CuratedCatalog): CuratedCatalogView {
+  const items = catalog.items.map(resolveCuratedCatalogItem);
+  const sections = catalog.sections
+    .slice()
+    .sort((left, right) => left.position - right.position || left.id.localeCompare(right.id))
+    .map((section) => ({
+      section,
+      items: items.filter((item) => item.item.sectionId === section.id)
+    }));
+  const featuredProducts = products.filter((product) => catalog.featuredProductIds.includes(product.id));
+  const featuredCollections = listCollections().filter((view) => catalog.featuredCollectionIds.includes(view.collection.id));
+
+  return {
+    catalog,
+    sections,
+    items,
+    featuredProducts,
+    featuredCollections,
+    boundaryNotes: [
+      ...catalog.warnings,
+      ...catalog.disclaimers,
+      "Curated Catalog is mock/config-first curation only.",
+      "No ranking real, no recommendation engine, no marketplace intelligence, no approval workflow, no billing and no settlement are active."
+    ]
+  };
+}
+
+export function listCuratedCatalogs() {
+  return curatedCatalogs.map(buildCuratedCatalogView);
+}
+
+export function getCuratedCatalogById(catalogId: string) {
+  return curatedCatalogs.find((catalog) => catalog.id === catalogId) ?? null;
+}
+
+export function getCuratedCatalogBySlug(slug: string) {
+  return curatedCatalogs.find((catalog) => catalog.slug === slug) ?? null;
+}
+
+export function resolveCuratedCatalog(catalogIdOrSlug: string) {
+  const catalog = getCuratedCatalogById(catalogIdOrSlug) ?? getCuratedCatalogBySlug(catalogIdOrSlug);
+  return catalog ? buildCuratedCatalogView(catalog) : null;
 }
 
 export function discoverWalletAssets(walletAddress?: string): WalletDiscoveryView {

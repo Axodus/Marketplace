@@ -10,6 +10,7 @@ const MarketplaceHomePage = lazy(() => import("./modules/marketplace/pages/Marke
 const ProductExplorerPage = lazy(() => import("./modules/marketplace/pages/ProductExplorerPage").then((module) => ({ default: module.ProductExplorerPage })));
 const CollectionsPage = lazy(() => import("./modules/marketplace/pages/CollectionsPage").then((module) => ({ default: module.CollectionsPage })));
 const CollectionDetailPage = lazy(() => import("./modules/marketplace/pages/CollectionDetailPage").then((module) => ({ default: module.CollectionDetailPage })));
+const CuratedCatalogsPage = lazy(() => import("./modules/marketplace/pages/CuratedCatalogsPage").then((module) => ({ default: module.CuratedCatalogsPage })));
 const CreateSellPage = lazy(() => import("./modules/marketplace/pages/CreateSellPage").then((module) => ({ default: module.CreateSellPage })));
 const ProductDetailPage = lazy(() => import("./modules/marketplace/pages/ProductDetailPage").then((module) => ({ default: module.ProductDetailPage })));
 const SellerProfilePage = lazy(() => import("./modules/marketplace/pages/SellerProfilePage").then((module) => ({ default: module.SellerProfilePage })));
@@ -67,6 +68,8 @@ const router = createBrowserRouter([
       { path: "marketplace/explore", element: routeElement(<ProductExplorerPage />) },
       { path: "marketplace/collections", element: routeElement(<CollectionsPage />) },
       { path: "marketplace/collections/:slug", element: routeElement(<CollectionDetailPage />) },
+      { path: "marketplace/curated", element: routeElement(<CuratedCatalogsPage />) },
+      { path: "marketplace/curated/:catalogId", element: routeElement(<CuratedCatalogsPage />) },
       { path: "marketplace/create", element: routeElement(<CreateSellPage />) },
       { path: "marketplace/sell", element: routeElement(<CreateSellPage />) },
       { path: "marketplace/products/:slug", element: routeElement(<ProductDetailPage />) },

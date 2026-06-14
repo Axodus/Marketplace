@@ -2,14 +2,14 @@
 
 # Phase 04 - Curated Catalogs Planning
 
-Status: PLANNING AUDIT COMPLETED - NO RUNTIME IMPLEMENTED
+Status: IN PROGRESS - CURATED CATALOG MODEL IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_04_CURATED_CATALOGS_AUDIT.md`
 
 Recommended implementation sequence:
 - MEP-04A - Curated Catalogs Planning and Governance Audit - COMPLETED
-- MEP-REQ-040 - Curated Catalog Model
+- MEP-REQ-040 - Curated Catalog Model - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-041 - Editorial Rules
 - MEP-REQ-042 - Featured Catalogs
 - MEP-REQ-043 - Catalog Segments and Eligibility
@@ -23,6 +23,16 @@ MEP-04A delivered:
 - defined governance, editorial and trust boundaries for curated catalog work
 - mapped gaps for MEP-REQ-040 through MEP-REQ-043 without implementing runtime
 - preserved no automated recommendation, no real ranking, no approval workflow, no Marketplace Intelligence, no Distribution Network, no Revenue Sharing, no billing and no settlement boundaries
+
+MEP-REQ-040 delivered:
+- added Curated Catalog, Curated Catalog Section, Curated Catalog Item and Curated Catalog Rule mock/config-first models
+- added curated catalog mock data for Foundational NFT Access and Academy Onboarding catalogs
+- added service helpers to list curated catalogs, resolve curated catalogs by id or slug and resolve curated catalog items
+- added hooks for curated catalog list, detail and items
+- added `/marketplace/curated` and `/marketplace/curated/:catalogId` runtime surfaces
+- displayed curation notes, sections, items, featured products, featured collections, warnings, disclaimers and boundary notes
+- preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries for external collections
+- preserved no ranking real, no recommendation engine, no marketplace intelligence, no revenue sharing, no settlement and no billing boundaries
 
 Constraints:
 - keep Phase 04 planning and future runtime mock/config-first until explicit implementation requests authorize changes

@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Box, Building2, FileCode2, FileSearch, FilePlus2, Gavel, LayoutDashboard, Layers3, RadioTower, ReceiptText, ShieldCheck, Tags, WalletCards } from "lucide-react";
+import { BookMarked, Box, Building2, FileCode2, FileSearch, FilePlus2, Gavel, LayoutDashboard, Layers3, RadioTower, ReceiptText, ShieldCheck, Tags, WalletCards } from "lucide-react";
 import { useWallet } from "../hooks/useWallet";
 import { resolveTenantBranding } from "../modules/marketplace/services/marketplaceService";
 
@@ -7,6 +7,7 @@ const links = [
   { to: "/marketplace", label: "Home", icon: Box },
   { to: "/marketplace/explore", label: "Explore", icon: Tags },
   { to: "/marketplace/collections", label: "Collections", icon: Layers3 },
+  { to: "/marketplace/curated", label: "Curated", icon: BookMarked },
   { to: "/marketplace/create", label: "Create/Sell", icon: FilePlus2 },
   { to: "/marketplace/tenants", label: "Tenants", icon: Building2 },
   { to: "/marketplace/governance", label: "Governance", icon: ShieldCheck },

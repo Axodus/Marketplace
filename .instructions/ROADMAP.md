@@ -203,7 +203,7 @@ Implementation boundary:
 
 # Phase 04 — Curated Catalogs
 
-Status: PLANNING AUDIT COMPLETED — NO RUNTIME IMPLEMENTED
+Status: IN PROGRESS — CURATED CATALOG MODEL IMPLEMENTED MOCK/CONFIG-FIRST
 
 Objectives:
 - model tenant, partner, community, DAO, Academy, ACS and enterprise curated catalogs
@@ -213,6 +213,7 @@ Objectives:
 
 Deliverables:
 - curated catalog model
+- Curated Catalog Model mock/config-first runtime
 - tenant product selection rules
 - catalog eligibility boundaries
 - product exposure policy readiness
@@ -223,7 +224,7 @@ Planning artifact:
 
 Linked requirements:
 - MEP-04A — Curated Catalogs Planning and Governance Audit — completed
-- MEP-REQ-040 — Curated Catalog Model
+- MEP-REQ-040 — Curated Catalog Model — completed mock/config-first
 - MEP-REQ-041 — Editorial Rules
 - MEP-REQ-042 — Featured Catalogs
 - MEP-REQ-043 — Catalog Segments and Eligibility
@@ -243,7 +244,9 @@ Relationship to later phases:
 
 Implementation boundary:
 - MEP-04A is audit and planning only
-- Curated Catalog, Curated Catalog Section, Curated Catalog Rule, Editorial Rule, Featured Catalog and Catalog Segment remain planned concepts until explicit implementation requests
+- MEP-REQ-040 introduces Curated Catalog, Curated Catalog Section, Curated Catalog Item and Curated Catalog Rule as mock/config-first runtime surfaces only
+- MEP-REQ-040 does not introduce advanced editorial workflow, featured catalog engine, full tenant-curated integration, real ranking, recommendation engine, marketplace intelligence, scoring real, productive approval, compliance real, revenue sharing, billing, settlement, backend, API, GraphQL schema, database, tracking or BI
+- Editorial Rule, Featured Catalog and Catalog Segment remain planned concepts until explicit implementation requests
 - no curated catalog runtime, approval workflow, AI curation, automated recommendation, real ranking, Marketplace Intelligence, Distribution Network, Revenue Sharing, billing, settlement, tracking, BI, API, database, GraphQL schema, provider call, indexer, contract write, wallet signature, payment, bridge or custody is introduced by MEP-04A
 - future curated catalogs must preserve product truth, tenant boundaries and federated origin, provider, validation status, provenance, risk classification and trust boundaries
 

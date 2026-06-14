@@ -8,6 +8,8 @@ import {
   getCollectionBySlug,
   getCollectionForProduct,
   getCollectionSourceLabel,
+  getCuratedCatalogById,
+  getCuratedCatalogBySlug,
   getExternalContractById,
   getFederationProviderById,
   getFederationProviderReference,
@@ -30,6 +32,7 @@ import {
   isValidTenantSlug,
   isValidMockWalletAddress,
   issueMockPurchase,
+  listCuratedCatalogs,
   listExternalContracts,
   listWalletDiscoveryRecords,
   listFederationProviders,
@@ -48,6 +51,8 @@ import {
   resolveTenantBySimulatedDomain,
   resolveTenantBySlug,
   resolveTenantBranding,
+  resolveCuratedCatalog,
+  resolveCuratedCatalogItems,
   resolveTenantCatalog,
   resolveTenantContext,
   resolveTenantRoutingContext
@@ -374,6 +379,35 @@ describe("marketplaceService", () => {
     expect(academy.resolution.productItems.every((item) => item.canSettle === false && item.canTrade === false)).toBe(true);
     expect(community.resolution.collectionItems.find((item) => item.collectionId === "external-collection-harmony-creator-keys")?.warnings.join(" ")).toContain("origin");
     expect(academy.resolution.disclaimers.join(" ")).toContain("No financial isolation");
+  });
+
+  it("resolves Curated Catalog model with sections, items and federated boundaries", () => {
+    const catalogs = listCuratedCatalogs();
+    const foundational = resolveCuratedCatalog("foundational-nft-access");
+    const academy = resolveCuratedCatalog("curated-catalog-academy-onboarding");
+
+    expect(catalogs.map((view) => view.catalog.slug)).toContain("foundational-nft-access");
+    expect(getCuratedCatalogById("curated-catalog-foundational-nft")?.catalogType).toBe("curated");
+    expect(getCuratedCatalogBySlug("academy-onboarding")?.inheritsTenantCatalog).toBe(true);
+    expect(foundational?.catalog.sections.length).toBeGreaterThan(0);
+    expect(foundational?.catalog.rules.map((rule) => rule.ruleType)).toContain("preserve-federation-boundary");
+    expect(foundational?.featuredProducts.map((product) => product.id)).toContain("product-governance-dashboard-nft");
+    expect(foundational?.featuredCollections.map((view) => view.collection.id)).toContain("external-collection-harmony-creator-keys");
+    expect(foundational?.items.every((entry) => entry.item.canSettle === false && entry.item.canTrade === false)).toBe(true);
+    expect(foundational?.boundaryNotes.join(" ")).toMatch(/no ranking real/i);
+    expect(foundational?.boundaryNotes.join(" ")).toMatch(/no marketplace intelligence/i);
+    expect(foundational?.boundaryNotes.join(" ")).toMatch(/no settlement/i);
+
+    const federatedItem = foundational?.items.find((entry) => entry.item.externalCollectionId === "external-collection-harmony-creator-keys");
+    expect(federatedItem?.item.isExternal).toBe(true);
+    expect(federatedItem?.trustBoundary?.provider).toContain("Harmony");
+    expect(federatedItem?.trustBoundary?.validationStatus).toBe("provider-reported");
+    expect(federatedItem?.trustBoundary?.riskClassification).toBe("unknown-external");
+    expect(federatedItem?.trustBoundary?.provenance).toContain("Provider-reported");
+    expect(federatedItem?.boundaryNotes.join(" ")).toContain("trust boundaries");
+    expect(resolveCuratedCatalogItems("academy-onboarding").map((entry) => entry.item.id)).toContain("item-academy-external-badges");
+    expect(academy?.catalog.tenantId).toBe("tenant-academy-marketplace");
+    expect(resolveCuratedCatalog("missing-catalog")).toBeNull();
   });
 
   it("finds products by slug", () => {

@@ -69,6 +69,36 @@ export type TenantCatalogSource =
   | "federated catalog rule"
   | "external collection rule"
   | "global catalog";
+export type CuratedCatalogStatus = "draft" | "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled" | "archived";
+export type CuratedCatalogType = "curated" | "editorial" | "featured" | "segment" | "federated" | "mixed";
+export type CuratedCatalogVisibility = "public-mock" | "tenant-preview" | "private-preview" | "restricted";
+export type CuratedCatalogGovernanceStatus = "governance-aligned" | "governance-review" | "restricted" | "disabled";
+export type CuratedCatalogOwnerScope = "global" | "tenant" | "community" | "academy" | "acs" | "dao" | "enterprise";
+export type CuratedCatalogSectionType = "hero" | "featured" | "segment" | "editorial" | "federated" | "mixed";
+export type CuratedCatalogItemType = "product" | "collection" | "external-collection";
+export type CuratedCatalogRuleType =
+  | "allow-product"
+  | "block-product"
+  | "allow-collection"
+  | "block-collection"
+  | "allow-category"
+  | "block-category"
+  | "allow-external-collection"
+  | "block-external-collection"
+  | "feature-product"
+  | "feature-collection"
+  | "require-governance-review"
+  | "preserve-federation-boundary";
+export type CuratedCatalogRuleEffect = "include" | "exclude" | "feature" | "warn" | "restrict";
+export type CuratedCatalogRuleTargetType = "product" | "collection" | "external-collection" | "category" | "catalog" | "asset-origin";
+export type CuratedCatalogItemSource =
+  | "curated catalog rule"
+  | "curated featured rule"
+  | "curated section rule"
+  | "editorial mock rule"
+  | "federated catalog rule"
+  | "tenant catalog reference"
+  | "global catalog reference";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -356,6 +386,97 @@ export interface TenantCatalogResolution {
   collectionItems: TenantCatalogItem[];
   warnings: string[];
   disclaimers: string[];
+}
+
+export interface CuratedCatalogRule {
+  id: string;
+  catalogId: string;
+  sectionId?: string;
+  ruleType: CuratedCatalogRuleType;
+  targetType: CuratedCatalogRuleTargetType;
+  targetId: string;
+  effect: CuratedCatalogRuleEffect;
+  priority: number;
+  reason: string;
+  status: CuratedCatalogStatus;
+  source: CuratedCatalogItemSource;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogSection {
+  id: string;
+  catalogId: string;
+  title: string;
+  description: string;
+  sectionType: CuratedCatalogSectionType;
+  position: number;
+  featuredProductIds: string[];
+  featuredCollectionIds: string[];
+  itemIds: string[];
+  ruleIds: string[];
+  visibility: CuratedCatalogVisibility;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogItem {
+  id: string;
+  catalogId: string;
+  sectionId: string;
+  itemType: CuratedCatalogItemType;
+  productId?: string;
+  collectionId?: string;
+  externalCollectionId?: string;
+  source: CuratedCatalogItemSource;
+  inclusionReason: string;
+  editorialNote: string;
+  isFeatured: boolean;
+  isFederated: boolean;
+  isExternal: boolean;
+  isNative: boolean;
+  canDisplay: boolean;
+  canTrade: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalog {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  catalogType: CuratedCatalogType;
+  status: CuratedCatalogStatus;
+  visibility: CuratedCatalogVisibility;
+  governanceStatus: CuratedCatalogGovernanceStatus;
+  ownerScope: CuratedCatalogOwnerScope;
+  tenantId?: string;
+  segmentIds: string[];
+  sectionIds: string[];
+  featuredProductIds: string[];
+  featuredCollectionIds: string[];
+  allowedProductIds: string[];
+  blockedProductIds: string[];
+  allowedCollectionIds: string[];
+  blockedCollectionIds: string[];
+  allowedCategoryIds: ProductCategory[];
+  blockedCategoryIds: ProductCategory[];
+  allowedExternalCollectionIds: string[];
+  blockedExternalCollectionIds: string[];
+  allowsFederatedAssets: boolean;
+  inheritsGlobalCatalog: boolean;
+  inheritsTenantCatalog: boolean;
+  curationNotes: string[];
+  sections: CuratedCatalogSection[];
+  items: CuratedCatalogItem[];
+  rules: CuratedCatalogRule[];
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Tenant {
