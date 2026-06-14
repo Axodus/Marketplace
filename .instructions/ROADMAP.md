@@ -203,7 +203,7 @@ Implementation boundary:
 
 # Phase 04 — Curated Catalogs
 
-Status: PLANNED
+Status: PLANNING AUDIT COMPLETED — NO RUNTIME IMPLEMENTED
 
 Objectives:
 - model tenant, partner, community, DAO, Academy, ACS and enterprise curated catalogs
@@ -217,6 +217,35 @@ Deliverables:
 - catalog eligibility boundaries
 - product exposure policy readiness
 - governance validation readiness
+
+Planning artifact:
+- `docs/PHASE_04_CURATED_CATALOGS_AUDIT.md`
+
+Linked requirements:
+- MEP-04A — Curated Catalogs Planning and Governance Audit — completed
+- MEP-REQ-040 — Curated Catalog Model
+- MEP-REQ-041 — Editorial Rules
+- MEP-REQ-042 — Featured Catalogs
+- MEP-REQ-043 — Catalog Segments and Eligibility
+- MEP-PHASE-04-CLOSURE — QA, governance and no-execution validation
+
+Dependencies:
+- PHASE 00 — Marketplace Architecture Revision
+- Phase 01 — NFT Marketplace Consolidation
+- Phase 02 — Federation Layer
+- Phase 03 — Tenant Infrastructure
+
+Relationship to later phases:
+- Phase 04 prepares curated and editorial catalog concepts
+- Phase 05 — Distribution Network remains future work and must not be activated by curated catalog planning
+- Phase 06 — Revenue Sharing remains future work and must not be activated by curated catalog planning
+- Phase 07 — Marketplace Intelligence remains future work and must not be activated by curated catalog planning
+
+Implementation boundary:
+- MEP-04A is audit and planning only
+- Curated Catalog, Curated Catalog Section, Curated Catalog Rule, Editorial Rule, Featured Catalog and Catalog Segment remain planned concepts until explicit implementation requests
+- no curated catalog runtime, approval workflow, AI curation, automated recommendation, real ranking, Marketplace Intelligence, Distribution Network, Revenue Sharing, billing, settlement, tracking, BI, API, database, GraphQL schema, provider call, indexer, contract write, wallet signature, payment, bridge or custody is introduced by MEP-04A
+- future curated catalogs must preserve product truth, tenant boundaries and federated origin, provider, validation status, provenance, risk classification and trust boundaries
 
 ---
 

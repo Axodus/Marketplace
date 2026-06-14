@@ -1,5 +1,36 @@
 # Marketplace Roadmap
 
+# Phase 04 - Curated Catalogs Planning
+
+Status: PLANNING AUDIT COMPLETED - NO RUNTIME IMPLEMENTED
+
+Planning artifact:
+- `docs/PHASE_04_CURATED_CATALOGS_AUDIT.md`
+
+Recommended implementation sequence:
+- MEP-04A - Curated Catalogs Planning and Governance Audit - COMPLETED
+- MEP-REQ-040 - Curated Catalog Model
+- MEP-REQ-041 - Editorial Rules
+- MEP-REQ-042 - Featured Catalogs
+- MEP-REQ-043 - Catalog Segments and Eligibility
+- MEP-PHASE-04-CLOSURE - QA, governance and no-execution validation
+
+MEP-04A delivered:
+- mapped current Phase 03 Tenant Catalog, Tenant Catalog Rule, Tenant Exposure Rule and Catalog Resolution foundations
+- differentiated Global Catalog, Tenant Catalog, Curated Catalog, Editorial Catalog and Federated Catalog
+- recommended conceptual models for Curated Catalog, Curated Catalog Section, Curated Catalog Rule, Editorial Rule, Featured Catalog and Catalog Segment
+- recommended catalog type, catalog status and editorial status taxonomies
+- defined governance, editorial and trust boundaries for curated catalog work
+- mapped gaps for MEP-REQ-040 through MEP-REQ-043 without implementing runtime
+- preserved no automated recommendation, no real ranking, no approval workflow, no Marketplace Intelligence, no Distribution Network, no Revenue Sharing, no billing and no settlement boundaries
+
+Constraints:
+- keep Phase 04 planning and future runtime mock/config-first until explicit implementation requests authorize changes
+- do not activate AI curation, automated recommendation, real ranking, production approval workflow, tracking, BI, Marketplace Intelligence, Distribution Network, Revenue Sharing, billing, settlement, treasury routing, partner/affiliate logic, provider calls, indexers, APIs, databases, schemas or GraphQL
+- curated catalogs must preserve product truth, tenant boundaries and federated origin/provider/validation/provenance/risk/trust metadata
+
+---
+
 # Phase 03 - Tenant Infrastructure Planning
 
 Status: COMPLETED - TENANT INFRASTRUCTURE VALIDATED MOCK/CONFIG-FIRST
