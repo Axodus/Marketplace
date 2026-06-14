@@ -2,7 +2,7 @@
 
 # Phase 04 - Curated Catalogs Planning
 
-Status: IN PROGRESS - CURATED CATALOG MODEL IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - EDITORIAL CURATION RULES IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_04_CURATED_CATALOGS_AUDIT.md`
@@ -10,7 +10,7 @@ Planning artifact:
 Recommended implementation sequence:
 - MEP-04A - Curated Catalogs Planning and Governance Audit - COMPLETED
 - MEP-REQ-040 - Curated Catalog Model - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-041 - Editorial Rules
+- MEP-REQ-041 - Editorial Rules - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-042 - Featured Catalogs
 - MEP-REQ-043 - Catalog Segments and Eligibility
 - MEP-PHASE-04-CLOSURE - QA, governance and no-execution validation
@@ -33,6 +33,15 @@ MEP-REQ-040 delivered:
 - displayed curation notes, sections, items, featured products, featured collections, warnings, disclaimers and boundary notes
 - preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries for external collections
 - preserved no ranking real, no recommendation engine, no marketplace intelligence, no revenue sharing, no settlement and no billing boundaries
+
+MEP-REQ-041 delivered:
+- added Editorial Rule, Curation Workflow, Curation Note, Curation Reason and mock review status models
+- added editorial rule mock data for inclusion, exclusion, feature, review-required and governance-review scenarios
+- added service helpers to list editorial rules and explain inclusion/exclusion reasons with boundary notes
+- added a hook for editorial rule explanations
+- displayed Curation Workflow state, curation notes, inclusion reasons, exclusion reasons, review statuses and governance labels in the Curated Catalog UI
+- preserved approved-mock as non-productive approval that does not imply compliance real, certification real or financial/commercial recommendation
+- preserved no productive approval workflow, no compliance real, no certification real, no ranking real, no recommendation engine, no Marketplace Intelligence, no billing, no settlement and no revenue sharing boundaries
 
 Constraints:
 - keep Phase 04 planning and future runtime mock/config-first until explicit implementation requests authorize changes

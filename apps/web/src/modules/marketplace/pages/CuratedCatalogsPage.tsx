@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { BookMarked, ShieldAlert, Sparkles } from "lucide-react";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useCuratedCatalog, useCuratedCatalogs } from "../hooks/useMarketplace";
+import { useCuratedCatalog, useCuratedCatalogs, useEditorialRules } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { CuratedCatalogResolvedItem, CuratedCatalogSectionView, CuratedCatalogView } from "../services/marketplaceService";
 
@@ -9,6 +9,7 @@ export function CuratedCatalogsPage() {
   const { catalogId } = useParams();
   const listQuery = useCuratedCatalogs();
   const detailQuery = useCuratedCatalog(catalogId);
+  const editorialRulesQuery = useEditorialRules(catalogId);
   const catalogs = listQuery.data ?? [];
   const selected = catalogId ? detailQuery.data : null;
   useMarketplaceTelemetry("curated-catalogs-page", { catalogCount: catalogs.length, catalogId: catalogId ?? null });
@@ -58,7 +59,14 @@ export function CuratedCatalogsPage() {
         </div>
       </section>
 
-      {selected && <CuratedCatalogDetail view={selected} />}
+      {selected && <CuratedCatalogDetail view={selected} editorialRules={editorialRulesQuery.data ?? selected.editorialRules.map((rule) => ({
+        rule,
+        inclusionReason: rule.effect === "include" || rule.effect === "feature" ? rule.reason : undefined,
+        exclusionReason: rule.effect === "exclude" || rule.effect === "restrict" ? rule.reason : undefined,
+        reviewStatus: rule.reviewStatus,
+        governanceLabel: rule.governanceLabel,
+        boundaryNote: "Editorial Rule is mock/config-first; no productive approval workflow, no compliance real, no certification real, no ranking real and no marketplace intelligence are active."
+      }))} />}
 
       <section className="grid gap-4 lg:grid-cols-2">
         {catalogs.map((catalog) => (
@@ -105,7 +113,20 @@ function CuratedCatalogCard({ view, selected }: { view: CuratedCatalogView; sele
   );
 }
 
-function CuratedCatalogDetail({ view }: { view: CuratedCatalogView }) {
+function CuratedCatalogDetail({
+  view,
+  editorialRules
+}: {
+  view: CuratedCatalogView;
+  editorialRules: Array<{
+    rule: CuratedCatalogView["editorialRules"][number];
+    inclusionReason?: string;
+    exclusionReason?: string;
+    reviewStatus: string;
+    governanceLabel: string;
+    boundaryNote: string;
+  }>;
+}) {
   const { catalog } = view;
 
   return (
@@ -125,6 +146,63 @@ function CuratedCatalogDetail({ view }: { view: CuratedCatalogView }) {
         <Metric label="Can settle" value={view.items.some((item) => item.item.canSettle) ? "unexpected" : "false"} />
       </div>
       <BoundaryNotes notes={view.boundaryNotes} />
+      <section className="rounded border border-indigo-200 bg-white p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-indigo-700">Curation Workflow</p>
+            <h3 className="mt-1 text-lg font-semibold">{view.workflowSummary.governanceLabel}</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              State: {view.workflowSummary.state} / Review status: {view.workflowSummary.reviewStatus}. This workflow is mock/config-first
+              and read-only.
+            </p>
+          </div>
+          <NeutralBadge>{catalog.governanceStatus}</NeutralBadge>
+        </div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          <div className="rounded border border-slate-200 bg-slate-50 p-3">
+            <p className="text-sm font-semibold">Curation notes</p>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-5 text-slate-600">
+              {view.workflowSummary.notes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+            {view.workflowSummary.disclaimers.map((note) => (
+              <p key={note}>{note}</p>
+            ))}
+            <p>approved-mock is not productive approval, compliance real, certification real or recommendation financial/commercial.</p>
+          </div>
+        </div>
+      </section>
+      <section className="rounded border border-slate-200 bg-white p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Editorial Rules</p>
+            <h3 className="text-lg font-semibold">Inclusion, exclusion and review reasons</h3>
+          </div>
+          <NeutralBadge>{editorialRules.length} rules</NeutralBadge>
+        </div>
+        <div className="mt-4 grid gap-3">
+          {editorialRules.map(({ rule, inclusionReason, exclusionReason, reviewStatus, governanceLabel, boundaryNote }) => (
+            <article key={rule.id} className="rounded border border-slate-200 bg-slate-50 p-3 text-sm">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-semibold">{rule.ruleType} / {rule.effect}</p>
+                  <p className="mt-1 text-slate-600">{rule.editorialNote}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <NeutralBadge>{reviewStatus}</NeutralBadge>
+                  <NeutralBadge>{governanceLabel}</NeutralBadge>
+                </div>
+              </div>
+              {inclusionReason ? <p className="mt-2 text-xs text-slate-600">Inclusion reason: {inclusionReason}</p> : null}
+              {exclusionReason ? <p className="mt-2 text-xs text-slate-600">Exclusion reason: {exclusionReason}</p> : null}
+              <p className="mt-2 text-xs text-amber-800">{boundaryNote}</p>
+            </article>
+          ))}
+        </div>
+      </section>
       <div className="grid gap-5">
         {view.sections.map((section) => (
           <CuratedSection key={section.section.id} view={section} />
@@ -169,11 +247,14 @@ function CuratedItem({ view }: { view: CuratedCatalogResolvedItem }) {
             {title}
           </Link>
           <p className="mt-1 text-sm text-slate-600">{item.inclusionReason}</p>
+          {item.exclusionReason ? <p className="mt-1 text-sm text-amber-700">Exclusion reason: {item.exclusionReason}</p> : null}
           <p className="mt-1 text-xs text-slate-500">{item.editorialNote}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <NeutralBadge>{item.itemType}</NeutralBadge>
           <NeutralBadge>{item.source}</NeutralBadge>
+          <NeutralBadge>{item.editorialStatus}</NeutralBadge>
+          <NeutralBadge>{item.governanceLabel}</NeutralBadge>
           {item.isFeatured ? <NeutralBadge>featured</NeutralBadge> : null}
           {item.isExternal ? <NeutralBadge>federated</NeutralBadge> : <NeutralBadge>native</NeutralBadge>}
         </div>
@@ -191,6 +272,12 @@ function CuratedItem({ view }: { view: CuratedCatalogResolvedItem }) {
       ) : null}
       <div className="mt-3 text-xs text-slate-600">
         canDisplay={String(item.canDisplay)} / canTrade={String(item.canTrade)} / canSettle={String(item.canSettle)}
+      </div>
+      <div className="mt-2 rounded border border-slate-200 bg-white p-3 text-xs leading-5 text-slate-600">
+        <p>Review state: {item.reviewState}</p>
+        <p>Review status: {view.curationReasons.reviewStatus}</p>
+        <p>Governance label: {view.curationReasons.governanceLabel}</p>
+        <p>approved-mock does not mean productive approval, compliance real, certification real or recommendation financial/commercial.</p>
       </div>
     </article>
   );

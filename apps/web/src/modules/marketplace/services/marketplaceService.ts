@@ -16,6 +16,7 @@ import type {
   CuratedCatalog,
   CuratedCatalogItem,
   CuratedCatalogSection,
+  EditorialRule,
   DiscoveredAsset,
   ExternalCollectionStatistics,
   ExternalContractReference,
@@ -405,6 +406,13 @@ export interface CuratedCatalogResolvedItem {
   item: CuratedCatalogItem;
   product?: Product;
   collection?: CollectionView;
+  editorialRules: EditorialRule[];
+  curationReasons: {
+    inclusionReason: string;
+    exclusionReason?: string;
+    reviewStatus: string;
+    governanceLabel: string;
+  };
   trustBoundary?: FederationTrustBoundary;
   boundaryNotes: string[];
 }
@@ -418,6 +426,15 @@ export interface CuratedCatalogView {
   catalog: CuratedCatalog;
   sections: CuratedCatalogSectionView[];
   items: CuratedCatalogResolvedItem[];
+  editorialRules: EditorialRule[];
+  workflowSummary: {
+    state: string;
+    reviewStatus: string;
+    governanceLabel: string;
+    notes: string[];
+    warnings: string[];
+    disclaimers: string[];
+  };
   featuredProducts: Product[];
   featuredCollections: CollectionView[];
   boundaryNotes: string[];
@@ -1125,19 +1142,36 @@ function getCollectionViewById(collectionId?: string) {
   return listCollections().find((view) => view.collection.id === collectionId) ?? null;
 }
 
-function resolveCuratedCatalogItem(item: CuratedCatalogItem): CuratedCatalogResolvedItem {
+function getCuratedCatalogItemTargetId(item: CuratedCatalogItem) {
+  return item.productId ?? item.collectionId ?? item.externalCollectionId ?? item.id;
+}
+
+function getEditorialRulesForItem(catalog: CuratedCatalog, item: CuratedCatalogItem) {
+  const targetId = getCuratedCatalogItemTargetId(item);
+  return catalog.editorialRules
+    .filter((rule) => rule.targetId === targetId || rule.sectionId === item.sectionId)
+    .sort((left, right) => left.priority - right.priority || left.id.localeCompare(right.id));
+}
+
+function resolveCuratedCatalogItem(catalog: CuratedCatalog, item: CuratedCatalogItem): CuratedCatalogResolvedItem {
   const product = item.productId ? products.find((record) => record.id === item.productId) : undefined;
   const collectionId = item.externalCollectionId ?? item.collectionId ?? product?.collectionId;
   const collection = getCollectionViewById(collectionId) ?? undefined;
   const trustBoundary = collection?.boundaries;
   const external = Boolean(collection && isExternalCollection(collection.collection));
+  const editorialRules = getEditorialRulesForItem(catalog, item);
+  const reviewStatus = editorialRules[0]?.reviewStatus ?? item.editorialStatus;
+  const governanceLabel = editorialRules[0]?.governanceLabel ?? item.governanceLabel;
   const boundaryNotes = [
+    `Curation Workflow status: ${item.reviewState}; review status: ${reviewStatus}; governance label: ${governanceLabel}.`,
     ...item.warnings,
     ...item.disclaimers,
+    ...editorialRules.flatMap((rule) => [...rule.warnings, ...rule.disclaimers]),
     ...(trustBoundary?.notes ?? []),
     external
       ? "Curated Catalog preserves origin, provider, validation status, provenance, risk classification and trust boundaries for federated assets."
       : "Curated Catalog item references existing native mock records without duplicating product truth.",
+    "approved-mock does not mean productive approval, compliance real, certification real or financial/commercial recommendation.",
     "mock curation / config-first curation / no ranking real / no marketplace intelligence / no revenue sharing / no settlement / no billing"
   ];
 
@@ -1153,6 +1187,13 @@ function resolveCuratedCatalogItem(item: CuratedCatalogItem): CuratedCatalogReso
     },
     product,
     collection,
+    editorialRules,
+    curationReasons: {
+      inclusionReason: item.inclusionReason,
+      exclusionReason: item.exclusionReason,
+      reviewStatus,
+      governanceLabel
+    },
     trustBoundary,
     boundaryNotes
   };
@@ -1161,11 +1202,11 @@ function resolveCuratedCatalogItem(item: CuratedCatalogItem): CuratedCatalogReso
 export function resolveCuratedCatalogItems(catalogIdOrSlug: string) {
   const catalog = getCuratedCatalogById(catalogIdOrSlug) ?? getCuratedCatalogBySlug(catalogIdOrSlug);
   if (!catalog) return [];
-  return catalog.items.map(resolveCuratedCatalogItem);
+  return catalog.items.map((item) => resolveCuratedCatalogItem(catalog, item));
 }
 
 function buildCuratedCatalogView(catalog: CuratedCatalog): CuratedCatalogView {
-  const items = catalog.items.map(resolveCuratedCatalogItem);
+  const items = catalog.items.map((item) => resolveCuratedCatalogItem(catalog, item));
   const sections = catalog.sections
     .slice()
     .sort((left, right) => left.position - right.position || left.id.localeCompare(right.id))
@@ -1180,6 +1221,15 @@ function buildCuratedCatalogView(catalog: CuratedCatalog): CuratedCatalogView {
     catalog,
     sections,
     items,
+    editorialRules: catalog.editorialRules,
+    workflowSummary: {
+      state: catalog.curationWorkflow.state,
+      reviewStatus: catalog.curationWorkflow.reviewStatus,
+      governanceLabel: catalog.curationWorkflow.governanceLabel,
+      notes: catalog.curationWorkflow.notes.map((note) => `${note.noteType}: ${note.note}`),
+      warnings: catalog.curationWorkflow.warnings,
+      disclaimers: catalog.curationWorkflow.disclaimers
+    },
     featuredProducts,
     featuredCollections,
     boundaryNotes: [
@@ -1193,6 +1243,26 @@ function buildCuratedCatalogView(catalog: CuratedCatalog): CuratedCatalogView {
 
 export function listCuratedCatalogs() {
   return curatedCatalogs.map(buildCuratedCatalogView);
+}
+
+export function listEditorialRules(catalogIdOrSlug?: string) {
+  if (!catalogIdOrSlug) return curatedCatalogs.flatMap((catalog) => catalog.editorialRules);
+  const catalog = getCuratedCatalogById(catalogIdOrSlug) ?? getCuratedCatalogBySlug(catalogIdOrSlug);
+  return catalog?.editorialRules ?? [];
+}
+
+export function explainEditorialRules(catalogIdOrSlug: string) {
+  const catalog = getCuratedCatalogById(catalogIdOrSlug) ?? getCuratedCatalogBySlug(catalogIdOrSlug);
+  if (!catalog) return [];
+
+  return catalog.editorialRules.map((rule) => ({
+    rule,
+    inclusionReason: rule.effect === "include" || rule.effect === "feature" ? rule.reason : undefined,
+    exclusionReason: rule.effect === "exclude" || rule.effect === "restrict" ? rule.reason : undefined,
+    reviewStatus: rule.reviewStatus,
+    governanceLabel: rule.governanceLabel,
+    boundaryNote: "Editorial Rule is mock/config-first; no productive approval workflow, no compliance real, no certification real, no ranking real and no marketplace intelligence are active."
+  }));
 }
 
 export function getCuratedCatalogById(catalogId: string) {

@@ -4,6 +4,7 @@ import {
   buildMarketplaceAnalytics,
   createDraftListingPreview,
   discoverWalletAssets,
+  explainEditorialRules,
   getAssetRegistryByProductSlug,
   getCollectionBySlug,
   getCollectionForProduct,
@@ -33,6 +34,7 @@ import {
   isValidMockWalletAddress,
   issueMockPurchase,
   listCuratedCatalogs,
+  listEditorialRules,
   listExternalContracts,
   listWalletDiscoveryRecords,
   listFederationProviders,
@@ -391,6 +393,8 @@ describe("marketplaceService", () => {
     expect(getCuratedCatalogBySlug("academy-onboarding")?.inheritsTenantCatalog).toBe(true);
     expect(foundational?.catalog.sections.length).toBeGreaterThan(0);
     expect(foundational?.catalog.rules.map((rule) => rule.ruleType)).toContain("preserve-federation-boundary");
+    expect(foundational?.editorialRules.map((rule) => rule.ruleType)).toContain("governance-review");
+    expect(foundational?.workflowSummary.reviewStatus).toBe("governance-review-mock");
     expect(foundational?.featuredProducts.map((product) => product.id)).toContain("product-governance-dashboard-nft");
     expect(foundational?.featuredCollections.map((view) => view.collection.id)).toContain("external-collection-harmony-creator-keys");
     expect(foundational?.items.every((entry) => entry.item.canSettle === false && entry.item.canTrade === false)).toBe(true);
@@ -408,6 +412,27 @@ describe("marketplaceService", () => {
     expect(resolveCuratedCatalogItems("academy-onboarding").map((entry) => entry.item.id)).toContain("item-academy-external-badges");
     expect(academy?.catalog.tenantId).toBe("tenant-academy-marketplace");
     expect(resolveCuratedCatalog("missing-catalog")).toBeNull();
+  });
+
+  it("explains Editorial Rules and mock Curation Workflow boundaries", () => {
+    const rules = listEditorialRules("foundational-nft-access");
+    const explanations = explainEditorialRules("foundational-nft-access");
+    const academyExplanations = explainEditorialRules("academy-onboarding");
+    const foundational = resolveCuratedCatalog("foundational-nft-access");
+
+    expect(rules.map((rule) => rule.reviewStatus)).toContain("approved-mock");
+    expect(rules.map((rule) => rule.reviewStatus)).toContain("governance-review-mock");
+    expect(explanations.find((entry) => entry.rule.id === "editorial-rule-foundational-governance-include")?.inclusionReason).toContain("Native governance product");
+    expect(explanations.find((entry) => entry.rule.id === "editorial-rule-foundational-trading-exclude")?.exclusionReason).toContain("Trading category");
+    expect(explanations.every((entry) => entry.boundaryNote.includes("no productive approval workflow"))).toBe(true);
+    expect(explanations.every((entry) => entry.boundaryNote.includes("no compliance real"))).toBe(true);
+    expect(explanations.every((entry) => entry.boundaryNote.includes("no certification real"))).toBe(true);
+    expect(explanations.every((entry) => entry.boundaryNote.includes("no ranking real"))).toBe(true);
+    expect(explanations.every((entry) => entry.boundaryNote.includes("no marketplace intelligence"))).toBe(true);
+    expect(foundational?.items.find((entry) => entry.item.id === "item-foundational-harmony-external-collection")?.curationReasons.reviewStatus).toBe("governance-review-mock");
+    expect(foundational?.workflowSummary.disclaimers.join(" ")).toContain("No productive approval workflow");
+    expect(academyExplanations.map((entry) => entry.rule.reviewStatus)).toContain("governance-review-mock");
+    expect(explainEditorialRules("missing-catalog")).toEqual([]);
   });
 
   it("finds products by slug", () => {

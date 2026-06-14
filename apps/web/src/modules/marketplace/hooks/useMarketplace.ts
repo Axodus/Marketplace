@@ -8,6 +8,7 @@ import {
   buildSellerProfileView,
   calculateDashboardMetrics,
   discoverWalletAssets,
+  explainEditorialRules,
   listCuratedCatalogs,
   getExternalContractById,
   getFederationProviderById,
@@ -132,6 +133,21 @@ export function useCuratedCatalogItems(catalogIdOrSlug?: string) {
         itemCount: items.length
       });
       return items;
+    }
+  });
+}
+
+export function useEditorialRules(catalogIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-editorial-rules", catalogIdOrSlug],
+    enabled: Boolean(catalogIdOrSlug),
+    queryFn: () => {
+      const rules = explainEditorialRules(catalogIdOrSlug ?? "");
+      traceMarketplaceLifecycle("marketplace-editorial-rules-query", "completed", {
+        catalogIdOrSlug: catalogIdOrSlug ?? null,
+        ruleCount: rules.length
+      });
+      return rules;
     }
   });
 }

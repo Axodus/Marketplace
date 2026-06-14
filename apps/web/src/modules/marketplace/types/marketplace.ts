@@ -99,6 +99,18 @@ export type CuratedCatalogItemSource =
   | "federated catalog rule"
   | "tenant catalog reference"
   | "global catalog reference";
+export type EditorialRuleType = "include" | "exclude" | "feature" | "restrict" | "warn" | "review-required" | "governance-review";
+export type CurationReviewStatus =
+  | "not-reviewed"
+  | "editorial-review-mock"
+  | "governance-review-mock"
+  | "approved-mock"
+  | "restricted"
+  | "blocked"
+  | "needs-update";
+export type CurationWorkflowState = "draft-mock" | "editorial-review-mock" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
+export type CurationDecision = "include" | "exclude" | "feature" | "restrict" | "warn" | "needs-review";
+export type CurationReason = "inclusion reason" | "exclusion reason" | "governance reason" | "review reason" | "restriction reason";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -404,6 +416,37 @@ export interface CuratedCatalogRule {
   disclaimers: string[];
 }
 
+export interface EditorialRule {
+  id: string;
+  catalogId: string;
+  sectionId?: string;
+  targetType: CuratedCatalogRuleTargetType;
+  targetId: string;
+  ruleType: EditorialRuleType;
+  effect: CuratedCatalogRuleEffect;
+  reason: string;
+  editorialNote: string;
+  reviewStatus: CurationReviewStatus;
+  governanceLabel: string;
+  priority: number;
+  status: CuratedCatalogStatus;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CurationNote {
+  id: string;
+  targetType: CuratedCatalogRuleTargetType;
+  targetId: string;
+  noteType: CurationReason;
+  note: string;
+  reviewStatus: CurationReviewStatus;
+  governanceLabel: string;
+  createdAt: string;
+}
+
 export interface CuratedCatalogSection {
   id: string;
   catalogId: string;
@@ -430,7 +473,11 @@ export interface CuratedCatalogItem {
   externalCollectionId?: string;
   source: CuratedCatalogItemSource;
   inclusionReason: string;
+  exclusionReason?: string;
   editorialNote: string;
+  editorialStatus: CurationReviewStatus;
+  governanceLabel: string;
+  reviewState: CurationWorkflowState;
   isFeatured: boolean;
   isFederated: boolean;
   isExternal: boolean;
@@ -473,6 +520,16 @@ export interface CuratedCatalog {
   sections: CuratedCatalogSection[];
   items: CuratedCatalogItem[];
   rules: CuratedCatalogRule[];
+  editorialRules: EditorialRule[];
+  curationWorkflow: {
+    state: CurationWorkflowState;
+    decision: CurationDecision;
+    reviewStatus: CurationReviewStatus;
+    governanceLabel: string;
+    notes: CurationNote[];
+    warnings: string[];
+    disclaimers: string[];
+  };
   warnings: string[];
   disclaimers: string[];
   createdAt: string;
