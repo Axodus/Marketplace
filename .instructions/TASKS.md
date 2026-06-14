@@ -2,7 +2,7 @@
 
 # Phase 04 - Curated Catalogs Planning
 
-Status: IN PROGRESS - FEATURED CATALOG SEGMENTS IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - TENANT CURATED CATALOG INTEGRATION IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_04_CURATED_CATALOGS_AUDIT.md`
@@ -12,7 +12,7 @@ Recommended implementation sequence:
 - MEP-REQ-040 - Curated Catalog Model - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-041 - Editorial Rules - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-042 - Featured Catalogs - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-043 - Catalog Segments and Eligibility
+- MEP-REQ-043 - Tenant Curated Catalog Integration - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-PHASE-04-CLOSURE - QA, governance and no-execution validation
 
 MEP-04A delivered:
@@ -52,6 +52,15 @@ MEP-REQ-042 delivered:
 - displayed Featured Catalogs and Catalog Segments in the Curated Catalog UI
 - preserved Featured Catalog as manual editorial placement, not ranking real, performance real, recommendation engine, Marketplace Intelligence, analytics real, scoring real, distribution, revenue sharing, billing or settlement
 - preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries through segment/featured views
+
+MEP-REQ-043 delivered:
+- added TenantCuratedCatalogConfig, TenantCuratedCatalogRule, TenantCuratedCatalogResolution and TenantCuratedCatalogItem models
+- added tenant curated catalog configs for Global, Academy, ACS Services and Community Demo tenants
+- added resolver for tenant curated catalogs with inheritance, tenant-owned catalogs, featured curated catalogs, blocked curated catalogs and federated curated catalog restrictions
+- applied Tenant Catalog isolation to Curated Catalog items before tenant display
+- added Tenant Storefront UI for Tenant Curated Catalogs with visible/excluded items and boundary notes
+- added service tests for global inheritance, tenant-owned curated catalogs, featured curated catalogs, blocked curated catalogs, tenant catalog isolation, branding/theme preservation and mock/read-only domain routing
+- preserved no revenue sharing, no settlement, no billing, no Marketplace Intelligence and no Distribution Network boundaries
 
 Constraints:
 - keep Phase 04 planning and future runtime mock/config-first until explicit implementation requests authorize changes

@@ -203,7 +203,7 @@ Implementation boundary:
 
 # Phase 04 — Curated Catalogs
 
-Status: IN PROGRESS — FEATURED CATALOG SEGMENTS IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS — TENANT CURATED CATALOG INTEGRATION IMPLEMENTED MOCK/CONFIG-FIRST
 
 Objectives:
 - model tenant, partner, community, DAO, Academy, ACS and enterprise curated catalogs
@@ -216,6 +216,7 @@ Deliverables:
 - Curated Catalog Model mock/config-first runtime
 - Editorial Rules and Curation Workflow mock/config-first runtime
 - Featured Catalogs and Catalog Segments mock/config-first runtime
+- Tenant Curated Catalog Integration mock/config-first runtime
 - tenant product selection rules
 - catalog eligibility boundaries
 - product exposure policy readiness
@@ -229,7 +230,7 @@ Linked requirements:
 - MEP-REQ-040 — Curated Catalog Model — completed mock/config-first
 - MEP-REQ-041 — Editorial Rules — completed mock/config-first
 - MEP-REQ-042 — Featured Catalogs — completed mock/config-first
-- MEP-REQ-043 — Catalog Segments and Eligibility
+- MEP-REQ-043 — Tenant Curated Catalog Integration — completed mock/config-first
 - MEP-PHASE-04-CLOSURE — QA, governance and no-execution validation
 
 Dependencies:
@@ -252,7 +253,9 @@ Implementation boundary:
 - MEP-REQ-041 does not introduce productive approval workflow, compliance real, certification real, AI curation, scoring real, real ranking, recommendation engine, Marketplace Intelligence, backend, API, database, tracking, BI, revenue sharing, billing or settlement
 - MEP-REQ-042 introduces Featured Catalogs, Featured Catalog placement and Catalog Segments as mock/config-first editorial grouping surfaces only
 - MEP-REQ-042 does not introduce ranking real, performance real, recommendation engine, Marketplace Intelligence, analytics real, automatic segmentation, scoring real, Distribution Network, revenue sharing, billing, settlement, backend, API, database, tracking or BI
-- Catalog Segment eligibility remains a planned concept until explicit implementation requests
+- MEP-REQ-043 introduces Tenant Curated Catalog config, rules, resolution and Tenant Storefront visibility as mock/config-first runtime surfaces only
+- MEP-REQ-043 applies Tenant Catalog isolation to Curated Catalog items and preserves tenant branding/theme and mock/read-only domain routing
+- MEP-REQ-043 does not introduce Distribution Network, Revenue Sharing, Marketplace Intelligence, tenant billing, tenant settlement, treasury routing, partner/affiliate attribution, real ranking, recommendation engine, automated curation, backend, API, database, tracking or BI
 - no curated catalog runtime, approval workflow, AI curation, automated recommendation, real ranking, Marketplace Intelligence, Distribution Network, Revenue Sharing, billing, settlement, tracking, BI, API, database, GraphQL schema, provider call, indexer, contract write, wallet signature, payment, bridge or custody is introduced by MEP-04A
 - future curated catalogs must preserve product truth, tenant boundaries and federated origin, provider, validation status, provenance, risk classification and trust boundaries
 

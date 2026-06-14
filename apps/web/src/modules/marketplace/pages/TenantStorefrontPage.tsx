@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router-dom";
-import { Building2, Globe2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { BookMarked, Building2, Globe2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import type { CSSProperties } from "react";
 import { ProductCard } from "../components/ProductCard";
 import type { Tenant, TenantBranding, TenantCatalog, TenantCatalogResolution, TenantDomain, TenantDomainAlias } from "../types/marketplace";
+import type { TenantCuratedCatalogView } from "../services/marketplaceService";
 import { useTenant, useTenants } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 
@@ -51,6 +52,8 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
     routingContext,
     catalog,
     catalogResolution,
+    curatedCatalogResolution,
+    tenantCuratedCatalogs,
     isGlobalMarketplace,
     branding,
     theme,
@@ -162,6 +165,8 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
       <TenantDomainsPanel tenant={tenant} activeDomain={routingContext.domain} />
 
       <TenantCatalogPanel catalog={catalog} resolution={catalogResolution} />
+
+      <TenantCuratedCatalogPanel catalogs={tenantCuratedCatalogs} included={curatedCatalogResolution.includedCatalogIds.length} excluded={curatedCatalogResolution.excludedCatalogIds.length} />
 
       <section className="grid gap-4 lg:grid-cols-2">
         <BoundaryPanel title="Warnings" tone="amber" items={[...tenant.warnings, ...branding.warnings]} />
@@ -361,6 +366,103 @@ function TenantCatalogPanel({ catalog, resolution }: { catalog: TenantCatalog; r
           mock isolation and config-first isolation only. No tenant settlement enabled, no tenant billing enabled, no tenant treasury routing
           enabled, no tenant revenue sharing enabled, no RBAC enabled, no isolated database enabled, no production data isolation enabled and
           no real tenant permissions enabled.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function TenantCuratedCatalogPanel({
+  catalogs,
+  included,
+  excluded
+}: {
+  catalogs: TenantCuratedCatalogView[];
+  included: number;
+  excluded: number;
+}) {
+  return (
+    <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <BookMarked size={20} /> Tenant Curated Catalogs
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Tenant Curated Catalog resolution layers Curated Catalogs over Tenant Catalog isolation. It can inherit global curated catalogs,
+            feature tenant curated catalogs, block curated catalogs and filter items through tenant catalog isolation.
+          </p>
+        </div>
+        <span className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
+          {included} included / {excluded} excluded
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        {catalogs.length ? (
+          catalogs.map((view) => (
+            <article key={view.catalog.catalog.id} className="rounded border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    {view.isTenantOwned ? "Tenant curated catalog" : view.isInherited ? "inherits global curated catalogs" : "tenant curated catalog resolution"}
+                  </p>
+                  <Link to={`/marketplace/curated/${view.catalog.catalog.slug}`} className="mt-1 block text-lg font-semibold text-slate-950 hover:text-teal-700">
+                    {view.catalog.catalog.displayName}
+                  </Link>
+                  <p className="mt-2 text-sm text-slate-600">{view.inclusionReason}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {view.isFeatured ? <span className="rounded border border-teal-200 bg-teal-50 px-2 py-1 text-xs font-semibold text-teal-800">featured curated catalogs</span> : null}
+                  {view.catalog.catalog.allowsFederatedAssets ? <span className="rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-800">federated boundary</span> : null}
+                </div>
+              </div>
+              <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                <Stat label="visible items" value={view.visibleItems.length} />
+                <Stat label="excluded items" value={view.excludedItems.length} />
+                <Stat label="applied rules" value={view.appliedRules.length} />
+              </div>
+              <div className="mt-4 grid gap-3">
+                {view.visibleItems.map((item) => (
+                  <div key={item.itemId} className="rounded border border-slate-200 bg-white p-3 text-sm">
+                    <p className="font-semibold">{item.productId ?? item.collectionId ?? item.externalCollectionId ?? item.itemId}</p>
+                    <p className="mt-1 text-slate-600">{item.inclusionReason}</p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      tenant catalog isolation / {item.isFederated ? "federated" : "native"} / canDisplay={String(item.canDisplay)}
+                    </p>
+                  </div>
+                ))}
+                {view.excludedItems.length ? (
+                  <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                    <p className="font-semibold">Excluded by tenant curated catalog resolution</p>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-xs">
+                      {view.excludedItems.map((item) => (
+                        <li key={item.itemId}>
+                          {item.productId ?? item.collectionId ?? item.externalCollectionId ?? item.itemId}: {item.exclusionReason}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </div>
+              <p className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+                {view.boundaryNotes[view.boundaryNotes.length - 1]}
+              </p>
+            </article>
+          ))
+        ) : (
+          <p className="rounded border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+            No Tenant Curated Catalogs are visible for this tenant. The tenant may be restricted, may block curated catalogs or may have no
+            curated catalog config.
+          </p>
+        )}
+      </div>
+
+      <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="font-semibold">Tenant curated boundary</p>
+        <p className="mt-1">
+          mock curation and config-first curation only. no revenue sharing, no settlement, no billing, no marketplace intelligence, no
+          distribution network, no ranking real and no recommendation engine are active.
         </p>
       </div>
     </section>

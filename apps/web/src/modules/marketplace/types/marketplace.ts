@@ -115,6 +115,17 @@ export type CatalogSegmentStatus = "configured-mock" | "active-mock" | "review-r
 export type FeaturedCatalogStatus = "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
 export type CatalogSegmentType = "academy" | "acs" | "enterprise" | "community" | "creator" | "dao" | "federated" | "seasonal" | "demo";
 export type FeaturedCatalogPlacement = "hero" | "section" | "tenant-preview" | "segment-highlight" | "federated-feature";
+export type TenantCuratedCatalogRuleType =
+  | "inherit-global-curated"
+  | "allow-curated-catalog"
+  | "block-curated-catalog"
+  | "feature-curated-catalog"
+  | "allow-segment"
+  | "block-segment"
+  | "allow-federated-curated"
+  | "block-federated-curated";
+export type TenantCuratedCatalogRuleEffect = "include" | "exclude" | "feature" | "inherit" | "restrict" | "warn";
+export type TenantCuratedCatalogRuleTargetType = "curated-catalog" | "catalog-segment" | "federated-curated-catalog" | "global-curated-catalogs";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -404,6 +415,64 @@ export interface TenantCatalogResolution {
   disclaimers: string[];
 }
 
+export interface TenantCuratedCatalogRule {
+  id: string;
+  tenantId: string;
+  ruleType: TenantCuratedCatalogRuleType;
+  targetType: TenantCuratedCatalogRuleTargetType;
+  targetId: string;
+  effect: TenantCuratedCatalogRuleEffect;
+  reason: string;
+  priority: number;
+  status: TenantCatalogStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCuratedCatalogConfig {
+  tenantId: string;
+  inheritsGlobalCuratedCatalogs: boolean;
+  allowedCuratedCatalogIds: string[];
+  blockedCuratedCatalogIds: string[];
+  featuredCuratedCatalogIds: string[];
+  allowedSegmentIds: string[];
+  blockedSegmentIds: string[];
+  allowsFederatedCuratedCatalogs: boolean;
+  rules: TenantCuratedCatalogRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCuratedCatalogItem {
+  itemId: string;
+  catalogId: string;
+  tenantId: string;
+  itemType: CuratedCatalogItemType;
+  productId?: string;
+  collectionId?: string;
+  externalCollectionId?: string;
+  inclusionReason?: string;
+  exclusionReason?: string;
+  canDisplay: boolean;
+  isFeatured: boolean;
+  isFederated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCuratedCatalogResolution {
+  tenantId: string;
+  resolvedAt: string;
+  includedCatalogIds: string[];
+  excludedCatalogIds: string[];
+  featuredCatalogIds: string[];
+  appliedRules: TenantCuratedCatalogRule[];
+  includedItems: TenantCuratedCatalogItem[];
+  excludedItems: TenantCuratedCatalogItem[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
 export interface CuratedCatalogRule {
   id: string;
   catalogId: string;
@@ -589,6 +658,7 @@ export interface Tenant {
   domains?: TenantDomain[];
   domainAliases?: TenantDomainAlias[];
   catalog?: TenantCatalog;
+  curatedCatalogConfig?: TenantCuratedCatalogConfig;
   createdAt: string;
   updatedAt: string;
   warnings: string[];

@@ -494,6 +494,33 @@ export const marketplaceTenants = [
       createdAt: "2026-06-12T10:00:00.000Z",
       updatedAt: "2026-06-12T10:00:00.000Z"
     },
+    curatedCatalogConfig: {
+      tenantId: "tenant-global-marketplace",
+      inheritsGlobalCuratedCatalogs: true,
+      allowedCuratedCatalogIds: ["curated-catalog-foundational-nft", "curated-catalog-academy-onboarding"],
+      blockedCuratedCatalogIds: [],
+      featuredCuratedCatalogIds: ["curated-catalog-foundational-nft"],
+      allowedSegmentIds: ["catalog-segment-academy", "catalog-segment-community", "catalog-segment-federated"],
+      blockedSegmentIds: [],
+      allowsFederatedCuratedCatalogs: true,
+      rules: [
+        {
+          id: "tenant-curated-global-inherit",
+          tenantId: "tenant-global-marketplace",
+          ruleType: "inherit-global-curated",
+          targetType: "global-curated-catalogs",
+          targetId: "global-curated",
+          effect: "inherit",
+          reason: "Global marketplace is the baseline for global curated catalog inheritance.",
+          priority: 1,
+          status: "active-mock",
+          warnings: [],
+          disclaimers: ["Global curated inheritance is mock/config-first and does not create recommendation engine or Marketplace Intelligence."]
+        }
+      ],
+      warnings: ["Global Tenant Curated Catalog config is the fallback baseline."],
+      disclaimers: ["Tenant Curated Catalog config does not enable revenue sharing, settlement, billing, Distribution Network or Marketplace Intelligence."]
+    },
     createdAt: "2026-06-12T10:00:00.000Z",
     updatedAt: "2026-06-12T10:00:00.000Z",
     warnings: ["Global marketplace context is mock/config-first and does not activate tenant isolation."],
@@ -756,6 +783,46 @@ export const marketplaceTenants = [
       createdAt: "2026-06-12T10:05:00.000Z",
       updatedAt: "2026-06-12T10:05:00.000Z"
     },
+    curatedCatalogConfig: {
+      tenantId: "tenant-academy-marketplace",
+      inheritsGlobalCuratedCatalogs: true,
+      allowedCuratedCatalogIds: ["curated-catalog-academy-onboarding"],
+      blockedCuratedCatalogIds: [],
+      featuredCuratedCatalogIds: ["curated-catalog-academy-onboarding"],
+      allowedSegmentIds: ["catalog-segment-academy"],
+      blockedSegmentIds: ["catalog-segment-community"],
+      allowsFederatedCuratedCatalogs: true,
+      rules: [
+        {
+          id: "tenant-curated-academy-inherit-global",
+          tenantId: "tenant-academy-marketplace",
+          ruleType: "inherit-global-curated",
+          targetType: "global-curated-catalogs",
+          targetId: "global-curated",
+          effect: "inherit",
+          reason: "Academy can inherit global curated catalogs while applying Academy Tenant Catalog isolation.",
+          priority: 1,
+          status: "configured-mock",
+          warnings: [],
+          disclaimers: ["Global curated inheritance does not bypass Academy Tenant Catalog isolation."]
+        },
+        {
+          id: "tenant-curated-academy-feature",
+          tenantId: "tenant-academy-marketplace",
+          ruleType: "feature-curated-catalog",
+          targetType: "curated-catalog",
+          targetId: "curated-catalog-academy-onboarding",
+          effect: "feature",
+          reason: "Academy onboarding is featured for Academy tenant discovery.",
+          priority: 10,
+          status: "configured-mock",
+          warnings: [],
+          disclaimers: ["Featured curated catalog is mock/config-first and not ranking real or recommendation engine."]
+        }
+      ],
+      warnings: ["Academy Tenant Curated Catalog config is tenant-preview and governance-review mock."],
+      disclaimers: ["Tenant curated catalog config does not enable tenant billing, settlement, revenue sharing, Marketplace Intelligence or Distribution Network."]
+    },
     createdAt: "2026-06-12T10:05:00.000Z",
     updatedAt: "2026-06-12T10:05:00.000Z",
     warnings: ["Academy tenant catalog references global products and collections; it does not duplicate product truth."],
@@ -974,6 +1041,33 @@ export const marketplaceTenants = [
       disclaimers: ["No financial isolation, no settlement isolation, no RBAC enforcement and no isolated database are active."],
       createdAt: "2026-06-12T10:10:00.000Z",
       updatedAt: "2026-06-12T10:10:00.000Z"
+    },
+    curatedCatalogConfig: {
+      tenantId: "tenant-acs-services",
+      inheritsGlobalCuratedCatalogs: false,
+      allowedCuratedCatalogIds: [],
+      blockedCuratedCatalogIds: ["curated-catalog-foundational-nft", "curated-catalog-academy-onboarding"],
+      featuredCuratedCatalogIds: [],
+      allowedSegmentIds: ["catalog-segment-acs"],
+      blockedSegmentIds: ["catalog-segment-federated", "catalog-segment-academy"],
+      allowsFederatedCuratedCatalogs: false,
+      rules: [
+        {
+          id: "tenant-curated-acs-block-federated",
+          tenantId: "tenant-acs-services",
+          ruleType: "block-federated-curated",
+          targetType: "federated-curated-catalog",
+          targetId: "federated",
+          effect: "restrict",
+          reason: "ACS tenant blocks federated curated catalogs until ACS governance review.",
+          priority: 5,
+          status: "review-required",
+          warnings: ["Federated curated catalogs are blocked for ACS private-preview."],
+          disclaimers: ["Block rule is mock/config-first and not production provider enforcement."]
+        }
+      ],
+      warnings: ["ACS Tenant Curated Catalog config is private-preview and restrictive."],
+      disclaimers: ["ACS tenant curated config does not activate service delivery, billing, settlement, Marketplace Intelligence or Distribution Network."]
     },
     createdAt: "2026-06-12T10:10:00.000Z",
     updatedAt: "2026-06-12T10:10:00.000Z",
@@ -1207,6 +1301,46 @@ export const marketplaceTenants = [
       disclaimers: ["No financial isolation, no settlement isolation, no RBAC enforcement and no isolated database are active."],
       createdAt: "2026-06-12T10:15:00.000Z",
       updatedAt: "2026-06-12T10:15:00.000Z"
+    },
+    curatedCatalogConfig: {
+      tenantId: "tenant-community-demo",
+      inheritsGlobalCuratedCatalogs: true,
+      allowedCuratedCatalogIds: ["curated-catalog-foundational-nft"],
+      blockedCuratedCatalogIds: ["curated-catalog-academy-onboarding"],
+      featuredCuratedCatalogIds: ["curated-catalog-foundational-nft"],
+      allowedSegmentIds: ["catalog-segment-community", "catalog-segment-federated"],
+      blockedSegmentIds: ["catalog-segment-academy"],
+      allowsFederatedCuratedCatalogs: true,
+      rules: [
+        {
+          id: "tenant-curated-community-feature-foundation",
+          tenantId: "tenant-community-demo",
+          ruleType: "feature-curated-catalog",
+          targetType: "curated-catalog",
+          targetId: "curated-catalog-foundational-nft",
+          effect: "feature",
+          reason: "Community demo highlights foundational NFT access while applying community catalog isolation.",
+          priority: 10,
+          status: "draft",
+          warnings: ["Community featured curated catalog remains draft-only."],
+          disclaimers: ["Featured curated catalog does not create ranking real, distribution attribution, revenue sharing, billing or settlement."]
+        },
+        {
+          id: "tenant-curated-community-block-academy",
+          tenantId: "tenant-community-demo",
+          ruleType: "block-curated-catalog",
+          targetType: "curated-catalog",
+          targetId: "curated-catalog-academy-onboarding",
+          effect: "exclude",
+          reason: "Academy onboarding catalog is blocked for this community demo tenant.",
+          priority: 20,
+          status: "draft",
+          warnings: ["Blocked curated catalog is excluded by tenant config."],
+          disclaimers: ["Block is mock/config-first and not RBAC or production permission enforcement."]
+        }
+      ],
+      warnings: ["Community Tenant Curated Catalog config is draft and mock/config-first."],
+      disclaimers: ["Community tenant curated config does not activate Distribution Network, revenue sharing, billing, settlement or Marketplace Intelligence."]
     },
     createdAt: "2026-06-12T10:15:00.000Z",
     updatedAt: "2026-06-12T10:15:00.000Z",

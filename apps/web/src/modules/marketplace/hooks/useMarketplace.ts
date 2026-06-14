@@ -15,6 +15,7 @@ import {
   getProductByItemRef,
   resolveCuratedCatalog,
   resolveCuratedCatalogItems,
+  resolveTenantCuratedCatalogs,
   getCollectionBySlug,
   getSellerById,
   listExternalContracts,
@@ -361,6 +362,21 @@ export function useTenantCatalog(tenantIdOrSlug?: string) {
 
 export function useTenantCatalogResolution(tenantIdOrSlug?: string) {
   return useTenantCatalog(tenantIdOrSlug);
+}
+
+export function useTenantCuratedCatalogs(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-curated-catalogs", tenantIdOrSlug],
+    queryFn: () => {
+      const curated = resolveTenantCuratedCatalogs(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-tenant-curated-catalogs-query", "completed", {
+        tenantId: curated.tenant.id,
+        includedCatalogs: curated.resolution.includedCatalogIds.length,
+        excludedCatalogs: curated.resolution.excludedCatalogIds.length
+      });
+      return curated;
+    }
+  });
 }
 
 export function useTenantVisibleProducts(tenantIdOrSlug?: string) {

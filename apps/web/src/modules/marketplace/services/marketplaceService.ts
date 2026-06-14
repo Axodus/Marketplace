@@ -43,6 +43,9 @@ import type {
   TenantCatalogResolution,
   TenantCatalogRule,
   TenantCatalogSource,
+  TenantCuratedCatalogConfig,
+  TenantCuratedCatalogItem,
+  TenantCuratedCatalogResolution,
   TenantDomain,
   TenantDomainAlias,
   TenantDomainInputType,
@@ -398,6 +401,8 @@ export interface TenantContextView {
   routingContext: TenantRoutingContext;
   catalog: TenantCatalog;
   catalogResolution: TenantCatalogResolution;
+  curatedCatalogResolution: TenantCuratedCatalogResolution;
+  tenantCuratedCatalogs: TenantCuratedCatalogView[];
   isGlobalMarketplace: boolean;
   branding: TenantBranding;
   theme: TenantTheme;
@@ -457,6 +462,18 @@ export interface CatalogSegmentView {
   segment: CatalogSegment;
   featuredCatalogs: FeaturedCatalogView[];
   catalogs: CuratedCatalogView[];
+  boundaryNotes: string[];
+}
+
+export interface TenantCuratedCatalogView {
+  catalog: CuratedCatalogView;
+  inclusionReason: string;
+  isInherited: boolean;
+  isTenantOwned: boolean;
+  isFeatured: boolean;
+  visibleItems: TenantCuratedCatalogItem[];
+  excludedItems: TenantCuratedCatalogItem[];
+  appliedRules: TenantCuratedCatalogConfig["rules"];
   boundaryNotes: string[];
 }
 
@@ -1123,12 +1140,172 @@ export function explainTenantCatalogExclusion(tenantIdOrSlug: string, targetId: 
   return "No exclusion found";
 }
 
+function buildFallbackTenantCuratedCatalogConfig(tenant: Tenant): TenantCuratedCatalogConfig {
+  return {
+    tenantId: tenant.id,
+    inheritsGlobalCuratedCatalogs: tenant.tenantType === "global",
+    allowedCuratedCatalogIds: [],
+    blockedCuratedCatalogIds: [],
+    featuredCuratedCatalogIds: [],
+    allowedSegmentIds: [],
+    blockedSegmentIds: [],
+    allowsFederatedCuratedCatalogs: tenant.configuration.isFederatedCatalogEnabled,
+    rules: [],
+    warnings: ["Fallback Tenant Curated Catalog config derived from tenant identity."],
+    disclaimers: ["Tenant Curated Catalog fallback is mock/config-first and does not enable revenue sharing, settlement, billing, Marketplace Intelligence or Distribution Network."]
+  };
+}
+
+export function getTenantCuratedCatalogConfig(tenantIdOrSlug?: string) {
+  const tenant = tenantIdOrSlug ? getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug) ?? getGlobalTenant() : getGlobalTenant();
+  return tenant.curatedCatalogConfig ?? buildFallbackTenantCuratedCatalogConfig(tenant);
+}
+
+function catalogMatchesTenantCuratedConfig(catalog: CuratedCatalog, tenant: Tenant, config: TenantCuratedCatalogConfig) {
+  if (config.blockedCuratedCatalogIds.includes(catalog.id)) return false;
+  if (catalog.segmentIds.some((segmentId) => config.blockedSegmentIds.includes(segmentId))) return false;
+  if (!config.allowsFederatedCuratedCatalogs && catalog.allowsFederatedAssets) return false;
+  if (catalog.tenantId === tenant.id) return true;
+  if (config.allowedCuratedCatalogIds.includes(catalog.id)) return true;
+  if (catalog.segmentIds.some((segmentId) => config.allowedSegmentIds.includes(segmentId))) return true;
+  if (config.inheritsGlobalCuratedCatalogs && catalog.ownerScope === "global") return true;
+  return false;
+}
+
+function explainTenantCuratedCatalogInclusion(catalog: CuratedCatalog, tenant: Tenant, config: TenantCuratedCatalogConfig) {
+  if (config.featuredCuratedCatalogIds.includes(catalog.id)) return "featured curated catalogs";
+  if (catalog.tenantId === tenant.id) return "tenant owned curated catalog";
+  if (config.allowedCuratedCatalogIds.includes(catalog.id)) return "tenant curated catalog allow rule";
+  if (catalog.segmentIds.some((segmentId) => config.allowedSegmentIds.includes(segmentId))) return "tenant curated segment allow rule";
+  if (config.inheritsGlobalCuratedCatalogs && catalog.ownerScope === "global") return "inherits global curated catalogs";
+  return "tenant curated catalog resolution";
+}
+
+function explainTenantCuratedCatalogExclusion(catalog: CuratedCatalog, config: TenantCuratedCatalogConfig) {
+  if (config.blockedCuratedCatalogIds.includes(catalog.id)) return "blocked curated catalogs";
+  if (catalog.segmentIds.some((segmentId) => config.blockedSegmentIds.includes(segmentId))) return "blocked catalog segment";
+  if (!config.allowsFederatedCuratedCatalogs && catalog.allowsFederatedAssets) return "federated curated catalog blocked";
+  return "tenant curated catalog rule excluded this catalog";
+}
+
+function resolveTenantCuratedItem(
+  resolvedItem: CuratedCatalogResolvedItem,
+  tenant: Tenant,
+  catalogResolution: TenantCatalogResolution,
+  config: TenantCuratedCatalogConfig
+): TenantCuratedCatalogItem {
+  const item = resolvedItem.item;
+  const productCollectionId = item.productId ? resolvedItem.product?.collectionId : undefined;
+  const visibleByProduct = item.productId ? catalogResolution.includedProductIds.includes(item.productId) : true;
+  const visibleCollectionId = item.externalCollectionId ?? item.collectionId ?? productCollectionId;
+  const visibleByCollection = visibleCollectionId
+    ? [...catalogResolution.includedCollectionIds, ...catalogResolution.includedExternalCollectionIds].includes(visibleCollectionId)
+    : true;
+  const visibleByFederation = item.isFederated ? config.allowsFederatedCuratedCatalogs : true;
+  const canDisplay = item.canDisplay && visibleByProduct && visibleByCollection && visibleByFederation;
+  const exclusionReason = !visibleByProduct
+    ? explainTenantCatalogExclusion(tenant.id, item.productId ?? item.id)
+    : !visibleByCollection
+      ? explainTenantCatalogExclusion(tenant.id, visibleCollectionId ?? item.id)
+      : !visibleByFederation
+        ? "federated curated catalog blocked"
+        : undefined;
+
+  return {
+    itemId: item.id,
+    catalogId: item.catalogId,
+    tenantId: tenant.id,
+    itemType: item.itemType,
+    productId: item.productId,
+    collectionId: item.collectionId,
+    externalCollectionId: item.externalCollectionId,
+    inclusionReason: canDisplay ? explainTenantCatalogInclusion(tenant.id, item.productId ?? item.collectionId ?? item.externalCollectionId ?? item.id) : undefined,
+    exclusionReason,
+    canDisplay,
+    isFeatured: item.isFeatured,
+    isFederated: item.isFederated,
+    warnings: canDisplay ? [...item.warnings] : [...item.warnings, "Tenant catalog isolation excluded this curated catalog item."],
+    disclaimers: [
+      ...item.disclaimers,
+      "tenant catalog isolation is applied before tenant curated catalog display.",
+      "Tenant Curated Catalog item does not enable revenue sharing, settlement, billing, Marketplace Intelligence or Distribution Network."
+    ]
+  };
+}
+
+export function resolveTenantCuratedCatalogs(tenantIdOrSlug?: string) {
+  const { tenant, resolution: catalogResolution } = resolveTenantCatalog(tenantIdOrSlug);
+  const config = getTenantCuratedCatalogConfig(tenant.id);
+  const appliedRules = [...config.rules].sort((left, right) => left.priority - right.priority || left.id.localeCompare(right.id));
+  const includedCatalogs = curatedCatalogs.filter((catalog) => catalogMatchesTenantCuratedConfig(catalog, tenant, config));
+  const excludedCatalogs = curatedCatalogs.filter((catalog) => !includedCatalogs.includes(catalog));
+  const tenantCuratedCatalogs = includedCatalogs.map((catalog) => {
+    const catalogView = resolveCuratedCatalog(catalog.id)!;
+    const resolvedItems = catalogView.items.map((item) => resolveTenantCuratedItem(item, tenant, catalogResolution, config));
+    const visibleItems = resolvedItems.filter((item) => item.canDisplay);
+    const excludedItems = resolvedItems.filter((item) => !item.canDisplay);
+
+    return {
+      catalog: catalogView,
+      inclusionReason: explainTenantCuratedCatalogInclusion(catalog, tenant, config),
+      isInherited: config.inheritsGlobalCuratedCatalogs && catalog.ownerScope === "global" && catalog.tenantId !== tenant.id,
+      isTenantOwned: catalog.tenantId === tenant.id,
+      isFeatured: config.featuredCuratedCatalogIds.includes(catalog.id),
+      visibleItems,
+      excludedItems,
+      appliedRules,
+      boundaryNotes: [
+        ...config.warnings,
+        ...config.disclaimers,
+        ...catalogView.boundaryNotes,
+        "Tenant Curated Catalog resolution is mock/config-first.",
+        "Tenant branding/theme and mock/read-only domain routing are preserved by Tenant Context.",
+        "No revenue sharing, no settlement, no billing, no marketplace intelligence and no distribution network are active."
+      ]
+    } satisfies TenantCuratedCatalogView;
+  });
+
+  const resolution: TenantCuratedCatalogResolution = {
+    tenantId: tenant.id,
+    resolvedAt: new Date(0).toISOString(),
+    includedCatalogIds: includedCatalogs.map((catalog) => catalog.id),
+    excludedCatalogIds: excludedCatalogs.map((catalog) => catalog.id),
+    featuredCatalogIds: config.featuredCuratedCatalogIds.filter((id) => includedCatalogs.some((catalog) => catalog.id === id)),
+    appliedRules,
+    includedItems: tenantCuratedCatalogs.flatMap((view) => view.visibleItems),
+    excludedItems: [
+      ...tenantCuratedCatalogs.flatMap((view) => view.excludedItems),
+      ...excludedCatalogs.map((catalog) => ({
+        itemId: `excluded-${catalog.id}`,
+        catalogId: catalog.id,
+        tenantId: tenant.id,
+        itemType: "product" as const,
+        exclusionReason: explainTenantCuratedCatalogExclusion(catalog, config),
+        canDisplay: false,
+        isFeatured: false,
+        isFederated: catalog.allowsFederatedAssets,
+        warnings: ["Curated catalog excluded by Tenant Curated Catalog config."],
+        disclaimers: ["Excluded Tenant Curated Catalog does not create RBAC, billing, settlement, revenue sharing or Distribution Network behavior."]
+      }))
+    ],
+    warnings: [...config.warnings],
+    disclaimers: [
+      ...config.disclaimers,
+      "Tenant Curated Catalog resolution applies Tenant Catalog isolation to curated catalog items.",
+      "No revenue sharing, no settlement, no billing, no marketplace intelligence and no distribution network are active."
+    ]
+  };
+
+  return { tenant, config, resolution, tenantCuratedCatalogs };
+}
+
 export function resolveTenantContext(idOrSlug?: string): TenantContextView {
   const routingContext = resolveTenantRoutingContext(idOrSlug);
   const tenant = routingContext.tenant;
   const branding = resolveTenantBranding(tenant.slug);
   const catalog = getTenantCatalog(tenant.id);
   const catalogResolution = applyTenantCatalogRules(tenant, catalog);
+  const tenantCurated = resolveTenantCuratedCatalogs(tenant.id);
   const referencedProducts = products.filter((product) => catalogResolution.includedProductIds.includes(product.id));
   const referencedCollections = listCollections().filter((view) =>
     [...catalogResolution.includedCollectionIds, ...catalogResolution.includedExternalCollectionIds].includes(view.collection.id)
@@ -1139,6 +1316,8 @@ export function resolveTenantContext(idOrSlug?: string): TenantContextView {
     routingContext,
     catalog,
     catalogResolution,
+    curatedCatalogResolution: tenantCurated.resolution,
+    tenantCuratedCatalogs: tenantCurated.tenantCuratedCatalogs,
     isGlobalMarketplace: tenant.tenantType === "global",
     branding: branding.branding,
     theme: branding.theme,

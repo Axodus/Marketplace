@@ -25,6 +25,7 @@ import {
   getTenantDomains,
   getPrimaryTenantDomain,
   getTenantCatalog,
+  getTenantCuratedCatalogConfig,
   isExternalCollection,
   isCollectionVisibleForTenant,
   isProductVisibleForTenant,
@@ -60,6 +61,7 @@ import {
   resolveCuratedCatalogItems,
   resolveTenantCatalog,
   resolveTenantContext,
+  resolveTenantCuratedCatalogs,
   resolveTenantRoutingContext
 } from "./marketplaceService";
 import { StorageAccessService, GreenfieldAccessAdapter } from "./boundaryAdapters";
@@ -384,6 +386,35 @@ describe("marketplaceService", () => {
     expect(academy.resolution.productItems.every((item) => item.canSettle === false && item.canTrade === false)).toBe(true);
     expect(community.resolution.collectionItems.find((item) => item.collectionId === "external-collection-harmony-creator-keys")?.warnings.join(" ")).toContain("origin");
     expect(academy.resolution.disclaimers.join(" ")).toContain("No financial isolation");
+  });
+
+  it("resolves Tenant Curated Catalog Integration with tenant isolation and boundaries", () => {
+    const global = resolveTenantCuratedCatalogs("global");
+    const academy = resolveTenantCuratedCatalogs("academy");
+    const acs = resolveTenantCuratedCatalogs("acs-services");
+    const community = resolveTenantCuratedCatalogs("community-demo");
+    const academyContext = resolveTenantContext("academy");
+
+    expect(getTenantCuratedCatalogConfig("academy").inheritsGlobalCuratedCatalogs).toBe(true);
+    expect(global.resolution.includedCatalogIds).toContain("curated-catalog-foundational-nft");
+    expect(academy.resolution.includedCatalogIds).toContain("curated-catalog-foundational-nft");
+    expect(academy.resolution.includedCatalogIds).toContain("curated-catalog-academy-onboarding");
+    expect(academy.resolution.featuredCatalogIds).toEqual(["curated-catalog-academy-onboarding"]);
+    expect(academy.tenantCuratedCatalogs.find((view) => view.catalog.catalog.id === "curated-catalog-academy-onboarding")?.isTenantOwned).toBe(true);
+    expect(academy.tenantCuratedCatalogs.find((view) => view.catalog.catalog.id === "curated-catalog-foundational-nft")?.isInherited).toBe(true);
+    expect(academy.resolution.excludedItems.some((item) => item.productId === "product-governance-dashboard-nft")).toBe(true);
+    expect(academy.resolution.includedItems.some((item) => item.productId === "product-academy-cert-bundle")).toBe(true);
+    expect(academyContext.tenantCuratedCatalogs).toHaveLength(2);
+    expect(academyContext.branding.displayName).toBe("Axodus Academy Marketplace");
+    expect(academyContext.routingContext.resolution.routingMode).toBe("mock-read-only");
+    expect(community.resolution.includedCatalogIds).toContain("curated-catalog-foundational-nft");
+    expect(community.resolution.excludedCatalogIds).toContain("curated-catalog-academy-onboarding");
+    expect(community.resolution.excludedItems.some((item) => item.catalogId === "curated-catalog-academy-onboarding" && item.exclusionReason === "blocked curated catalogs")).toBe(true);
+    expect(acs.resolution.includedCatalogIds).toEqual([]);
+    expect(acs.resolution.excludedItems.some((item) => item.exclusionReason === "blocked curated catalogs" || item.exclusionReason === "federated curated catalog blocked")).toBe(true);
+    expect(academy.resolution.disclaimers.join(" ")).toContain("Tenant Catalog isolation");
+    expect(academy.resolution.disclaimers.join(" ")).toContain("No revenue sharing");
+    expect(academy.tenantCuratedCatalogs.flatMap((view) => view.boundaryNotes).join(" ")).toContain("no marketplace intelligence");
   });
 
   it("resolves Curated Catalog model with sections, items and federated boundaries", () => {
