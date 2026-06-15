@@ -4,7 +4,10 @@ import {
   buildMarketplaceAnalytics,
   createDraftListingPreview,
   discoverWalletAssets,
+  applyCommunityDistributionRules,
   explainAttributionBoundary,
+  explainCommunityDistributionExclusion,
+  explainCommunityDistributionInclusion,
   explainEditorialRules,
   getAttributionSourceById,
   getAttributionSourceBySlug,
@@ -18,6 +21,14 @@ import {
   getCollectionBySlug,
   getCollectionForProduct,
   getCollectionSourceLabel,
+  getCommunityDistributionAttributionSource,
+  getCommunityDistributionCommercialOrigin,
+  getCommunityDistributionCuratedCatalogs,
+  getCommunityDistributionItems,
+  getCommunityDistributionSegments,
+  getCommunityDistributionTenants,
+  getCommunityMarketplaceDistributionById,
+  getCommunityMarketplaceDistributionBySlug,
   getCuratedCatalogById,
   getCuratedCatalogBySlug,
   getDistributionChannelById,
@@ -52,6 +63,7 @@ import {
   isValidMockWalletAddress,
   issueMockPurchase,
   listAttributionSources,
+  listCommunityMarketplaceDistributions,
   listCuratedCatalogs,
   listDistributionChannels,
   listDistributionNetworks,
@@ -81,6 +93,7 @@ import {
   resolveCuratedCatalog,
   resolveCuratedCatalogItems,
   resolveAttributionContext,
+  resolveCommunityDistributionContext,
   resolveDistributionContext,
   resolveDistributionProfileContext,
   resolveTenantCatalog,
@@ -668,6 +681,54 @@ describe("marketplaceService", () => {
     expect(sources.every((view) => view.source.canAttributeRevenue === false)).toBe(true);
     expect(sources.every((view) => view.source.canTriggerPayout === false)).toBe(true);
     expect(sources.every((view) => view.source.canSettle === false)).toBe(true);
+  });
+
+  it("represents Community Marketplace Distribution with mock rules, attribution and federation boundaries", () => {
+    const distributions = listCommunityMarketplaceDistributions();
+    const community = getCommunityMarketplaceDistributionById("community-distribution-creator-federated");
+    const bySlug = getCommunityMarketplaceDistributionBySlug("creator-federated-community");
+    const empty = getCommunityMarketplaceDistributionById("empty-demo-community");
+    const context = resolveCommunityDistributionContext("creator-federated-community");
+    const fallback = resolveCommunityDistributionContext("missing-community");
+    const tenants = getCommunityDistributionTenants("creator-federated-community");
+    const catalogs = getCommunityDistributionCuratedCatalogs("creator-federated-community");
+    const segments = getCommunityDistributionSegments("creator-federated-community");
+    const items = getCommunityDistributionItems("creator-federated-community");
+    const attribution = getCommunityDistributionAttributionSource("creator-federated-community");
+    const origin = getCommunityDistributionCommercialOrigin("creator-federated-community");
+    const rules = applyCommunityDistributionRules("creator-federated-community");
+    const inclusions = explainCommunityDistributionInclusion("creator-federated-community");
+    const exclusions = explainCommunityDistributionExclusion("creator-federated-community");
+    const federatedItem = community?.visibleItems.find((item) => item.item.collectionId === "external-collection-harmony-creator-keys");
+
+    expect(distributions.map((view) => view.distribution.slug)).toEqual(["creator-federated-community", "empty-demo-community"]);
+    expect(community?.profile?.profile.profileType).toBe("community-marketplace");
+    expect(community?.channel?.channel.id).toBe("distribution-channel-community-marketplace");
+    expect(bySlug?.distribution.id).toBe("community-distribution-creator-federated");
+    expect(empty?.distribution.status).toBe("empty");
+    expect(empty?.visibleItems).toHaveLength(0);
+    expect(context.context.canTrack).toBe(false);
+    expect(context.context.canAttributeRevenue).toBe(false);
+    expect(context.context.canTriggerPayout).toBe(false);
+    expect(context.context.canSettle).toBe(false);
+    expect(fallback.isFallback).toBe(true);
+    expect(tenants.map((tenant) => tenant.slug)).toContain("community-demo");
+    expect(catalogs.map((catalog) => catalog.catalog.slug)).toContain("foundational-nft-access");
+    expect(segments.map((segment) => segment.slug)).toContain("federated");
+    expect(items.some((item) => item.item.exclusionReason === "Blocked by community distribution rule.")).toBe(true);
+    expect(attribution?.source.id).toBe("attribution-record-community-source");
+    expect(origin?.originType).toBe("community");
+    expect(rules.map((rule) => rule.ruleType)).toContain("allow-federated-assets");
+    expect(rules.map((rule) => rule.ruleType)).toContain("block-product");
+    expect(inclusions.map((entry) => entry.targetId)).toContain("external-collection-harmony-creator-keys");
+    expect(exclusions.map((entry) => entry.targetId)).toContain("product-mcp-agent-template");
+    expect(federatedItem?.trustBoundary?.provider).toContain("Harmony");
+    expect(federatedItem?.trustBoundary?.validationStatus).toBeDefined();
+    expect(federatedItem?.trustBoundary?.riskClassification).toBeDefined();
+    expect(community?.boundaryNotes.join(" ")).toContain("origin, provider, validation status, provenance, risk classification and trust boundaries");
+    expect(community?.boundaryNotes.join(" ")).toContain("governance delegation real");
+    expect(community?.boundaryNotes.join(" ")).toContain("revenue sharing");
+    expect(community?.boundaryNotes.join(" ")).toContain("tracking real");
   });
 
   it("issues mock purchase records without settlement", () => {

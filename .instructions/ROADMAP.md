@@ -268,7 +268,7 @@ Implementation boundary:
 
 # Phase 05 — Distribution Network
 
-Status: IN PROGRESS — ATTRIBUTION SOURCES IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS — COMMUNITY DISTRIBUTION IMPLEMENTED MOCK/CONFIG-FIRST
 
 Objectives:
 - model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
@@ -287,6 +287,7 @@ Deliverables:
 - partner and affiliate boundary model
 - agency boundary model
 - Community Marketplace boundary model
+- Community Marketplace Distribution mock/config-first runtime
 - Distribution Eligibility model
 - Commercial Origin model
 - catalog propagation readiness
@@ -301,7 +302,7 @@ Linked requirements:
 - MEP-REQ-050 — Distribution Network Model — completed mock/config-first
 - MEP-REQ-051 — Distributor and Partner Profiles — completed mock/config-first
 - MEP-REQ-052 — Attribution and Distribution Sources — completed mock/config-first
-- MEP-REQ-053 — Community Marketplace Distribution
+- MEP-REQ-053 — Community Marketplace Distribution — completed mock/config-first
 - MEP-REQ-054 — Tenant and Curated Catalog Distribution Integration
 - MEP-PHASE-05-CLOSURE — QA, navigation and Distribution Network boundary validation
 
@@ -326,6 +327,11 @@ Implementation boundary:
 - MEP-REQ-052 adds `/marketplace/distribution/attribution` and `/marketplace/distribution/attribution/:sourceSlug` to list and inspect attribution sources
 - MEP-REQ-052 keeps canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false for detailed Attribution Sources
 - MEP-REQ-052 does not introduce tracking real, cookies, analytics tracking, affiliate tracking real, commission tracking, payout, billing, settlement, Revenue Sharing, Marketplace Intelligence, BI, backend, API, database, external campaign integration, payments or contracts
+- MEP-REQ-053 introduces Community Marketplace Distribution, Community Distribution Context, Community Distribution Item and Community Distribution Rule as mock/config-first runtime read models
+- MEP-REQ-053 adds `/marketplace/distribution/communities` and `/marketplace/distribution/communities/:communitySlug` to list and inspect community distributions
+- MEP-REQ-053 links community distributions to Community Marketplace Profile, Distribution Channel, Attribution Source, Tenants, Curated Catalogs, Featured Catalogs, Catalog Segments, Products and Collections by reference
+- MEP-REQ-053 preserves federated origin, provider, validation status, provenance, risk classification and trust boundaries in community-distributed external items
+- MEP-REQ-053 does not introduce governance delegation real, community governance produtiva, onboarding produtivo, commercial contract real, KYC real, commission rules, payout, billing, settlement, treasury routing, Revenue Sharing, affiliate tracking real, campaign tracking real, cookie tracking, analytics tracking, Marketplace Intelligence, BI, backend, API, database, payments or contracts
 
 ---
 

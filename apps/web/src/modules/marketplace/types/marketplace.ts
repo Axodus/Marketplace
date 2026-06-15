@@ -187,6 +187,41 @@ export type DistributionProfileVisibility = "public-mock" | "private-mock" | "te
 export type DistributionProfileGovernanceStatus = "not-reviewed" | "review-required" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
 export type DistributionProfileRelationshipType = "operates-channel" | "represents-tenant" | "features-curated-catalog" | "covers-segment" | "community-context";
 export type DistributionProfileRelationshipTargetType = "distribution-channel" | "tenant" | "curated-catalog" | "catalog-segment" | "community";
+export type CommunityDistributionStatus = "draft" | "configured-mock" | "active-mock" | "review-required" | "governance-review" | "restricted" | "disabled" | "archived" | "empty";
+export type CommunityDistributionVisibility = "public-mock" | "private-mock" | "community-only" | "tenant-only" | "restricted" | "hidden";
+export type CommunityDistributionGovernanceStatus = "not-reviewed" | "review-required" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
+export type CommunityDistributionScope = "global" | "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "mixed" | "demo";
+export type CommunityType =
+  | "creator-community"
+  | "academy-community"
+  | "acs-community"
+  | "dao-community"
+  | "enterprise-community"
+  | "partner-community"
+  | "local-community"
+  | "federated-community"
+  | "demo-community";
+export type CommunityDistributionRuleType =
+  | "allow-tenant"
+  | "block-tenant"
+  | "allow-curated-catalog"
+  | "block-curated-catalog"
+  | "allow-segment"
+  | "block-segment"
+  | "allow-product"
+  | "block-product"
+  | "allow-collection"
+  | "block-collection"
+  | "allow-federated-assets"
+  | "block-federated-assets"
+  | "feature-catalog"
+  | "feature-product"
+  | "feature-collection"
+  | "warn"
+  | "restrict";
+export type CommunityDistributionRuleEffect = "include" | "exclude" | "feature" | "warn" | "restrict";
+export type CommunityDistributionRuleTargetType = "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "external-collection" | "federated-assets";
+export type CommunityDistributionItemType = "tenant" | "curated-catalog" | "featured-catalog" | "catalog-segment" | "product" | "collection" | "external-collection";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -766,6 +801,108 @@ export interface AttributionContext {
   canSettle: boolean;
   warnings: string[];
   disclaimers: string[];
+}
+
+export interface CommunityDistributionRule {
+  id: string;
+  communityDistributionId: string;
+  ruleType: CommunityDistributionRuleType;
+  targetType: CommunityDistributionRuleTargetType;
+  targetId: string;
+  effect: CommunityDistributionRuleEffect;
+  reason: string;
+  priority: number;
+  status: CommunityDistributionStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommunityDistributionItem {
+  id: string;
+  communityDistributionId: string;
+  itemType: CommunityDistributionItemType;
+  targetId: string;
+  tenantId?: string;
+  catalogId?: string;
+  curatedCatalogId?: string;
+  segmentId?: string;
+  productId?: string;
+  collectionId?: string;
+  source: string;
+  inclusionReason: string;
+  exclusionReason?: string;
+  isFeatured: boolean;
+  isFederated: boolean;
+  isExternal: boolean;
+  isNative: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommunityDistributionContext {
+  communityDistributionId: string;
+  resolvedAt: string;
+  profileId: string;
+  channelId: string;
+  tenantIds: string[];
+  curatedCatalogIds: string[];
+  featuredCatalogIds: string[];
+  segmentIds: string[];
+  includedProductIds: string[];
+  excludedProductIds: string[];
+  includedCollectionIds: string[];
+  excludedCollectionIds: string[];
+  attributionSourceId: string;
+  commercialOriginLabel: string;
+  isSimulated: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommunityMarketplaceDistribution {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  communityType: CommunityType;
+  status: CommunityDistributionStatus;
+  visibility: CommunityDistributionVisibility;
+  governanceStatus: CommunityDistributionGovernanceStatus;
+  scope: CommunityDistributionScope;
+  profileId: string;
+  channelId: string;
+  tenantIds: string[];
+  curatedCatalogIds: string[];
+  featuredCatalogIds: string[];
+  segmentIds: string[];
+  productIds: string[];
+  collectionIds: string[];
+  allowedProductIds: string[];
+  blockedProductIds: string[];
+  allowedCollectionIds: string[];
+  blockedCollectionIds: string[];
+  allowsFederatedAssets: boolean;
+  attributionSourceId: string;
+  commercialOriginId: string;
+  distributionSourceId: string;
+  featuredReason?: string;
+  rules: CommunityDistributionRule[];
+  items: CommunityDistributionItem[];
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CuratedCatalogRule {

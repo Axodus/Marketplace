@@ -2,7 +2,7 @@
 
 # Phase 05 - Distribution Network Planning
 
-Status: IN PROGRESS - ATTRIBUTION SOURCES IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - COMMUNITY DISTRIBUTION IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_05_DISTRIBUTION_NETWORK_AUDIT.md`
@@ -14,13 +14,15 @@ Runtime surfaces:
 - `/marketplace/distribution/profiles/:profileSlug`
 - `/marketplace/distribution/attribution`
 - `/marketplace/distribution/attribution/:sourceSlug`
+- `/marketplace/distribution/communities`
+- `/marketplace/distribution/communities/:communitySlug`
 
 Recommended implementation sequence:
 - MEP-05A - Distribution Network Planning and Attribution Audit - COMPLETED
 - MEP-REQ-050 - Distribution Network Model - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-051 - Distributor and Partner Profiles - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-052 - Attribution and Distribution Sources - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-053 - Community Marketplace Distribution
+- MEP-REQ-053 - Community Marketplace Distribution - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-054 - Tenant and Curated Catalog Distribution Integration
 - MEP-PHASE-05-CLOSURE - QA, navigation and Distribution Network boundary validation
 
@@ -65,6 +67,18 @@ MEP-REQ-052 delivered:
 - displayed source type, tracking mode, commercial origin, distribution source, associated channel, associated profile, associated tenant, associated curated catalog, associated segment, associated placement, attribution notes, warnings and disclaimers
 - preserved canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false on detailed Attribution Sources
 - preserved no tracking real, no cookies, no analytics tracking, no commission tracking, no payout, no settlement, no billing, no revenue sharing, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
+
+MEP-REQ-053 delivered:
+- added Community Marketplace Distribution, Community Distribution Context, Community Distribution Item and Community Distribution Rule models
+- added mock/config-first community distribution data for a creator/federated community and an empty restricted demo community
+- linked community distributions to existing Community Marketplace Profile, Distribution Channel, Attribution Source, Tenants, Curated Catalogs, Featured Catalogs, Catalog Segments, Products and Collections by reference
+- added helpers to list community distributions, resolve detail by id or slug, resolve Community Distribution Context, retrieve tenants/catalogs/segments/items/attribution/commercial origin and explain inclusion/exclusion
+- added hooks for Community Marketplace Distributions, detail, context and items
+- added `/marketplace/distribution/communities` and `/marketplace/distribution/communities/:communitySlug` surfaces
+- displayed community type, status, visibility, governance status, associated profile, associated channel, attribution source, commercial origin, tenants, curated catalogs, featured catalogs, segments, products, collections, rules, visible items and excluded items
+- preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries for external community distribution items
+- preserved canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false for community distribution context and items
+- preserved no governance delegation real, no revenue sharing, no commission, no payout, no settlement, no billing, no tracking real, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
 
 Constraints:
 - keep Phase 05 runtime mock/config-first until explicit implementation requests authorize broader changes
