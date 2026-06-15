@@ -2,7 +2,7 @@
 
 # Phase 05 - Distribution Network Planning
 
-Status: IN PROGRESS - COMMUNITY DISTRIBUTION IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - TENANT AND CURATED CATALOG DISTRIBUTION INTEGRATED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_05_DISTRIBUTION_NETWORK_AUDIT.md`
@@ -16,6 +16,9 @@ Runtime surfaces:
 - `/marketplace/distribution/attribution/:sourceSlug`
 - `/marketplace/distribution/communities`
 - `/marketplace/distribution/communities/:communitySlug`
+- `/marketplace/tenants/:tenantId`
+- `/marketplace/t/:tenantSlug`
+- `/marketplace/curated/:catalogId`
 
 Recommended implementation sequence:
 - MEP-05A - Distribution Network Planning and Attribution Audit - COMPLETED
@@ -23,7 +26,7 @@ Recommended implementation sequence:
 - MEP-REQ-051 - Distributor and Partner Profiles - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-052 - Attribution and Distribution Sources - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-053 - Community Marketplace Distribution - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-054 - Tenant and Curated Catalog Distribution Integration
+- MEP-REQ-054 - Tenant and Curated Catalog Distribution Integration - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-PHASE-05-CLOSURE - QA, navigation and Distribution Network boundary validation
 
 MEP-05A delivered:
@@ -79,6 +82,18 @@ MEP-REQ-053 delivered:
 - preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries for external community distribution items
 - preserved canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false for community distribution context and items
 - preserved no governance delegation real, no revenue sharing, no commission, no payout, no settlement, no billing, no tracking real, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
+
+MEP-REQ-054 delivered:
+- added Tenant Distribution Config, Curated Catalog Distribution Config, Tenant Distribution Rule, Curated Catalog Distribution Rule, Tenant Distribution Resolution, Curated Catalog Distribution Resolution, Distribution Integrated Context and Distribution Integrated Item models
+- added mock/config-first tenant distribution configs for Global, Academy, ACS Services and Community Demo tenants
+- added mock/config-first curated catalog distribution configs for Foundational NFT Access and Academy Onboarding catalogs
+- added helpers to resolve tenant distribution, curated catalog distribution, combined distribution context, included/excluded references and inclusion/exclusion explanations
+- added hooks for Tenant Distribution, Curated Catalog Distribution and distribution context by tenant/catalog
+- displayed Tenant Distribution Integration in Tenant Storefront with included/blocked/featured channels, profiles, community distributions, attribution sources, rules and boundary notes
+- displayed Curated Catalog Distribution Config in Curated Catalog detail with channels, profiles, community distributions, tenants, attribution sources, rules and boundary notes
+- preserved tenant catalog isolation, branding/theme, domain simulation, curated catalog editorial rules, featured/segment context and federated origin/provider/validation/provenance/risk/trust boundaries
+- preserved canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false for distribution integration contexts and items
+- preserved no revenue sharing, no commission, no payout, no settlement, no billing, no tracking real, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
 
 Constraints:
 - keep Phase 05 runtime mock/config-first until explicit implementation requests authorize broader changes

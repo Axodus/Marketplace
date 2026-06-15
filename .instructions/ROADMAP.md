@@ -268,7 +268,7 @@ Implementation boundary:
 
 # Phase 05 — Distribution Network
 
-Status: IN PROGRESS — COMMUNITY DISTRIBUTION IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS — TENANT AND CURATED CATALOG DISTRIBUTION INTEGRATED MOCK/CONFIG-FIRST
 
 Objectives:
 - model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
@@ -288,6 +288,7 @@ Deliverables:
 - agency boundary model
 - Community Marketplace boundary model
 - Community Marketplace Distribution mock/config-first runtime
+- Tenant and Curated Catalog Distribution Integration mock/config-first runtime
 - Distribution Eligibility model
 - Commercial Origin model
 - catalog propagation readiness
@@ -303,7 +304,7 @@ Linked requirements:
 - MEP-REQ-051 — Distributor and Partner Profiles — completed mock/config-first
 - MEP-REQ-052 — Attribution and Distribution Sources — completed mock/config-first
 - MEP-REQ-053 — Community Marketplace Distribution — completed mock/config-first
-- MEP-REQ-054 — Tenant and Curated Catalog Distribution Integration
+- MEP-REQ-054 — Tenant and Curated Catalog Distribution Integration — completed mock/config-first
 - MEP-PHASE-05-CLOSURE — QA, navigation and Distribution Network boundary validation
 
 Dependencies:
@@ -332,6 +333,11 @@ Implementation boundary:
 - MEP-REQ-053 links community distributions to Community Marketplace Profile, Distribution Channel, Attribution Source, Tenants, Curated Catalogs, Featured Catalogs, Catalog Segments, Products and Collections by reference
 - MEP-REQ-053 preserves federated origin, provider, validation status, provenance, risk classification and trust boundaries in community-distributed external items
 - MEP-REQ-053 does not introduce governance delegation real, community governance produtiva, onboarding produtivo, commercial contract real, KYC real, commission rules, payout, billing, settlement, treasury routing, Revenue Sharing, affiliate tracking real, campaign tracking real, cookie tracking, analytics tracking, Marketplace Intelligence, BI, backend, API, database, payments or contracts
+- MEP-REQ-054 introduces Tenant Distribution Config, Curated Catalog Distribution Config, Tenant Distribution Rule, Curated Catalog Distribution Rule, Tenant Distribution Resolution, Curated Catalog Distribution Resolution, Distribution Integrated Context and Distribution Integrated Item as mock/config-first runtime read models
+- MEP-REQ-054 integrates tenant storefronts and curated catalog details with Distribution Channels, Distribution Profiles, Community Marketplace Distributions and Attribution Sources by reference
+- MEP-REQ-054 preserves tenant catalog isolation, branding/theme, simulated domain routing, curated catalog editorial rules, featured/segment context and federation trust boundaries
+- MEP-REQ-054 keeps canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false for distribution integration contexts and items
+- MEP-REQ-054 does not introduce revenue sharing, commission rules, payout, billing, settlement, treasury routing, affiliate tracking real, campaign tracking real, cookie tracking, analytics tracking, Marketplace Intelligence, BI, backend, API, database, payments or contracts
 
 ---
 

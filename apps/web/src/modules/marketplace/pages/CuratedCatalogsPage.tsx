@@ -1,10 +1,18 @@
 import { Link, useParams } from "react-router-dom";
-import { BookMarked, ShieldAlert, Sparkles } from "lucide-react";
+import { BookMarked, Share2, ShieldAlert, Sparkles } from "lucide-react";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useCatalogSegments, useCuratedCatalog, useCuratedCatalogs, useEditorialRules, useFeaturedCatalogs } from "../hooks/useMarketplace";
+import {
+  useCatalogSegments,
+  useCuratedCatalog,
+  useCuratedCatalogDistribution,
+  useCuratedCatalogs,
+  useEditorialRules,
+  useFeaturedCatalogs
+} from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type {
   CatalogSegmentView,
+  CuratedCatalogDistributionView,
   CuratedCatalogResolvedItem,
   CuratedCatalogSectionView,
   CuratedCatalogView,
@@ -15,6 +23,7 @@ export function CuratedCatalogsPage() {
   const { catalogId } = useParams();
   const listQuery = useCuratedCatalogs();
   const detailQuery = useCuratedCatalog(catalogId);
+  const distributionQuery = useCuratedCatalogDistribution(catalogId);
   const editorialRulesQuery = useEditorialRules(catalogId);
   const featuredQuery = useFeaturedCatalogs();
   const segmentsQuery = useCatalogSegments();
@@ -80,7 +89,7 @@ export function CuratedCatalogsPage() {
       <FeaturedCatalogsSection featuredCatalogs={featuredCatalogs} />
       <CatalogSegmentsSection segments={segments} />
 
-      {selected && <CuratedCatalogDetail view={selected} editorialRules={editorialRulesQuery.data ?? selected.editorialRules.map((rule) => ({
+      {selected && <CuratedCatalogDetail view={selected} distribution={distributionQuery.data ?? null} editorialRules={editorialRulesQuery.data ?? selected.editorialRules.map((rule) => ({
         rule,
         inclusionReason: rule.effect === "include" || rule.effect === "feature" ? rule.reason : undefined,
         exclusionReason: rule.effect === "exclude" || rule.effect === "restrict" ? rule.reason : undefined,
@@ -224,9 +233,11 @@ function CuratedCatalogCard({ view, selected }: { view: CuratedCatalogView; sele
 
 function CuratedCatalogDetail({
   view,
+  distribution,
   editorialRules
 }: {
   view: CuratedCatalogView;
+  distribution: CuratedCatalogDistributionView | null;
   editorialRules: Array<{
     rule: CuratedCatalogView["editorialRules"][number];
     inclusionReason?: string;
@@ -255,6 +266,7 @@ function CuratedCatalogDetail({
         <Metric label="Can settle" value={view.items.some((item) => item.item.canSettle) ? "unexpected" : "false"} />
       </div>
       <BoundaryNotes notes={view.boundaryNotes} />
+      {distribution ? <CuratedDistributionSection view={distribution} /> : null}
       <section className="rounded border border-indigo-200 bg-white p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -318,6 +330,104 @@ function CuratedCatalogDetail({
         ))}
       </div>
     </section>
+  );
+}
+
+function CuratedDistributionSection({ view }: { view: CuratedCatalogDistributionView }) {
+  const { config, resolution, context } = view;
+
+  return (
+    <section className="rounded border border-slate-200 bg-white p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-teal-700">
+            <Share2 size={16} /> Curated Catalog Distribution Config
+          </p>
+          <h3 className="mt-1 text-lg font-semibold">Distribution-aware curated catalog view</h3>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Curated Catalog Distribution Config exposes this catalog to selected channels, profiles, community distributions and attribution
+            sources while preserving editorial rules, featured/segment context and federation boundaries.
+          </p>
+        </div>
+        <NeutralBadge>{config.status} / {config.scope}</NeutralBadge>
+      </div>
+
+      <div className="mt-4 grid gap-3 text-sm md:grid-cols-4">
+        <Metric label="Included channels" value={resolution.includedChannelIds.length} />
+        <Metric label="Featured channels" value={resolution.featuredChannelIds.length} />
+        <Metric label="Blocked channels" value={resolution.excludedChannelIds.length} />
+        <Metric label="Attribution sources" value={resolution.includedAttributionSourceIds.length} />
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <DistributionNames title="Included channels" items={view.channels.map((item) => item.channel.displayName)} />
+        <DistributionNames title="Blocked channels" items={view.excludedChannels.map((item) => item.channel.displayName)} />
+        <DistributionNames title="Associated profiles" items={view.profiles.map((item) => item.profile.displayName)} />
+        <DistributionNames title="Community distributions" items={view.communityDistributions.map((item) => item.distribution.displayName)} />
+        <DistributionNames title="Associated tenants" items={view.tenants.map((item) => item.displayName)} />
+        <DistributionNames title="Attribution sources" items={view.attributionSources.map((item) => item.source.displayName)} />
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <CuratedDistributionRules title="Applied rules" rules={resolution.appliedRules} />
+        <CuratedDistributionRules title="Blocked rules" rules={resolution.blockedRules} />
+      </div>
+
+      <div className="mt-4 rounded border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-600">
+        <p className="font-semibold">Distribution Integrated Context</p>
+        <p>Commercial origin: {context.commercialOriginLabel}</p>
+        <p>Distribution source: {context.distributionSourceLabel}</p>
+        <p>
+          canTrack={String(context.canTrack)} / canAttributeRevenue={String(context.canAttributeRevenue)} / canTriggerPayout=
+          {String(context.canTriggerPayout)} / canSettle={String(context.canSettle)}
+        </p>
+      </div>
+
+      <p className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+        mock distribution integration / config-first distribution integration / curated catalog editorial rules preserved / no revenue sharing
+        / no commission / no payout / no settlement / no billing / no tracking real / no marketplace intelligence
+      </p>
+    </section>
+  );
+}
+
+function DistributionNames({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="rounded border border-slate-200 bg-slate-50 p-3">
+      <p className="text-sm font-semibold">{title}</p>
+      {items.length ? (
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-5 text-slate-600">
+          {items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-2 text-xs text-slate-600">No records in this group.</p>
+      )}
+    </div>
+  );
+}
+
+function CuratedDistributionRules({ title, rules }: { title: string; rules: CuratedCatalogDistributionView["resolution"]["appliedRules"] }) {
+  return (
+    <div className="rounded border border-slate-200 bg-slate-50 p-3">
+      <p className="text-sm font-semibold">{title}</p>
+      <div className="mt-2 space-y-2">
+        {rules.length ? (
+          rules.map((rule) => (
+            <div key={rule.id} className="rounded border border-slate-200 bg-white p-2 text-xs leading-5 text-slate-600">
+              <p className="font-semibold text-slate-800">{rule.ruleType}</p>
+              <p>
+                {rule.effect} {rule.targetType} {rule.targetId}
+              </p>
+              <p>{rule.reason}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-xs text-slate-600">No rules in this group.</p>
+        )}
+      </div>
+    </div>
   );
 }
 

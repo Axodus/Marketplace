@@ -222,6 +222,74 @@ export type CommunityDistributionRuleType =
 export type CommunityDistributionRuleEffect = "include" | "exclude" | "feature" | "warn" | "restrict";
 export type CommunityDistributionRuleTargetType = "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "external-collection" | "federated-assets";
 export type CommunityDistributionItemType = "tenant" | "curated-catalog" | "featured-catalog" | "catalog-segment" | "product" | "collection" | "external-collection";
+export type TenantDistributionRuleType =
+  | "allow-channel"
+  | "block-channel"
+  | "feature-channel"
+  | "allow-profile"
+  | "block-profile"
+  | "allow-community-distribution"
+  | "block-community-distribution"
+  | "allow-attribution-source"
+  | "block-attribution-source"
+  | "allow-curated-catalog"
+  | "block-curated-catalog"
+  | "allow-segment"
+  | "block-segment"
+  | "allow-federated-assets"
+  | "block-federated-assets"
+  | "inherit-global-distribution"
+  | "warn"
+  | "restrict";
+export type CuratedCatalogDistributionRuleType =
+  | "allow-channel"
+  | "block-channel"
+  | "feature-channel"
+  | "allow-profile"
+  | "block-profile"
+  | "allow-community-distribution"
+  | "block-community-distribution"
+  | "allow-attribution-source"
+  | "block-attribution-source"
+  | "allow-tenant"
+  | "block-tenant"
+  | "allow-segment"
+  | "block-segment"
+  | "allow-federated-assets"
+  | "block-federated-assets"
+  | "inherit-global-distribution"
+  | "warn"
+  | "restrict";
+export type DistributionIntegrationRuleEffect = "include" | "exclude" | "feature" | "inherit" | "warn" | "restrict";
+export type DistributionIntegrationRuleTargetType =
+  | "distribution-channel"
+  | "distribution-profile"
+  | "community-distribution"
+  | "attribution-source"
+  | "curated-catalog"
+  | "tenant"
+  | "catalog-segment"
+  | "federated-assets"
+  | "global-distribution";
+export type DistributionIntegrationStatus =
+  | "configured-mock"
+  | "active-mock"
+  | "review-required"
+  | "governance-review"
+  | "restricted"
+  | "disabled"
+  | "archived"
+  | "empty"
+  | "conflict";
+export type DistributionIntegrationScope =
+  | "tenant"
+  | "curated-catalog"
+  | "featured-catalog"
+  | "catalog-segment"
+  | "community-distribution"
+  | "mixed"
+  | "demo";
+export type DistributionIntegratedContextType = "tenant" | "curated-catalog";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -903,6 +971,186 @@ export interface CommunityMarketplaceDistribution {
   disclaimers: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface TenantDistributionRule {
+  id: string;
+  tenantId: string;
+  ruleType: TenantDistributionRuleType;
+  targetType: DistributionIntegrationRuleTargetType;
+  targetId: string;
+  effect: DistributionIntegrationRuleEffect;
+  reason: string;
+  priority: number;
+  status: DistributionIntegrationStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogDistributionRule {
+  id: string;
+  curatedCatalogId: string;
+  ruleType: CuratedCatalogDistributionRuleType;
+  targetType: DistributionIntegrationRuleTargetType;
+  targetId: string;
+  effect: DistributionIntegrationRuleEffect;
+  reason: string;
+  priority: number;
+  status: DistributionIntegrationStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantDistributionConfig {
+  tenantId: string;
+  status: DistributionIntegrationStatus;
+  scope: DistributionIntegrationScope;
+  inheritsGlobalDistributionChannels: boolean;
+  allowedDistributionChannelIds: string[];
+  blockedDistributionChannelIds: string[];
+  featuredDistributionChannelIds: string[];
+  allowedDistributionProfileIds: string[];
+  blockedDistributionProfileIds: string[];
+  allowedCommunityDistributionIds: string[];
+  blockedCommunityDistributionIds: string[];
+  allowedAttributionSourceIds: string[];
+  blockedAttributionSourceIds: string[];
+  allowedCuratedCatalogIds: string[];
+  blockedCuratedCatalogIds: string[];
+  allowedSegmentIds: string[];
+  blockedSegmentIds: string[];
+  allowsFederatedAssets: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  rules: TenantDistributionRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogDistributionConfig {
+  curatedCatalogId: string;
+  status: DistributionIntegrationStatus;
+  scope: DistributionIntegrationScope;
+  inheritsGlobalDistributionChannels: boolean;
+  allowedDistributionChannelIds: string[];
+  blockedDistributionChannelIds: string[];
+  featuredDistributionChannelIds: string[];
+  allowedDistributionProfileIds: string[];
+  blockedDistributionProfileIds: string[];
+  allowedCommunityDistributionIds: string[];
+  blockedCommunityDistributionIds: string[];
+  allowedAttributionSourceIds: string[];
+  blockedAttributionSourceIds: string[];
+  allowedTenantIds: string[];
+  blockedTenantIds: string[];
+  allowedSegmentIds: string[];
+  blockedSegmentIds: string[];
+  allowsFederatedAssets: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  rules: CuratedCatalogDistributionRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantDistributionResolution {
+  tenantId: string;
+  resolvedAt: string;
+  includedChannelIds: string[];
+  excludedChannelIds: string[];
+  featuredChannelIds: string[];
+  includedProfileIds: string[];
+  excludedProfileIds: string[];
+  includedCommunityDistributionIds: string[];
+  excludedCommunityDistributionIds: string[];
+  includedAttributionSourceIds: string[];
+  excludedAttributionSourceIds: string[];
+  includedCuratedCatalogIds: string[];
+  excludedCuratedCatalogIds: string[];
+  includedSegmentIds: string[];
+  excludedSegmentIds: string[];
+  appliedRules: TenantDistributionRule[];
+  blockedRules: TenantDistributionRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogDistributionResolution {
+  curatedCatalogId: string;
+  resolvedAt: string;
+  includedChannelIds: string[];
+  excludedChannelIds: string[];
+  featuredChannelIds: string[];
+  includedProfileIds: string[];
+  excludedProfileIds: string[];
+  includedCommunityDistributionIds: string[];
+  excludedCommunityDistributionIds: string[];
+  includedAttributionSourceIds: string[];
+  excludedAttributionSourceIds: string[];
+  includedTenantIds: string[];
+  excludedTenantIds: string[];
+  includedSegmentIds: string[];
+  excludedSegmentIds: string[];
+  appliedRules: CuratedCatalogDistributionRule[];
+  blockedRules: CuratedCatalogDistributionRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionIntegratedContext {
+  contextId: string;
+  contextType: DistributionIntegratedContextType;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  channelId?: string;
+  profileId?: string;
+  communityDistributionId?: string;
+  attributionSourceId?: string;
+  commercialOriginLabel: string;
+  distributionSourceLabel: string;
+  routingMode: string;
+  isSimulated: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionIntegratedItem {
+  id: string;
+  contextId: string;
+  contextType: DistributionIntegratedContextType;
+  targetType: DistributionIntegrationRuleTargetType;
+  targetId: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  channelId?: string;
+  profileId?: string;
+  communityDistributionId?: string;
+  attributionSourceId?: string;
+  source: string;
+  inclusionReason?: string;
+  exclusionReason?: string;
+  isFeatured: boolean;
+  isFederated: boolean;
+  isExternal: boolean;
+  isNative: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
 }
 
 export interface CuratedCatalogRule {

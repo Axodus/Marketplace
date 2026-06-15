@@ -1,10 +1,10 @@
 import { Link, useParams } from "react-router-dom";
-import { BookMarked, Building2, Globe2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { BookMarked, Building2, Globe2, Share2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import type { CSSProperties } from "react";
 import { ProductCard } from "../components/ProductCard";
 import type { Tenant, TenantBranding, TenantCatalog, TenantCatalogResolution, TenantDomain, TenantDomainAlias } from "../types/marketplace";
-import type { TenantCuratedCatalogView } from "../services/marketplaceService";
-import { useTenant, useTenants } from "../hooks/useMarketplace";
+import type { TenantCuratedCatalogView, TenantDistributionView } from "../services/marketplaceService";
+import { useTenant, useTenantDistribution, useTenants } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 
 export function TenantStorefrontPage() {
@@ -44,6 +44,7 @@ function TenantRegistrySurface() {
 
 function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
   const { data } = useTenant(tenantIdOrSlug);
+  const tenantDistributionQuery = useTenantDistribution(tenantIdOrSlug);
 
   if (!data) return null;
 
@@ -63,6 +64,7 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
     enabledSections,
     executionBoundaries
   } = data;
+  const tenantDistribution = tenantDistributionQuery.data;
 
   return (
     <div className="space-y-6">
@@ -167,6 +169,8 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
       <TenantCatalogPanel catalog={catalog} resolution={catalogResolution} />
 
       <TenantCuratedCatalogPanel catalogs={tenantCuratedCatalogs} included={curatedCatalogResolution.includedCatalogIds.length} excluded={curatedCatalogResolution.excludedCatalogIds.length} />
+
+      {tenantDistribution ? <TenantDistributionPanel view={tenantDistribution} /> : null}
 
       <section className="grid gap-4 lg:grid-cols-2">
         <BoundaryPanel title="Warnings" tone="amber" items={[...tenant.warnings, ...branding.warnings]} />
@@ -363,9 +367,8 @@ function TenantCatalogPanel({ catalog, resolution }: { catalog: TenantCatalog; r
       <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
         <p className="font-semibold">Isolation boundary</p>
         <p className="mt-1">
-          mock isolation and config-first isolation only. No tenant settlement enabled, no tenant billing enabled, no tenant treasury routing
-          enabled, no tenant revenue sharing enabled, no RBAC enabled, no isolated database enabled, no production data isolation enabled and
-          no real tenant permissions enabled.
+          mock isolation and config-first isolation only. Tenant settlement, tenant billing, tenant treasury routing, tenant revenue sharing,
+          RBAC enforcement, isolated database, production data isolation and real tenant permissions remain disabled.
         </p>
       </div>
     </section>
@@ -466,6 +469,113 @@ function TenantCuratedCatalogPanel({
         </p>
       </div>
     </section>
+  );
+}
+
+function TenantDistributionPanel({ view }: { view: TenantDistributionView }) {
+  const { config, resolution, context } = view;
+
+  return (
+    <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <Share2 size={20} /> Tenant Distribution Integration
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Tenant Distribution Config integrates tenant storefronts, curated catalogs, community distributions and attribution sources in
+            mock/config-first mode while preserving tenant catalog isolation, branding/theme and simulated domain routing.
+          </p>
+        </div>
+        <span className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
+          {config.status} / {config.scope}
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <Stat label="included channels" value={resolution.includedChannelIds.length} />
+        <Stat label="featured channels" value={resolution.featuredChannelIds.length} />
+        <Stat label="blocked channels" value={resolution.excludedChannelIds.length} />
+        <Stat label="attribution sources" value={resolution.includedAttributionSourceIds.length} />
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <DistributionList title="Included distribution channels" items={view.channels.map((item) => item.channel.displayName)} empty="No included channels." />
+        <DistributionList title="Blocked distribution channels" items={view.excludedChannels.map((item) => item.channel.displayName)} empty="No blocked channels." />
+        <DistributionList title="Associated profiles" items={view.profiles.map((item) => item.profile.displayName)} empty="No profiles associated." />
+        <DistributionList title="Community distributions" items={view.communityDistributions.map((item) => item.distribution.displayName)} empty="No community distributions associated." />
+        <DistributionList title="Attribution sources" items={view.attributionSources.map((item) => item.source.displayName)} empty="No attribution sources associated." />
+        <DistributionList title="Curated catalogs by channel" items={view.curatedCatalogs.map((item) => item.catalog.displayName)} empty="No curated catalogs associated." />
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <DistributionRuleList title="Applied tenant distribution rules" rules={resolution.appliedRules} />
+        <DistributionRuleList title="Blocked tenant distribution rules" rules={resolution.blockedRules} />
+      </div>
+
+      <div className="mt-5 rounded border border-slate-200 bg-slate-50 p-4 text-sm">
+        <h3 className="font-semibold">Distribution Integrated Context</h3>
+        <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Row label="Routing mode" value={context.routingMode} />
+          <Row label="Commercial origin" value={context.commercialOriginLabel} />
+          <Row label="Distribution source" value={context.distributionSourceLabel} />
+          <Row label="Can track" value={String(context.canTrack)} />
+          <Row label="Can attribute revenue" value={String(context.canAttributeRevenue)} />
+          <Row label="Can trigger payout" value={String(context.canTriggerPayout)} />
+          <Row label="Can settle" value={String(context.canSettle)} />
+          <Row label="Simulated" value={String(context.isSimulated)} />
+        </dl>
+      </div>
+
+      <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="font-semibold">Distribution integration boundary</p>
+        <p className="mt-1">
+          mock distribution integration and config-first distribution integration only. Tenant catalog isolation, branding/theme and
+          simulated domains are preserved. No revenue sharing, no commission, no payout, no settlement, no billing, no tracking real and no
+          marketplace intelligence are active.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function DistributionList({ title, items, empty }: { title: string; items: string[]; empty: string }) {
+  return (
+    <div className="rounded border border-slate-200 bg-slate-50 p-4">
+      <h3 className="font-semibold">{title}</h3>
+      {items.length ? (
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
+          {items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-sm text-slate-600">{empty}</p>
+      )}
+    </div>
+  );
+}
+
+function DistributionRuleList({ title, rules }: { title: string; rules: TenantDistributionView["resolution"]["appliedRules"] }) {
+  return (
+    <div className="rounded border border-slate-200 bg-white p-4">
+      <h3 className="font-semibold">{title}</h3>
+      <div className="mt-3 space-y-3">
+        {rules.length ? (
+          rules.map((rule) => (
+            <div key={rule.id} className="rounded border border-slate-200 bg-slate-50 p-3 text-sm">
+              <p className="font-semibold">{rule.ruleType}</p>
+              <p className="mt-1 text-slate-600">
+                {rule.effect} {rule.targetType} {rule.targetId}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">{rule.reason}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-slate-600">No rules in this group.</p>
+        )}
+      </div>
+    </div>
   );
 }
 

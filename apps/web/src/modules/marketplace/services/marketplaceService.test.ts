@@ -5,6 +5,10 @@ import {
   createDraftListingPreview,
   discoverWalletAssets,
   applyCommunityDistributionRules,
+  applyCuratedCatalogDistributionRules,
+  applyTenantDistributionRules,
+  explainCuratedCatalogDistributionExclusion,
+  explainCuratedCatalogDistributionInclusion,
   explainAttributionBoundary,
   explainCommunityDistributionExclusion,
   explainCommunityDistributionInclusion,
@@ -31,6 +35,12 @@ import {
   getCommunityMarketplaceDistributionBySlug,
   getCuratedCatalogById,
   getCuratedCatalogBySlug,
+  getCuratedCatalogDistributionAttributionSources,
+  getCuratedCatalogDistributionChannels,
+  getCuratedCatalogDistributionConfig,
+  getCuratedCatalogDistributionProfiles,
+  getDistributionContextForCuratedCatalog,
+  getDistributionContextForTenant,
   getDistributionChannelById,
   getDistributionNetworkById,
   getDistributionProfileById,
@@ -54,6 +64,11 @@ import {
   getPrimaryTenantDomain,
   getTenantCatalog,
   getTenantCuratedCatalogConfig,
+  getTenantDistributionAttributionSources,
+  getTenantDistributionChannels,
+  getTenantDistributionCommunityChannels,
+  getTenantDistributionConfig,
+  getTenantDistributionProfiles,
   isExternalCollection,
   isCollectionVisibleForTenant,
   isProductVisibleForTenant,
@@ -86,12 +101,15 @@ import {
   getTenantVisibleProducts,
   explainTenantCatalogExclusion,
   explainTenantCatalogInclusion,
+  explainTenantDistributionExclusion,
+  explainTenantDistributionInclusion,
   resolveTenantByAlias,
   resolveTenantBySimulatedDomain,
   resolveTenantBySlug,
   resolveTenantBranding,
   resolveCuratedCatalog,
   resolveCuratedCatalogItems,
+  resolveCuratedCatalogDistribution,
   resolveAttributionContext,
   resolveCommunityDistributionContext,
   resolveDistributionContext,
@@ -99,6 +117,7 @@ import {
   resolveTenantCatalog,
   resolveTenantContext,
   resolveTenantCuratedCatalogs,
+  resolveTenantDistribution,
   resolveTenantRoutingContext
 } from "./marketplaceService";
 import { StorageAccessService, GreenfieldAccessAdapter } from "./boundaryAdapters";
@@ -729,6 +748,101 @@ describe("marketplaceService", () => {
     expect(community?.boundaryNotes.join(" ")).toContain("governance delegation real");
     expect(community?.boundaryNotes.join(" ")).toContain("revenue sharing");
     expect(community?.boundaryNotes.join(" ")).toContain("tracking real");
+  });
+
+  it("integrates tenants and curated catalogs with Distribution Network without commercial execution", () => {
+    const tenantConfig = getTenantDistributionConfig("community-demo");
+    const tenantDistribution = resolveTenantDistribution("community-demo");
+    const tenantChannels = getTenantDistributionChannels("community-demo");
+    const tenantProfiles = getTenantDistributionProfiles("community-demo");
+    const tenantAttributionSources = getTenantDistributionAttributionSources("community-demo");
+    const tenantCommunityChannels = getTenantDistributionCommunityChannels("community-demo");
+    const tenantContext = getDistributionContextForTenant("community-demo");
+    const tenantRules = applyTenantDistributionRules("community-demo");
+    const tenantInclusions = explainTenantDistributionInclusion("community-demo");
+    const tenantExclusions = explainTenantDistributionExclusion("community-demo");
+    const tenantCatalog = resolveTenantCatalog("community-demo");
+    const tenantBranding = resolveTenantBranding("community-demo");
+    const tenantRouting = resolveTenantRoutingContext("/marketplace/t/community-demo");
+
+    const catalogConfig = getCuratedCatalogDistributionConfig("foundational-nft-access");
+    const catalogDistribution = resolveCuratedCatalogDistribution("foundational-nft-access");
+    const catalogChannels = getCuratedCatalogDistributionChannels("foundational-nft-access");
+    const catalogProfiles = getCuratedCatalogDistributionProfiles("foundational-nft-access");
+    const catalogAttributionSources = getCuratedCatalogDistributionAttributionSources("foundational-nft-access");
+    const catalogContext = getDistributionContextForCuratedCatalog("foundational-nft-access");
+    const catalogRules = applyCuratedCatalogDistributionRules("foundational-nft-access");
+    const catalogInclusions = explainCuratedCatalogDistributionInclusion("foundational-nft-access");
+    const catalogExclusions = explainCuratedCatalogDistributionExclusion("foundational-nft-access");
+    const curatedCatalog = resolveCuratedCatalog("foundational-nft-access");
+    const federatedItem = curatedCatalog?.items.find((item) => item.item.isFederated);
+
+    expect(tenantConfig.inheritsGlobalDistributionChannels).toBe(true);
+    expect(tenantDistribution.resolution.includedChannelIds).toContain("distribution-channel-global-tenant");
+    expect(tenantDistribution.resolution.includedChannelIds).toContain("distribution-channel-community-marketplace");
+    expect(tenantDistribution.resolution.excludedChannelIds).toContain("distribution-channel-affiliate-demo");
+    expect(tenantDistribution.resolution.featuredChannelIds).toContain("distribution-channel-community-marketplace");
+    expect(tenantDistribution.resolution.includedProfileIds).toContain("distribution-profile-community-marketplace");
+    expect(tenantDistribution.resolution.excludedProfileIds).toContain("distribution-profile-affiliate-demo");
+    expect(tenantDistribution.resolution.includedCommunityDistributionIds).toContain("community-distribution-creator-federated");
+    expect(tenantDistribution.resolution.excludedCommunityDistributionIds).toContain("community-distribution-empty-demo");
+    expect(tenantDistribution.resolution.includedAttributionSourceIds).toContain("attribution-record-community-source");
+    expect(tenantDistribution.resolution.excludedAttributionSourceIds).toContain("attribution-record-affiliate-referral");
+    expect(tenantDistribution.resolution.includedCuratedCatalogIds).toContain("curated-catalog-foundational-nft");
+    expect(tenantDistribution.resolution.excludedCuratedCatalogIds).toContain("curated-catalog-academy-onboarding");
+    expect(tenantDistribution.resolution.includedSegmentIds).toContain("catalog-segment-federated");
+    expect(tenantChannels.map((view) => view.channel.id)).toContain("distribution-channel-community-marketplace");
+    expect(tenantProfiles.map((view) => view.profile.id)).toContain("distribution-profile-community-marketplace");
+    expect(tenantAttributionSources.map((view) => view.source.id)).toContain("attribution-record-community-source");
+    expect(tenantCommunityChannels.map((view) => view.distribution.id)).toContain("community-distribution-creator-federated");
+    expect(tenantRules.map((rule) => rule.ruleType)).toContain("feature-channel");
+    expect(tenantInclusions.map((entry) => entry.targetId)).toContain("distribution-channel-community-marketplace");
+    expect(tenantExclusions.map((entry) => entry.targetId)).toContain("distribution-channel-affiliate-demo");
+    expect(tenantContext.routingMode).toBe("mock-read-only");
+    expect(tenantContext.canTrack).toBe(false);
+    expect(tenantContext.canAttributeRevenue).toBe(false);
+    expect(tenantContext.canTriggerPayout).toBe(false);
+    expect(tenantContext.canSettle).toBe(false);
+    expect(tenantCatalog.resolution.includedProductIds).toContain("product-governance-dashboard-nft");
+    expect(tenantBranding.branding.displayName).toBe("Community Marketplace Demo");
+    expect(tenantRouting.resolution.matchedTenantSlug).toBe("community-demo");
+
+    expect(catalogConfig?.inheritsGlobalDistributionChannels).toBe(true);
+    expect(catalogDistribution?.resolution.includedChannelIds).toContain("distribution-channel-global-tenant");
+    expect(catalogDistribution?.resolution.includedChannelIds).toContain("distribution-channel-community-marketplace");
+    expect(catalogDistribution?.resolution.excludedChannelIds).toContain("distribution-channel-acs-distributor");
+    expect(catalogDistribution?.resolution.featuredChannelIds).toContain("distribution-channel-community-marketplace");
+    expect(catalogDistribution?.resolution.includedProfileIds).toContain("distribution-profile-community-marketplace");
+    expect(catalogDistribution?.resolution.excludedProfileIds).toContain("distribution-profile-acs-distributor");
+    expect(catalogDistribution?.resolution.includedCommunityDistributionIds).toContain("community-distribution-creator-federated");
+    expect(catalogDistribution?.resolution.excludedCommunityDistributionIds).toContain("community-distribution-empty-demo");
+    expect(catalogDistribution?.resolution.includedAttributionSourceIds).toContain("attribution-record-community-source");
+    expect(catalogDistribution?.resolution.excludedAttributionSourceIds).toContain("attribution-record-acs-manual");
+    expect(catalogDistribution?.resolution.includedTenantIds).toContain("tenant-community-demo");
+    expect(catalogDistribution?.resolution.excludedTenantIds).toContain("tenant-acs-services");
+    expect(catalogDistribution?.resolution.includedSegmentIds).toContain("catalog-segment-federated");
+    expect(catalogChannels.map((view) => view.channel.id)).toContain("distribution-channel-community-marketplace");
+    expect(catalogProfiles.map((view) => view.profile.id)).toContain("distribution-profile-community-marketplace");
+    expect(catalogAttributionSources.map((view) => view.source.id)).toContain("attribution-record-community-source");
+    expect(catalogRules.map((rule) => rule.ruleType)).toContain("feature-channel");
+    expect(catalogInclusions.map((entry) => entry.targetId)).toContain("distribution-channel-community-marketplace");
+    expect(catalogExclusions.map((entry) => entry.targetId)).toContain("distribution-channel-acs-distributor");
+    expect(catalogContext.canTrack).toBe(false);
+    expect(catalogContext.canAttributeRevenue).toBe(false);
+    expect(catalogContext.canTriggerPayout).toBe(false);
+    expect(catalogContext.canSettle).toBe(false);
+    expect(curatedCatalog?.editorialRules.length).toBeGreaterThan(0);
+    expect(federatedItem?.trustBoundary?.origin).toBeDefined();
+    expect(federatedItem?.trustBoundary?.provider).toBeDefined();
+    expect(federatedItem?.trustBoundary?.validationStatus).toBeDefined();
+    expect(federatedItem?.trustBoundary?.provenance).toBeDefined();
+    expect(federatedItem?.trustBoundary?.riskClassification).toBeDefined();
+    expect(federatedItem?.boundaryNotes.join(" ")).toContain("trust boundaries");
+    expect(tenantDistribution.boundaryNotes.join(" ")).toContain("Tenant catalog isolation");
+    expect(catalogDistribution?.boundaryNotes.join(" ")).toContain("Curated catalog editorial rules");
+    expect(catalogDistribution?.boundaryNotes.join(" ")).toContain("federation boundaries");
+    expect(tenantDistribution.boundaryNotes.join(" ")).toContain("No revenue sharing");
+    expect(tenantDistribution.boundaryNotes.join(" ")).toContain("no tracking real");
   });
 
   it("issues mock purchase records without settlement", () => {

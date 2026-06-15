@@ -14,6 +14,8 @@ import {
   getAttributionSourcesByProfile,
   getCommunityDistributionItems,
   getCommunityMarketplaceDistributionById,
+  getDistributionContextForCuratedCatalog,
+  getDistributionContextForTenant,
   getDistributionChannelById,
   getDistributionNetworkById,
   getDistributionProfileById,
@@ -46,11 +48,13 @@ import {
   listCommunityMarketplaceDistributions,
   resolveAttributionContext,
   resolveCommunityDistributionContext,
+  resolveCuratedCatalogDistribution,
   resolveDistributionContext,
   resolveDistributionProfileContext,
   resolveTenantCatalog,
   resolveTenantBranding,
   resolveTenantContext,
+  resolveTenantDistribution,
   resolveTenantRoutingContext,
   resolveTenantTheme
 } from "../services/marketplaceService";
@@ -463,6 +467,71 @@ export function useCommunityDistributionItems(distributionIdOrSlug?: string) {
         itemCount: items.length
       });
       return items;
+    }
+  });
+}
+
+export function useTenantDistribution(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-distribution", tenantIdOrSlug],
+    enabled: Boolean(tenantIdOrSlug),
+    queryFn: () => {
+      const distribution = resolveTenantDistribution(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-tenant-distribution-query", "completed", {
+        tenantId: distribution.tenant.id,
+        channelCount: distribution.channels.length
+      });
+      return distribution;
+    }
+  });
+}
+
+export function useCuratedCatalogDistribution(catalogIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-curated-catalog-distribution", catalogIdOrSlug],
+    enabled: Boolean(catalogIdOrSlug),
+    queryFn: () => {
+      const distribution = resolveCuratedCatalogDistribution(catalogIdOrSlug ?? "");
+      if (!distribution) {
+        const error = new Error("Curated Catalog Distribution Config not found");
+        instrumentMarketplaceError("marketplace-curated-catalog-distribution-query", error, { catalogIdOrSlug: catalogIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-curated-catalog-distribution-query", "completed", {
+        curatedCatalogId: distribution.catalog.catalog.id,
+        channelCount: distribution.channels.length
+      });
+      return distribution;
+    }
+  });
+}
+
+export function useDistributionContextForTenant(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-context-for-tenant", tenantIdOrSlug],
+    enabled: Boolean(tenantIdOrSlug),
+    queryFn: () => {
+      const context = getDistributionContextForTenant(tenantIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-distribution-context-for-tenant-query", "completed", {
+        tenantId: context.tenantId ?? null,
+        canTrack: context.canTrack
+      });
+      return context;
+    }
+  });
+}
+
+export function useDistributionContextForCuratedCatalog(catalogIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-context-for-curated-catalog", catalogIdOrSlug],
+    enabled: Boolean(catalogIdOrSlug),
+    queryFn: () => {
+      const context = getDistributionContextForCuratedCatalog(catalogIdOrSlug ?? "");
+      traceMarketplaceLifecycle("marketplace-distribution-context-for-curated-catalog-query", "completed", {
+        curatedCatalogId: context.curatedCatalogId ?? null,
+        canTrack: context.canTrack
+      });
+      return context;
     }
   });
 }

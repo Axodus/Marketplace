@@ -5,6 +5,7 @@ import {
   marketplaceCatalogSegments,
   marketplaceCollections,
   marketplaceCommunityDistributions,
+  marketplaceCuratedCatalogDistributionConfigs,
   marketplaceCuratedCatalogs,
   marketplaceDistributionChannels,
   marketplaceDistributionNetworks,
@@ -15,6 +16,7 @@ import {
   marketplaceLicenses,
   marketplaceProducts,
   marketplaceSellers,
+  marketplaceTenantDistributionConfigs,
   marketplaceTenants,
   marketplaceWalletDiscoveryRecords
 } from "../../../data/mock/marketplace.mock";
@@ -27,11 +29,16 @@ import type {
   CommunityDistributionItem,
   CommunityMarketplaceDistribution,
   CuratedCatalog,
+  CuratedCatalogDistributionConfig,
+  CuratedCatalogDistributionResolution,
+  CuratedCatalogDistributionRule,
   CuratedCatalogItem,
   CuratedCatalogSection,
   EditorialRule,
   CatalogSegment,
   DiscoveredAsset,
+  DistributionIntegratedContext,
+  DistributionIntegratedItem,
   DistributionChannel,
   DistributionNetwork,
   DistributionPlacement,
@@ -61,6 +68,9 @@ import type {
   TenantCuratedCatalogConfig,
   TenantCuratedCatalogItem,
   TenantCuratedCatalogResolution,
+  TenantDistributionConfig,
+  TenantDistributionResolution,
+  TenantDistributionRule,
   TenantDomain,
   TenantDomainAlias,
   TenantDomainInputType,
@@ -118,6 +128,8 @@ const distributionPlacements = marketplaceDistributionPlacements as Distribution
 const distributionProfiles = marketplaceDistributionProfiles as DistributionProfile[];
 const attributionSources = marketplaceAttributionSources as AttributionSourceRecord[];
 const communityDistributions = marketplaceCommunityDistributions as CommunityMarketplaceDistribution[];
+const tenantDistributionConfigs = marketplaceTenantDistributionConfigs as TenantDistributionConfig[];
+const curatedCatalogDistributionConfigs = marketplaceCuratedCatalogDistributionConfigs as CuratedCatalogDistributionConfig[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
@@ -586,6 +598,52 @@ export interface CommunityDistributionView {
   collections: MarketplaceCollection[];
   visibleItems: CommunityDistributionItemView[];
   excludedItems: CommunityDistributionItemView[];
+  boundaryNotes: string[];
+}
+
+export interface TenantDistributionView {
+  tenant: Tenant;
+  config: TenantDistributionConfig;
+  resolution: TenantDistributionResolution;
+  channels: DistributionChannelView[];
+  featuredChannels: DistributionChannelView[];
+  excludedChannels: DistributionChannelView[];
+  profiles: DistributionProfileView[];
+  excludedProfiles: DistributionProfileView[];
+  communityDistributions: CommunityDistributionView[];
+  excludedCommunityDistributions: CommunityDistributionView[];
+  attributionSources: AttributionSourceView[];
+  excludedAttributionSources: AttributionSourceView[];
+  curatedCatalogs: CuratedCatalogView[];
+  excludedCuratedCatalogs: CuratedCatalogView[];
+  segments: CatalogSegment[];
+  excludedSegments: CatalogSegment[];
+  context: DistributionIntegratedContext;
+  includedItems: DistributionIntegratedItem[];
+  excludedItems: DistributionIntegratedItem[];
+  boundaryNotes: string[];
+}
+
+export interface CuratedCatalogDistributionView {
+  catalog: CuratedCatalogView;
+  config: CuratedCatalogDistributionConfig;
+  resolution: CuratedCatalogDistributionResolution;
+  channels: DistributionChannelView[];
+  featuredChannels: DistributionChannelView[];
+  excludedChannels: DistributionChannelView[];
+  profiles: DistributionProfileView[];
+  excludedProfiles: DistributionProfileView[];
+  communityDistributions: CommunityDistributionView[];
+  excludedCommunityDistributions: CommunityDistributionView[];
+  attributionSources: AttributionSourceView[];
+  excludedAttributionSources: AttributionSourceView[];
+  tenants: Tenant[];
+  excludedTenants: Tenant[];
+  segments: CatalogSegment[];
+  excludedSegments: CatalogSegment[];
+  context: DistributionIntegratedContext;
+  includedItems: DistributionIntegratedItem[];
+  excludedItems: DistributionIntegratedItem[];
   boundaryNotes: string[];
 }
 
@@ -2310,6 +2368,594 @@ export function explainCommunityDistributionExclusion(distributionIdOrSlug: stri
     reason: item.item.exclusionReason ?? "No exclusion reason",
     boundaryNotes: item.boundaryNotes
   })) ?? [];
+}
+
+function uniqueValues(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+function getTenantByIdOrSlug(tenantIdOrSlug?: string) {
+  return tenantIdOrSlug ? getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug) : null;
+}
+
+function getCatalogSegmentByIdOrSlug(segmentIdOrSlug: string) {
+  return catalogSegments.find((segment) => segment.id === segmentIdOrSlug || segment.slug === segmentIdOrSlug) ?? null;
+}
+
+function isAppliedDistributionRule(effect: string) {
+  return effect === "include" || effect === "feature" || effect === "inherit" || effect === "warn";
+}
+
+function getTenantDistributionTargetLabel(rule: TenantDistributionRule) {
+  if (rule.targetType === "distribution-channel") return getDistributionChannelById(rule.targetId)?.channel.displayName ?? rule.targetId;
+  if (rule.targetType === "distribution-profile") return getDistributionProfileById(rule.targetId)?.profile.displayName ?? rule.targetId;
+  if (rule.targetType === "community-distribution") return getCommunityMarketplaceDistributionById(rule.targetId)?.distribution.displayName ?? rule.targetId;
+  if (rule.targetType === "attribution-source") return getAttributionSourceById(rule.targetId)?.source.displayName ?? rule.targetId;
+  if (rule.targetType === "curated-catalog") return resolveCuratedCatalog(rule.targetId)?.catalog.displayName ?? rule.targetId;
+  if (rule.targetType === "catalog-segment") return getCatalogSegmentByIdOrSlug(rule.targetId)?.displayName ?? rule.targetId;
+  return rule.targetId;
+}
+
+function getCuratedCatalogDistributionTargetLabel(rule: CuratedCatalogDistributionRule) {
+  if (rule.targetType === "distribution-channel") return getDistributionChannelById(rule.targetId)?.channel.displayName ?? rule.targetId;
+  if (rule.targetType === "distribution-profile") return getDistributionProfileById(rule.targetId)?.profile.displayName ?? rule.targetId;
+  if (rule.targetType === "community-distribution") return getCommunityMarketplaceDistributionById(rule.targetId)?.distribution.displayName ?? rule.targetId;
+  if (rule.targetType === "attribution-source") return getAttributionSourceById(rule.targetId)?.source.displayName ?? rule.targetId;
+  if (rule.targetType === "tenant") return getTenantById(rule.targetId)?.displayName ?? rule.targetId;
+  if (rule.targetType === "catalog-segment") return getCatalogSegmentByIdOrSlug(rule.targetId)?.displayName ?? rule.targetId;
+  return rule.targetId;
+}
+
+function getDefaultTenantDistributionConfig(tenantId: string): TenantDistributionConfig {
+  return {
+    tenantId,
+    status: "configured-mock",
+    scope: "tenant",
+    inheritsGlobalDistributionChannels: true,
+    allowedDistributionChannelIds: [],
+    blockedDistributionChannelIds: [],
+    featuredDistributionChannelIds: [],
+    allowedDistributionProfileIds: [],
+    blockedDistributionProfileIds: [],
+    allowedCommunityDistributionIds: [],
+    blockedCommunityDistributionIds: [],
+    allowedAttributionSourceIds: [],
+    blockedAttributionSourceIds: [],
+    allowedCuratedCatalogIds: [],
+    blockedCuratedCatalogIds: [],
+    allowedSegmentIds: [],
+    blockedSegmentIds: [],
+    allowsFederatedAssets: false,
+    canDisplay: true,
+    canTrack: false,
+    canAttributeRevenue: false,
+    canTriggerPayout: false,
+    canSettle: false,
+    rules: [
+      {
+        id: `tenant-distribution-${tenantId}-fallback-inherit`,
+        tenantId,
+        ruleType: "inherit-global-distribution",
+        targetType: "global-distribution",
+        targetId: "distribution-channel-global-tenant",
+        effect: "inherit",
+        reason: "Fallback Tenant Distribution Config inherits the global distribution channel.",
+        priority: 1,
+        status: "configured-mock",
+        warnings: ["Fallback Tenant Distribution Config is generated from local mock data."],
+        disclaimers: ["No revenue sharing, commission, payout, settlement, billing, tracking real or Marketplace Intelligence is active."]
+      }
+    ],
+    warnings: ["Fallback Tenant Distribution Config uses global mock distribution only."],
+    disclaimers: ["Tenant Distribution Config is mock/config-first and cannot execute financial or tracking operations."]
+  };
+}
+
+function getDefaultCuratedCatalogDistributionConfig(curatedCatalogId: string): CuratedCatalogDistributionConfig {
+  return {
+    curatedCatalogId,
+    status: "configured-mock",
+    scope: "curated-catalog",
+    inheritsGlobalDistributionChannels: true,
+    allowedDistributionChannelIds: [],
+    blockedDistributionChannelIds: [],
+    featuredDistributionChannelIds: [],
+    allowedDistributionProfileIds: [],
+    blockedDistributionProfileIds: [],
+    allowedCommunityDistributionIds: [],
+    blockedCommunityDistributionIds: [],
+    allowedAttributionSourceIds: [],
+    blockedAttributionSourceIds: [],
+    allowedTenantIds: [],
+    blockedTenantIds: [],
+    allowedSegmentIds: [],
+    blockedSegmentIds: [],
+    allowsFederatedAssets: false,
+    canDisplay: true,
+    canTrack: false,
+    canAttributeRevenue: false,
+    canTriggerPayout: false,
+    canSettle: false,
+    rules: [
+      {
+        id: `curated-distribution-${curatedCatalogId}-fallback-inherit`,
+        curatedCatalogId,
+        ruleType: "inherit-global-distribution",
+        targetType: "global-distribution",
+        targetId: "distribution-channel-global-tenant",
+        effect: "inherit",
+        reason: "Fallback Curated Catalog Distribution Config inherits the global distribution channel.",
+        priority: 1,
+        status: "configured-mock",
+        warnings: ["Fallback Curated Catalog Distribution Config is generated from local mock data."],
+        disclaimers: ["No ranking real, revenue sharing, commission, payout, settlement, billing, tracking real or Marketplace Intelligence is active."]
+      }
+    ],
+    warnings: ["Fallback Curated Catalog Distribution Config uses global mock distribution only."],
+    disclaimers: ["Curated Catalog Distribution Config is mock/config-first and cannot execute financial or tracking operations."]
+  };
+}
+
+export function getTenantDistributionConfig(tenantIdOrSlug?: string) {
+  const tenant = getTenantByIdOrSlug(tenantIdOrSlug) ?? getGlobalTenant();
+  return tenantDistributionConfigs.find((config) => config.tenantId === tenant.id) ?? getDefaultTenantDistributionConfig(tenant.id);
+}
+
+export function getCuratedCatalogDistributionConfig(catalogIdOrSlug: string) {
+  const catalog = resolveCuratedCatalog(catalogIdOrSlug);
+  if (!catalog) return null;
+  return curatedCatalogDistributionConfigs.find((config) => config.curatedCatalogId === catalog.catalog.id) ?? getDefaultCuratedCatalogDistributionConfig(catalog.catalog.id);
+}
+
+export function applyTenantDistributionRules(tenantIdOrSlug?: string) {
+  return [...getTenantDistributionConfig(tenantIdOrSlug).rules].sort((left, right) => left.priority - right.priority || left.id.localeCompare(right.id));
+}
+
+export function applyCuratedCatalogDistributionRules(catalogIdOrSlug: string) {
+  return [...(getCuratedCatalogDistributionConfig(catalogIdOrSlug)?.rules ?? [])].sort((left, right) => left.priority - right.priority || left.id.localeCompare(right.id));
+}
+
+export function resolveTenantDistribution(tenantIdOrSlug?: string): TenantDistributionView {
+  const tenant = getTenantByIdOrSlug(tenantIdOrSlug) ?? getGlobalTenant();
+  const config = getTenantDistributionConfig(tenant.id);
+  const rules = applyTenantDistributionRules(tenant.id);
+  const inheritedChannelIds = config.inheritsGlobalDistributionChannels ? ["distribution-channel-global-tenant"] : [];
+  const includedChannelIds = uniqueValues([...inheritedChannelIds, ...config.allowedDistributionChannelIds]).filter((id) => !config.blockedDistributionChannelIds.includes(id));
+  const excludedChannelIds = uniqueValues(config.blockedDistributionChannelIds);
+  const featuredChannelIds = uniqueValues(config.featuredDistributionChannelIds).filter((id) => includedChannelIds.includes(id));
+  const includedProfileIds = uniqueValues(config.allowedDistributionProfileIds).filter((id) => !config.blockedDistributionProfileIds.includes(id));
+  const excludedProfileIds = uniqueValues(config.blockedDistributionProfileIds);
+  const includedCommunityDistributionIds = uniqueValues(config.allowedCommunityDistributionIds).filter((id) => !config.blockedCommunityDistributionIds.includes(id));
+  const excludedCommunityDistributionIds = uniqueValues(config.blockedCommunityDistributionIds);
+  const includedAttributionSourceIds = uniqueValues(config.allowedAttributionSourceIds).filter((id) => !config.blockedAttributionSourceIds.includes(id));
+  const excludedAttributionSourceIds = uniqueValues(config.blockedAttributionSourceIds);
+  const includedCuratedCatalogIds = uniqueValues(config.allowedCuratedCatalogIds).filter((id) => !config.blockedCuratedCatalogIds.includes(id));
+  const excludedCuratedCatalogIds = uniqueValues(config.blockedCuratedCatalogIds);
+  const includedSegmentIds = uniqueValues(config.allowedSegmentIds).filter((id) => !config.blockedSegmentIds.includes(id));
+  const excludedSegmentIds = uniqueValues(config.blockedSegmentIds);
+  const appliedRules = rules.filter((rule) => isAppliedDistributionRule(rule.effect));
+  const blockedRules = rules.filter((rule) => rule.effect === "exclude" || rule.effect === "restrict");
+
+  const resolution: TenantDistributionResolution = {
+    tenantId: tenant.id,
+    resolvedAt: "2026-06-15T13:00:00.000Z",
+    includedChannelIds,
+    excludedChannelIds,
+    featuredChannelIds,
+    includedProfileIds,
+    excludedProfileIds,
+    includedCommunityDistributionIds,
+    excludedCommunityDistributionIds,
+    includedAttributionSourceIds,
+    excludedAttributionSourceIds,
+    includedCuratedCatalogIds,
+    excludedCuratedCatalogIds,
+    includedSegmentIds,
+    excludedSegmentIds,
+    appliedRules,
+    blockedRules,
+    warnings: [...config.warnings, ...rules.flatMap((rule) => rule.warnings)],
+    disclaimers: [
+      ...config.disclaimers,
+      ...rules.flatMap((rule) => rule.disclaimers),
+      "Tenant Distribution Resolution is mock/config-first distribution integration.",
+      "Tenant catalog isolation, branding/theme and simulated domain routing remain preserved.",
+      "No revenue sharing, no commission, no payout, no settlement, no billing, no tracking real and no Marketplace Intelligence are active."
+    ]
+  };
+
+  const channels = includedChannelIds.map((id) => getDistributionChannelById(id)).filter((view): view is DistributionChannelView => Boolean(view));
+  const excludedChannels = excludedChannelIds.map((id) => getDistributionChannelById(id)).filter((view): view is DistributionChannelView => Boolean(view));
+  const featuredChannels = featuredChannelIds.map((id) => getDistributionChannelById(id)).filter((view): view is DistributionChannelView => Boolean(view));
+  const profiles = includedProfileIds.map((id) => getDistributionProfileById(id)).filter((view): view is DistributionProfileView => Boolean(view));
+  const excludedProfiles = excludedProfileIds.map((id) => getDistributionProfileById(id)).filter((view): view is DistributionProfileView => Boolean(view));
+  const communityDistributionViews = includedCommunityDistributionIds.map((id) => getCommunityMarketplaceDistributionById(id)).filter((view): view is CommunityDistributionView => Boolean(view));
+  const excludedCommunityDistributionViews = excludedCommunityDistributionIds.map((id) => getCommunityMarketplaceDistributionById(id)).filter((view): view is CommunityDistributionView => Boolean(view));
+  const attributionSourceViews = includedAttributionSourceIds.map((id) => getAttributionSourceById(id)).filter((view): view is AttributionSourceView => Boolean(view));
+  const excludedAttributionSourceViews = excludedAttributionSourceIds.map((id) => getAttributionSourceById(id)).filter((view): view is AttributionSourceView => Boolean(view));
+  const curatedCatalogViews = includedCuratedCatalogIds.map((id) => resolveCuratedCatalog(id)).filter((view): view is CuratedCatalogView => Boolean(view));
+  const excludedCuratedCatalogViews = excludedCuratedCatalogIds.map((id) => resolveCuratedCatalog(id)).filter((view): view is CuratedCatalogView => Boolean(view));
+  const segments = includedSegmentIds.map((id) => getCatalogSegmentByIdOrSlug(id)).filter((segment): segment is CatalogSegment => Boolean(segment));
+  const excludedSegments = excludedSegmentIds.map((id) => getCatalogSegmentByIdOrSlug(id)).filter((segment): segment is CatalogSegment => Boolean(segment));
+  const context = getDistributionContextForTenant(tenant.id);
+  const includedItems = [
+    ...channels.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "distribution-channel" as const, view.channel.id, "included by tenant distribution rules", featuredChannelIds.includes(view.channel.id))),
+    ...profiles.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "distribution-profile" as const, view.profile.id, "included by tenant distribution profile rules")),
+    ...communityDistributionViews.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "community-distribution" as const, view.distribution.id, "included by tenant community distribution rules")),
+    ...attributionSourceViews.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "attribution-source" as const, view.source.id, "included by tenant attribution source rules")),
+    ...curatedCatalogViews.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "curated-catalog" as const, view.catalog.id, "included by tenant curated catalog distribution rules", config.featuredDistributionChannelIds.length > 0)),
+    ...segments.map((segment) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "catalog-segment" as const, segment.id, "included by tenant segment distribution rules"))
+  ];
+  const excludedItems = [
+    ...excludedChannels.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "distribution-channel" as const, view.channel.id, undefined, false, "blocked distribution channels")),
+    ...excludedProfiles.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "distribution-profile" as const, view.profile.id, undefined, false, "blocked distribution profiles")),
+    ...excludedCommunityDistributionViews.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "community-distribution" as const, view.distribution.id, undefined, false, "blocked community distributions")),
+    ...excludedAttributionSourceViews.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "attribution-source" as const, view.source.id, undefined, false, "blocked attribution sources")),
+    ...excludedCuratedCatalogViews.map((view) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "curated-catalog" as const, view.catalog.id, undefined, false, "blocked curated catalogs")),
+    ...excludedSegments.map((segment) => buildTenantDistributionIntegratedItem(context.contextId, tenant.id, "catalog-segment" as const, segment.id, undefined, false, "blocked catalog segments"))
+  ];
+
+  return {
+    tenant,
+    config,
+    resolution,
+    channels,
+    featuredChannels,
+    excludedChannels,
+    profiles,
+    excludedProfiles,
+    communityDistributions: communityDistributionViews,
+    excludedCommunityDistributions: excludedCommunityDistributionViews,
+    attributionSources: attributionSourceViews,
+    excludedAttributionSources: excludedAttributionSourceViews,
+    curatedCatalogs: curatedCatalogViews,
+    excludedCuratedCatalogs: excludedCuratedCatalogViews,
+    segments,
+    excludedSegments,
+    context,
+    includedItems,
+    excludedItems,
+    boundaryNotes: [
+      ...resolution.warnings,
+      ...resolution.disclaimers,
+      ...channels.flatMap((view) => view.boundaryNotes),
+      ...profiles.flatMap((view) => view.boundaryNotes),
+      ...communityDistributionViews.flatMap((view) => view.boundaryNotes),
+      ...attributionSourceViews.flatMap((view) => view.boundaryNotes)
+    ]
+  };
+}
+
+export function resolveCuratedCatalogDistribution(catalogIdOrSlug: string): CuratedCatalogDistributionView | null {
+  const catalog = resolveCuratedCatalog(catalogIdOrSlug);
+  if (!catalog) return null;
+
+  const config = getCuratedCatalogDistributionConfig(catalog.catalog.id)!;
+  const rules = applyCuratedCatalogDistributionRules(catalog.catalog.id);
+  const inheritedChannelIds = config.inheritsGlobalDistributionChannels ? ["distribution-channel-global-tenant"] : [];
+  const includedChannelIds = uniqueValues([...inheritedChannelIds, ...config.allowedDistributionChannelIds]).filter((id) => !config.blockedDistributionChannelIds.includes(id));
+  const excludedChannelIds = uniqueValues(config.blockedDistributionChannelIds);
+  const featuredChannelIds = uniqueValues(config.featuredDistributionChannelIds).filter((id) => includedChannelIds.includes(id));
+  const includedProfileIds = uniqueValues(config.allowedDistributionProfileIds).filter((id) => !config.blockedDistributionProfileIds.includes(id));
+  const excludedProfileIds = uniqueValues(config.blockedDistributionProfileIds);
+  const includedCommunityDistributionIds = uniqueValues(config.allowedCommunityDistributionIds).filter((id) => !config.blockedCommunityDistributionIds.includes(id));
+  const excludedCommunityDistributionIds = uniqueValues(config.blockedCommunityDistributionIds);
+  const includedAttributionSourceIds = uniqueValues(config.allowedAttributionSourceIds).filter((id) => !config.blockedAttributionSourceIds.includes(id));
+  const excludedAttributionSourceIds = uniqueValues(config.blockedAttributionSourceIds);
+  const includedTenantIds = uniqueValues(config.allowedTenantIds).filter((id) => !config.blockedTenantIds.includes(id));
+  const excludedTenantIds = uniqueValues(config.blockedTenantIds);
+  const includedSegmentIds = uniqueValues(config.allowedSegmentIds).filter((id) => !config.blockedSegmentIds.includes(id));
+  const excludedSegmentIds = uniqueValues(config.blockedSegmentIds);
+  const appliedRules = rules.filter((rule) => isAppliedDistributionRule(rule.effect));
+  const blockedRules = rules.filter((rule) => rule.effect === "exclude" || rule.effect === "restrict");
+
+  const resolution: CuratedCatalogDistributionResolution = {
+    curatedCatalogId: catalog.catalog.id,
+    resolvedAt: "2026-06-15T13:05:00.000Z",
+    includedChannelIds,
+    excludedChannelIds,
+    featuredChannelIds,
+    includedProfileIds,
+    excludedProfileIds,
+    includedCommunityDistributionIds,
+    excludedCommunityDistributionIds,
+    includedAttributionSourceIds,
+    excludedAttributionSourceIds,
+    includedTenantIds,
+    excludedTenantIds,
+    includedSegmentIds,
+    excludedSegmentIds,
+    appliedRules,
+    blockedRules,
+    warnings: [...config.warnings, ...rules.flatMap((rule) => rule.warnings), ...catalog.workflowSummary.warnings],
+    disclaimers: [
+      ...config.disclaimers,
+      ...rules.flatMap((rule) => rule.disclaimers),
+      ...catalog.workflowSummary.disclaimers,
+      "Curated Catalog Distribution Resolution is mock/config-first distribution integration.",
+      "Curated catalog editorial rules, featured/segment context and federation boundaries remain preserved.",
+      "No revenue sharing, no commission, no payout, no settlement, no billing, no tracking real and no Marketplace Intelligence are active."
+    ]
+  };
+
+  const channels = includedChannelIds.map((id) => getDistributionChannelById(id)).filter((view): view is DistributionChannelView => Boolean(view));
+  const excludedChannels = excludedChannelIds.map((id) => getDistributionChannelById(id)).filter((view): view is DistributionChannelView => Boolean(view));
+  const featuredChannels = featuredChannelIds.map((id) => getDistributionChannelById(id)).filter((view): view is DistributionChannelView => Boolean(view));
+  const profiles = includedProfileIds.map((id) => getDistributionProfileById(id)).filter((view): view is DistributionProfileView => Boolean(view));
+  const excludedProfiles = excludedProfileIds.map((id) => getDistributionProfileById(id)).filter((view): view is DistributionProfileView => Boolean(view));
+  const communityDistributionViews = includedCommunityDistributionIds.map((id) => getCommunityMarketplaceDistributionById(id)).filter((view): view is CommunityDistributionView => Boolean(view));
+  const excludedCommunityDistributionViews = excludedCommunityDistributionIds.map((id) => getCommunityMarketplaceDistributionById(id)).filter((view): view is CommunityDistributionView => Boolean(view));
+  const attributionSourceViews = includedAttributionSourceIds.map((id) => getAttributionSourceById(id)).filter((view): view is AttributionSourceView => Boolean(view));
+  const excludedAttributionSourceViews = excludedAttributionSourceIds.map((id) => getAttributionSourceById(id)).filter((view): view is AttributionSourceView => Boolean(view));
+  const tenantViews = includedTenantIds.map((id) => getTenantById(id)).filter((tenant): tenant is Tenant => Boolean(tenant));
+  const excludedTenantViews = excludedTenantIds.map((id) => getTenantById(id)).filter((tenant): tenant is Tenant => Boolean(tenant));
+  const segments = includedSegmentIds.map((id) => getCatalogSegmentByIdOrSlug(id)).filter((segment): segment is CatalogSegment => Boolean(segment));
+  const excludedSegments = excludedSegmentIds.map((id) => getCatalogSegmentByIdOrSlug(id)).filter((segment): segment is CatalogSegment => Boolean(segment));
+  const context = getDistributionContextForCuratedCatalog(catalog.catalog.id);
+  const includedItems = [
+    ...channels.map((view) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "distribution-channel" as const, view.channel.id, "included by curated catalog distribution rules", featuredChannelIds.includes(view.channel.id))),
+    ...profiles.map((view) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "distribution-profile" as const, view.profile.id, "included by curated catalog distribution profile rules")),
+    ...communityDistributionViews.map((view) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "community-distribution" as const, view.distribution.id, "included by curated catalog community distribution rules")),
+    ...attributionSourceViews.map((view) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "attribution-source" as const, view.source.id, "included by curated catalog attribution source rules")),
+    ...tenantViews.map((tenant) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "tenant" as const, tenant.id, "included by curated catalog tenant distribution rules")),
+    ...segments.map((segment) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "catalog-segment" as const, segment.id, "included by curated catalog segment distribution rules"))
+  ];
+  const excludedItems = [
+    ...excludedChannels.map((view) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "distribution-channel" as const, view.channel.id, undefined, false, "blocked distribution channels")),
+    ...excludedProfiles.map((view) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "distribution-profile" as const, view.profile.id, undefined, false, "blocked distribution profiles")),
+    ...excludedCommunityDistributionViews.map((view) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "community-distribution" as const, view.distribution.id, undefined, false, "blocked community distributions")),
+    ...excludedAttributionSourceViews.map((view) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "attribution-source" as const, view.source.id, undefined, false, "blocked attribution sources")),
+    ...excludedTenantViews.map((tenant) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "tenant" as const, tenant.id, undefined, false, "blocked tenants")),
+    ...excludedSegments.map((segment) => buildCuratedCatalogDistributionIntegratedItem(context.contextId, catalog.catalog.id, "catalog-segment" as const, segment.id, undefined, false, "blocked catalog segments"))
+  ];
+
+  return {
+    catalog,
+    config,
+    resolution,
+    channels,
+    featuredChannels,
+    excludedChannels,
+    profiles,
+    excludedProfiles,
+    communityDistributions: communityDistributionViews,
+    excludedCommunityDistributions: excludedCommunityDistributionViews,
+    attributionSources: attributionSourceViews,
+    excludedAttributionSources: excludedAttributionSourceViews,
+    tenants: tenantViews,
+    excludedTenants: excludedTenantViews,
+    segments,
+    excludedSegments,
+    context,
+    includedItems,
+    excludedItems,
+    boundaryNotes: [
+      ...resolution.warnings,
+      ...resolution.disclaimers,
+      ...catalog.boundaryNotes,
+      ...channels.flatMap((view) => view.boundaryNotes),
+      ...profiles.flatMap((view) => view.boundaryNotes),
+      ...communityDistributionViews.flatMap((view) => view.boundaryNotes),
+      ...attributionSourceViews.flatMap((view) => view.boundaryNotes)
+    ]
+  };
+}
+
+function buildTenantDistributionIntegratedItem(
+  contextId: string,
+  tenantId: string,
+  targetType: DistributionIntegratedItem["targetType"],
+  targetId: string,
+  inclusionReason?: string,
+  isFeatured = false,
+  exclusionReason?: string
+): DistributionIntegratedItem {
+  const collection = targetType === "curated-catalog" ? resolveCuratedCatalog(targetId)?.items.find((item) => item.item.isFederated)?.collection?.collection : undefined;
+  return {
+    id: `${contextId}-${targetType}-${targetId}`,
+    contextId,
+    contextType: "tenant",
+    targetType,
+    targetId,
+    tenantId,
+    source: "tenant distribution rules",
+    inclusionReason,
+    exclusionReason,
+    isFeatured,
+    isFederated: Boolean(collection?.isFederated),
+    isExternal: Boolean(collection?.isExternal),
+    isNative: !collection?.isExternal,
+    canDisplay: Boolean(inclusionReason),
+    canTrack: false,
+    canAttributeRevenue: false,
+    canTriggerPayout: false,
+    canSettle: false,
+    warnings: ["Distribution Integrated Item is mock/config-first."],
+    disclaimers: ["No revenue sharing, commission, payout, settlement, billing, tracking real or Marketplace Intelligence is active."]
+  };
+}
+
+function buildCuratedCatalogDistributionIntegratedItem(
+  contextId: string,
+  curatedCatalogId: string,
+  targetType: DistributionIntegratedItem["targetType"],
+  targetId: string,
+  inclusionReason?: string,
+  isFeatured = false,
+  exclusionReason?: string
+): DistributionIntegratedItem {
+  const catalog = resolveCuratedCatalog(curatedCatalogId);
+  return {
+    id: `${contextId}-${targetType}-${targetId}`,
+    contextId,
+    contextType: "curated-catalog",
+    targetType,
+    targetId,
+    curatedCatalogId,
+    source: "curated catalog distribution rules",
+    inclusionReason,
+    exclusionReason,
+    isFeatured,
+    isFederated: Boolean(catalog?.catalog.allowsFederatedAssets),
+    isExternal: Boolean(catalog?.items.some((item) => item.item.isExternal)),
+    isNative: !catalog?.items.some((item) => item.item.isExternal),
+    canDisplay: Boolean(inclusionReason),
+    canTrack: false,
+    canAttributeRevenue: false,
+    canTriggerPayout: false,
+    canSettle: false,
+    warnings: ["Distribution Integrated Item is mock/config-first."],
+    disclaimers: ["No revenue sharing, commission, payout, settlement, billing, tracking real or Marketplace Intelligence is active."]
+  };
+}
+
+export function getTenantDistributionChannels(tenantIdOrSlug?: string) {
+  return resolveTenantDistribution(tenantIdOrSlug).channels;
+}
+
+export function getTenantDistributionProfiles(tenantIdOrSlug?: string) {
+  return resolveTenantDistribution(tenantIdOrSlug).profiles;
+}
+
+export function getTenantDistributionAttributionSources(tenantIdOrSlug?: string) {
+  return resolveTenantDistribution(tenantIdOrSlug).attributionSources;
+}
+
+export function getTenantDistributionCommunityChannels(tenantIdOrSlug?: string) {
+  return resolveTenantDistribution(tenantIdOrSlug).communityDistributions;
+}
+
+export function getCuratedCatalogDistributionChannels(catalogIdOrSlug: string) {
+  return resolveCuratedCatalogDistribution(catalogIdOrSlug)?.channels ?? [];
+}
+
+export function getCuratedCatalogDistributionProfiles(catalogIdOrSlug: string) {
+  return resolveCuratedCatalogDistribution(catalogIdOrSlug)?.profiles ?? [];
+}
+
+export function getCuratedCatalogDistributionAttributionSources(catalogIdOrSlug: string) {
+  return resolveCuratedCatalogDistribution(catalogIdOrSlug)?.attributionSources ?? [];
+}
+
+export function getDistributionContextForTenant(tenantIdOrSlug?: string): DistributionIntegratedContext {
+  const tenant = getTenantByIdOrSlug(tenantIdOrSlug) ?? getGlobalTenant();
+  const config = getTenantDistributionConfig(tenant.id);
+  const channelId = uniqueValues([...(config.inheritsGlobalDistributionChannels ? ["distribution-channel-global-tenant"] : []), ...config.allowedDistributionChannelIds]).find(
+    (id) => !config.blockedDistributionChannelIds.includes(id)
+  );
+  const channel = channelId ? getDistributionChannelById(channelId) : null;
+  const attributionId = config.allowedAttributionSourceIds.find((id) => !config.blockedAttributionSourceIds.includes(id));
+  const attribution = attributionId ? getAttributionSourceById(attributionId) : null;
+
+  return {
+    contextId: `tenant-distribution-context-${tenant.id}`,
+    contextType: "tenant",
+    tenantId: tenant.id,
+    channelId: channel?.channel.id,
+    profileId: config.allowedDistributionProfileIds.find((id) => !config.blockedDistributionProfileIds.includes(id)),
+    communityDistributionId: config.allowedCommunityDistributionIds.find((id) => !config.blockedCommunityDistributionIds.includes(id)),
+    attributionSourceId: attribution?.source.id,
+    commercialOriginLabel: attribution?.source.commercialOrigin.originLabel ?? channel?.channel.commercialOrigin.originLabel ?? "Tenant commercial origin mock",
+    distributionSourceLabel: attribution?.source.distributionSource.sourceLabel ?? channel?.channel.distributionSource.sourceLabel ?? "Tenant distribution source mock",
+    routingMode: resolveTenantRoutingContext(tenant.slug).resolution.routingMode,
+    isSimulated: true,
+    canDisplay: config.canDisplay && tenant.configuration.canDisplay,
+    canTrack: false,
+    canAttributeRevenue: false,
+    canTriggerPayout: false,
+    canSettle: false,
+    warnings: [...config.warnings, ...(channel?.channel.warnings ?? []), ...(attribution?.source.warnings ?? [])],
+    disclaimers: [
+      ...config.disclaimers,
+      ...(channel?.channel.disclaimers ?? []),
+      ...(attribution?.source.disclaimers ?? []),
+      "Distribution Integrated Context for tenant preserves tenant catalog isolation, branding/theme and domain simulation.",
+      "No revenue sharing, no commission, no payout, no settlement, no billing, no tracking real and no Marketplace Intelligence are active."
+    ]
+  };
+}
+
+export function getDistributionContextForCuratedCatalog(catalogIdOrSlug: string): DistributionIntegratedContext {
+  const catalog = resolveCuratedCatalog(catalogIdOrSlug);
+  const config = catalog ? getCuratedCatalogDistributionConfig(catalog.catalog.id) : null;
+  const channelId = config
+    ? uniqueValues([...(config.inheritsGlobalDistributionChannels ? ["distribution-channel-global-tenant"] : []), ...config.allowedDistributionChannelIds]).find(
+        (id) => !config.blockedDistributionChannelIds.includes(id)
+      )
+    : undefined;
+  const channel = channelId ? getDistributionChannelById(channelId) : null;
+  const attributionId = config?.allowedAttributionSourceIds.find((id) => !config.blockedAttributionSourceIds.includes(id));
+  const attribution = attributionId ? getAttributionSourceById(attributionId) : null;
+
+  return {
+    contextId: `curated-catalog-distribution-context-${catalog?.catalog.id ?? "missing"}`,
+    contextType: "curated-catalog",
+    curatedCatalogId: catalog?.catalog.id,
+    channelId: channel?.channel.id,
+    profileId: config?.allowedDistributionProfileIds.find((id) => !config.blockedDistributionProfileIds.includes(id)),
+    communityDistributionId: config?.allowedCommunityDistributionIds.find((id) => !config.blockedCommunityDistributionIds.includes(id)),
+    attributionSourceId: attribution?.source.id,
+    commercialOriginLabel: attribution?.source.commercialOrigin.originLabel ?? channel?.channel.commercialOrigin.originLabel ?? "Curated catalog commercial origin mock",
+    distributionSourceLabel: attribution?.source.distributionSource.sourceLabel ?? channel?.channel.distributionSource.sourceLabel ?? "Curated catalog distribution source mock",
+    routingMode: "mock/read-only curated catalog distribution",
+    isSimulated: true,
+    canDisplay: Boolean(config?.canDisplay && catalog?.catalog.status !== "disabled"),
+    canTrack: false,
+    canAttributeRevenue: false,
+    canTriggerPayout: false,
+    canSettle: false,
+    warnings: [...(config?.warnings ?? []), ...(catalog?.workflowSummary.warnings ?? []), ...(channel?.channel.warnings ?? []), ...(attribution?.source.warnings ?? [])],
+    disclaimers: [
+      ...(config?.disclaimers ?? []),
+      ...(catalog?.workflowSummary.disclaimers ?? []),
+      ...(channel?.channel.disclaimers ?? []),
+      ...(attribution?.source.disclaimers ?? []),
+      "Distribution Integrated Context for curated catalog preserves editorial rules, featured/segment context and federation boundaries.",
+      "No revenue sharing, no commission, no payout, no settlement, no billing, no tracking real and no Marketplace Intelligence are active."
+    ]
+  };
+}
+
+export function explainTenantDistributionInclusion(tenantIdOrSlug?: string) {
+  const view = resolveTenantDistribution(tenantIdOrSlug);
+  return view.resolution.appliedRules.map((rule) => ({
+    targetId: rule.targetId,
+    targetLabel: getTenantDistributionTargetLabel(rule),
+    reason: rule.reason,
+    boundaryNotes: [...rule.warnings, ...rule.disclaimers, ...view.context.disclaimers]
+  }));
+}
+
+export function explainTenantDistributionExclusion(tenantIdOrSlug?: string) {
+  const view = resolveTenantDistribution(tenantIdOrSlug);
+  return view.resolution.blockedRules.map((rule) => ({
+    targetId: rule.targetId,
+    targetLabel: getTenantDistributionTargetLabel(rule),
+    reason: rule.reason,
+    boundaryNotes: [...rule.warnings, ...rule.disclaimers, ...view.context.disclaimers]
+  }));
+}
+
+export function explainCuratedCatalogDistributionInclusion(catalogIdOrSlug: string) {
+  const view = resolveCuratedCatalogDistribution(catalogIdOrSlug);
+  if (!view) return [];
+  return view.resolution.appliedRules.map((rule) => ({
+    targetId: rule.targetId,
+    targetLabel: getCuratedCatalogDistributionTargetLabel(rule),
+    reason: rule.reason,
+    boundaryNotes: [...rule.warnings, ...rule.disclaimers, ...view.context.disclaimers]
+  }));
+}
+
+export function explainCuratedCatalogDistributionExclusion(catalogIdOrSlug: string) {
+  const view = resolveCuratedCatalogDistribution(catalogIdOrSlug);
+  if (!view) return [];
+  return view.resolution.blockedRules.map((rule) => ({
+    targetId: rule.targetId,
+    targetLabel: getCuratedCatalogDistributionTargetLabel(rule),
+    reason: rule.reason,
+    boundaryNotes: [...rule.warnings, ...rule.disclaimers, ...view.context.disclaimers]
+  }));
 }
 
 export function discoverWalletAssets(walletAddress?: string): WalletDiscoveryView {
