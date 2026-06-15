@@ -9,6 +9,8 @@ import {
   calculateDashboardMetrics,
   discoverWalletAssets,
   explainEditorialRules,
+  getDistributionChannelById,
+  getDistributionNetworkById,
   listCuratedCatalogs,
   getExternalContractById,
   getFederationProviderById,
@@ -22,6 +24,8 @@ import {
   listFederationProviders,
   listBoundaries,
   listCollections,
+  listDistributionChannels,
+  listDistributionNetworks,
   listProducts,
   getTenantDomains,
   getTenantVisibleCollections,
@@ -30,6 +34,7 @@ import {
   listTenants,
   listFeaturedCatalogs,
   listCatalogsBySegment,
+  resolveDistributionContext,
   resolveTenantCatalog,
   resolveTenantBranding,
   resolveTenantContext,
@@ -189,6 +194,76 @@ export function useCatalogsBySegment(segmentIdOrSlug?: string) {
         catalogCount: catalogs.length
       });
       return catalogs;
+    }
+  });
+}
+
+export function useDistributionNetworks() {
+  return useQuery({
+    queryKey: ["marketplace-distribution-networks"],
+    queryFn: () => {
+      const networks = listDistributionNetworks();
+      traceMarketplaceLifecycle("marketplace-distribution-networks-query", "completed", { networkCount: networks.length });
+      return networks;
+    }
+  });
+}
+
+export function useDistributionNetwork(networkIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-network", networkIdOrSlug],
+    enabled: Boolean(networkIdOrSlug),
+    queryFn: () => {
+      const network = getDistributionNetworkById(networkIdOrSlug ?? "");
+      if (!network) {
+        const error = new Error("Distribution Network not found");
+        instrumentMarketplaceError("marketplace-distribution-network-query", error, { networkIdOrSlug: networkIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-distribution-network-query", "completed", { networkId: network.network.id });
+      return network;
+    }
+  });
+}
+
+export function useDistributionChannels() {
+  return useQuery({
+    queryKey: ["marketplace-distribution-channels"],
+    queryFn: () => {
+      const channels = listDistributionChannels();
+      traceMarketplaceLifecycle("marketplace-distribution-channels-query", "completed", { channelCount: channels.length });
+      return channels;
+    }
+  });
+}
+
+export function useDistributionChannel(channelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-channel", channelIdOrSlug],
+    enabled: Boolean(channelIdOrSlug),
+    queryFn: () => {
+      const channel = getDistributionChannelById(channelIdOrSlug ?? "");
+      if (!channel) {
+        const error = new Error("Distribution Channel not found");
+        instrumentMarketplaceError("marketplace-distribution-channel-query", error, { channelIdOrSlug: channelIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-distribution-channel-query", "completed", { channelId: channel.channel.id });
+      return channel;
+    }
+  });
+}
+
+export function useDistributionContext(channelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-context", channelIdOrSlug],
+    queryFn: () => {
+      const context = resolveDistributionContext(channelIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-distribution-context-query", "completed", {
+        channelId: context.channel.channel.id,
+        fallback: context.isFallback
+      });
+      return context;
     }
   });
 }

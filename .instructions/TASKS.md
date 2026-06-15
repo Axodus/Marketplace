@@ -2,14 +2,18 @@
 
 # Phase 05 - Distribution Network Planning
 
-Status: PLANNING COMPLETE - DISTRIBUTION BOUNDARIES AUDITED
+Status: IN PROGRESS - DISTRIBUTION NETWORK MODEL IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_05_DISTRIBUTION_NETWORK_AUDIT.md`
 
+Runtime surfaces:
+- `/marketplace/distribution`
+- `/marketplace/distribution/:channelId`
+
 Recommended implementation sequence:
 - MEP-05A - Distribution Network Planning and Attribution Audit - COMPLETED
-- MEP-REQ-050 - Distribution Network Model
+- MEP-REQ-050 - Distribution Network Model - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-051 - Distributor and Partner Profiles
 - MEP-REQ-052 - Attribution and Distribution Sources
 - MEP-REQ-053 - Community Marketplace Distribution
@@ -25,8 +29,19 @@ MEP-05A delivered:
 - mapped future gaps for MEP-REQ-050 through MEP-REQ-054 without implementing runtime
 - preserved no revenue sharing, no settlement, no billing, no payout, no commission, no tracking real, no Marketplace Intelligence, no backend, no API, no database, no analytics and no BI boundaries
 
+MEP-REQ-050 delivered:
+- added Distribution Network, Distribution Channel, Distribution Placement, Distribution Source, Commercial Origin and Attribution Source models
+- added mock/config-first Distribution Network, Distribution Channel and Distribution Placement data
+- added helpers to list networks and channels, resolve channel detail and resolve a basic Distribution Context with global fallback
+- added hooks for Distribution Networks, Distribution Channels and Distribution Context
+- added `/marketplace/distribution` and `/marketplace/distribution/:channelId` surfaces
+- displayed channel type, status, visibility, governance status, scope, commercial origin, attribution source, distribution source, allowed and blocked references, placements, warnings and disclaimers
+- differentiated Tenant Marketplace, Partner Channel, Distributor Channel, Agency Channel, Affiliate Channel, Community Channel and Demo Channel
+- preserved canTrack=false, canAttributeRevenue=false and canSettle=false on distribution channels and attribution sources
+- preserved no revenue sharing, no settlement, no billing, no payout, no commission, no tracking real, no Marketplace Intelligence, no backend, no API, no database, no analytics and no BI boundaries
+
 Constraints:
-- keep Phase 05 planning and future runtime mock/config-first until explicit implementation requests authorize changes
+- keep Phase 05 runtime mock/config-first until explicit implementation requests authorize broader changes
 - do not activate affiliate tracking, cookie tracking, analytics tracking, campaign tracking, referral tracking, commission engine, payout, billing, settlement, treasury routing, Revenue Sharing, Marketplace Intelligence, backend, API, GraphQL schema, database, payments, wallet signatures, contract writes, bridge, provider real or BI
 - distribution channels must preserve tenant catalog isolation, curated catalog editorial boundaries and federated origin/provider/validation/provenance/risk/trust metadata
 

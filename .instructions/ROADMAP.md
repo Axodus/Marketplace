@@ -268,7 +268,7 @@ Implementation boundary:
 
 # Phase 05 — Distribution Network
 
-Status: PLANNING COMPLETE — DISTRIBUTION BOUNDARIES AUDITED
+Status: IN PROGRESS — DISTRIBUTION NETWORK MODEL IMPLEMENTED MOCK/CONFIG-FIRST
 
 Objectives:
 - model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
@@ -279,6 +279,8 @@ Objectives:
 
 Deliverables:
 - distribution channel model
+- Distribution Network Model mock/config-first runtime
+- Distribution Channel, Distribution Placement, Distribution Source, Commercial Origin and Attribution Source base models
 - distributor model
 - partner and affiliate boundary model
 - agency boundary model
@@ -294,7 +296,7 @@ Planning artifact:
 
 Linked requirements:
 - MEP-05A — Distribution Network Planning and Attribution Audit — completed
-- MEP-REQ-050 — Distribution Network Model
+- MEP-REQ-050 — Distribution Network Model — completed mock/config-first
 - MEP-REQ-051 — Distributor and Partner Profiles
 - MEP-REQ-052 — Attribution and Distribution Sources
 - MEP-REQ-053 — Community Marketplace Distribution
@@ -307,9 +309,13 @@ Dependencies:
 
 Implementation boundary:
 - MEP-05A is audit and planning only
-- future Phase 05 runtime must remain mock/config-first until explicit implementation requests authorize changes
+- Phase 05 runtime must remain mock/config-first until explicit implementation requests authorize broader changes
 - MEP-05A maps Distribution Network, Distribution Channel, Distributor, Partner, Agency, Affiliate, Community Marketplace, Attribution Source, Commercial Origin and Distribution Placement boundaries without implementing runtime
 - no real attribution, referral tracking, campaign tracking, cookie tracking, analytics tracking, partner network, commission engine, partner dashboard, affiliate links, payment, payout, API, GraphQL schema, database, persistence, frontend component, route, integration, settlement, treasury routing, Revenue Sharing, Marketplace Intelligence, analytics or BI is introduced by MEP-05A
+- MEP-REQ-050 introduces Distribution Network, Distribution Channel, Distribution Placement, Distribution Source, Commercial Origin and Attribution Source as mock/config-first runtime read models
+- MEP-REQ-050 adds `/marketplace/distribution` and `/marketplace/distribution/:channelId` to list and inspect distribution channels
+- MEP-REQ-050 keeps canTrack=false, canAttributeRevenue=false and canSettle=false for channel and attribution surfaces
+- MEP-REQ-050 does not introduce real attribution, referral tracking, campaign tracking, cookie tracking, analytics tracking, partner network, commission engine, partner dashboard, affiliate links, payment, payout, API, GraphQL schema, database, persistence, settlement, treasury routing, Revenue Sharing, Marketplace Intelligence, analytics or BI
 
 ---
 

@@ -126,6 +126,29 @@ export type TenantCuratedCatalogRuleType =
   | "block-federated-curated";
 export type TenantCuratedCatalogRuleEffect = "include" | "exclude" | "feature" | "inherit" | "restrict" | "warn";
 export type TenantCuratedCatalogRuleTargetType = "curated-catalog" | "catalog-segment" | "federated-curated-catalog" | "global-curated-catalogs";
+export type DistributionChannelType =
+  | "tenant"
+  | "partner"
+  | "distributor"
+  | "agency"
+  | "affiliate"
+  | "community"
+  | "academy"
+  | "acs"
+  | "enterprise"
+  | "creator"
+  | "dao"
+  | "demo";
+export type DistributionStatus = "draft" | "configured-mock" | "active-mock" | "review-required" | "governance-review" | "restricted" | "disabled" | "archived";
+export type DistributionVisibility = "public-mock" | "private-mock" | "tenant-only" | "restricted" | "hidden";
+export type DistributionScope = "global" | "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "community" | "demo";
+export type DistributionGovernanceStatus = "governance-aligned" | "governance-review" | "restricted" | "disabled";
+export type DistributionPlacementType = "storefront" | "catalog-section" | "featured-slot" | "campaign-mock" | "community-shelf" | "demo-preview";
+export type DistributionPlacementTargetType = "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "external-collection";
+export type DistributionSourceType = "tenant-storefront" | "curated-catalog" | "catalog-segment" | "referral-mock" | "campaign-mock" | "placement-mock" | "community-mock";
+export type CommercialOriginType = "tenant" | "partner" | "distributor" | "agency" | "affiliate" | "community" | "demo";
+export type AttributionStatus = "not-tracked" | "simulated-only" | "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
+export type TrackingMode = "none" | "simulated-only" | "manual-mock" | "referral-code-mock" | "placement-mock";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -471,6 +494,126 @@ export interface TenantCuratedCatalogResolution {
   excludedItems: TenantCuratedCatalogItem[];
   warnings: string[];
   disclaimers: string[];
+}
+
+export interface CommercialOrigin {
+  originType: CommercialOriginType;
+  originLabel: string;
+  channelId: string;
+  tenantId?: string;
+  partnerId?: string;
+  distributorId?: string;
+  sourceLabel: string;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AttributionSource {
+  id: string;
+  sourceType: DistributionSourceType;
+  sourceLabel: string;
+  channelId: string;
+  tenantId?: string;
+  catalogId?: string;
+  placementId?: string;
+  campaignLabel?: string;
+  referralCodeMock?: string;
+  trackingMode: TrackingMode;
+  status: AttributionStatus;
+  isSimulated: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionSource {
+  id: string;
+  sourceType: DistributionSourceType;
+  sourceLabel: string;
+  channelId: string;
+  tenantId?: string;
+  catalogId?: string;
+  placementId?: string;
+  status: DistributionStatus;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionPlacement {
+  id: string;
+  channelId: string;
+  placementType: DistributionPlacementType;
+  placementLabel: string;
+  targetType: DistributionPlacementTargetType;
+  targetId: string;
+  catalogId?: string;
+  curatedCatalogId?: string;
+  tenantId?: string;
+  position: number;
+  status: DistributionStatus;
+  visibility: DistributionVisibility;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionChannel {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  channelType: DistributionChannelType;
+  status: DistributionStatus;
+  visibility: DistributionVisibility;
+  governanceStatus: DistributionGovernanceStatus;
+  scope: DistributionScope;
+  operatorType: string;
+  operatorId: string;
+  tenantId?: string;
+  partnerId?: string;
+  distributorId?: string;
+  communityId?: string;
+  allowedCatalogIds: string[];
+  allowedCuratedCatalogIds: string[];
+  allowedSegmentIds: string[];
+  allowedProductIds: string[];
+  allowedCollectionIds: string[];
+  blockedCatalogIds: string[];
+  blockedProductIds: string[];
+  blockedCollectionIds: string[];
+  allowsFederatedAssets: boolean;
+  commercialOrigin: CommercialOrigin;
+  attributionSource: AttributionSource;
+  distributionSource: DistributionSource;
+  placementIds: string[];
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DistributionNetwork {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  status: DistributionStatus;
+  visibility: DistributionVisibility;
+  governanceStatus: DistributionGovernanceStatus;
+  channelIds: string[];
+  defaultChannelId: string;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CuratedCatalogRule {

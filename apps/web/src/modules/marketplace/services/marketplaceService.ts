@@ -4,6 +4,9 @@ import {
   marketplaceCatalogSegments,
   marketplaceCollections,
   marketplaceCuratedCatalogs,
+  marketplaceDistributionChannels,
+  marketplaceDistributionNetworks,
+  marketplaceDistributionPlacements,
   marketplaceFederationProviders,
   marketplaceFeaturedCatalogs,
   marketplaceLicenses,
@@ -21,6 +24,9 @@ import type {
   EditorialRule,
   CatalogSegment,
   DiscoveredAsset,
+  DistributionChannel,
+  DistributionNetwork,
+  DistributionPlacement,
   ExternalCollectionStatistics,
   ExternalContractReference,
   DraftListingInput,
@@ -97,6 +103,9 @@ const tenants = marketplaceTenants as Tenant[];
 const curatedCatalogs = marketplaceCuratedCatalogs as CuratedCatalog[];
 const catalogSegments = marketplaceCatalogSegments as CatalogSegment[];
 const featuredCatalogs = marketplaceFeaturedCatalogs as FeaturedCatalog[];
+const distributionNetworks = marketplaceDistributionNetworks as DistributionNetwork[];
+const distributionChannels = marketplaceDistributionChannels as DistributionChannel[];
+const distributionPlacements = marketplaceDistributionPlacements as DistributionPlacement[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
@@ -474,6 +483,45 @@ export interface TenantCuratedCatalogView {
   visibleItems: TenantCuratedCatalogItem[];
   excludedItems: TenantCuratedCatalogItem[];
   appliedRules: TenantCuratedCatalogConfig["rules"];
+  boundaryNotes: string[];
+}
+
+export interface DistributionPlacementView {
+  placement: DistributionPlacement;
+  targetLabel: string;
+  targetKind: string;
+  product?: Product;
+  collection?: MarketplaceCollection;
+  curatedCatalog?: CuratedCatalogView;
+  segment?: CatalogSegment;
+  tenant?: Tenant;
+  boundaryNotes: string[];
+}
+
+export interface DistributionChannelView {
+  channel: DistributionChannel;
+  tenant?: Tenant;
+  placements: DistributionPlacementView[];
+  allowedCuratedCatalogs: CuratedCatalogView[];
+  allowedSegments: CatalogSegment[];
+  allowedProducts: Product[];
+  allowedCollections: MarketplaceCollection[];
+  blockedProducts: Product[];
+  blockedCollections: MarketplaceCollection[];
+  boundaryNotes: string[];
+}
+
+export interface DistributionNetworkView {
+  network: DistributionNetwork;
+  channels: DistributionChannelView[];
+  defaultChannel: DistributionChannelView | null;
+  boundaryNotes: string[];
+}
+
+export interface DistributionContextView {
+  network: DistributionNetworkView;
+  channel: DistributionChannelView;
+  isFallback: boolean;
   boundaryNotes: string[];
 }
 
@@ -1534,6 +1582,173 @@ export function getCuratedCatalogBySlug(slug: string) {
 export function resolveCuratedCatalog(catalogIdOrSlug: string) {
   const catalog = getCuratedCatalogById(catalogIdOrSlug) ?? getCuratedCatalogBySlug(catalogIdOrSlug);
   return catalog ? buildCuratedCatalogView(catalog) : null;
+}
+
+function getDistributionChannelByIdOrSlug(channelIdOrSlug: string) {
+  const key = channelIdOrSlug.toLowerCase();
+  return distributionChannels.find((channel) => channel.id.toLowerCase() === key || channel.slug.toLowerCase() === key) ?? null;
+}
+
+function getDistributionNetworkByIdOrSlug(networkIdOrSlug: string) {
+  const key = networkIdOrSlug.toLowerCase();
+  return distributionNetworks.find((network) => network.id.toLowerCase() === key || network.slug.toLowerCase() === key) ?? null;
+}
+
+function getDistributionTargetLabel(placement: DistributionPlacement) {
+  if (placement.targetType === "product") {
+    return products.find((product) => product.id === placement.targetId)?.title ?? placement.targetId;
+  }
+  if (placement.targetType === "collection" || placement.targetType === "external-collection") {
+    return collections.find((collection) => collection.id === placement.targetId)?.name ?? placement.targetId;
+  }
+  if (placement.targetType === "curated-catalog") {
+    return curatedCatalogs.find((catalog) => catalog.id === placement.targetId)?.displayName ?? placement.targetId;
+  }
+  if (placement.targetType === "catalog-segment") {
+    return catalogSegments.find((segment) => segment.id === placement.targetId)?.displayName ?? placement.targetId;
+  }
+  if (placement.targetType === "tenant") {
+    return tenants.find((tenant) => tenant.id === placement.targetId)?.displayName ?? placement.targetId;
+  }
+  return placement.targetId;
+}
+
+function buildDistributionPlacementView(placement: DistributionPlacement): DistributionPlacementView {
+  const product = placement.targetType === "product" ? products.find((item) => item.id === placement.targetId) : undefined;
+  const collection =
+    placement.targetType === "collection" || placement.targetType === "external-collection"
+      ? collections.find((item) => item.id === placement.targetId)
+      : undefined;
+  const curatedCatalog =
+    placement.targetType === "curated-catalog" ? resolveCuratedCatalog(placement.targetId) ?? undefined : undefined;
+  const segment = placement.targetType === "catalog-segment" ? catalogSegments.find((item) => item.id === placement.targetId) : undefined;
+  const tenant = placement.tenantId ? getTenantById(placement.tenantId) ?? undefined : undefined;
+  const collectionBoundary = collection?.trustBoundary;
+
+  return {
+    placement,
+    targetLabel: getDistributionTargetLabel(placement),
+    targetKind: placement.targetType,
+    product,
+    collection,
+    curatedCatalog,
+    segment,
+    tenant,
+    boundaryNotes: [
+      ...placement.warnings,
+      ...placement.disclaimers,
+      ...(collectionBoundary?.notes ?? []),
+      "Distribution Placement is mock/config-first and does not execute referral tracking, campaign tracking, commission, payout, billing, settlement or revenue sharing."
+    ]
+  };
+}
+
+function buildDistributionChannelView(channel: DistributionChannel): DistributionChannelView {
+  const tenant = channel.tenantId ? getTenantById(channel.tenantId) ?? undefined : undefined;
+  const placements = distributionPlacements
+    .filter((placement) => channel.placementIds.includes(placement.id) || placement.channelId === channel.id)
+    .sort((left, right) => left.position - right.position || left.id.localeCompare(right.id))
+    .map(buildDistributionPlacementView);
+  const allowedCuratedCatalogs = channel.allowedCuratedCatalogIds
+    .map((catalogId) => resolveCuratedCatalog(catalogId))
+    .filter((catalog): catalog is CuratedCatalogView => Boolean(catalog));
+  const allowedSegments = channel.allowedSegmentIds
+    .map((segmentId) => catalogSegments.find((segment) => segment.id === segmentId || segment.slug === segmentId))
+    .filter((segment): segment is CatalogSegment => Boolean(segment));
+  const allowedProducts = channel.allowedProductIds
+    .map((productId) => products.find((product) => product.id === productId))
+    .filter((product): product is Product => Boolean(product));
+  const blockedProducts = channel.blockedProductIds
+    .map((productId) => products.find((product) => product.id === productId))
+    .filter((product): product is Product => Boolean(product));
+  const allowedCollections = channel.allowedCollectionIds
+    .map((collectionId) => collections.find((collection) => collection.id === collectionId))
+    .filter((collection): collection is MarketplaceCollection => Boolean(collection));
+  const blockedCollections = channel.blockedCollectionIds
+    .map((collectionId) => collections.find((collection) => collection.id === collectionId))
+    .filter((collection): collection is MarketplaceCollection => Boolean(collection));
+  const federationNotes = allowedCollections.flatMap((collection) => collection.trustBoundary?.notes ?? []);
+
+  return {
+    channel,
+    tenant,
+    placements,
+    allowedCuratedCatalogs,
+    allowedSegments,
+    allowedProducts,
+    allowedCollections,
+    blockedProducts,
+    blockedCollections,
+    boundaryNotes: [
+      ...channel.warnings,
+      ...channel.disclaimers,
+      ...channel.commercialOrigin.warnings,
+      ...channel.commercialOrigin.disclaimers,
+      ...channel.attributionSource.warnings,
+      ...channel.attributionSource.disclaimers,
+      ...channel.distributionSource.warnings,
+      ...channel.distributionSource.disclaimers,
+      ...federationNotes,
+      "Distribution Channel is mock/config-first; canTrack=false, canAttributeRevenue=false and canSettle=false.",
+      "Commercial Origin does not mean settlement, payout, billing, commission or revenue sharing.",
+      "Attribution Source does not mean affiliate tracking real, cookie tracking, analytics tracking, Marketplace Intelligence or BI."
+    ]
+  };
+}
+
+function buildDistributionNetworkView(network: DistributionNetwork): DistributionNetworkView {
+  const channels = network.channelIds
+    .map((channelId) => getDistributionChannelByIdOrSlug(channelId))
+    .filter((channel): channel is DistributionChannel => Boolean(channel))
+    .map(buildDistributionChannelView);
+  const defaultChannel = channels.find((view) => view.channel.id === network.defaultChannelId) ?? channels[0] ?? null;
+
+  return {
+    network,
+    channels,
+    defaultChannel,
+    boundaryNotes: [
+      ...network.warnings,
+      ...network.disclaimers,
+      "Distribution Network is a mock/config-first read model only.",
+      "No revenue sharing, no settlement, no billing, no payout, no commission, no tracking real, no Marketplace Intelligence, no backend, no API, no database, no analytics and no BI are active."
+    ]
+  };
+}
+
+export function listDistributionNetworks() {
+  return distributionNetworks.map(buildDistributionNetworkView);
+}
+
+export function getDistributionNetworkById(networkIdOrSlug: string) {
+  const network = getDistributionNetworkByIdOrSlug(networkIdOrSlug);
+  return network ? buildDistributionNetworkView(network) : null;
+}
+
+export function listDistributionChannels() {
+  return distributionChannels.map(buildDistributionChannelView);
+}
+
+export function getDistributionChannelById(channelIdOrSlug: string) {
+  const channel = getDistributionChannelByIdOrSlug(channelIdOrSlug);
+  return channel ? buildDistributionChannelView(channel) : null;
+}
+
+export function resolveDistributionContext(channelIdOrSlug?: string) {
+  const network = buildDistributionNetworkView(distributionNetworks[0]);
+  const requestedChannel = channelIdOrSlug ? getDistributionChannelById(channelIdOrSlug) : null;
+  const channel = requestedChannel ?? network.defaultChannel ?? listDistributionChannels()[0];
+
+  return {
+    network,
+    channel,
+    isFallback: !requestedChannel,
+    boundaryNotes: [
+      ...network.boundaryNotes,
+      ...channel.boundaryNotes,
+      "Distribution Context resolution never creates partner onboarding, commission, payout, billing, settlement, tracking real or revenue sharing."
+    ]
+  };
 }
 
 export function discoverWalletAssets(walletAddress?: string): WalletDiscoveryView {

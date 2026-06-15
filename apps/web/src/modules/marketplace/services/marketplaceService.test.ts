@@ -11,6 +11,8 @@ import {
   getCollectionSourceLabel,
   getCuratedCatalogById,
   getCuratedCatalogBySlug,
+  getDistributionChannelById,
+  getDistributionNetworkById,
   getExternalContractById,
   getFederationProviderById,
   getFederationProviderReference,
@@ -35,6 +37,8 @@ import {
   isValidMockWalletAddress,
   issueMockPurchase,
   listCuratedCatalogs,
+  listDistributionChannels,
+  listDistributionNetworks,
   listEditorialRules,
   listExternalContracts,
   listCatalogSegments,
@@ -59,6 +63,7 @@ import {
   resolveTenantBranding,
   resolveCuratedCatalog,
   resolveCuratedCatalogItems,
+  resolveDistributionContext,
   resolveTenantCatalog,
   resolveTenantContext,
   resolveTenantCuratedCatalogs,
@@ -500,6 +505,47 @@ describe("marketplaceService", () => {
 
     expect(product?.tokenStandard).toBe("ERC1155");
     expect(product?.listingType).toBe("english-auction");
+  });
+
+  it("represents Distribution Network channels as mock/config-first non-executing read models", () => {
+    const networks = listDistributionNetworks();
+    const channels = listDistributionChannels();
+    const globalNetwork = getDistributionNetworkById("axodus-distribution-network");
+    const partnerChannel = getDistributionChannelById("academy-partner-channel");
+    const affiliateChannel = getDistributionChannelById("distribution-channel-affiliate-demo");
+    const communityChannel = getDistributionChannelById("community-marketplace-channel");
+    const context = resolveDistributionContext("affiliate-demo-channel");
+    const fallback = resolveDistributionContext("missing-channel");
+
+    expect(networks).toHaveLength(1);
+    expect(globalNetwork?.channels).toHaveLength(7);
+    expect(channels.map((view) => view.channel.channelType)).toEqual([
+      "tenant",
+      "partner",
+      "distributor",
+      "community",
+      "affiliate",
+      "agency",
+      "demo"
+    ]);
+    expect(partnerChannel?.channel.commercialOrigin.originType).toBe("partner");
+    expect(partnerChannel?.allowedCuratedCatalogs.map((catalog) => catalog.catalog.slug)).toContain("academy-onboarding");
+    expect(partnerChannel?.placements[0].targetLabel).toBe("Academy Onboarding");
+    expect(affiliateChannel?.channel.attributionSource.sourceType).toBe("referral-mock");
+    expect(affiliateChannel?.channel.attributionSource.trackingMode).toBe("referral-code-mock");
+    expect(affiliateChannel?.channel.canTrack).toBe(false);
+    expect(affiliateChannel?.channel.canAttributeRevenue).toBe(false);
+    expect(affiliateChannel?.channel.canSettle).toBe(false);
+    expect(communityChannel?.allowedCollections.some((collection) => collection.id === "external-collection-harmony-creator-keys")).toBe(true);
+    expect(communityChannel?.boundaryNotes.join(" ")).toContain("Federated Collection display is read-only");
+    expect(context.channel.channel.id).toBe("distribution-channel-affiliate-demo");
+    expect(context.boundaryNotes.join(" ")).toContain("No affiliate tracking real");
+    expect(fallback.isFallback).toBe(true);
+    expect(fallback.channel.channel.id).toBe("distribution-channel-global-tenant");
+    expect(networks[0].boundaryNotes.join(" ")).toContain("no tracking real");
+    expect(channels.every((view) => view.channel.canSettle === false)).toBe(true);
+    expect(channels.every((view) => view.channel.canTrack === false)).toBe(true);
+    expect(channels.every((view) => view.channel.canAttributeRevenue === false)).toBe(true);
   });
 
   it("issues mock purchase records without settlement", () => {
