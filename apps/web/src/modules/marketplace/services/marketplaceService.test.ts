@@ -13,6 +13,10 @@ import {
   getCuratedCatalogBySlug,
   getDistributionChannelById,
   getDistributionNetworkById,
+  getDistributionProfileById,
+  getDistributionProfileBySlug,
+  getDistributionProfilesByChannel,
+  getDistributionProfilesByType,
   getExternalContractById,
   getFederationProviderById,
   getFederationProviderReference,
@@ -39,6 +43,7 @@ import {
   listCuratedCatalogs,
   listDistributionChannels,
   listDistributionNetworks,
+  listDistributionProfiles,
   listEditorialRules,
   listExternalContracts,
   listCatalogSegments,
@@ -64,6 +69,7 @@ import {
   resolveCuratedCatalog,
   resolveCuratedCatalogItems,
   resolveDistributionContext,
+  resolveDistributionProfileContext,
   resolveTenantCatalog,
   resolveTenantContext,
   resolveTenantCuratedCatalogs,
@@ -546,6 +552,49 @@ describe("marketplaceService", () => {
     expect(channels.every((view) => view.channel.canSettle === false)).toBe(true);
     expect(channels.every((view) => view.channel.canTrack === false)).toBe(true);
     expect(channels.every((view) => view.channel.canAttributeRevenue === false)).toBe(true);
+  });
+
+  it("represents Distribution Profiles as mock/config-first identities without onboarding or tracking", () => {
+    const profiles = listDistributionProfiles();
+    const distributor = getDistributionProfileById("distribution-profile-acs-distributor");
+    const partner = getDistributionProfileBySlug("academy-partner-profile");
+    const agency = getDistributionProfileById("agency-preview-profile");
+    const affiliate = getDistributionProfileById("affiliate-demo-profile");
+    const community = getDistributionProfileById("community-marketplace-profile");
+    const disabled = getDistributionProfileById("demo-sandbox-profile");
+    const partnerProfiles = getDistributionProfilesByType("partner");
+    const channelProfiles = getDistributionProfilesByChannel("academy-partner-channel");
+    const context = resolveDistributionProfileContext("affiliate-demo-profile");
+    const fallback = resolveDistributionProfileContext("missing-profile");
+
+    expect(profiles.map((view) => view.profile.profileType)).toEqual([
+      "distributor",
+      "partner",
+      "agency",
+      "affiliate",
+      "community-marketplace",
+      "demo"
+    ]);
+    expect(distributor?.channels[0].channel.id).toBe("distribution-channel-acs-distributor");
+    expect(distributor?.segments.map((segment) => segment.slug)).toContain("acs");
+    expect(partner?.curatedCatalogs.map((catalog) => catalog.catalog.slug)).toContain("academy-onboarding");
+    expect(partner?.tenants.map((tenant) => tenant.slug)).toContain("academy");
+    expect(agency?.profile.governanceStatus).toBe("review-required");
+    expect(affiliate?.profile.commercialLabel).toContain("no tracking real");
+    expect(community?.profile.profileType).toBe("community-marketplace");
+    expect(community?.boundaryNotes.join(" ")).toContain("not a Seller Profile, Tenant Identity or Federation Provider");
+    expect(disabled?.profile.status).toBe("disabled");
+    expect(partnerProfiles).toHaveLength(1);
+    expect(channelProfiles[0].profile.id).toBe("distribution-profile-academy-partner");
+    expect(context.profile.profile.id).toBe("distribution-profile-affiliate-demo");
+    expect(context.boundaryNotes.join(" ")).toContain("KYC real");
+    expect(context.boundaryNotes.join(" ")).toContain("commercial contract real");
+    expect(context.boundaryNotes.join(" ")).toContain("no revenue sharing");
+    expect(fallback.isFallback).toBe(true);
+    expect(fallback.profile.profile.status).not.toBe("disabled");
+    expect(profiles.every((view) => view.boundaryNotes.join(" ").includes("tracking real"))).toBe(true);
+    expect(profiles.every((view) => view.boundaryNotes.join(" ").includes("commission"))).toBe(true);
+    expect(profiles.every((view) => view.boundaryNotes.join(" ").includes("payout"))).toBe(true);
   });
 
   it("issues mock purchase records without settlement", () => {

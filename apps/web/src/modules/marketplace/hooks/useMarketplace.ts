@@ -11,6 +11,8 @@ import {
   explainEditorialRules,
   getDistributionChannelById,
   getDistributionNetworkById,
+  getDistributionProfileById,
+  getDistributionProfilesByType,
   listCuratedCatalogs,
   getExternalContractById,
   getFederationProviderById,
@@ -26,6 +28,7 @@ import {
   listCollections,
   listDistributionChannels,
   listDistributionNetworks,
+  listDistributionProfiles,
   listProducts,
   getTenantDomains,
   getTenantVisibleCollections,
@@ -35,6 +38,7 @@ import {
   listFeaturedCatalogs,
   listCatalogsBySegment,
   resolveDistributionContext,
+  resolveDistributionProfileContext,
   resolveTenantCatalog,
   resolveTenantBranding,
   resolveTenantContext,
@@ -261,6 +265,63 @@ export function useDistributionContext(channelIdOrSlug?: string) {
       const context = resolveDistributionContext(channelIdOrSlug);
       traceMarketplaceLifecycle("marketplace-distribution-context-query", "completed", {
         channelId: context.channel.channel.id,
+        fallback: context.isFallback
+      });
+      return context;
+    }
+  });
+}
+
+export function useDistributionProfiles() {
+  return useQuery({
+    queryKey: ["marketplace-distribution-profiles"],
+    queryFn: () => {
+      const profiles = listDistributionProfiles();
+      traceMarketplaceLifecycle("marketplace-distribution-profiles-query", "completed", { profileCount: profiles.length });
+      return profiles;
+    }
+  });
+}
+
+export function useDistributionProfile(profileIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-profile", profileIdOrSlug],
+    enabled: Boolean(profileIdOrSlug),
+    queryFn: () => {
+      const profile = getDistributionProfileById(profileIdOrSlug ?? "");
+      if (!profile) {
+        const error = new Error("Distribution Profile not found");
+        instrumentMarketplaceError("marketplace-distribution-profile-query", error, { profileIdOrSlug: profileIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-distribution-profile-query", "completed", { profileId: profile.profile.id });
+      return profile;
+    }
+  });
+}
+
+export function useDistributionProfilesByType(profileType?: Parameters<typeof getDistributionProfilesByType>[0]) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-profiles-by-type", profileType],
+    enabled: Boolean(profileType),
+    queryFn: () => {
+      const profiles = getDistributionProfilesByType(profileType as Parameters<typeof getDistributionProfilesByType>[0]);
+      traceMarketplaceLifecycle("marketplace-distribution-profiles-by-type-query", "completed", {
+        profileType: profileType ?? null,
+        profileCount: profiles.length
+      });
+      return profiles;
+    }
+  });
+}
+
+export function useDistributionProfileContext(profileIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-profile-context", profileIdOrSlug],
+    queryFn: () => {
+      const context = resolveDistributionProfileContext(profileIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-distribution-profile-context-query", "completed", {
+        profileId: context.profile.profile.id,
         fallback: context.isFallback
       });
       return context;

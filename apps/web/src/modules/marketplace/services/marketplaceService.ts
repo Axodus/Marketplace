@@ -7,6 +7,7 @@ import {
   marketplaceDistributionChannels,
   marketplaceDistributionNetworks,
   marketplaceDistributionPlacements,
+  marketplaceDistributionProfiles,
   marketplaceFederationProviders,
   marketplaceFeaturedCatalogs,
   marketplaceLicenses,
@@ -27,6 +28,7 @@ import type {
   DistributionChannel,
   DistributionNetwork,
   DistributionPlacement,
+  DistributionProfile,
   ExternalCollectionStatistics,
   ExternalContractReference,
   DraftListingInput,
@@ -106,6 +108,7 @@ const featuredCatalogs = marketplaceFeaturedCatalogs as FeaturedCatalog[];
 const distributionNetworks = marketplaceDistributionNetworks as DistributionNetwork[];
 const distributionChannels = marketplaceDistributionChannels as DistributionChannel[];
 const distributionPlacements = marketplaceDistributionPlacements as DistributionPlacement[];
+const distributionProfiles = marketplaceDistributionProfiles as DistributionProfile[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
@@ -522,6 +525,16 @@ export interface DistributionContextView {
   network: DistributionNetworkView;
   channel: DistributionChannelView;
   isFallback: boolean;
+  boundaryNotes: string[];
+}
+
+export interface DistributionProfileView {
+  profile: DistributionProfile;
+  channels: DistributionChannelView[];
+  tenants: Tenant[];
+  curatedCatalogs: CuratedCatalogView[];
+  segments: CatalogSegment[];
+  relationshipLabels: string[];
   boundaryNotes: string[];
 }
 
@@ -1747,6 +1760,122 @@ export function resolveDistributionContext(channelIdOrSlug?: string) {
       ...network.boundaryNotes,
       ...channel.boundaryNotes,
       "Distribution Context resolution never creates partner onboarding, commission, payout, billing, settlement, tracking real or revenue sharing."
+    ]
+  };
+}
+
+function getDistributionProfileByIdOrSlug(profileIdOrSlug: string) {
+  const key = profileIdOrSlug.toLowerCase();
+  return distributionProfiles.find((profile) => profile.id.toLowerCase() === key || profile.slug.toLowerCase() === key) ?? null;
+}
+
+function getDistributionProfileRelationshipLabel(profile: DistributionProfile, relationshipId: string) {
+  const relationship = profile.relationships.find((entry) => entry.id === relationshipId);
+  if (!relationship) {
+    return relationshipId;
+  }
+
+  if (relationship.targetType === "distribution-channel") {
+    return getDistributionChannelById(relationship.targetId)?.channel.displayName ?? relationship.targetId;
+  }
+  if (relationship.targetType === "tenant") {
+    return getTenantById(relationship.targetId)?.displayName ?? relationship.targetId;
+  }
+  if (relationship.targetType === "curated-catalog") {
+    return resolveCuratedCatalog(relationship.targetId)?.catalog.displayName ?? relationship.targetId;
+  }
+  if (relationship.targetType === "catalog-segment") {
+    return catalogSegments.find((segment) => segment.id === relationship.targetId || segment.slug === relationship.targetId)?.displayName ?? relationship.targetId;
+  }
+  if (relationship.targetType === "community") {
+    return relationship.targetId;
+  }
+
+  return relationship.targetId;
+}
+
+function buildDistributionProfileView(profile: DistributionProfile): DistributionProfileView {
+  const channels = profile.channelIds
+    .map((channelId) => getDistributionChannelById(channelId))
+    .filter((channel): channel is DistributionChannelView => Boolean(channel));
+  const tenantsForProfile = profile.tenantIds
+    .map((tenantId) => getTenantById(tenantId))
+    .filter((tenant): tenant is Tenant => Boolean(tenant));
+  const curatedCatalogsForProfile = profile.curatedCatalogIds
+    .map((catalogId) => resolveCuratedCatalog(catalogId))
+    .filter((catalog): catalog is CuratedCatalogView => Boolean(catalog));
+  const segmentsForProfile = profile.catalogSegmentIds
+    .map((segmentId) => catalogSegments.find((segment) => segment.id === segmentId || segment.slug === segmentId))
+    .filter((segment): segment is CatalogSegment => Boolean(segment));
+  const relationshipLabels = profile.relationships.map((relationship) => `${relationship.relationshipType}: ${getDistributionProfileRelationshipLabel(profile, relationship.id)}`);
+
+  return {
+    profile,
+    channels,
+    tenants: tenantsForProfile,
+    curatedCatalogs: curatedCatalogsForProfile,
+    segments: segmentsForProfile,
+    relationshipLabels,
+    boundaryNotes: [
+      ...profile.warnings,
+      ...profile.disclaimers,
+      ...profile.relationships.flatMap((relationship) => [...relationship.warnings, ...relationship.disclaimers]),
+      ...channels.flatMap((channel) => channel.boundaryNotes),
+      "Distribution Profile is mock/config-first and is not a Seller Profile, Tenant Identity or Federation Provider.",
+      "Distribution Profile does not mean KYC real, onboarding real, commercial contract real, commission, payout, settlement, billing, revenue sharing or tracking real.",
+      "Associated channels, tenants, curated catalogs and segments are references only and do not duplicate product, tenant or provider truth."
+    ]
+  };
+}
+
+export function listDistributionProfiles() {
+  return distributionProfiles.map(buildDistributionProfileView);
+}
+
+export function getDistributionProfileById(profileIdOrSlug: string) {
+  const profile = getDistributionProfileByIdOrSlug(profileIdOrSlug);
+  return profile ? buildDistributionProfileView(profile) : null;
+}
+
+export function getDistributionProfileBySlug(profileSlug: string) {
+  const profile = distributionProfiles.find((entry) => entry.slug === profileSlug) ?? null;
+  return profile ? buildDistributionProfileView(profile) : null;
+}
+
+export function getDistributionProfilesByType(profileType: DistributionProfile["profileType"]) {
+  return distributionProfiles.filter((profile) => profile.profileType === profileType).map(buildDistributionProfileView);
+}
+
+export function getDistributionProfilesByChannel(channelIdOrSlug: string) {
+  const channel = getDistributionChannelByIdOrSlug(channelIdOrSlug);
+  if (!channel) {
+    return [];
+  }
+  return distributionProfiles.filter((profile) => profile.channelIds.includes(channel.id)).map(buildDistributionProfileView);
+}
+
+export function getDistributionProfileChannels(profileIdOrSlug: string) {
+  return getDistributionProfileById(profileIdOrSlug)?.channels ?? [];
+}
+
+export function getDistributionProfileTenants(profileIdOrSlug: string) {
+  return getDistributionProfileById(profileIdOrSlug)?.tenants ?? [];
+}
+
+export function getDistributionProfileCuratedCatalogs(profileIdOrSlug: string) {
+  return getDistributionProfileById(profileIdOrSlug)?.curatedCatalogs ?? [];
+}
+
+export function resolveDistributionProfileContext(profileIdOrSlug?: string) {
+  const requestedProfile = profileIdOrSlug ? getDistributionProfileById(profileIdOrSlug) : null;
+  const profile = requestedProfile ?? listDistributionProfiles().find((view) => view.profile.status !== "disabled") ?? listDistributionProfiles()[0];
+
+  return {
+    profile,
+    isFallback: !requestedProfile,
+    boundaryNotes: [
+      ...profile.boundaryNotes,
+      "Distribution Profile Context resolution never creates KYC real, partner onboarding real, commercial contract real, commission, payout, billing, settlement, tracking real or revenue sharing."
     ]
   };
 }

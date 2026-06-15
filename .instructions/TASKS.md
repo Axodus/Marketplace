@@ -2,7 +2,7 @@
 
 # Phase 05 - Distribution Network Planning
 
-Status: IN PROGRESS - DISTRIBUTION NETWORK MODEL IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - DISTRIBUTION PROFILES IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_05_DISTRIBUTION_NETWORK_AUDIT.md`
@@ -10,11 +10,13 @@ Planning artifact:
 Runtime surfaces:
 - `/marketplace/distribution`
 - `/marketplace/distribution/:channelId`
+- `/marketplace/distribution/profiles`
+- `/marketplace/distribution/profiles/:profileSlug`
 
 Recommended implementation sequence:
 - MEP-05A - Distribution Network Planning and Attribution Audit - COMPLETED
 - MEP-REQ-050 - Distribution Network Model - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-051 - Distributor and Partner Profiles
+- MEP-REQ-051 - Distributor and Partner Profiles - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-052 - Attribution and Distribution Sources
 - MEP-REQ-053 - Community Marketplace Distribution
 - MEP-REQ-054 - Tenant and Curated Catalog Distribution Integration
@@ -39,6 +41,16 @@ MEP-REQ-050 delivered:
 - differentiated Tenant Marketplace, Partner Channel, Distributor Channel, Agency Channel, Affiliate Channel, Community Channel and Demo Channel
 - preserved canTrack=false, canAttributeRevenue=false and canSettle=false on distribution channels and attribution sources
 - preserved no revenue sharing, no settlement, no billing, no payout, no commission, no tracking real, no Marketplace Intelligence, no backend, no API, no database, no analytics and no BI boundaries
+
+MEP-REQ-051 delivered:
+- added Distribution Profile and Distribution Profile Relationship models for Distributor Profile, Partner Profile, Agency Profile, Affiliate Profile, Community Marketplace Profile and Demo Profile
+- added mock/config-first Distribution Profile data linked to existing Distribution Channels, Tenants, Curated Catalogs and Catalog Segments by reference
+- added helpers to list profiles, resolve profile detail by id or slug, filter profiles by type or channel and resolve Distribution Profile Context with fallback
+- added hooks for Distribution Profiles, Distribution Profile detail, Distribution Profiles by type and Distribution Profile Context
+- added `/marketplace/distribution/profiles` and `/marketplace/distribution/profiles/:profileSlug` surfaces
+- displayed profile type, status, visibility, governance status, operator label, trust label, commercial label, associated channels, associated tenants, associated curated catalogs, associated segments, capabilities, limitations, relationships, warnings and disclaimers
+- differentiated Distribution Profile from Seller Profile, Tenant Identity and Federation Provider
+- preserved no KYC real, no onboarding real, no contract real, no payout, no commission, no revenue sharing, no settlement, no billing, no tracking real, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
 
 Constraints:
 - keep Phase 05 runtime mock/config-first until explicit implementation requests authorize broader changes

@@ -268,7 +268,7 @@ Implementation boundary:
 
 # Phase 05 — Distribution Network
 
-Status: IN PROGRESS — DISTRIBUTION NETWORK MODEL IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS — DISTRIBUTION PROFILES IMPLEMENTED MOCK/CONFIG-FIRST
 
 Objectives:
 - model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
@@ -282,6 +282,7 @@ Deliverables:
 - Distribution Network Model mock/config-first runtime
 - Distribution Channel, Distribution Placement, Distribution Source, Commercial Origin and Attribution Source base models
 - distributor model
+- Distributor Profile, Partner Profile, Agency Profile, Affiliate Profile and Community Marketplace Profile mock/config-first runtime
 - partner and affiliate boundary model
 - agency boundary model
 - Community Marketplace boundary model
@@ -297,7 +298,7 @@ Planning artifact:
 Linked requirements:
 - MEP-05A — Distribution Network Planning and Attribution Audit — completed
 - MEP-REQ-050 — Distribution Network Model — completed mock/config-first
-- MEP-REQ-051 — Distributor and Partner Profiles
+- MEP-REQ-051 — Distributor and Partner Profiles — completed mock/config-first
 - MEP-REQ-052 — Attribution and Distribution Sources
 - MEP-REQ-053 — Community Marketplace Distribution
 - MEP-REQ-054 — Tenant and Curated Catalog Distribution Integration
@@ -316,6 +317,10 @@ Implementation boundary:
 - MEP-REQ-050 adds `/marketplace/distribution` and `/marketplace/distribution/:channelId` to list and inspect distribution channels
 - MEP-REQ-050 keeps canTrack=false, canAttributeRevenue=false and canSettle=false for channel and attribution surfaces
 - MEP-REQ-050 does not introduce real attribution, referral tracking, campaign tracking, cookie tracking, analytics tracking, partner network, commission engine, partner dashboard, affiliate links, payment, payout, API, GraphQL schema, database, persistence, settlement, treasury routing, Revenue Sharing, Marketplace Intelligence, analytics or BI
+- MEP-REQ-051 introduces Distribution Profiles and Distribution Profile Relationships as mock/config-first runtime read models
+- MEP-REQ-051 adds `/marketplace/distribution/profiles` and `/marketplace/distribution/profiles/:profileSlug` to list and inspect distribution profiles
+- MEP-REQ-051 differentiates Distributor Profile, Partner Profile, Agency Profile, Affiliate Profile and Community Marketplace Profile from Seller Profile, Tenant Identity and Federation Provider
+- MEP-REQ-051 does not introduce KYC real, partner onboarding real, commercial contract real, commission rules, payout, billing, settlement, Revenue Sharing, affiliate tracking real, campaign tracking real, cookie tracking, analytics tracking, Marketplace Intelligence, BI, backend, API, database, payments or contracts
 
 ---
 

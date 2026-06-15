@@ -12,6 +12,7 @@ const CollectionsPage = lazy(() => import("./modules/marketplace/pages/Collectio
 const CollectionDetailPage = lazy(() => import("./modules/marketplace/pages/CollectionDetailPage").then((module) => ({ default: module.CollectionDetailPage })));
 const CuratedCatalogsPage = lazy(() => import("./modules/marketplace/pages/CuratedCatalogsPage").then((module) => ({ default: module.CuratedCatalogsPage })));
 const DistributionNetworkPage = lazy(() => import("./modules/marketplace/pages/DistributionNetworkPage").then((module) => ({ default: module.DistributionNetworkPage })));
+const DistributionProfilesPage = lazy(() => import("./modules/marketplace/pages/DistributionProfilesPage").then((module) => ({ default: module.DistributionProfilesPage })));
 const CreateSellPage = lazy(() => import("./modules/marketplace/pages/CreateSellPage").then((module) => ({ default: module.CreateSellPage })));
 const ProductDetailPage = lazy(() => import("./modules/marketplace/pages/ProductDetailPage").then((module) => ({ default: module.ProductDetailPage })));
 const SellerProfilePage = lazy(() => import("./modules/marketplace/pages/SellerProfilePage").then((module) => ({ default: module.SellerProfilePage })));
@@ -72,6 +73,8 @@ const router = createBrowserRouter([
       { path: "marketplace/curated", element: routeElement(<CuratedCatalogsPage />) },
       { path: "marketplace/curated/:catalogId", element: routeElement(<CuratedCatalogsPage />) },
       { path: "marketplace/distribution", element: routeElement(<DistributionNetworkPage />) },
+      { path: "marketplace/distribution/profiles", element: routeElement(<DistributionProfilesPage />) },
+      { path: "marketplace/distribution/profiles/:profileSlug", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/:channelId", element: routeElement(<DistributionNetworkPage />) },
       { path: "marketplace/create", element: routeElement(<CreateSellPage />) },
       { path: "marketplace/sell", element: routeElement(<CreateSellPage />) },

@@ -149,6 +149,32 @@ export type DistributionSourceType = "tenant-storefront" | "curated-catalog" | "
 export type CommercialOriginType = "tenant" | "partner" | "distributor" | "agency" | "affiliate" | "community" | "demo";
 export type AttributionStatus = "not-tracked" | "simulated-only" | "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
 export type TrackingMode = "none" | "simulated-only" | "manual-mock" | "referral-code-mock" | "placement-mock";
+export type DistributionProfileType =
+  | "distributor"
+  | "partner"
+  | "agency"
+  | "affiliate"
+  | "community-marketplace"
+  | "tenant-operator"
+  | "creator-network"
+  | "academy-network"
+  | "acs-network"
+  | "enterprise-network"
+  | "dao-network"
+  | "demo";
+export type DistributionProfileStatus =
+  | "draft"
+  | "configured-mock"
+  | "active-mock"
+  | "review-required"
+  | "governance-review"
+  | "restricted"
+  | "disabled"
+  | "archived";
+export type DistributionProfileVisibility = "public-mock" | "private-mock" | "tenant-only" | "restricted" | "hidden";
+export type DistributionProfileGovernanceStatus = "not-reviewed" | "review-required" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
+export type DistributionProfileRelationshipType = "operates-channel" | "represents-tenant" | "features-curated-catalog" | "covers-segment" | "community-context";
+export type DistributionProfileRelationshipTargetType = "distribution-channel" | "tenant" | "curated-catalog" | "catalog-segment" | "community";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -610,6 +636,50 @@ export interface DistributionNetwork {
   governanceStatus: DistributionGovernanceStatus;
   channelIds: string[];
   defaultChannelId: string;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DistributionProfileRelationship {
+  id: string;
+  profileId: string;
+  relationshipType: DistributionProfileRelationshipType;
+  targetType: DistributionProfileRelationshipTargetType;
+  targetId: string;
+  status: DistributionProfileStatus;
+  visibility: DistributionProfileVisibility;
+  governanceStatus: DistributionProfileGovernanceStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionProfile {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  profileType: DistributionProfileType;
+  status: DistributionProfileStatus;
+  visibility: DistributionProfileVisibility;
+  governanceStatus: DistributionProfileGovernanceStatus;
+  operatorType: string;
+  operatorLabel: string;
+  trustLabel: string;
+  commercialLabel: string;
+  tenantIds: string[];
+  channelIds: string[];
+  curatedCatalogIds: string[];
+  catalogSegmentIds: string[];
+  communityId?: string;
+  contactLabel?: string;
+  websiteLabel?: string;
+  regionLabel?: string;
+  capabilityLabels: string[];
+  limitationLabels: string[];
+  relationships: DistributionProfileRelationship[];
   warnings: string[];
   disclaimers: string[];
   createdAt: string;
