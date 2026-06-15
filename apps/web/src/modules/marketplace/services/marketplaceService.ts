@@ -1,4 +1,5 @@
 import {
+  marketplaceAttributionSources,
   marketplaceAssetRegistry,
   marketplaceBoundaries,
   marketplaceCatalogSegments,
@@ -18,6 +19,8 @@ import {
 } from "../../../data/mock/marketplace.mock";
 import type {
   AssetRegistryRecord,
+  AttributionContext,
+  AttributionSourceRecord,
   Chain,
   CuratedCatalog,
   CuratedCatalogItem,
@@ -109,6 +112,7 @@ const distributionNetworks = marketplaceDistributionNetworks as DistributionNetw
 const distributionChannels = marketplaceDistributionChannels as DistributionChannel[];
 const distributionPlacements = marketplaceDistributionPlacements as DistributionPlacement[];
 const distributionProfiles = marketplaceDistributionProfiles as DistributionProfile[];
+const attributionSources = marketplaceAttributionSources as AttributionSourceRecord[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
@@ -535,6 +539,19 @@ export interface DistributionProfileView {
   curatedCatalogs: CuratedCatalogView[];
   segments: CatalogSegment[];
   relationshipLabels: string[];
+  boundaryNotes: string[];
+}
+
+export interface AttributionSourceView {
+  source: AttributionSourceRecord;
+  context: AttributionContext;
+  channel?: DistributionChannelView;
+  profile?: DistributionProfileView;
+  tenant?: Tenant;
+  curatedCatalog?: CuratedCatalogView;
+  segment?: CatalogSegment;
+  placement?: DistributionPlacementView;
+  noteLabels: string[];
   boundaryNotes: string[];
 }
 
@@ -1876,6 +1893,169 @@ export function resolveDistributionProfileContext(profileIdOrSlug?: string) {
     boundaryNotes: [
       ...profile.boundaryNotes,
       "Distribution Profile Context resolution never creates KYC real, partner onboarding real, commercial contract real, commission, payout, billing, settlement, tracking real or revenue sharing."
+    ]
+  };
+}
+
+function getAttributionSourceByIdOrSlug(sourceIdOrSlug: string) {
+  const key = sourceIdOrSlug.toLowerCase();
+  return attributionSources.find((source) => source.id.toLowerCase() === key || source.slug.toLowerCase() === key) ?? null;
+}
+
+function buildAttributionContext(source: AttributionSourceRecord): AttributionContext {
+  return {
+    sourceId: source.id,
+    resolvedAt: "2026-06-15T11:30:00.000Z",
+    sourceType: source.sourceType,
+    trackingMode: source.trackingMode,
+    channelId: source.channelId,
+    profileId: source.profileId,
+    tenantId: source.tenantId,
+    catalogId: source.catalogId,
+    curatedCatalogId: source.curatedCatalogId,
+    segmentId: source.segmentId,
+    placementId: source.placementId,
+    commercialOriginLabel: source.commercialOrigin.originLabel,
+    isSimulated: source.isSimulated,
+    canTrack: source.canTrack,
+    canAttributeRevenue: source.canAttributeRevenue,
+    canTriggerPayout: source.canTriggerPayout,
+    canSettle: source.canSettle,
+    warnings: [
+      ...source.warnings,
+      ...source.commercialOrigin.warnings,
+      ...source.distributionSource.warnings,
+      ...source.attributionNotes.flatMap((note) => note.warnings)
+    ],
+    disclaimers: [
+      ...source.disclaimers,
+      ...source.commercialOrigin.disclaimers,
+      ...source.distributionSource.disclaimers,
+      ...source.attributionNotes.flatMap((note) => note.disclaimers),
+      "Attribution Context is mock/config-first and cannot track users, cookies, revenue, commissions, payout, billing, settlement or revenue sharing."
+    ]
+  };
+}
+
+function buildAttributionSourceView(source: AttributionSourceRecord): AttributionSourceView {
+  const channel = source.channelId ? getDistributionChannelById(source.channelId) ?? undefined : undefined;
+  const profile = source.profileId ? getDistributionProfileById(source.profileId) ?? undefined : undefined;
+  const tenant = source.tenantId ? getTenantById(source.tenantId) ?? undefined : undefined;
+  const curatedCatalog = source.curatedCatalogId ? resolveCuratedCatalog(source.curatedCatalogId) ?? undefined : undefined;
+  const segment = source.segmentId ? catalogSegments.find((item) => item.id === source.segmentId || item.slug === source.segmentId) : undefined;
+  const placement = source.placementId
+    ? distributionPlacements.find((item) => item.id === source.placementId)
+    : undefined;
+  const placementView = placement ? buildDistributionPlacementView(placement) : undefined;
+  const context = buildAttributionContext(source);
+
+  return {
+    source,
+    context,
+    channel,
+    profile,
+    tenant,
+    curatedCatalog,
+    segment,
+    placement: placementView,
+    noteLabels: source.attributionNotes.map((note) => `${note.noteType}: ${note.title}`),
+    boundaryNotes: [
+      ...context.warnings,
+      ...context.disclaimers,
+      ...(channel?.boundaryNotes ?? []),
+      ...(profile?.boundaryNotes ?? []),
+      ...(placementView?.boundaryNotes ?? []),
+      "Attribution Source is not tracking real, cookie tracking, analytics tracking, commission tracking, payout, settlement, billing, revenue sharing, Marketplace Intelligence or BI.",
+      "Referral Source mock, Campaign Source mock and Placement Source mock are display descriptors only."
+    ]
+  };
+}
+
+export function listAttributionSources() {
+  return attributionSources.map(buildAttributionSourceView);
+}
+
+export function getAttributionSourceById(sourceIdOrSlug: string) {
+  const source = getAttributionSourceByIdOrSlug(sourceIdOrSlug);
+  return source ? buildAttributionSourceView(source) : null;
+}
+
+export function getAttributionSourceBySlug(sourceSlug: string) {
+  const source = attributionSources.find((entry) => entry.slug === sourceSlug) ?? null;
+  return source ? buildAttributionSourceView(source) : null;
+}
+
+export function getAttributionSourcesByChannel(channelIdOrSlug: string) {
+  const channel = getDistributionChannelByIdOrSlug(channelIdOrSlug);
+  if (!channel) {
+    return [];
+  }
+  return attributionSources.filter((source) => source.channelId === channel.id).map(buildAttributionSourceView);
+}
+
+export function getAttributionSourcesByProfile(profileIdOrSlug: string) {
+  const profile = getDistributionProfileByIdOrSlug(profileIdOrSlug);
+  if (!profile) {
+    return [];
+  }
+  return attributionSources.filter((source) => source.profileId === profile.id).map(buildAttributionSourceView);
+}
+
+export function getAttributionSourcesByTenant(tenantIdOrSlug: string) {
+  const tenant = getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug);
+  if (!tenant) {
+    return [];
+  }
+  return attributionSources.filter((source) => source.tenantId === tenant.id).map(buildAttributionSourceView);
+}
+
+export function getAttributionSourcesByCuratedCatalog(catalogIdOrSlug: string) {
+  const catalog = resolveCuratedCatalog(catalogIdOrSlug);
+  if (!catalog) {
+    return [];
+  }
+  return attributionSources.filter((source) => source.curatedCatalogId === catalog.catalog.id).map(buildAttributionSourceView);
+}
+
+export function getAttributionSourcesBySegment(segmentIdOrSlug: string) {
+  const segment = catalogSegments.find((item) => item.id === segmentIdOrSlug || item.slug === segmentIdOrSlug);
+  if (!segment) {
+    return [];
+  }
+  return attributionSources.filter((source) => source.segmentId === segment.id).map(buildAttributionSourceView);
+}
+
+export function getAttributionSourcesByPlacement(placementId: string) {
+  return attributionSources.filter((source) => source.placementId === placementId).map(buildAttributionSourceView);
+}
+
+export function getCommercialOriginForAttribution(sourceIdOrSlug: string) {
+  return getAttributionSourceById(sourceIdOrSlug)?.source.commercialOrigin ?? null;
+}
+
+export function getDistributionSourceForAttribution(sourceIdOrSlug: string) {
+  return getAttributionSourceById(sourceIdOrSlug)?.source.distributionSource ?? null;
+}
+
+export function explainAttributionBoundary(sourceIdOrSlug: string) {
+  const view = getAttributionSourceById(sourceIdOrSlug);
+  if (!view) {
+    return [];
+  }
+  return Array.from(new Set(view.boundaryNotes));
+}
+
+export function resolveAttributionContext(sourceIdOrSlug?: string) {
+  const requestedSource = sourceIdOrSlug ? getAttributionSourceById(sourceIdOrSlug) : null;
+  const source = requestedSource ?? listAttributionSources().find((view) => view.source.status !== "disabled") ?? listAttributionSources()[0];
+
+  return {
+    source,
+    context: source.context,
+    isFallback: !requestedSource,
+    boundaryNotes: [
+      ...source.boundaryNotes,
+      "Attribution Context resolution never creates tracking real, cookies, analytics tracking, commission tracking, payout, settlement, billing, revenue sharing, Marketplace Intelligence or BI."
     ]
   };
 }

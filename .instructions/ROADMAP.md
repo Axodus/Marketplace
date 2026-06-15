@@ -268,7 +268,7 @@ Implementation boundary:
 
 # Phase 05 — Distribution Network
 
-Status: IN PROGRESS — DISTRIBUTION PROFILES IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS — ATTRIBUTION SOURCES IMPLEMENTED MOCK/CONFIG-FIRST
 
 Objectives:
 - model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
@@ -281,6 +281,7 @@ Deliverables:
 - distribution channel model
 - Distribution Network Model mock/config-first runtime
 - Distribution Channel, Distribution Placement, Distribution Source, Commercial Origin and Attribution Source base models
+- Attribution Source, Attribution Note and Attribution Context mock/config-first runtime
 - distributor model
 - Distributor Profile, Partner Profile, Agency Profile, Affiliate Profile and Community Marketplace Profile mock/config-first runtime
 - partner and affiliate boundary model
@@ -299,7 +300,7 @@ Linked requirements:
 - MEP-05A — Distribution Network Planning and Attribution Audit — completed
 - MEP-REQ-050 — Distribution Network Model — completed mock/config-first
 - MEP-REQ-051 — Distributor and Partner Profiles — completed mock/config-first
-- MEP-REQ-052 — Attribution and Distribution Sources
+- MEP-REQ-052 — Attribution and Distribution Sources — completed mock/config-first
 - MEP-REQ-053 — Community Marketplace Distribution
 - MEP-REQ-054 — Tenant and Curated Catalog Distribution Integration
 - MEP-PHASE-05-CLOSURE — QA, navigation and Distribution Network boundary validation
@@ -321,6 +322,10 @@ Implementation boundary:
 - MEP-REQ-051 adds `/marketplace/distribution/profiles` and `/marketplace/distribution/profiles/:profileSlug` to list and inspect distribution profiles
 - MEP-REQ-051 differentiates Distributor Profile, Partner Profile, Agency Profile, Affiliate Profile and Community Marketplace Profile from Seller Profile, Tenant Identity and Federation Provider
 - MEP-REQ-051 does not introduce KYC real, partner onboarding real, commercial contract real, commission rules, payout, billing, settlement, Revenue Sharing, affiliate tracking real, campaign tracking real, cookie tracking, analytics tracking, Marketplace Intelligence, BI, backend, API, database, payments or contracts
+- MEP-REQ-052 introduces Attribution Source, Referral Source mock, Campaign Source mock, Placement Source mock, Distribution Source, Commercial Origin, Attribution Note and Attribution Context as mock/config-first runtime read models
+- MEP-REQ-052 adds `/marketplace/distribution/attribution` and `/marketplace/distribution/attribution/:sourceSlug` to list and inspect attribution sources
+- MEP-REQ-052 keeps canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false for detailed Attribution Sources
+- MEP-REQ-052 does not introduce tracking real, cookies, analytics tracking, affiliate tracking real, commission tracking, payout, billing, settlement, Revenue Sharing, Marketplace Intelligence, BI, backend, API, database, external campaign integration, payments or contracts
 
 ---
 

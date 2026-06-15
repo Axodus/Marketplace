@@ -4,7 +4,16 @@ import {
   buildMarketplaceAnalytics,
   createDraftListingPreview,
   discoverWalletAssets,
+  explainAttributionBoundary,
   explainEditorialRules,
+  getAttributionSourceById,
+  getAttributionSourceBySlug,
+  getAttributionSourcesByChannel,
+  getAttributionSourcesByCuratedCatalog,
+  getAttributionSourcesByPlacement,
+  getAttributionSourcesByProfile,
+  getAttributionSourcesBySegment,
+  getAttributionSourcesByTenant,
   getAssetRegistryByProductSlug,
   getCollectionBySlug,
   getCollectionForProduct,
@@ -17,6 +26,8 @@ import {
   getDistributionProfileBySlug,
   getDistributionProfilesByChannel,
   getDistributionProfilesByType,
+  getCommercialOriginForAttribution,
+  getDistributionSourceForAttribution,
   getExternalContractById,
   getFederationProviderById,
   getFederationProviderReference,
@@ -40,6 +51,7 @@ import {
   isValidTenantSlug,
   isValidMockWalletAddress,
   issueMockPurchase,
+  listAttributionSources,
   listCuratedCatalogs,
   listDistributionChannels,
   listDistributionNetworks,
@@ -68,6 +80,7 @@ import {
   resolveTenantBranding,
   resolveCuratedCatalog,
   resolveCuratedCatalogItems,
+  resolveAttributionContext,
   resolveDistributionContext,
   resolveDistributionProfileContext,
   resolveTenantCatalog,
@@ -595,6 +608,66 @@ describe("marketplaceService", () => {
     expect(profiles.every((view) => view.boundaryNotes.join(" ").includes("tracking real"))).toBe(true);
     expect(profiles.every((view) => view.boundaryNotes.join(" ").includes("commission"))).toBe(true);
     expect(profiles.every((view) => view.boundaryNotes.join(" ").includes("payout"))).toBe(true);
+  });
+
+  it("represents Attribution and Distribution Sources without tracking or financial attribution", () => {
+    const sources = listAttributionSources();
+    const referral = getAttributionSourceBySlug("affiliate-referral-source");
+    const campaign = getAttributionSourceById("attribution-record-academy-campaign");
+    const placement = getAttributionSourceById("global-placement-source");
+    const community = getAttributionSourceById("community-marketplace-source");
+    const disabled = getAttributionSourceById("demo-disabled-source");
+    const byChannel = getAttributionSourcesByChannel("affiliate-demo-channel");
+    const byProfile = getAttributionSourcesByProfile("affiliate-demo-profile");
+    const byTenant = getAttributionSourcesByTenant("academy");
+    const byCatalog = getAttributionSourcesByCuratedCatalog("academy-onboarding");
+    const bySegment = getAttributionSourcesBySegment("academy");
+    const byPlacement = getAttributionSourcesByPlacement("distribution-placement-affiliate-product");
+    const origin = getCommercialOriginForAttribution("affiliate-referral-source");
+    const distributionSource = getDistributionSourceForAttribution("affiliate-referral-source");
+    const boundary = explainAttributionBoundary("affiliate-referral-source").join(" ");
+    const context = resolveAttributionContext("affiliate-referral-source");
+    const fallback = resolveAttributionContext("missing-source");
+
+    expect(sources.map((view) => view.source.sourceType)).toEqual([
+      "placement-mock",
+      "campaign-mock",
+      "referral-mock",
+      "community-marketplace",
+      "manual-source-mock",
+      "demo"
+    ]);
+    expect(referral?.source.referralCodeMock).toBe("AFFILIATE-MOCK-NO-TRACK");
+    expect(referral?.source.trackingMode).toBe("referral-code-mock");
+    expect(campaign?.source.campaignLabel).toBe("academy-onboarding-campaign-mock");
+    expect(campaign?.source.trackingMode).toBe("campaign-label-mock");
+    expect(placement?.source.sourceType).toBe("placement-mock");
+    expect(community?.profile?.profile.profileType).toBe("community-marketplace");
+    expect(disabled?.source.status).toBe("disabled");
+    expect(byChannel.map((view) => view.source.id)).toContain("attribution-record-affiliate-referral");
+    expect(byProfile.map((view) => view.source.id)).toContain("attribution-record-affiliate-referral");
+    expect(byTenant.map((view) => view.source.id)).toContain("attribution-record-academy-campaign");
+    expect(byCatalog.map((view) => view.source.id)).toContain("attribution-record-academy-campaign");
+    expect(bySegment.map((view) => view.source.id)).toContain("attribution-record-academy-campaign");
+    expect(byPlacement.map((view) => view.source.id)).toContain("attribution-record-affiliate-referral");
+    expect(origin?.originType).toBe("affiliate");
+    expect(distributionSource?.sourceType).toBe("referral-mock");
+    expect(context.source.source.id).toBe("attribution-record-affiliate-referral");
+    expect(context.context.canTrack).toBe(false);
+    expect(context.context.canAttributeRevenue).toBe(false);
+    expect(context.context.canTriggerPayout).toBe(false);
+    expect(context.context.canSettle).toBe(false);
+    expect(boundary).toContain("no cookies");
+    expect(boundary).toContain("no commission");
+    expect(boundary).toContain("no payout");
+    expect(boundary).toContain("no revenue sharing");
+    expect(boundary).toContain("no settlement");
+    expect(fallback.isFallback).toBe(true);
+    expect(fallback.source.source.status).not.toBe("disabled");
+    expect(sources.every((view) => view.source.canTrack === false)).toBe(true);
+    expect(sources.every((view) => view.source.canAttributeRevenue === false)).toBe(true);
+    expect(sources.every((view) => view.source.canTriggerPayout === false)).toBe(true);
+    expect(sources.every((view) => view.source.canSettle === false)).toBe(true);
   });
 
   it("issues mock purchase records without settlement", () => {

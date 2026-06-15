@@ -9,6 +9,9 @@ import {
   calculateDashboardMetrics,
   discoverWalletAssets,
   explainEditorialRules,
+  getAttributionSourceById,
+  getAttributionSourcesByChannel,
+  getAttributionSourcesByProfile,
   getDistributionChannelById,
   getDistributionNetworkById,
   getDistributionProfileById,
@@ -37,6 +40,8 @@ import {
   listTenants,
   listFeaturedCatalogs,
   listCatalogsBySegment,
+  listAttributionSources,
+  resolveAttributionContext,
   resolveDistributionContext,
   resolveDistributionProfileContext,
   resolveTenantCatalog,
@@ -322,6 +327,78 @@ export function useDistributionProfileContext(profileIdOrSlug?: string) {
       const context = resolveDistributionProfileContext(profileIdOrSlug);
       traceMarketplaceLifecycle("marketplace-distribution-profile-context-query", "completed", {
         profileId: context.profile.profile.id,
+        fallback: context.isFallback
+      });
+      return context;
+    }
+  });
+}
+
+export function useAttributionSources() {
+  return useQuery({
+    queryKey: ["marketplace-attribution-sources"],
+    queryFn: () => {
+      const sources = listAttributionSources();
+      traceMarketplaceLifecycle("marketplace-attribution-sources-query", "completed", { sourceCount: sources.length });
+      return sources;
+    }
+  });
+}
+
+export function useAttributionSource(sourceIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-source", sourceIdOrSlug],
+    enabled: Boolean(sourceIdOrSlug),
+    queryFn: () => {
+      const source = getAttributionSourceById(sourceIdOrSlug ?? "");
+      if (!source) {
+        const error = new Error("Attribution Source not found");
+        instrumentMarketplaceError("marketplace-attribution-source-query", error, { sourceIdOrSlug: sourceIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-attribution-source-query", "completed", { sourceId: source.source.id });
+      return source;
+    }
+  });
+}
+
+export function useAttributionSourcesByChannel(channelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-sources-by-channel", channelIdOrSlug],
+    enabled: Boolean(channelIdOrSlug),
+    queryFn: () => {
+      const sources = getAttributionSourcesByChannel(channelIdOrSlug ?? "");
+      traceMarketplaceLifecycle("marketplace-attribution-sources-by-channel-query", "completed", {
+        channelIdOrSlug: channelIdOrSlug ?? null,
+        sourceCount: sources.length
+      });
+      return sources;
+    }
+  });
+}
+
+export function useAttributionSourcesByProfile(profileIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-sources-by-profile", profileIdOrSlug],
+    enabled: Boolean(profileIdOrSlug),
+    queryFn: () => {
+      const sources = getAttributionSourcesByProfile(profileIdOrSlug ?? "");
+      traceMarketplaceLifecycle("marketplace-attribution-sources-by-profile-query", "completed", {
+        profileIdOrSlug: profileIdOrSlug ?? null,
+        sourceCount: sources.length
+      });
+      return sources;
+    }
+  });
+}
+
+export function useAttributionContext(sourceIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-context", sourceIdOrSlug],
+    queryFn: () => {
+      const context = resolveAttributionContext(sourceIdOrSlug);
+      traceMarketplaceLifecycle("marketplace-attribution-context-query", "completed", {
+        sourceId: context.source.source.id,
         fallback: context.isFallback
       });
       return context;

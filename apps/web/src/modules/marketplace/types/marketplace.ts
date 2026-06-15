@@ -146,9 +146,21 @@ export type DistributionGovernanceStatus = "governance-aligned" | "governance-re
 export type DistributionPlacementType = "storefront" | "catalog-section" | "featured-slot" | "campaign-mock" | "community-shelf" | "demo-preview";
 export type DistributionPlacementTargetType = "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "external-collection";
 export type DistributionSourceType = "tenant-storefront" | "curated-catalog" | "catalog-segment" | "referral-mock" | "campaign-mock" | "placement-mock" | "community-mock";
-export type CommercialOriginType = "tenant" | "partner" | "distributor" | "agency" | "affiliate" | "community" | "demo";
+export type AttributionSourceType =
+  | DistributionSourceType
+  | "distribution-channel"
+  | "partner-profile"
+  | "affiliate-profile"
+  | "tenant-route"
+  | "community-marketplace"
+  | "manual-source-mock"
+  | "demo";
+export type CommercialOriginType = "tenant" | "partner" | "distributor" | "agency" | "affiliate" | "community" | "curated-catalog" | "campaign-mock" | "manual-mock" | "demo";
 export type AttributionStatus = "not-tracked" | "simulated-only" | "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
-export type TrackingMode = "none" | "simulated-only" | "manual-mock" | "referral-code-mock" | "placement-mock";
+export type TrackingMode = "none" | "simulated-only" | "manual-mock" | "referral-code-mock" | "campaign-label-mock" | "placement-mock";
+export type AttributionScope = "global" | "tenant" | "channel" | "profile" | "catalog" | "curated-catalog" | "segment" | "placement" | "community" | "demo";
+export type AttributionNoteType = "boundary" | "referral" | "campaign" | "placement" | "commercial-origin" | "distribution-source" | "risk";
+export type AttributionNoteSeverity = "info" | "warning" | "restricted";
 export type DistributionProfileType =
   | "distributor"
   | "partner"
@@ -562,7 +574,7 @@ export interface DistributionSource {
   tenantId?: string;
   catalogId?: string;
   placementId?: string;
-  status: DistributionStatus;
+  status: DistributionStatus | AttributionStatus;
   isSimulated: boolean;
   warnings: string[];
   disclaimers: string[];
@@ -684,6 +696,76 @@ export interface DistributionProfile {
   disclaimers: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AttributionNote {
+  id: string;
+  sourceId: string;
+  noteType: AttributionNoteType;
+  title: string;
+  description: string;
+  severity: AttributionNoteSeverity;
+  status: AttributionStatus;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttributionSourceRecord {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  sourceType: AttributionSourceType;
+  status: AttributionStatus | "governance-review" | "archived";
+  scope: AttributionScope;
+  trackingMode: TrackingMode;
+  channelId?: string;
+  profileId?: string;
+  tenantId?: string;
+  catalogId?: string;
+  curatedCatalogId?: string;
+  segmentId?: string;
+  placementId?: string;
+  campaignLabel?: string;
+  referralCodeMock?: string;
+  sourceLabel: string;
+  commercialOrigin: CommercialOrigin;
+  distributionSource: DistributionSource;
+  attributionNotes: AttributionNote[];
+  isSimulated: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttributionContext {
+  sourceId: string;
+  resolvedAt: string;
+  sourceType: AttributionSourceType;
+  trackingMode: TrackingMode;
+  channelId?: string;
+  profileId?: string;
+  tenantId?: string;
+  catalogId?: string;
+  curatedCatalogId?: string;
+  segmentId?: string;
+  placementId?: string;
+  commercialOriginLabel: string;
+  isSimulated: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
 }
 
 export interface CuratedCatalogRule {

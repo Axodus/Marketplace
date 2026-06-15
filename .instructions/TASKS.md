@@ -2,7 +2,7 @@
 
 # Phase 05 - Distribution Network Planning
 
-Status: IN PROGRESS - DISTRIBUTION PROFILES IMPLEMENTED MOCK/CONFIG-FIRST
+Status: IN PROGRESS - ATTRIBUTION SOURCES IMPLEMENTED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_05_DISTRIBUTION_NETWORK_AUDIT.md`
@@ -12,12 +12,14 @@ Runtime surfaces:
 - `/marketplace/distribution/:channelId`
 - `/marketplace/distribution/profiles`
 - `/marketplace/distribution/profiles/:profileSlug`
+- `/marketplace/distribution/attribution`
+- `/marketplace/distribution/attribution/:sourceSlug`
 
 Recommended implementation sequence:
 - MEP-05A - Distribution Network Planning and Attribution Audit - COMPLETED
 - MEP-REQ-050 - Distribution Network Model - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-051 - Distributor and Partner Profiles - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-052 - Attribution and Distribution Sources
+- MEP-REQ-052 - Attribution and Distribution Sources - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-053 - Community Marketplace Distribution
 - MEP-REQ-054 - Tenant and Curated Catalog Distribution Integration
 - MEP-PHASE-05-CLOSURE - QA, navigation and Distribution Network boundary validation
@@ -51,6 +53,18 @@ MEP-REQ-051 delivered:
 - displayed profile type, status, visibility, governance status, operator label, trust label, commercial label, associated channels, associated tenants, associated curated catalogs, associated segments, capabilities, limitations, relationships, warnings and disclaimers
 - differentiated Distribution Profile from Seller Profile, Tenant Identity and Federation Provider
 - preserved no KYC real, no onboarding real, no contract real, no payout, no commission, no revenue sharing, no settlement, no billing, no tracking real, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
+
+MEP-REQ-052 delivered:
+- added detailed Attribution Source, Attribution Note and Attribution Context models while preserving the basic channel-level Attribution Source model
+- added mock/config-first attribution records for Placement Source mock, Campaign Source mock, Referral Source mock, Community Marketplace source, Manual Source mock and Demo source
+- linked Attribution Sources to existing Distribution Channels, Distribution Profiles, Tenants, Curated Catalogs, Catalog Segments and Distribution Placements by reference
+- added helpers to list attribution sources, resolve source detail by id or slug, filter by channel/profile/tenant/curated catalog/segment/placement and resolve Attribution Context
+- added helpers to retrieve Commercial Origin and Distribution Source for an Attribution Source and explain attribution boundaries
+- added hooks for Attribution Sources, Attribution Source detail, Attribution Sources by channel/profile and Attribution Context
+- added `/marketplace/distribution/attribution` and `/marketplace/distribution/attribution/:sourceSlug` surfaces
+- displayed source type, tracking mode, commercial origin, distribution source, associated channel, associated profile, associated tenant, associated curated catalog, associated segment, associated placement, attribution notes, warnings and disclaimers
+- preserved canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false on detailed Attribution Sources
+- preserved no tracking real, no cookies, no analytics tracking, no commission tracking, no payout, no settlement, no billing, no revenue sharing, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
 
 Constraints:
 - keep Phase 05 runtime mock/config-first until explicit implementation requests authorize broader changes
