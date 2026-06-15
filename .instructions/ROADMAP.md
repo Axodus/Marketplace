@@ -268,7 +268,7 @@ Implementation boundary:
 
 # Phase 05 — Distribution Network
 
-Status: PLANNED
+Status: PLANNING COMPLETE — DISTRIBUTION BOUNDARIES AUDITED
 
 Objectives:
 - model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
@@ -289,19 +289,27 @@ Deliverables:
 - distribution telemetry readiness
 - offer routing preview model
 
+Planning artifact:
+- `docs/PHASE_05_DISTRIBUTION_NETWORK_AUDIT.md`
+
 Linked requirements:
-- MEP-REQ-050 — Attribution Engine
-- MEP-REQ-051 — Referral System
-- MEP-REQ-052 — Partner Network
+- MEP-05A — Distribution Network Planning and Attribution Audit — completed
+- MEP-REQ-050 — Distribution Network Model
+- MEP-REQ-051 — Distributor and Partner Profiles
+- MEP-REQ-052 — Attribution and Distribution Sources
+- MEP-REQ-053 — Community Marketplace Distribution
+- MEP-REQ-054 — Tenant and Curated Catalog Distribution Integration
+- MEP-PHASE-05-CLOSURE — QA, navigation and Distribution Network boundary validation
 
 Dependencies:
 - Phase 03 — Tenant Infrastructure
 - Phase 04 — Curated Catalogs
 
 Implementation boundary:
-- Phase 05 implementation is future work
-- MEP-REQ-003 is documentation-only
-- no real attribution, referral, partner network, tracking, commission engine, partner dashboard, affiliate links, payment, payout, API, GraphQL schema, database, persistence, frontend component, route, integration, settlement, treasury routing or revenue sharing is introduced by Phase 00
+- MEP-05A is audit and planning only
+- future Phase 05 runtime must remain mock/config-first until explicit implementation requests authorize changes
+- MEP-05A maps Distribution Network, Distribution Channel, Distributor, Partner, Agency, Affiliate, Community Marketplace, Attribution Source, Commercial Origin and Distribution Placement boundaries without implementing runtime
+- no real attribution, referral tracking, campaign tracking, cookie tracking, analytics tracking, partner network, commission engine, partner dashboard, affiliate links, payment, payout, API, GraphQL schema, database, persistence, frontend component, route, integration, settlement, treasury routing, Revenue Sharing, Marketplace Intelligence, analytics or BI is introduced by MEP-05A
 
 ---
 

@@ -1,5 +1,37 @@
 # Marketplace Roadmap
 
+# Phase 05 - Distribution Network Planning
+
+Status: PLANNING COMPLETE - DISTRIBUTION BOUNDARIES AUDITED
+
+Planning artifact:
+- `docs/PHASE_05_DISTRIBUTION_NETWORK_AUDIT.md`
+
+Recommended implementation sequence:
+- MEP-05A - Distribution Network Planning and Attribution Audit - COMPLETED
+- MEP-REQ-050 - Distribution Network Model
+- MEP-REQ-051 - Distributor and Partner Profiles
+- MEP-REQ-052 - Attribution and Distribution Sources
+- MEP-REQ-053 - Community Marketplace Distribution
+- MEP-REQ-054 - Tenant and Curated Catalog Distribution Integration
+- MEP-PHASE-05-CLOSURE - QA, navigation and Distribution Network boundary validation
+
+MEP-05A delivered:
+- mapped the current post-Phase 04 Marketplace runtime and documentation state
+- differentiated Tenant Marketplace, Partner Marketplace, Distributor, Partner, Agency, Affiliate and Community Marketplace boundaries
+- defined planning models for Distribution Network, Distribution Channel, Distribution Placement, Distribution Source, Attribution Source and Commercial Origin
+- recommended distribution channel types, distribution statuses and attribution statuses
+- defined governance, attribution, commercial exposure and trust boundaries
+- mapped future gaps for MEP-REQ-050 through MEP-REQ-054 without implementing runtime
+- preserved no revenue sharing, no settlement, no billing, no payout, no commission, no tracking real, no Marketplace Intelligence, no backend, no API, no database, no analytics and no BI boundaries
+
+Constraints:
+- keep Phase 05 planning and future runtime mock/config-first until explicit implementation requests authorize changes
+- do not activate affiliate tracking, cookie tracking, analytics tracking, campaign tracking, referral tracking, commission engine, payout, billing, settlement, treasury routing, Revenue Sharing, Marketplace Intelligence, backend, API, GraphQL schema, database, payments, wallet signatures, contract writes, bridge, provider real or BI
+- distribution channels must preserve tenant catalog isolation, curated catalog editorial boundaries and federated origin/provider/validation/provenance/risk/trust metadata
+
+---
+
 # Phase 04 - Curated Catalogs Planning
 
 Status: COMPLETED - CURATED CATALOGS VALIDATED MOCK/CONFIG-FIRST
