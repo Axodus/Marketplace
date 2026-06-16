@@ -11,7 +11,7 @@ Recommended implementation sequence:
 - MEP-06A - Revenue Sharing Planning and Settlement Boundary Audit - COMPLETED
 - MEP-REQ-060 - Revenue Sharing Model - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-061 - Commission Models and Participant Shares - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-062 - Attribution-to-Split Rules - PLANNED
+- MEP-REQ-062 - Attribution-to-Split Rules - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-063 - Revenue Sharing Preview and Audit Trail - PLANNED
 - MEP-REQ-064 - Tenant/Distribution Revenue Sharing Integration - PLANNED
 - MEP-PHASE-06-CLOSURE - QA, navigation and Revenue Sharing boundary validation - PLANNED
@@ -50,6 +50,16 @@ MEP-REQ-061 delivered:
 - added hooks and Revenue Sharing UI sections for Commission Model validation, Participant Share details, cap/floor warnings and conflict-mock status
 - added tests for valid-mock, warning-mock and conflict-mock commission models, share totals, cap warnings and disabled payout/settlement/receive-payout flags
 - preserved no commission real, no obligation financial, no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no split on-chain, no payment gateway, no backend, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
+
+MEP-REQ-062 delivered:
+- added Attribution-to-Split Rule, Attribution Split Mapping, Commercial Origin Split Mapping, Distribution Source Split Mapping, Attribution Split Resolution and Attribution Split Explanation models
+- added mock/config-first attribution-to-split rules for placement, campaign, referral and community distribution contexts
+- connected Attribution Source, Distribution Source and Commercial Origin records to simulated target policies, commission models, participants and participant shares
+- added helpers to list rules by attribution source, distribution channel, distribution profile and community distribution
+- added helpers to resolve simulated split suggestions, mapping records and rule application explanations
+- added hooks and Attribution Sources UI sections for Attribution-to-Split mappings, applied/blocked rules and boundary notes
+- added tests for campaign split suggestion, affiliate referral blocked mapping, commercial origin mapping, distribution source mapping and disabled execution flags
+- preserved no tracking real, no commission tracking, no attribution financeira real, no payout, no settlement, no billing, no analytics tracking, no BI, no Marketplace Intelligence, no backend, no API and no database boundaries
 
 ---
 

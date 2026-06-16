@@ -336,6 +336,7 @@ export type RevenueSplitTargetType = "tenant" | "distribution-channel" | "distri
 export type ParticipantShareType = "percentage-mock" | "weighted-percentage-mock" | "flat-amount-mock" | "tiered-mock" | "manual-mock" | "demo";
 export type CommissionModelStatus = "valid-mock" | "warning-mock" | "conflict-mock" | "incomplete" | "restricted" | "disabled";
 export type ParticipantShareValidationStatus = CommissionModelStatus;
+export type AttributionToSplitStatus = "configured-mock" | "simulated-only" | "preview-only" | "review-required" | "blocked" | "disabled";
 export type RevenueSplitConflictPolicy = "warn-only" | "block-preview" | "review-required" | "manual-resolution";
 export type SettlementBoundaryStatus = "no-settlement" | "preview-only" | "blocked" | "review-required" | "restricted" | "disabled" | "not-configured";
 export type LicenseType =
@@ -917,6 +918,103 @@ export interface AttributionContext {
   canSettle: boolean;
   warnings: string[];
   disclaimers: string[];
+}
+
+export interface AttributionToSplitRule {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: AttributionToSplitStatus;
+  attributionSourceId: string;
+  distributionSourceId: string;
+  commercialOriginId: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  targetPolicyId: string;
+  targetCommissionModelId: string;
+  targetParticipantId: string;
+  suggestedShareType: ParticipantShareType;
+  suggestedShareValue: number;
+  priority: number;
+  reason: string;
+  isSimulated: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttributionSplitMapping {
+  ruleId: string;
+  attributionSourceId: string;
+  participantShareIds: string[];
+  targetPolicyId: string;
+  targetCommissionModelId: string;
+  targetParticipantId: string;
+  suggestedShareType: ParticipantShareType;
+  suggestedShareValue: number;
+  isSimulated: boolean;
+  boundaryNotes: string[];
+}
+
+export interface CommercialOriginSplitMapping {
+  commercialOriginId: string;
+  originLabel: string;
+  appliedRuleIds: string[];
+  targetPolicyIds: string[];
+  isSimulated: boolean;
+  boundaryNotes: string[];
+}
+
+export interface DistributionSourceSplitMapping {
+  distributionSourceId: string;
+  sourceLabel: string;
+  appliedRuleIds: string[];
+  targetPolicyIds: string[];
+  targetCommissionModelIds: string[];
+  isSimulated: boolean;
+  boundaryNotes: string[];
+}
+
+export interface AttributionSplitResolution {
+  attributionSourceId: string;
+  resolvedAt: string;
+  policyId?: string;
+  commissionModelId?: string;
+  participantShareIds: string[];
+  appliedRuleIds: string[];
+  blockedRuleIds: string[];
+  warnings: string[];
+  disclaimers: string[];
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+}
+
+export interface AttributionSplitExplanation {
+  ruleId: string;
+  ruleName: string;
+  reason: string;
+  attributionSourceId: string;
+  distributionSourceId: string;
+  commercialOriginId: string;
+  targetPolicyId: string;
+  targetCommissionModelId: string;
+  targetParticipantId: string;
+  participantShareIds: string[];
+  suggestedShareLabel: string;
+  status: AttributionToSplitStatus;
+  priority: number;
+  boundaryNotes: string[];
 }
 
 export interface CommunityDistributionRule {

@@ -66,17 +66,18 @@ export function AttributionSourcesPage() {
         <h1 className="mt-2 text-3xl font-semibold">Mock/config-first attribution and distribution sources</h1>
         <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-600">
           Attribution Sources represent referral mock, campaign mock, placement source, Distribution Source and Commercial Origin
-          descriptors. They are transparent display records only and do not activate tracking real, cookies, analytics tracking,
-          commission tracking, payout, settlement, billing, revenue sharing, Marketplace Intelligence or BI.
+          descriptors. Attribution-to-Split mappings can suggest simulated split records for preview explanation only. They do not
+          activate tracking real, cookies, analytics tracking, commission tracking, payout, settlement, billing, Marketplace Intelligence or BI.
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <NeutralBadge>mock attribution</NeutralBadge>
           <NeutralBadge>config-first attribution</NeutralBadge>
+          <NeutralBadge>Attribution-to-Split</NeutralBadge>
+          <NeutralBadge>simulated split</NeutralBadge>
           <NeutralBadge>no tracking real</NeutralBadge>
           <NeutralBadge>no cookies</NeutralBadge>
-          <NeutralBadge>no commission</NeutralBadge>
+          <NeutralBadge>no commission tracking</NeutralBadge>
           <NeutralBadge>no payout</NeutralBadge>
-          <NeutralBadge>no revenue sharing</NeutralBadge>
           <NeutralBadge>no settlement</NeutralBadge>
           <NeutralBadge>no billing</NeutralBadge>
         </div>
@@ -177,6 +178,52 @@ function AttributionSourceDetail({ view }: { view: AttributionSourceView }) {
         <ReferencePanel title="Associated curated catalog" items={view.curatedCatalog ? [view.curatedCatalog.catalog.displayName] : []} />
         <ReferencePanel title="Associated segment" items={view.segment ? [view.segment.displayName] : []} />
         <ReferencePanel title="Associated placement" items={view.placement ? [view.placement.placement.placementLabel] : []} />
+      </section>
+
+      <section className="rounded border border-slate-200 bg-white p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="font-semibold">Attribution-to-Split</h3>
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              Attribution Split Mapping, Commercial Origin Split Mapping and Distribution Source Split Mapping can suggest simulated split records.
+            </p>
+          </div>
+          <NeutralBadge>{view.attributionSplitResolution.appliedRuleIds.length} applied mock</NeutralBadge>
+        </div>
+        <div className="mt-3 grid gap-3 text-sm md:grid-cols-4">
+          <Metric label="Attribution Split Resolution" value={view.attributionSplitResolution.policyId ?? "none"} />
+          <Metric label="Commission model" value={view.attributionSplitResolution.commissionModelId ?? "none"} />
+          <Metric label="Participant shares" value={view.attributionSplitResolution.participantShareIds.length} />
+          <Metric label="Blocked rules" value={view.attributionSplitResolution.blockedRuleIds.length} />
+          <Metric label="Can track" value={String(view.attributionSplitResolution.canTrack)} />
+          <Metric label="Can attribute revenue" value={String(view.attributionSplitResolution.canAttributeRevenue)} />
+          <Metric label="Can settle" value={String(view.attributionSplitResolution.canSettle)} />
+          <Metric label="Can trigger payout" value={String(view.attributionSplitResolution.canTriggerPayout)} />
+        </div>
+        <div className="mt-4 grid gap-3">
+          {view.attributionSplitExplanations.length ? view.attributionSplitExplanations.map((explanation) => (
+            <article key={explanation.ruleId} className="rounded border border-slate-200 bg-slate-50 p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h4 className="font-semibold">{explanation.ruleName}</h4>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{explanation.reason}</p>
+                </div>
+                <NeutralBadge>{explanation.status}</NeutralBadge>
+              </div>
+              <div className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+                <Metric label="Target policy" value={explanation.targetPolicyId} />
+                <Metric label="Target commission model" value={explanation.targetCommissionModelId} />
+                <Metric label="Suggested share" value={explanation.suggestedShareLabel} />
+                <Metric label="Distribution Source Split Mapping" value={explanation.distributionSourceId} />
+                <Metric label="Commercial Origin Split Mapping" value={explanation.commercialOriginId} />
+                <Metric label="Participant shares" value={explanation.participantShareIds.length} />
+              </div>
+              <p className="mt-3 rounded border border-amber-200 bg-amber-50 p-2 text-xs leading-5 text-amber-900">
+                Simulated split only: no tracking real, no commission tracking, no payout, no settlement and no billing.
+              </p>
+            </article>
+          )) : <NeutralBadge>No Attribution Split Mapping</NeutralBadge>}
+        </div>
       </section>
 
       <section className="rounded border border-slate-200 bg-white p-4">

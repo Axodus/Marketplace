@@ -11,15 +11,19 @@ import {
   detectParticipantShareConflicts,
   discoverWalletAssets,
   explainEditorialRules,
+  explainAttributionToSplit,
   explainRevenueSharingBoundary,
   getAttributionSourceById,
+  getAttributionSplitMapping,
   getAttributionSourcesByChannel,
   getAttributionSourcesByProfile,
+  getCommercialOriginSplitMapping,
   getCommunityDistributionItems,
   getCommunityMarketplaceDistributionById,
   getDistributionContextForCuratedCatalog,
   getDistributionContextForTenant,
   getDistributionChannelById,
+  getDistributionSourceSplitMapping,
   getDistributionNetworkById,
   getDistributionProfileById,
   getDistributionProfilesByType,
@@ -59,8 +63,14 @@ import {
   listFeaturedCatalogs,
   listCatalogsBySegment,
   listAttributionSources,
+  listAttributionToSplitRules,
+  listAttributionToSplitRulesByAttributionSource,
+  listAttributionToSplitRulesByCommunityDistribution,
+  listAttributionToSplitRulesByDistributionChannel,
+  listAttributionToSplitRulesByDistributionProfile,
   listCommunityMarketplaceDistributions,
   resolveAttributionContext,
+  resolveAttributionSplit,
   resolveCommunityDistributionContext,
   resolveCuratedCatalogDistribution,
   resolveDistributionContext,
@@ -428,6 +438,89 @@ export function useAttributionContext(sourceIdOrSlug?: string) {
       });
       return context;
     }
+  });
+}
+
+export function useAttributionToSplitRules() {
+  return useQuery({
+    queryKey: ["marketplace-attribution-to-split-rules"],
+    queryFn: () => {
+      const rules = listAttributionToSplitRules();
+      traceMarketplaceLifecycle("marketplace-attribution-to-split-rules-query", "completed", { ruleCount: rules.length });
+      return rules;
+    }
+  });
+}
+
+export function useAttributionToSplitRulesBySource(sourceIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-to-split-rules-by-source", sourceIdOrSlug],
+    enabled: Boolean(sourceIdOrSlug),
+    queryFn: () => listAttributionToSplitRulesByAttributionSource(sourceIdOrSlug ?? "")
+  });
+}
+
+export function useAttributionToSplitRulesByDistributionChannel(channelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-to-split-rules-by-channel", channelIdOrSlug],
+    enabled: Boolean(channelIdOrSlug),
+    queryFn: () => listAttributionToSplitRulesByDistributionChannel(channelIdOrSlug ?? "")
+  });
+}
+
+export function useAttributionToSplitRulesByDistributionProfile(profileIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-to-split-rules-by-profile", profileIdOrSlug],
+    enabled: Boolean(profileIdOrSlug),
+    queryFn: () => listAttributionToSplitRulesByDistributionProfile(profileIdOrSlug ?? "")
+  });
+}
+
+export function useAttributionToSplitRulesByCommunityDistribution(distributionIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-to-split-rules-by-community", distributionIdOrSlug],
+    enabled: Boolean(distributionIdOrSlug),
+    queryFn: () => listAttributionToSplitRulesByCommunityDistribution(distributionIdOrSlug ?? "")
+  });
+}
+
+export function useAttributionSplit(sourceIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-split-resolution", sourceIdOrSlug],
+    enabled: Boolean(sourceIdOrSlug),
+    queryFn: () => resolveAttributionSplit(sourceIdOrSlug ?? "")
+  });
+}
+
+export function useAttributionSplitExplanation(sourceIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-split-explanation", sourceIdOrSlug],
+    enabled: Boolean(sourceIdOrSlug),
+    queryFn: () => explainAttributionToSplit(sourceIdOrSlug ?? "")
+  });
+}
+
+export function useAttributionSplitMapping(sourceIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-attribution-split-mapping", sourceIdOrSlug],
+    enabled: Boolean(sourceIdOrSlug),
+    queryFn: () => getAttributionSplitMapping(sourceIdOrSlug ?? "")
+  });
+}
+
+export function useCommercialOriginSplitMapping(commercialOriginId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-commercial-origin-split-mapping", commercialOriginId],
+    enabled: Boolean(commercialOriginId),
+    queryFn: () => getCommercialOriginSplitMapping(commercialOriginId ?? "")
+  });
+}
+
+export function useDistributionSourceSplitMapping(distributionSourceId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-source-split-mapping", distributionSourceId],
+    enabled: Boolean(distributionSourceId),
+    queryFn: () => getDistributionSourceSplitMapping(distributionSourceId ?? "")
   });
 }
 

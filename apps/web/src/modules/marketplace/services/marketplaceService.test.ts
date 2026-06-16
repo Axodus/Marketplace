@@ -12,11 +12,13 @@ import {
   explainCuratedCatalogDistributionExclusion,
   explainCuratedCatalogDistributionInclusion,
   explainAttributionBoundary,
+  explainAttributionToSplit,
   explainCommunityDistributionExclusion,
   explainCommunityDistributionInclusion,
   explainEditorialRules,
   getAttributionSourceById,
   getAttributionSourceBySlug,
+  getAttributionSplitMapping,
   getAttributionSourcesByChannel,
   getAttributionSourcesByCuratedCatalog,
   getAttributionSourcesByPlacement,
@@ -27,6 +29,7 @@ import {
   getCollectionBySlug,
   getCollectionForProduct,
   getCollectionSourceLabel,
+  getCommercialOriginSplitMapping,
   getCommunityDistributionAttributionSource,
   getCommunityDistributionCommercialOrigin,
   getCommunityDistributionCuratedCatalogs,
@@ -55,6 +58,7 @@ import {
   getRevenueSharingPoliciesByTenant,
   getCommercialOriginForAttribution,
   getDistributionSourceForAttribution,
+  getDistributionSourceSplitMapping,
   getExternalContractById,
   getFederationProviderById,
   getFederationProviderReference,
@@ -84,6 +88,11 @@ import {
   isValidMockWalletAddress,
   issueMockPurchase,
   listAttributionSources,
+  listAttributionToSplitRules,
+  listAttributionToSplitRulesByAttributionSource,
+  listAttributionToSplitRulesByCommunityDistribution,
+  listAttributionToSplitRulesByDistributionChannel,
+  listAttributionToSplitRulesByDistributionProfile,
   listCommissionModels,
   listCommissionModelsByPolicy,
   listCommunityMarketplaceDistributions,
@@ -124,6 +133,7 @@ import {
   resolveCuratedCatalogItems,
   resolveCuratedCatalogDistribution,
   resolveAttributionContext,
+  resolveAttributionSplit,
   resolveCommunityDistributionContext,
   resolveDistributionContext,
   resolveDistributionProfileContext,
@@ -717,6 +727,65 @@ describe("marketplaceService", () => {
     expect(sources.every((view) => view.source.canAttributeRevenue === false)).toBe(true);
     expect(sources.every((view) => view.source.canTriggerPayout === false)).toBe(true);
     expect(sources.every((view) => view.source.canSettle === false)).toBe(true);
+  });
+
+  it("maps Attribution-to-Split rules as simulated split suggestions without tracking real", () => {
+    const rules = listAttributionToSplitRules();
+    const campaignRules = listAttributionToSplitRulesByAttributionSource("academy-campaign-source");
+    const affiliateRules = listAttributionToSplitRulesByAttributionSource("affiliate-referral-source");
+    const channelRules = listAttributionToSplitRulesByDistributionChannel("academy-partner-channel");
+    const profileRules = listAttributionToSplitRulesByDistributionProfile("affiliate-demo-profile");
+    const communityRules = listAttributionToSplitRulesByCommunityDistribution("creator-federated-community");
+    const campaignResolution = resolveAttributionSplit("academy-campaign-source");
+    const affiliateResolution = resolveAttributionSplit("affiliate-referral-source");
+    const campaignMapping = getAttributionSplitMapping("academy-campaign-source");
+    const commercialOriginMapping = getCommercialOriginSplitMapping("commercial-origin-academy-partner");
+    const distributionSourceMapping = getDistributionSourceSplitMapping("distribution-source-record-academy-campaign");
+    const explanations = explainAttributionToSplit("academy-campaign-source");
+    const campaignSource = getAttributionSourceById("academy-campaign-source");
+    const affiliateSource = getAttributionSourceById("affiliate-referral-source");
+    const notes = campaignSource?.boundaryNotes.join(" ") ?? "";
+
+    expect(rules.map((view) => view.rule.slug)).toEqual([
+      "global-placement-platform-split",
+      "academy-campaign-partner-split",
+      "affiliate-referral-blocked-split",
+      "community-source-community-share"
+    ]);
+    expect(campaignRules.map((view) => view.rule.id)).toEqual(["attribution-split-rule-academy-campaign-partner"]);
+    expect(affiliateRules.map((view) => view.rule.status)).toEqual(["blocked"]);
+    expect(channelRules.map((view) => view.rule.id)).toContain("attribution-split-rule-academy-campaign-partner");
+    expect(profileRules.map((view) => view.rule.id)).toContain("attribution-split-rule-affiliate-referral-blocked");
+    expect(communityRules.map((view) => view.rule.id)).toContain("attribution-split-rule-community-share");
+    expect(campaignResolution?.policyId).toBe("revenue-policy-academy-tenant-preview");
+    expect(campaignResolution?.commissionModelId).toBe("commission-model-academy-tenant-preview");
+    expect(campaignResolution?.participantShareIds).toEqual(["participant-share-split-rule-academy-partner"]);
+    expect(campaignResolution?.appliedRuleIds).toEqual(["attribution-split-rule-academy-campaign-partner"]);
+    expect(campaignResolution?.blockedRuleIds).toEqual([]);
+    expect(campaignResolution?.canTrack).toBe(false);
+    expect(campaignResolution?.canAttributeRevenue).toBe(false);
+    expect(campaignResolution?.canSettle).toBe(false);
+    expect(campaignResolution?.canTriggerPayout).toBe(false);
+    expect(affiliateResolution?.appliedRuleIds).toEqual([]);
+    expect(affiliateResolution?.blockedRuleIds).toEqual(["attribution-split-rule-affiliate-referral-blocked"]);
+    expect(campaignMapping[0].participantShareIds).toEqual(["participant-share-split-rule-academy-partner"]);
+    expect(campaignMapping[0].suggestedShareValue).toBe(25);
+    expect(commercialOriginMapping?.appliedRuleIds).toEqual(["attribution-split-rule-academy-campaign-partner"]);
+    expect(distributionSourceMapping?.targetCommissionModelIds).toEqual(["commission-model-academy-tenant-preview"]);
+    expect(explanations[0].suggestedShareLabel).toContain("simulated split");
+    expect(explanations[0].boundaryNotes.join(" ")).toContain("Attribution-to-Split");
+    expect(campaignSource?.attributionSplitExplanations[0].targetParticipantId).toBe("revenue-participant-academy-partner");
+    expect(affiliateSource?.attributionSplitResolution.blockedRuleIds).toContain("attribution-split-rule-affiliate-referral-blocked");
+    expect(notes).toContain("Attribution Split Resolution");
+    expect(notes).toContain("no tracking real");
+    expect(notes).toContain("no commission tracking");
+    expect(notes).toContain("no payout");
+    expect(notes).toContain("no settlement");
+    expect(notes).toContain("no billing");
+    expect(rules.every((view) => view.rule.canTrack === false)).toBe(true);
+    expect(rules.every((view) => view.rule.canAttributeRevenue === false)).toBe(true);
+    expect(rules.every((view) => view.rule.canSettle === false)).toBe(true);
+    expect(rules.every((view) => view.rule.canTriggerPayout === false)).toBe(true);
   });
 
   it("represents Community Marketplace Distribution with mock rules, attribution and federation boundaries", () => {

@@ -2,6 +2,7 @@ import {
   marketplaceAttributionSources,
   marketplaceAssetRegistry,
   marketplaceBoundaries,
+  marketplaceAttributionToSplitRules,
   marketplaceCatalogSegments,
   marketplaceCollections,
   marketplaceCommunityDistributions,
@@ -29,8 +30,13 @@ import {
 import type {
   AssetRegistryRecord,
   AttributionContext,
+  AttributionSplitExplanation,
+  AttributionSplitMapping,
+  AttributionSplitResolution,
   AttributionSourceRecord,
+  AttributionToSplitRule,
   Chain,
+  CommercialOriginSplitMapping,
   CommunityDistributionContext,
   CommunityDistributionItem,
   CommunityMarketplaceDistribution,
@@ -49,6 +55,7 @@ import type {
   DistributionNetwork,
   DistributionPlacement,
   DistributionProfile,
+  DistributionSourceSplitMapping,
   ExternalCollectionStatistics,
   ExternalContractReference,
   DraftListingInput,
@@ -142,6 +149,7 @@ const distributionChannels = marketplaceDistributionChannels as DistributionChan
 const distributionPlacements = marketplaceDistributionPlacements as DistributionPlacement[];
 const distributionProfiles = marketplaceDistributionProfiles as DistributionProfile[];
 const attributionSources = marketplaceAttributionSources as AttributionSourceRecord[];
+const attributionToSplitRules = marketplaceAttributionToSplitRules as AttributionToSplitRule[];
 const communityDistributions = marketplaceCommunityDistributions as CommunityMarketplaceDistribution[];
 const tenantDistributionConfigs = marketplaceTenantDistributionConfigs as TenantDistributionConfig[];
 const curatedCatalogDistributionConfigs = marketplaceCuratedCatalogDistributionConfigs as CuratedCatalogDistributionConfig[];
@@ -583,6 +591,8 @@ export interface DistributionProfileView {
 export interface AttributionSourceView {
   source: AttributionSourceRecord;
   context: AttributionContext;
+  attributionSplitResolution: AttributionSplitResolution;
+  attributionSplitExplanations: AttributionSplitExplanation[];
   channel?: DistributionChannelView;
   profile?: DistributionProfileView;
   tenant?: Tenant;
@@ -590,6 +600,16 @@ export interface AttributionSourceView {
   segment?: CatalogSegment;
   placement?: DistributionPlacementView;
   noteLabels: string[];
+  boundaryNotes: string[];
+}
+
+export interface AttributionToSplitRuleView {
+  rule: AttributionToSplitRule;
+  attributionSource: AttributionSourceView | null;
+  targetPolicy: RevenueSharingPolicyView | null;
+  targetCommissionModel: CommissionModelView | null;
+  participantShares: ParticipantShare[];
+  explanation: AttributionSplitExplanation;
   boundaryNotes: string[];
 }
 
@@ -2080,6 +2100,112 @@ function buildAttributionContext(source: AttributionSourceRecord): AttributionCo
   };
 }
 
+function getAttributionToSplitRulesForSource(sourceId: string) {
+  return attributionToSplitRules.filter((rule) => rule.attributionSourceId === sourceId).sort((left, right) => left.priority - right.priority);
+}
+
+function getAttributionRuleParticipantShares(rule: AttributionToSplitRule) {
+  return participantShares.filter(
+    (share) =>
+      share.policyId === rule.targetPolicyId &&
+      share.commissionModelId === rule.targetCommissionModelId &&
+      share.participantId === rule.targetParticipantId
+  );
+}
+
+function buildAttributionSplitExplanation(rule: AttributionToSplitRule): AttributionSplitExplanation {
+  const shares = getAttributionRuleParticipantShares(rule);
+  return {
+    ruleId: rule.id,
+    ruleName: rule.name,
+    reason: rule.reason,
+    attributionSourceId: rule.attributionSourceId,
+    distributionSourceId: rule.distributionSourceId,
+    commercialOriginId: rule.commercialOriginId,
+    targetPolicyId: rule.targetPolicyId,
+    targetCommissionModelId: rule.targetCommissionModelId,
+    targetParticipantId: rule.targetParticipantId,
+    participantShareIds: shares.map((share) => share.id),
+    suggestedShareLabel: `${rule.suggestedShareValue}% ${rule.suggestedShareType} simulated split`,
+    status: rule.status,
+    priority: rule.priority,
+    boundaryNotes: Array.from(
+      new Set([
+        ...rule.warnings,
+        ...rule.disclaimers,
+        ...shares.flatMap((share) => [...share.warnings, ...share.disclaimers]),
+        "Attribution-to-Split is mock/config-first and simulated split only.",
+        "Commercial Origin Split Mapping and Distribution Source Split Mapping do not create attribution financeira real, commission tracking, payout, settlement, billing, analytics tracking, BI or Marketplace Intelligence."
+      ])
+    )
+  };
+}
+
+function resolveAttributionSplitForSource(source: AttributionSourceRecord): AttributionSplitResolution {
+  const rules = getAttributionToSplitRulesForSource(source.id);
+  const appliedRules = rules.filter((rule) => rule.status !== "blocked" && rule.status !== "disabled");
+  const blockedRules = rules.filter((rule) => rule.status === "blocked" || rule.status === "disabled");
+  const participantShareIds = appliedRules.flatMap((rule) => getAttributionRuleParticipantShares(rule).map((share) => share.id));
+  const firstAppliedRule = appliedRules[0];
+
+  return {
+    attributionSourceId: source.id,
+    resolvedAt: "2026-06-16T11:30:00.000Z",
+    policyId: firstAppliedRule?.targetPolicyId,
+    commissionModelId: firstAppliedRule?.targetCommissionModelId,
+    participantShareIds: Array.from(new Set(participantShareIds)),
+    appliedRuleIds: appliedRules.map((rule) => rule.id),
+    blockedRuleIds: blockedRules.map((rule) => rule.id),
+    warnings: Array.from(
+      new Set([
+        ...source.warnings,
+        ...rules.flatMap((rule) => rule.warnings),
+        ...(rules.length ? [] : ["No Attribution-to-Split Rule is configured for this Attribution Source."]),
+        ...(blockedRules.length ? ["One or more Attribution-to-Split Rules are blocked because tracking real or commission tracking is unavailable."] : [])
+      ])
+    ),
+    disclaimers: Array.from(
+      new Set([
+        ...source.disclaimers,
+        ...rules.flatMap((rule) => rule.disclaimers),
+        "Attribution Split Resolution is simulated split only and cannot track, attribute revenue, settle or trigger payout.",
+        "No tracking real, no commission tracking, no payout, no settlement, no billing, no analytics tracking, no BI and no Marketplace Intelligence are active."
+      ])
+    ),
+    canTrack: false,
+    canAttributeRevenue: false,
+    canSettle: false,
+    canTriggerPayout: false
+  };
+}
+
+function buildAttributionToSplitRuleView(rule: AttributionToSplitRule): AttributionToSplitRuleView {
+  const attributionSource = getAttributionSourceById(rule.attributionSourceId);
+  const targetPolicy = getRevenueSharingPolicyById(rule.targetPolicyId);
+  const targetCommissionModel = getCommissionModelById(rule.targetCommissionModelId);
+  const participantSharesForRule = getAttributionRuleParticipantShares(rule);
+  const explanation = buildAttributionSplitExplanation(rule);
+
+  return {
+    rule,
+    attributionSource,
+    targetPolicy,
+    targetCommissionModel,
+    participantShares: participantSharesForRule,
+    explanation,
+    boundaryNotes: Array.from(
+      new Set([
+        ...rule.warnings,
+        ...rule.disclaimers,
+        ...explanation.boundaryNotes,
+        ...(targetPolicy?.boundaryNotes ?? []),
+        ...(targetCommissionModel?.boundaryNotes ?? []),
+        "Attribution-to-Split Rule is simulated split only and does not perform tracking real, commission tracking, payout, settlement or billing."
+      ])
+    )
+  };
+}
+
 function buildAttributionSourceView(source: AttributionSourceRecord): AttributionSourceView {
   const channel = source.channelId ? getDistributionChannelById(source.channelId) ?? undefined : undefined;
   const profile = source.profileId ? getDistributionProfileById(source.profileId) ?? undefined : undefined;
@@ -2091,10 +2217,14 @@ function buildAttributionSourceView(source: AttributionSourceRecord): Attributio
     : undefined;
   const placementView = placement ? buildDistributionPlacementView(placement) : undefined;
   const context = buildAttributionContext(source);
+  const attributionSplitResolution = resolveAttributionSplitForSource(source);
+  const attributionSplitExplanations = getAttributionToSplitRulesForSource(source.id).map(buildAttributionSplitExplanation);
 
   return {
     source,
     context,
+    attributionSplitResolution,
+    attributionSplitExplanations,
     channel,
     profile,
     tenant,
@@ -2108,6 +2238,9 @@ function buildAttributionSourceView(source: AttributionSourceRecord): Attributio
       ...(channel?.boundaryNotes ?? []),
       ...(profile?.boundaryNotes ?? []),
       ...(placementView?.boundaryNotes ?? []),
+      ...attributionSplitResolution.warnings,
+      ...attributionSplitResolution.disclaimers,
+      ...attributionSplitExplanations.flatMap((explanation) => explanation.boundaryNotes),
       "Attribution Source is not tracking real, cookie tracking, analytics tracking, commission tracking, payout, settlement, billing, revenue sharing, Marketplace Intelligence or BI.",
       "Referral Source mock, Campaign Source mock and Placement Source mock are display descriptors only."
     ]
@@ -2200,6 +2333,94 @@ export function resolveAttributionContext(sourceIdOrSlug?: string) {
       ...source.boundaryNotes,
       "Attribution Context resolution never creates tracking real, cookies, analytics tracking, commission tracking, payout, settlement, billing, revenue sharing, Marketplace Intelligence or BI."
     ]
+  };
+}
+
+export function listAttributionToSplitRules() {
+  return attributionToSplitRules.map(buildAttributionToSplitRuleView);
+}
+
+export function listAttributionToSplitRulesByAttributionSource(sourceIdOrSlug: string) {
+  const source = getAttributionSourceByIdOrSlug(sourceIdOrSlug);
+  if (!source) return [];
+  return getAttributionToSplitRulesForSource(source.id).map(buildAttributionToSplitRuleView);
+}
+
+export function listAttributionToSplitRulesByDistributionChannel(channelIdOrSlug: string) {
+  const channel = getDistributionChannelByIdOrSlug(channelIdOrSlug);
+  if (!channel) return [];
+  return attributionToSplitRules.filter((rule) => rule.distributionChannelId === channel.id).map(buildAttributionToSplitRuleView);
+}
+
+export function listAttributionToSplitRulesByDistributionProfile(profileIdOrSlug: string) {
+  const profile = getDistributionProfileByIdOrSlug(profileIdOrSlug);
+  if (!profile) return [];
+  return attributionToSplitRules.filter((rule) => rule.distributionProfileId === profile.id).map(buildAttributionToSplitRuleView);
+}
+
+export function listAttributionToSplitRulesByCommunityDistribution(distributionIdOrSlug: string) {
+  const distribution = getCommunityDistributionByIdOrSlug(distributionIdOrSlug);
+  if (!distribution) return [];
+  return attributionToSplitRules.filter((rule) => rule.communityDistributionId === distribution.id).map(buildAttributionToSplitRuleView);
+}
+
+export function resolveAttributionSplit(sourceIdOrSlug: string) {
+  const source = getAttributionSourceByIdOrSlug(sourceIdOrSlug);
+  return source ? resolveAttributionSplitForSource(source) : null;
+}
+
+export function explainAttributionToSplit(sourceIdOrSlug: string) {
+  const source = getAttributionSourceByIdOrSlug(sourceIdOrSlug);
+  if (!source) return [];
+  return getAttributionToSplitRulesForSource(source.id).map(buildAttributionSplitExplanation);
+}
+
+export function getAttributionSplitMapping(sourceIdOrSlug: string): AttributionSplitMapping[] {
+  const source = getAttributionSourceByIdOrSlug(sourceIdOrSlug);
+  if (!source) return [];
+  return getAttributionToSplitRulesForSource(source.id).map((rule) => {
+    const shares = getAttributionRuleParticipantShares(rule);
+    return {
+      ruleId: rule.id,
+      attributionSourceId: rule.attributionSourceId,
+      participantShareIds: shares.map((share) => share.id),
+      targetPolicyId: rule.targetPolicyId,
+      targetCommissionModelId: rule.targetCommissionModelId,
+      targetParticipantId: rule.targetParticipantId,
+      suggestedShareType: rule.suggestedShareType,
+      suggestedShareValue: rule.suggestedShareValue,
+      isSimulated: true,
+      boundaryNotes: buildAttributionSplitExplanation(rule).boundaryNotes
+    };
+  });
+}
+
+export function getCommercialOriginSplitMapping(commercialOriginId: string): CommercialOriginSplitMapping | null {
+  const rules = attributionToSplitRules.filter((rule) => rule.commercialOriginId === commercialOriginId);
+  if (!rules.length) return null;
+  const source = attributionSources.find((entry) => entry.id === rules[0].attributionSourceId);
+  return {
+    commercialOriginId,
+    originLabel: source?.commercialOrigin.originLabel ?? commercialOriginId,
+    appliedRuleIds: rules.filter((rule) => rule.status !== "blocked" && rule.status !== "disabled").map((rule) => rule.id),
+    targetPolicyIds: Array.from(new Set(rules.map((rule) => rule.targetPolicyId))),
+    isSimulated: true,
+    boundaryNotes: Array.from(new Set(rules.flatMap((rule) => [...rule.warnings, ...rule.disclaimers])))
+  };
+}
+
+export function getDistributionSourceSplitMapping(distributionSourceId: string): DistributionSourceSplitMapping | null {
+  const rules = attributionToSplitRules.filter((rule) => rule.distributionSourceId === distributionSourceId);
+  if (!rules.length) return null;
+  const source = attributionSources.find((entry) => entry.distributionSource.id === distributionSourceId);
+  return {
+    distributionSourceId,
+    sourceLabel: source?.distributionSource.sourceLabel ?? distributionSourceId,
+    appliedRuleIds: rules.filter((rule) => rule.status !== "blocked" && rule.status !== "disabled").map((rule) => rule.id),
+    targetPolicyIds: Array.from(new Set(rules.map((rule) => rule.targetPolicyId))),
+    targetCommissionModelIds: Array.from(new Set(rules.map((rule) => rule.targetCommissionModelId))),
+    isSimulated: true,
+    boundaryNotes: Array.from(new Set(rules.flatMap((rule) => [...rule.warnings, ...rule.disclaimers])))
   };
 }
 

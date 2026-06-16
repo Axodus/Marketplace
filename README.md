@@ -42,6 +42,8 @@ Phase 06 - Revenue Sharing planning is documented in `docs/PHASE_06_REVENUE_SHAR
 
 `MEP-REQ-061` adds mock/config-first Commission Models and detailed Participant Shares to the Revenue Sharing surface. Commission models expose simulated Platform Share, Tenant Share, Distributor Share, Partner Share, Affiliate Share, Agency Share, Creator Share and Community Share validation with cap/floor/share-total warnings. Commission Models do not create commission real, obligation financial, payout, settlement, billing, invoice, accounting, tax, treasury routing, split on-chain, payment gateway, backend, database, analytics tracking, BI or Marketplace Intelligence.
 
+`MEP-REQ-062` adds mock/config-first Attribution-to-Split Rules to the Attribution Sources surface. Attribution Split Mapping, Commercial Origin Split Mapping and Distribution Source Split Mapping can suggest simulated participant shares from referral mock, campaign mock, placement mock and community source context. Attribution-to-Split does not activate tracking real, commission tracking, attribution financeira real, payout, settlement, billing, analytics tracking, BI, Marketplace Intelligence, backend, API or database.
+
 Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  
