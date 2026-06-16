@@ -1,5 +1,38 @@
 # Marketplace Roadmap
 
+# Phase 06 - Revenue Sharing Planning
+
+Status: COMPLETED - PLANNING AND BOUNDARY AUDIT
+
+Planning artifact:
+- `docs/PHASE_06_REVENUE_SHARING_AUDIT.md`
+
+Recommended implementation sequence:
+- MEP-06A - Revenue Sharing Planning and Settlement Boundary Audit - COMPLETED
+- MEP-REQ-060 - Revenue Sharing Model - PLANNED
+- MEP-REQ-061 - Commission Models and Participant Shares - PLANNED
+- MEP-REQ-062 - Attribution-to-Split Rules - PLANNED
+- MEP-REQ-063 - Revenue Sharing Preview and Audit Trail - PLANNED
+- MEP-REQ-064 - Tenant/Distribution Revenue Sharing Integration - PLANNED
+- MEP-PHASE-06-CLOSURE - QA, navigation and Revenue Sharing boundary validation - PLANNED
+
+MEP-06A delivered:
+- mapped the current post-Phase 05 Marketplace runtime and documentation state
+- differentiated Attribution Source, Commercial Origin, Commission Model, Revenue Share, Revenue Split Rule, Participant Share, Payout, Billing and Settlement boundaries
+- defined conceptual models for Revenue Sharing Policy, Revenue Split Rule, Commission Model, Revenue Participant, Participant Share, Revenue Attribution Snapshot, Revenue Sharing Preview, Settlement Boundary, Payout Preview mock, Revenue Sharing Audit Entry, Tenant Revenue Sharing Config and Distribution Revenue Sharing Config
+- recommended participant types, revenue sharing statuses, split rule types and settlement boundary statuses
+- mapped future entry points across navigation, tenant storefronts, curated catalogs, distribution channels, profiles, community distribution, attribution sources, products, collections, sellers, dashboards, asset registry and commerce preview modals
+- defined governance, financial execution, settlement, treasury, attribution-to-split and trust boundaries
+- preserved no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend, no API, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
+
+Constraints:
+- Phase 06 work must remain mock/config-first until explicit implementation requests authorize bounded runtime changes
+- MEP-06A is documentation/audit planning only; it may reference existing bounded runtime artifacts as prior context, but it does not modify, extend, activate or validate them as Phase 06 Revenue Sharing runtime
+- `canCalculatePreview` may be true only for simulation
+- `canSettle`, `canTriggerPayout`, `canRouteTreasury`, `canInvoice`, `canAccount` and `canReceivePayout` must remain false during Phase 06
+
+---
+
 # Phase 05 - Distribution Network Planning
 
 Status: COMPLETED - DISTRIBUTION NETWORK VALIDATED MOCK/CONFIG-FIRST

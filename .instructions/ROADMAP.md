@@ -350,14 +350,14 @@ Implementation boundary:
 
 # Phase 06 — Revenue Sharing Infrastructure
 
-Status: PLANNED
+Status: PLANNING/AUDIT COMPLETED - READY FOR MOCK/CONFIG-FIRST IMPLEMENTATION
 
 Objectives:
 - introduce revenue sharing models for sellers, creators, tenants, partners, affiliates, platform fees, ecosystem fees and treasury-compatible splits
 - preserve EIP-2981 royalty compatibility
 - separate allocation previews from payout execution
 - define Attribution Model, Commission Model, Revenue Split Rules and Tenant Participation implementation boundaries
-- prepare Commission Engine, Split Rules and Revenue Dashboard as future capabilities
+- prepare Revenue Sharing Policy, Commission Model, Participant Share, Attribution-to-Split Rules, Preview and Audit Trail as future mock/config-first capabilities
 - depend on Distribution Network commercial origin, distribution eligibility and traceability
 - depend on Attribution Engine or equivalent commercial attribution capability before activation
 
@@ -376,10 +376,17 @@ Deliverables:
 - Treasury Validation boundary
 - Revenue Dashboard readiness
 
+Planning artifact:
+- `docs/PHASE_06_REVENUE_SHARING_AUDIT.md`
+
 Linked requirements:
-- MEP-REQ-060 — Commission Engine
-- MEP-REQ-061 — Split Rules
-- MEP-REQ-062 — Revenue Dashboard
+- MEP-06A — Revenue Sharing Planning and Settlement Boundary Audit — completed
+- MEP-REQ-060 — Revenue Sharing Model
+- MEP-REQ-061 — Commission Models and Participant Shares
+- MEP-REQ-062 — Attribution-to-Split Rules
+- MEP-REQ-063 — Revenue Sharing Preview and Audit Trail
+- MEP-REQ-064 — Tenant/Distribution Revenue Sharing Integration
+- MEP-PHASE-06-CLOSURE — QA, navigation and Revenue Sharing boundary validation
 
 Dependencies:
 - Phase 05 — Distribution Network
@@ -388,9 +395,11 @@ Dependencies:
 - Treasury Validation boundary
 
 Implementation boundary:
-- Phase 06 implementation is future work
+- MEP-06A is audit and planning only
+- Phase 06 implementation remains future controlled mock/config-first work
 - MEP-REQ-004 is documentation-only
-- no real Commission Engine, split engine, Revenue Dashboard, payment, payout, billing, settlement, treasury routing, definitive financial calculation, pricing model, API, GraphQL schema, database, persistence, frontend component, route, contract, adapter or integration is introduced by Phase 00
+- no real Revenue Sharing runtime, Commission Engine, split engine, Revenue Dashboard, payment, payout, billing, invoice, accounting, tax, settlement, treasury routing, definitive financial calculation, pricing model, API, GraphQL schema, database, persistence, frontend component, route, contract, adapter, wallet signature, analytics tracking, BI, Marketplace Intelligence or integration is introduced by MEP-06A
+- during Phase 06, `canCalculatePreview` may be true only for simulation; `canSettle`, `canTriggerPayout`, `canRouteTreasury`, `canInvoice`, `canAccount` and `canReceivePayout` must remain false
 
 ---
 
