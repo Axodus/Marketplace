@@ -47,6 +47,9 @@ import {
   getDistributionProfileBySlug,
   getDistributionProfilesByChannel,
   getDistributionProfilesByType,
+  getRevenueSharingPoliciesByCuratedCatalog,
+  getRevenueSharingPoliciesByDistributionChannel,
+  getRevenueSharingPoliciesByTenant,
   getCommercialOriginForAttribution,
   getDistributionSourceForAttribution,
   getExternalContractById,
@@ -92,6 +95,10 @@ import {
   listFederationProviders,
   listCollections,
   listProducts,
+  listParticipantSharesByPolicy,
+  listRevenueParticipantsByPolicy,
+  listRevenueSharingPolicies,
+  listRevenueSplitRulesByPolicy,
   listTenants,
   getTenantDisplayName,
   getTenantFeaturedCollections,
@@ -114,6 +121,9 @@ import {
   resolveCommunityDistributionContext,
   resolveDistributionContext,
   resolveDistributionProfileContext,
+  resolveSettlementBoundary,
+  getRevenueSharingPolicyById,
+  explainRevenueSharingBoundary,
   resolveTenantCatalog,
   resolveTenantContext,
   resolveTenantCuratedCatalogs,
@@ -843,6 +853,69 @@ describe("marketplaceService", () => {
     expect(catalogDistribution?.boundaryNotes.join(" ")).toContain("federation boundaries");
     expect(tenantDistribution.boundaryNotes.join(" ")).toContain("No revenue sharing");
     expect(tenantDistribution.boundaryNotes.join(" ")).toContain("no tracking real");
+  });
+
+  it("represents Revenue Sharing Policies as mock/config-first models without financial execution", () => {
+    const policies = listRevenueSharingPolicies();
+    const academyPolicy = getRevenueSharingPolicyById("academy-tenant-revenue-preview");
+    const communityPolicy = getRevenueSharingPolicyById("revenue-policy-community-distribution-preview");
+    const productPolicy = getRevenueSharingPolicyById("governance-product-revenue-preview");
+    const tenantPolicies = getRevenueSharingPoliciesByTenant("academy");
+    const channelPolicies = getRevenueSharingPoliciesByDistributionChannel("academy-partner-channel");
+    const catalogPolicies = getRevenueSharingPoliciesByCuratedCatalog("academy-onboarding");
+    const participants = listRevenueParticipantsByPolicy("academy-tenant-revenue-preview");
+    const rules = listRevenueSplitRulesByPolicy("academy-tenant-revenue-preview");
+    const shares = listParticipantSharesByPolicy("academy-tenant-revenue-preview");
+    const boundary = resolveSettlementBoundary("academy-tenant-revenue-preview");
+    const notes = explainRevenueSharingBoundary("academy-tenant-revenue-preview").join(" ");
+
+    expect(policies.map((view) => view.policy.slug)).toEqual([
+      "academy-tenant-revenue-preview",
+      "community-distribution-revenue-preview",
+      "governance-product-revenue-preview"
+    ]);
+    expect(academyPolicy?.policy.scope).toBe("tenant");
+    expect(academyPolicy?.tenant?.slug).toBe("academy");
+    expect(academyPolicy?.distributionChannel?.channel.id).toBe("distribution-channel-academy-partner");
+    expect(academyPolicy?.distributionProfile?.profile.id).toBe("distribution-profile-academy-partner");
+    expect(academyPolicy?.curatedCatalog?.catalog.slug).toBe("academy-onboarding");
+    expect(academyPolicy?.attributionSources.map((source) => source.source.id)).toContain("attribution-record-academy-campaign");
+    expect(academyPolicy?.shareTotal).toBe(100);
+    expect(communityPolicy?.communityDistribution?.distribution.id).toBe("community-distribution-creator-federated");
+    expect(communityPolicy?.policy.allowsFederatedAssets).toBe(true);
+    expect(communityPolicy?.boundaryNotes.join(" ")).toContain("origin, provider, validation status, provenance, risk classification and trust boundaries");
+    expect(productPolicy?.product?.slug).toBe("governance-dashboard-nft-access");
+    expect(tenantPolicies.map((view) => view.policy.id)).toContain("revenue-policy-academy-tenant-preview");
+    expect(channelPolicies.map((view) => view.policy.id)).toContain("revenue-policy-academy-tenant-preview");
+    expect(catalogPolicies.map((view) => view.policy.id)).toContain("revenue-policy-academy-tenant-preview");
+    expect(participants.map((participant) => participant.participantType)).toEqual(["platform", "tenant", "partner"]);
+    expect(rules.map((rule) => rule.ruleType)).toContain("tenant-based-mock");
+    expect(rules.map((rule) => rule.ruleType)).toContain("distribution-based-mock");
+    expect(shares.every((share) => share.isSimulated)).toBe(true);
+    expect(shares.every((share) => share.canCalculatePreview === true)).toBe(true);
+    expect(boundary?.status).toBe("preview-only");
+    expect(boundary?.canSettle).toBe(false);
+    expect(boundary?.canTriggerPayout).toBe(false);
+    expect(boundary?.canRouteTreasury).toBe(false);
+    expect(boundary?.canInvoice).toBe(false);
+    expect(boundary?.canAccount).toBe(false);
+    expect(notes).toContain("mock/config-first");
+    expect(notes).toContain("No payout");
+    expect(notes).toContain("no settlement");
+    expect(notes).toContain("no billing");
+    expect(notes).toContain("no treasury routing");
+    expect(notes).toContain("no wallet signature");
+    expect(policies.every((view) => view.policy.canCalculatePreview === true)).toBe(true);
+    expect(policies.every((view) => view.policy.canSettle === false)).toBe(true);
+    expect(policies.every((view) => view.policy.canTriggerPayout === false)).toBe(true);
+    expect(policies.every((view) => view.policy.canRouteTreasury === false)).toBe(true);
+    expect(policies.every((view) => view.participants.every((participant) => participant.canReceivePayout === false && participant.canSettle === false))).toBe(true);
+    expect(policies.every((view) => view.participantShares.every((share) => share.canSettle === false && share.canTriggerPayout === false))).toBe(true);
+    expect(policies.every((view) => view.settlementBoundary?.canSettle === false)).toBe(true);
+    expect(policies.every((view) => view.settlementBoundary?.canTriggerPayout === false)).toBe(true);
+    expect(policies.every((view) => view.settlementBoundary?.canRouteTreasury === false)).toBe(true);
+    expect(policies.every((view) => view.settlementBoundary?.canInvoice === false)).toBe(true);
+    expect(policies.every((view) => view.settlementBoundary?.canAccount === false)).toBe(true);
   });
 
   it("issues mock purchase records without settlement", () => {

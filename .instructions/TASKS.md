@@ -9,7 +9,7 @@ Planning artifact:
 
 Recommended implementation sequence:
 - MEP-06A - Revenue Sharing Planning and Settlement Boundary Audit - COMPLETED
-- MEP-REQ-060 - Revenue Sharing Model - PLANNED
+- MEP-REQ-060 - Revenue Sharing Model - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-061 - Commission Models and Participant Shares - PLANNED
 - MEP-REQ-062 - Attribution-to-Split Rules - PLANNED
 - MEP-REQ-063 - Revenue Sharing Preview and Audit Trail - PLANNED
@@ -30,6 +30,16 @@ Constraints:
 - MEP-06A is documentation/audit planning only; it may reference existing bounded runtime artifacts as prior context, but it does not modify, extend, activate or validate them as Phase 06 Revenue Sharing runtime
 - `canCalculatePreview` may be true only for simulation
 - `canSettle`, `canTriggerPayout`, `canRouteTreasury`, `canInvoice`, `canAccount` and `canReceivePayout` must remain false during Phase 06
+
+MEP-REQ-060 delivered:
+- added Revenue Sharing Policy, Revenue Split Rule, Revenue Participant, Participant Share, Settlement Boundary, status, scope, participant type and governance status models
+- added mock/config-first Revenue Sharing Policies for Academy tenant, Community Marketplace Distribution and Governance product contexts
+- added helpers to list policies, resolve a policy by id or slug, list participants, list split rules, list participant shares and resolve Settlement Boundary
+- added policy filters by tenant, distribution channel and curated catalog
+- added hooks for policies, detail, participants, rules, shares, settlement boundary and boundary notes
+- added `/marketplace/revenue-sharing` and `/marketplace/revenue-sharing/:policySlug` UI surfaces with preview-only/no-payout/no-settlement boundary labels
+- added tests for policy resolution, participant and rule references, share totals and disabled payout/settlement/billing/treasury execution flags
+- preserved no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend API, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
 
 ---
 

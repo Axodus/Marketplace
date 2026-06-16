@@ -14,8 +14,13 @@ import {
   marketplaceFederationProviders,
   marketplaceFeaturedCatalogs,
   marketplaceLicenses,
+  marketplaceParticipantShares,
   marketplaceProducts,
+  marketplaceRevenueParticipants,
+  marketplaceRevenueSharingPolicies,
+  marketplaceRevenueSplitRules,
   marketplaceSellers,
+  marketplaceSettlementBoundaries,
   marketplaceTenantDistributionConfigs,
   marketplaceTenants,
   marketplaceWalletDiscoveryRecords
@@ -53,11 +58,16 @@ import type {
   License,
   MarketplaceBoundaryStatus,
   MarketplaceCollection,
+  ParticipantShare,
   Product,
   ProductCategory,
   ProductStanding,
   PurchaseRecord,
+  RevenueParticipant,
+  RevenueSharingPolicy,
+  RevenueSplitRule,
   Seller,
+  SettlementBoundary,
   Tenant,
   TenantBranding,
   TenantCatalog,
@@ -130,6 +140,11 @@ const attributionSources = marketplaceAttributionSources as AttributionSourceRec
 const communityDistributions = marketplaceCommunityDistributions as CommunityMarketplaceDistribution[];
 const tenantDistributionConfigs = marketplaceTenantDistributionConfigs as TenantDistributionConfig[];
 const curatedCatalogDistributionConfigs = marketplaceCuratedCatalogDistributionConfigs as CuratedCatalogDistributionConfig[];
+const revenueSharingPolicies = marketplaceRevenueSharingPolicies as RevenueSharingPolicy[];
+const revenueParticipants = marketplaceRevenueParticipants as RevenueParticipant[];
+const revenueSplitRules = marketplaceRevenueSplitRules as RevenueSplitRule[];
+const participantShares = marketplaceParticipantShares as ParticipantShare[];
+const settlementBoundaries = marketplaceSettlementBoundaries as SettlementBoundary[];
 const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
@@ -644,6 +659,25 @@ export interface CuratedCatalogDistributionView {
   context: DistributionIntegratedContext;
   includedItems: DistributionIntegratedItem[];
   excludedItems: DistributionIntegratedItem[];
+  boundaryNotes: string[];
+}
+
+export interface RevenueSharingPolicyView {
+  policy: RevenueSharingPolicy;
+  participants: RevenueParticipant[];
+  rules: RevenueSplitRule[];
+  participantShares: ParticipantShare[];
+  settlementBoundary: SettlementBoundary | null;
+  tenant?: Tenant;
+  distributionChannel?: DistributionChannelView;
+  distributionProfile?: DistributionProfileView;
+  communityDistribution?: CommunityDistributionView;
+  curatedCatalog?: CuratedCatalogView;
+  catalogSegment?: CatalogSegment;
+  product?: Product;
+  collection?: MarketplaceCollection;
+  attributionSources: AttributionSourceView[];
+  shareTotal: number;
   boundaryNotes: string[];
 }
 
@@ -2956,6 +2990,122 @@ export function explainCuratedCatalogDistributionExclusion(catalogIdOrSlug: stri
     reason: rule.reason,
     boundaryNotes: [...rule.warnings, ...rule.disclaimers, ...view.context.disclaimers]
   }));
+}
+
+function getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug: string) {
+  const key = policyIdOrSlug.toLowerCase();
+  return revenueSharingPolicies.find((policy) => policy.id.toLowerCase() === key || policy.slug.toLowerCase() === key) ?? null;
+}
+
+function getRevenueParticipantById(participantId: string) {
+  return revenueParticipants.find((participant) => participant.id === participantId) ?? null;
+}
+
+function getRevenueSplitRuleById(ruleId: string) {
+  return revenueSplitRules.find((rule) => rule.id === ruleId) ?? null;
+}
+
+function buildRevenueSharingPolicyView(policy: RevenueSharingPolicy): RevenueSharingPolicyView {
+  const participants = policy.participantIds.map(getRevenueParticipantById).filter((participant): participant is RevenueParticipant => Boolean(participant));
+  const rules = policy.ruleIds.map(getRevenueSplitRuleById).filter((rule): rule is RevenueSplitRule => Boolean(rule));
+  const shares = participantShares.filter((share) => share.policyId === policy.id);
+  const settlementBoundary = settlementBoundaries.find((boundary) => boundary.id === policy.settlementBoundaryId) ?? null;
+  const tenant = policy.tenantId ? getTenantById(policy.tenantId) ?? undefined : undefined;
+  const distributionChannel = policy.distributionChannelId ? getDistributionChannelById(policy.distributionChannelId) ?? undefined : undefined;
+  const distributionProfile = policy.distributionProfileId ? getDistributionProfileById(policy.distributionProfileId) ?? undefined : undefined;
+  const communityDistribution = policy.communityDistributionId ? getCommunityMarketplaceDistributionById(policy.communityDistributionId) ?? undefined : undefined;
+  const curatedCatalog = policy.curatedCatalogId ? resolveCuratedCatalog(policy.curatedCatalogId) ?? undefined : undefined;
+  const catalogSegment = policy.catalogSegmentId ? getCatalogSegmentByIdOrSlug(policy.catalogSegmentId) ?? undefined : undefined;
+  const product = policy.productId ? products.find((entry) => entry.id === policy.productId) : undefined;
+  const collection = policy.collectionId ? collections.find((entry) => entry.id === policy.collectionId) : undefined;
+  const attributionSourceViews = policy.attributionSourceIds.map((sourceId) => getAttributionSourceById(sourceId)).filter((source): source is AttributionSourceView => Boolean(source));
+  const shareTotal = shares.reduce((total, share) => total + share.shareValue, 0);
+  const shareWarning = shareTotal === 100 ? [] : [`Participant Share mock total is ${shareTotal}; review required before any future activation.`];
+
+  return {
+    policy,
+    participants,
+    rules,
+    participantShares: shares,
+    settlementBoundary,
+    tenant,
+    distributionChannel,
+    distributionProfile,
+    communityDistribution,
+    curatedCatalog,
+    catalogSegment,
+    product,
+    collection,
+    attributionSources: attributionSourceViews,
+    shareTotal,
+    boundaryNotes: Array.from(
+      new Set([
+        ...policy.warnings,
+        ...policy.disclaimers,
+        ...shareWarning,
+        ...participants.flatMap((participant) => [...participant.warnings, ...participant.disclaimers]),
+        ...rules.flatMap((rule) => [...rule.warnings, ...rule.disclaimers]),
+        ...shares.flatMap((share) => [...share.warnings, ...share.disclaimers]),
+        ...(settlementBoundary ? [...settlementBoundary.warnings, ...settlementBoundary.disclaimers] : ["Settlement Boundary missing; review required."]),
+        ...(distributionChannel?.boundaryNotes ?? []),
+        ...(distributionProfile?.boundaryNotes ?? []),
+        ...(communityDistribution?.boundaryNotes ?? []),
+        ...(curatedCatalog?.boundaryNotes ?? []),
+        ...(collection?.trustBoundary?.notes ?? []),
+        ...attributionSourceViews.flatMap((source) => source.boundaryNotes),
+        "Revenue Sharing Policy is mock/config-first and preview-only.",
+        "Revenue Sharing Policy does not execute payout, settlement, billing, invoice, accounting, tax, treasury routing, payment gateway, wallet signature, backend, API, database, analytics tracking, BI or Marketplace Intelligence.",
+        "canCalculatePreview may be true only for simulated explanation; canSettle=false, canTriggerPayout=false and canRouteTreasury=false."
+      ])
+    )
+  };
+}
+
+export function listRevenueSharingPolicies() {
+  return revenueSharingPolicies.map(buildRevenueSharingPolicyView);
+}
+
+export function getRevenueSharingPolicyById(policyIdOrSlug: string) {
+  const policy = getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug);
+  return policy ? buildRevenueSharingPolicyView(policy) : null;
+}
+
+export function listRevenueParticipantsByPolicy(policyIdOrSlug: string) {
+  return getRevenueSharingPolicyById(policyIdOrSlug)?.participants ?? [];
+}
+
+export function listRevenueSplitRulesByPolicy(policyIdOrSlug: string) {
+  return getRevenueSharingPolicyById(policyIdOrSlug)?.rules ?? [];
+}
+
+export function listParticipantSharesByPolicy(policyIdOrSlug: string) {
+  return getRevenueSharingPolicyById(policyIdOrSlug)?.participantShares ?? [];
+}
+
+export function resolveSettlementBoundary(policyIdOrSlug: string) {
+  return getRevenueSharingPolicyById(policyIdOrSlug)?.settlementBoundary ?? null;
+}
+
+export function getRevenueSharingPoliciesByTenant(tenantIdOrSlug: string) {
+  const tenant = getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug);
+  if (!tenant) return [];
+  return listRevenueSharingPolicies().filter((view) => view.policy.tenantId === tenant.id);
+}
+
+export function getRevenueSharingPoliciesByDistributionChannel(channelIdOrSlug: string) {
+  const channel = getDistributionChannelByIdOrSlug(channelIdOrSlug);
+  if (!channel) return [];
+  return listRevenueSharingPolicies().filter((view) => view.policy.distributionChannelId === channel.id);
+}
+
+export function getRevenueSharingPoliciesByCuratedCatalog(catalogIdOrSlug: string) {
+  const catalog = resolveCuratedCatalog(catalogIdOrSlug);
+  if (!catalog) return [];
+  return listRevenueSharingPolicies().filter((view) => view.policy.curatedCatalogId === catalog.catalog.id);
+}
+
+export function explainRevenueSharingBoundary(policyIdOrSlug: string) {
+  return getRevenueSharingPolicyById(policyIdOrSlug)?.boundaryNotes ?? [];
 }
 
 export function discoverWalletAssets(walletAddress?: string): WalletDiscoveryView {

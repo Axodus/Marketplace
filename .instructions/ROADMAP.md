@@ -381,7 +381,7 @@ Planning artifact:
 
 Linked requirements:
 - MEP-06A — Revenue Sharing Planning and Settlement Boundary Audit — completed
-- MEP-REQ-060 — Revenue Sharing Model
+- MEP-REQ-060 — Revenue Sharing Model — implemented mock/config-first
 - MEP-REQ-061 — Commission Models and Participant Shares
 - MEP-REQ-062 — Attribution-to-Split Rules
 - MEP-REQ-063 — Revenue Sharing Preview and Audit Trail

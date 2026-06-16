@@ -290,6 +290,52 @@ export type DistributionIntegrationScope =
   | "mixed"
   | "demo";
 export type DistributionIntegratedContextType = "tenant" | "curated-catalog";
+export type RevenueSharingStatus =
+  | "draft"
+  | "configured-mock"
+  | "active-mock"
+  | "preview-only"
+  | "review-required"
+  | "governance-review"
+  | "restricted"
+  | "disabled"
+  | "archived"
+  | "conflict";
+export type RevenueSharingScope = "global" | "tenant" | "distribution-channel" | "distribution-profile" | "community-distribution" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "demo";
+export type RevenueParticipantType =
+  | "platform"
+  | "tenant"
+  | "creator"
+  | "seller"
+  | "distributor"
+  | "partner"
+  | "agency"
+  | "affiliate"
+  | "community"
+  | "academy"
+  | "acs"
+  | "enterprise"
+  | "dao"
+  | "curator"
+  | "provider"
+  | "demo";
+export type RevenueGovernanceStatus = "not-reviewed" | "review-required" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
+export type RevenueSplitRuleType =
+  | "fixed-percentage-mock"
+  | "weighted-percentage-mock"
+  | "flat-amount-mock"
+  | "tiered-mock"
+  | "attribution-based-mock"
+  | "catalog-based-mock"
+  | "tenant-based-mock"
+  | "distribution-based-mock"
+  | "community-based-mock"
+  | "manual-mock"
+  | "demo";
+export type RevenueSplitTargetType = "tenant" | "distribution-channel" | "distribution-profile" | "community-distribution" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "global" | "demo";
+export type ParticipantShareType = "percentage-mock" | "flat-amount-mock" | "weighted-mock" | "manual-mock";
+export type RevenueSplitConflictPolicy = "warn-only" | "block-preview" | "review-required" | "manual-resolution";
+export type SettlementBoundaryStatus = "no-settlement" | "preview-only" | "blocked" | "review-required" | "restricted" | "disabled" | "not-configured";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -1151,6 +1197,108 @@ export interface DistributionIntegratedItem {
   canSettle: boolean;
   warnings: string[];
   disclaimers: string[];
+}
+
+export interface RevenueParticipant {
+  id: string;
+  participantType: RevenueParticipantType;
+  participantRefId: string;
+  displayName: string;
+  status: RevenueSharingStatus;
+  governanceStatus: RevenueGovernanceStatus;
+  walletLabelMock: string;
+  payoutLabelMock: string;
+  canReceivePayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSplitRule {
+  id: string;
+  policyId: string;
+  ruleType: RevenueSplitRuleType;
+  scope: RevenueSharingScope;
+  targetType: RevenueSplitTargetType;
+  targetId: string;
+  participantType: RevenueParticipantType;
+  participantId: string;
+  shareType: ParticipantShareType;
+  shareValue: number;
+  priority: number;
+  status: RevenueSharingStatus;
+  capValueMock?: number;
+  floorValueMock?: number;
+  conflictPolicy: RevenueSplitConflictPolicy;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ParticipantShare {
+  id: string;
+  policyId: string;
+  participantId: string;
+  shareType: ParticipantShareType;
+  shareValue: number;
+  sourceRuleId: string;
+  attributionSourceId?: string;
+  commercialOriginId?: string;
+  isSimulated: boolean;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SettlementBoundary {
+  id: string;
+  scope: RevenueSharingScope;
+  scopeId: string;
+  status: SettlementBoundaryStatus;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  boundaryLabel: string;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingPolicy {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  scope: RevenueSharingScope;
+  status: RevenueSharingStatus;
+  governanceStatus: RevenueGovernanceStatus;
+  tenantId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  productId?: string;
+  collectionId?: string;
+  participantIds: string[];
+  ruleIds: string[];
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  settlementBoundaryId: string;
+  allowsFederatedAssets: boolean;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CuratedCatalogRule {

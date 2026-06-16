@@ -15,6 +15,7 @@ const DistributionNetworkPage = lazy(() => import("./modules/marketplace/pages/D
 const DistributionProfilesPage = lazy(() => import("./modules/marketplace/pages/DistributionProfilesPage").then((module) => ({ default: module.DistributionProfilesPage })));
 const AttributionSourcesPage = lazy(() => import("./modules/marketplace/pages/AttributionSourcesPage").then((module) => ({ default: module.AttributionSourcesPage })));
 const CommunityDistributionsPage = lazy(() => import("./modules/marketplace/pages/CommunityDistributionsPage").then((module) => ({ default: module.CommunityDistributionsPage })));
+const RevenueSharingPage = lazy(() => import("./modules/marketplace/pages/RevenueSharingPage").then((module) => ({ default: module.RevenueSharingPage })));
 const CreateSellPage = lazy(() => import("./modules/marketplace/pages/CreateSellPage").then((module) => ({ default: module.CreateSellPage })));
 const ProductDetailPage = lazy(() => import("./modules/marketplace/pages/ProductDetailPage").then((module) => ({ default: module.ProductDetailPage })));
 const SellerProfilePage = lazy(() => import("./modules/marketplace/pages/SellerProfilePage").then((module) => ({ default: module.SellerProfilePage })));
@@ -79,6 +80,8 @@ const router = createBrowserRouter([
       { path: "marketplace/distribution/attribution/:sourceSlug", element: routeElement(<AttributionSourcesPage />) },
       { path: "marketplace/distribution/communities", element: routeElement(<CommunityDistributionsPage />) },
       { path: "marketplace/distribution/communities/:communitySlug", element: routeElement(<CommunityDistributionsPage />) },
+      { path: "marketplace/revenue-sharing", element: routeElement(<RevenueSharingPage />) },
+      { path: "marketplace/revenue-sharing/:policySlug", element: routeElement(<RevenueSharingPage />) },
       { path: "marketplace/distribution/profiles", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/profiles/:profileSlug", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/:channelId", element: routeElement(<DistributionNetworkPage />) },

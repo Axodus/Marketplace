@@ -9,6 +9,7 @@ import {
   calculateDashboardMetrics,
   discoverWalletAssets,
   explainEditorialRules,
+  explainRevenueSharingBoundary,
   getAttributionSourceById,
   getAttributionSourcesByChannel,
   getAttributionSourcesByProfile,
@@ -20,6 +21,9 @@ import {
   getDistributionNetworkById,
   getDistributionProfileById,
   getDistributionProfilesByType,
+  getRevenueSharingPoliciesByCuratedCatalog,
+  getRevenueSharingPoliciesByDistributionChannel,
+  getRevenueSharingPoliciesByTenant,
   listCuratedCatalogs,
   getExternalContractById,
   getFederationProviderById,
@@ -37,6 +41,10 @@ import {
   listDistributionNetworks,
   listDistributionProfiles,
   listProducts,
+  listRevenueSharingPolicies,
+  listParticipantSharesByPolicy,
+  listRevenueParticipantsByPolicy,
+  listRevenueSplitRulesByPolicy,
   getTenantDomains,
   getTenantVisibleCollections,
   getTenantVisibleProducts,
@@ -51,6 +59,8 @@ import {
   resolveCuratedCatalogDistribution,
   resolveDistributionContext,
   resolveDistributionProfileContext,
+  resolveSettlementBoundary,
+  getRevenueSharingPolicyById,
   resolveTenantCatalog,
   resolveTenantBranding,
   resolveTenantContext,
@@ -533,6 +543,98 @@ export function useDistributionContextForCuratedCatalog(catalogIdOrSlug?: string
       });
       return context;
     }
+  });
+}
+
+export function useRevenueSharingPolicies() {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-policies"],
+    queryFn: () => {
+      const policies = listRevenueSharingPolicies();
+      traceMarketplaceLifecycle("marketplace-revenue-sharing-policies-query", "completed", { policyCount: policies.length });
+      return policies;
+    }
+  });
+}
+
+export function useRevenueSharingPolicy(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-policy", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => {
+      const policy = getRevenueSharingPolicyById(policyIdOrSlug ?? "");
+      if (!policy) {
+        const error = new Error("Revenue Sharing Policy not found");
+        instrumentMarketplaceError("marketplace-revenue-sharing-policy-query", error, { policyIdOrSlug: policyIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-revenue-sharing-policy-query", "completed", { policyId: policy.policy.id });
+      return policy;
+    }
+  });
+}
+
+export function useRevenueSharingPoliciesByTenant(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-policies-by-tenant", tenantIdOrSlug],
+    enabled: Boolean(tenantIdOrSlug),
+    queryFn: () => getRevenueSharingPoliciesByTenant(tenantIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingPoliciesByDistributionChannel(channelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-policies-by-channel", channelIdOrSlug],
+    enabled: Boolean(channelIdOrSlug),
+    queryFn: () => getRevenueSharingPoliciesByDistributionChannel(channelIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingPoliciesByCuratedCatalog(catalogIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-policies-by-catalog", catalogIdOrSlug],
+    enabled: Boolean(catalogIdOrSlug),
+    queryFn: () => getRevenueSharingPoliciesByCuratedCatalog(catalogIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingParticipants(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-participants", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => listRevenueParticipantsByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingSplitRules(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-split-rules", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => listRevenueSplitRulesByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingParticipantShares(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-participant-shares", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => listParticipantSharesByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useSettlementBoundary(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-settlement-boundary", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => resolveSettlementBoundary(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingBoundary(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-boundary", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => explainRevenueSharingBoundary(policyIdOrSlug ?? "")
   });
 }
 

@@ -38,6 +38,8 @@ Phase 05 — Distribution Network is completed and validated with `docs/PHASE_05
 
 Phase 06 - Revenue Sharing planning is documented in `docs/PHASE_06_REVENUE_SHARING_AUDIT.md`. MEP-06A prepares Revenue Sharing Policy, Revenue Split Rule, Commission Model, Revenue Participant, Participant Share, Revenue Attribution Snapshot, Revenue Sharing Preview, Settlement Boundary, Payout Preview mock, Revenue Sharing Audit Entry and tenant/distribution revenue sharing config concepts. It preserves attribution, commercial origin, tenant isolation, curated catalog rules, distribution context and federation trust boundaries while keeping all revenue sharing mock/config-first. MEP-06A does not activate payout, settlement, billing, invoice, accounting, tax, treasury routing, payment gateway, wallet signature, backend, API, database, analytics tracking, BI or Marketplace Intelligence.
 
+`MEP-REQ-060` adds the mock/config-first Revenue Sharing model and UI surfaces at `/marketplace/revenue-sharing` and `/marketplace/revenue-sharing/:policySlug`. Policies can be listed and opened by id or slug, with participants, split rules, participant shares, settlement boundary, warnings, disclaimers and boundary notes. Revenue Sharing remains preview-only: no payout, settlement, billing, invoice, accounting, tax, treasury routing, payment gateway, wallet signature, backend API, database, analytics tracking, BI or Marketplace Intelligence is activated.
+
 Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  
