@@ -1,10 +1,10 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
-import { CircleDollarSign, FileSearch, ShieldCheck, Split } from "lucide-react";
+import { CircleDollarSign, FileSearch, History, ShieldCheck, Split } from "lucide-react";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useRevenueSharingPolicies, useRevenueSharingPolicy } from "../hooks/useMarketplace";
+import { useRevenueSharingPolicies, useRevenueSharingPolicy, useRevenueSharingPreview } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
-import type { CommissionModelView, RevenueSharingPolicyView } from "../services/marketplaceService";
+import type { CommissionModelView, RevenueSharingPolicyView, RevenueSharingPreviewView } from "../services/marketplaceService";
 
 export function RevenueSharingPage() {
   const { policySlug } = useParams();
@@ -12,6 +12,8 @@ export function RevenueSharingPage() {
   const detailQuery = useRevenueSharingPolicy(policySlug);
   const policies = policiesQuery.data ?? [];
   const selected = policySlug ? detailQuery.data : policies[0];
+  const previewQuery = useRevenueSharingPreview(selected?.policy.slug);
+  const preview = previewQuery.data ?? null;
 
   useMarketplaceTelemetry("revenue-sharing-page", {
     policySlug: policySlug ?? null,
@@ -56,6 +58,9 @@ export function RevenueSharingPage() {
         <div className="mt-5 flex flex-wrap gap-2">
           <NeutralBadge>mock/config-first</NeutralBadge>
           <NeutralBadge>preview-only</NeutralBadge>
+          <NeutralBadge>Revenue Sharing Preview</NeutralBadge>
+          <NeutralBadge>Payout Preview mock</NeutralBadge>
+          <NeutralBadge>Settlement Preview mock</NeutralBadge>
           <NeutralBadge>canCalculatePreview simulation</NeutralBadge>
           <NeutralBadge>no commission real</NeutralBadge>
           <NeutralBadge>no payout</NeutralBadge>
@@ -66,7 +71,7 @@ export function RevenueSharingPage() {
         </div>
       </section>
 
-      {selected ? <RevenueSharingPolicyDetail view={selected} /> : null}
+      {selected ? <RevenueSharingPolicyDetail view={selected} preview={preview} /> : null}
 
       <section className="grid gap-4 lg:grid-cols-3">
         {policies.map((view) => (
@@ -109,7 +114,7 @@ function RevenueSharingPolicyCard({ view, selected }: { view: RevenueSharingPoli
   );
 }
 
-function RevenueSharingPolicyDetail({ view }: { view: RevenueSharingPolicyView }) {
+function RevenueSharingPolicyDetail({ view, preview }: { view: RevenueSharingPolicyView; preview: RevenueSharingPreviewView | null }) {
   const { policy, settlementBoundary } = view;
 
   return (
@@ -176,6 +181,8 @@ function RevenueSharingPolicyDetail({ view }: { view: RevenueSharingPolicyView }
         <ReferencePanel title="Attribution Sources" items={view.attributionSources.map((source) => `${source.source.displayName} - ${source.source.trackingMode}`)} />
       </section>
 
+      {preview ? <RevenueSharingPreviewPanel view={preview} /> : null}
+
       <section className="rounded border border-slate-200 bg-white p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -230,6 +237,118 @@ function RevenueSharingPolicyDetail({ view }: { view: RevenueSharingPolicyView }
       </section>
 
       <BoundaryNotes notes={view.boundaryNotes} />
+    </section>
+  );
+}
+
+function RevenueSharingPreviewPanel({ view }: { view: RevenueSharingPreviewView }) {
+  const { preview, payoutPreview, settlementPreview } = view;
+
+  return (
+    <section className="space-y-4 rounded border border-slate-200 bg-white p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Revenue Sharing Preview</p>
+          <h3 className="mt-1 text-lg font-semibold">Preview and Revenue Sharing Audit Trail</h3>
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            Preview, Payout Preview mock and Settlement Preview mock are non-executing explanations only.
+          </p>
+        </div>
+        <NeutralBadge>{preview.previewStatus}</NeutralBadge>
+      </div>
+
+      <div className="grid gap-3 text-sm md:grid-cols-4">
+        <Metric label="Generated" value={preview.generatedAt} />
+        <Metric label="Total share mock" value={`${preview.totalShareValueMock}%`} />
+        <Metric label="Applied rules" value={preview.appliedRuleIds.length} />
+        <Metric label="Blocked rules" value={preview.blockedRuleIds.length} />
+        <Metric label="Can settle" value={String(preview.canSettle)} />
+        <Metric label="Can payout" value={String(preview.canTriggerPayout)} />
+        <Metric label="Can invoice" value={String(preview.canInvoice)} />
+        <Metric label="Can account" value={String(preview.canAccount)} />
+      </div>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <InfoPanel
+          title="Payout Preview mock"
+          icon={<CircleDollarSign size={18} />}
+          rows={[
+            ["Status", payoutPreview?.status ?? "missing"],
+            ["Label", payoutPreview?.payoutLabelMock ?? "missing"],
+            ["Can trigger payout", String(payoutPreview?.canTriggerPayout ?? false)],
+            ["Can receive payout", String(payoutPreview?.canReceivePayout ?? false)]
+          ]}
+        />
+        <InfoPanel
+          title="Settlement Preview mock"
+          icon={<ShieldCheck size={18} />}
+          rows={[
+            ["Status", settlementPreview?.status ?? "missing"],
+            ["Label", settlementPreview?.settlementLabelMock ?? "missing"],
+            ["Can settle", String(settlementPreview?.canSettle ?? false)],
+            ["Can route treasury", String(settlementPreview?.canRouteTreasury ?? false)],
+            ["Can invoice", String(settlementPreview?.canInvoice ?? false)],
+            ["Can account", String(settlementPreview?.canAccount ?? false)]
+          ]}
+        />
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <ReferencePanel title="Rule application explanation" items={view.ruleApplicationExplanations.map((entry) => `${entry.ruleName} - ${entry.status} - ${entry.suggestedShareLabel}`)} />
+        <ReferencePanel title="Conflict warnings" items={view.conflictWarnings} emptyLabel="No conflict warnings" />
+      </section>
+
+      <section className="rounded border border-slate-200 bg-slate-50 p-4">
+        <h4 className="font-semibold">Participant split explanation</h4>
+        <div className="mt-3 grid gap-3">
+          {view.participantSplitExplanations.map((entry) => (
+            <article key={entry.participantShareId} className="rounded border border-slate-200 bg-white p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-semibold">{entry.participantLabel}</p>
+                  <p className="mt-1 text-sm text-slate-600">{entry.sourceRuleId}</p>
+                </div>
+                <NeutralBadge>{entry.shareLabel}</NeutralBadge>
+              </div>
+              <div className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+                <Metric label="Can settle" value={String(entry.canSettle)} />
+                <Metric label="Can payout" value={String(entry.canTriggerPayout)} />
+                <Metric label="Can receive payout" value={String(entry.canReceivePayout)} />
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded border border-slate-200 bg-slate-50 p-4">
+        <div className="flex items-center gap-2">
+          <History size={18} />
+          <h4 className="font-semibold">Revenue Sharing Audit Trail</h4>
+        </div>
+        <div className="mt-3 grid gap-3">
+          {view.auditEntries.map((entry) => (
+            <article key={entry.id} className="rounded border border-slate-200 bg-white p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-semibold">{entry.eventLabel}</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{entry.reason}</p>
+                </div>
+                <NeutralBadge>{entry.severity}</NeutralBadge>
+              </div>
+              <div className="mt-3 grid gap-2 text-sm sm:grid-cols-4">
+                <Metric label="Event" value={entry.eventType} />
+                <Metric label="Target" value={`${entry.targetType}: ${entry.targetId}`} />
+                <Metric label="Rule" value={entry.ruleId ?? "none"} />
+                <Metric label="Timestamp" value={entry.createdAt} />
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <p className="rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+        Revenue Sharing Preview is not payment, payout, settlement, invoice, accounting, tax, treasury routing, payment gateway or wallet signature.
+      </p>
     </section>
   );
 }

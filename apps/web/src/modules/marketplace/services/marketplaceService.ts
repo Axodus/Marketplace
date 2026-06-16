@@ -20,9 +20,13 @@ import {
   marketplaceProducts,
   marketplaceRevenueParticipants,
   marketplaceRevenueSharingPolicies,
+  marketplaceRevenueSharingPreviews,
+  marketplacePayoutPreviewMocks,
   marketplaceRevenueSplitRules,
   marketplaceSellers,
   marketplaceSettlementBoundaries,
+  marketplaceSettlementPreviewMocks,
+  marketplaceRevenueSharingAuditEntries,
   marketplaceTenantDistributionConfigs,
   marketplaceTenants,
   marketplaceWalletDiscoveryRecords
@@ -71,13 +75,18 @@ import type {
   ParticipantShareValidation,
   ParticipantShareValidationStatus,
   ParticipantShare,
+  ParticipantSplitExplanation,
+  PayoutPreviewMock,
   Product,
   ProductCategory,
   ProductStanding,
   PurchaseRecord,
   RevenueParticipant,
+  RevenueSharingAuditEntry,
+  RevenueSharingPreview,
   RevenueSharingPolicy,
   RevenueSplitRule,
+  SettlementPreviewMock,
   Seller,
   SettlementBoundary,
   Tenant,
@@ -154,6 +163,10 @@ const communityDistributions = marketplaceCommunityDistributions as CommunityMar
 const tenantDistributionConfigs = marketplaceTenantDistributionConfigs as TenantDistributionConfig[];
 const curatedCatalogDistributionConfigs = marketplaceCuratedCatalogDistributionConfigs as CuratedCatalogDistributionConfig[];
 const revenueSharingPolicies = marketplaceRevenueSharingPolicies as RevenueSharingPolicy[];
+const revenueSharingPreviews = marketplaceRevenueSharingPreviews as RevenueSharingPreview[];
+const payoutPreviewMocks = marketplacePayoutPreviewMocks as PayoutPreviewMock[];
+const settlementPreviewMocks = marketplaceSettlementPreviewMocks as SettlementPreviewMock[];
+const revenueSharingAuditEntries = marketplaceRevenueSharingAuditEntries as RevenueSharingAuditEntry[];
 const commissionModels = marketplaceCommissionModels as CommissionModel[];
 const revenueParticipants = marketplaceRevenueParticipants as RevenueParticipant[];
 const revenueSplitRules = marketplaceRevenueSplitRules as RevenueSplitRule[];
@@ -715,6 +728,19 @@ export interface CommissionModelView {
   rules: RevenueSplitRule[];
   participantShares: ParticipantShare[];
   validation: ParticipantShareValidation;
+  boundaryNotes: string[];
+}
+
+export interface RevenueSharingPreviewView {
+  preview: RevenueSharingPreview;
+  policy: RevenueSharingPolicyView | null;
+  commissionModel: CommissionModelView | null;
+  payoutPreview: PayoutPreviewMock | null;
+  settlementPreview: SettlementPreviewMock | null;
+  auditEntries: RevenueSharingAuditEntry[];
+  participantSplitExplanations: ParticipantSplitExplanation[];
+  ruleApplicationExplanations: AttributionSplitExplanation[];
+  conflictWarnings: string[];
   boundaryNotes: string[];
 }
 
@@ -3385,6 +3411,89 @@ function buildCommissionModelView(model: CommissionModel): CommissionModelView {
   };
 }
 
+function getRevenueSharingPreviewByPolicy(policyId: string) {
+  return revenueSharingPreviews.find((preview) => preview.policyId === policyId) ?? null;
+}
+
+function getRevenueSharingPreviewByIdOrPolicy(previewIdOrPolicyId: string) {
+  const key = previewIdOrPolicyId.toLowerCase();
+  return (
+    revenueSharingPreviews.find(
+      (preview) => preview.id.toLowerCase() === key || preview.policyId.toLowerCase() === key
+    ) ?? null
+  );
+}
+
+function buildParticipantSplitExplanation(share: ParticipantShare): ParticipantSplitExplanation {
+  const participant = getRevenueParticipantById(share.participantId);
+  return {
+    participantId: share.participantId,
+    participantLabel: participant?.displayName ?? share.participantId,
+    participantType: share.participantType,
+    participantShareId: share.id,
+    sourceRuleId: share.sourceRuleId,
+    shareLabel: `${share.shareValue}% ${share.shareType} Participant split explanation`,
+    attributionSourceId: share.attributionSourceId,
+    commercialOriginId: share.commercialOriginId,
+    canSettle: share.canSettle,
+    canTriggerPayout: share.canTriggerPayout,
+    canReceivePayout: share.canReceivePayout,
+    boundaryNotes: Array.from(
+      new Set([
+        ...(participant ? [...participant.warnings, ...participant.disclaimers] : []),
+        ...share.warnings,
+        ...share.disclaimers,
+        "Participant split explanation is preview-only and cannot create payout, settlement, invoice, accounting, tax or payment gateway execution."
+      ])
+    )
+  };
+}
+
+function buildRevenueSharingPreviewView(preview: RevenueSharingPreview): RevenueSharingPreviewView {
+  const policy = getRevenueSharingPolicyById(preview.policyId);
+  const commissionModel = getCommissionModelById(preview.commissionModelId);
+  const payoutPreview = payoutPreviewMocks.find((entry) => entry.previewId === preview.id) ?? null;
+  const settlementPreview = settlementPreviewMocks.find((entry) => entry.previewId === preview.id) ?? null;
+  const auditEntries = revenueSharingAuditEntries.filter((entry) => entry.policyId === preview.policyId);
+  const shares = preview.participantShareIds.map(getParticipantShareById).filter((share): share is ParticipantShare => Boolean(share));
+  const participantSplitExplanations = shares.map(buildParticipantSplitExplanation);
+  const attributionExplanations = preview.attributionSourceIds.flatMap((sourceId) => explainAttributionToSplit(sourceId));
+  const conflictWarnings = [
+    ...(commissionModel?.validation.conflictWarnings ?? []),
+    ...preview.warnings,
+    ...auditEntries.filter((entry) => entry.severity === "conflict" || entry.severity === "blocked").flatMap((entry) => entry.warnings)
+  ];
+
+  return {
+    preview,
+    policy,
+    commissionModel,
+    payoutPreview,
+    settlementPreview,
+    auditEntries,
+    participantSplitExplanations,
+    ruleApplicationExplanations: attributionExplanations,
+    conflictWarnings: Array.from(new Set(conflictWarnings)),
+    boundaryNotes: Array.from(
+      new Set([
+        ...preview.warnings,
+        ...preview.disclaimers,
+        ...(policy?.boundaryNotes ?? []),
+        ...(commissionModel?.boundaryNotes ?? []),
+        ...(payoutPreview ? [...payoutPreview.warnings, ...payoutPreview.disclaimers] : ["Payout Preview mock missing; review required."]),
+        ...(settlementPreview ? [...settlementPreview.warnings, ...settlementPreview.disclaimers] : ["Settlement Preview mock missing; review required."]),
+        ...auditEntries.flatMap((entry) => [...entry.warnings, ...entry.disclaimers]),
+        ...participantSplitExplanations.flatMap((entry) => entry.boundaryNotes),
+        ...attributionExplanations.flatMap((entry) => entry.boundaryNotes),
+        "Revenue Sharing Preview is mock/config-first and preview-only.",
+        "Payout Preview mock is non-executing and cannot trigger payout.",
+        "Settlement Preview mock is non-executing and cannot settle, invoice, account or route treasury.",
+        "Revenue Sharing Audit Trail mock is not accounting, tax, invoice, settlement, payment gateway, wallet signature, backend, database, BI or Marketplace Intelligence."
+      ])
+    )
+  };
+}
+
 function buildRevenueSharingPolicyView(policy: RevenueSharingPolicy): RevenueSharingPolicyView {
   const participants = policy.participantIds.map(getRevenueParticipantById).filter((participant): participant is RevenueParticipant => Boolean(participant));
   const rules = policy.ruleIds.map(getRevenueSplitRuleById).filter((rule): rule is RevenueSplitRule => Boolean(rule));
@@ -3494,6 +3603,42 @@ export function detectParticipantShareConflicts(modelIdOrSlug: string) {
 
 export function validateParticipantSharesByCommissionModel(modelIdOrSlug: string) {
   return getCommissionModelById(modelIdOrSlug)?.validation ?? null;
+}
+
+export function listRevenueSharingPreviews() {
+  return revenueSharingPreviews.map(buildRevenueSharingPreviewView);
+}
+
+export function resolveRevenueSharingPreview(policyIdOrSlug: string) {
+  const policy = getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug);
+  const preview = policy ? getRevenueSharingPreviewByPolicy(policy.id) : getRevenueSharingPreviewByIdOrPolicy(policyIdOrSlug);
+  return preview ? buildRevenueSharingPreviewView(preview) : null;
+}
+
+export function listRevenueSharingAuditEntriesByPolicy(policyIdOrSlug: string) {
+  const policy = getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug);
+  if (!policy) return [];
+  return revenueSharingAuditEntries.filter((entry) => entry.policyId === policy.id);
+}
+
+export function explainParticipantSplitsByPolicy(policyIdOrSlug: string) {
+  return resolveRevenueSharingPreview(policyIdOrSlug)?.participantSplitExplanations ?? [];
+}
+
+export function explainRevenueSharingRuleApplication(policyIdOrSlug: string) {
+  return resolveRevenueSharingPreview(policyIdOrSlug)?.ruleApplicationExplanations ?? [];
+}
+
+export function listRevenueSharingPreviewConflicts(policyIdOrSlug: string) {
+  return resolveRevenueSharingPreview(policyIdOrSlug)?.conflictWarnings ?? [];
+}
+
+export function resolvePayoutPreviewMock(policyIdOrSlug: string) {
+  return resolveRevenueSharingPreview(policyIdOrSlug)?.payoutPreview ?? null;
+}
+
+export function resolveSettlementPreviewMock(policyIdOrSlug: string) {
+  return resolveRevenueSharingPreview(policyIdOrSlug)?.settlementPreview ?? null;
 }
 
 export function resolveSettlementBoundary(policyIdOrSlug: string) {

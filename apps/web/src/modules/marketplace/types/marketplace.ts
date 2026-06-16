@@ -337,6 +337,16 @@ export type ParticipantShareType = "percentage-mock" | "weighted-percentage-mock
 export type CommissionModelStatus = "valid-mock" | "warning-mock" | "conflict-mock" | "incomplete" | "restricted" | "disabled";
 export type ParticipantShareValidationStatus = CommissionModelStatus;
 export type AttributionToSplitStatus = "configured-mock" | "simulated-only" | "preview-only" | "review-required" | "blocked" | "disabled";
+export type RevenueSharingPreviewStatus = "preview-only" | "configured-mock" | "warning-mock" | "conflict-mock" | "blocked" | "disabled";
+export type RevenueSharingAuditEventType =
+  | "preview-generated-mock"
+  | "rule-applied-mock"
+  | "rule-blocked-mock"
+  | "participant-share-explained-mock"
+  | "conflict-warning-mock"
+  | "payout-preview-mock"
+  | "settlement-preview-mock"
+  | "boundary-note-mock";
 export type RevenueSplitConflictPolicy = "warn-only" | "block-preview" | "review-required" | "manual-resolution";
 export type SettlementBoundaryStatus = "no-settlement" | "preview-only" | "blocked" | "review-required" | "restricted" | "disabled" | "not-configured";
 export type LicenseType =
@@ -1014,6 +1024,90 @@ export interface AttributionSplitExplanation {
   suggestedShareLabel: string;
   status: AttributionToSplitStatus;
   priority: number;
+  boundaryNotes: string[];
+}
+
+export interface PayoutPreviewMock {
+  id: string;
+  previewId: string;
+  policyId: string;
+  status: "preview-only" | "blocked" | "disabled";
+  payoutLabelMock: string;
+  participantShareIds: string[];
+  canTriggerPayout: boolean;
+  canReceivePayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SettlementPreviewMock {
+  id: string;
+  previewId: string;
+  policyId: string;
+  status: "preview-only" | "blocked" | "disabled";
+  settlementLabelMock: string;
+  settlementBoundaryId: string;
+  canSettle: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingPreview {
+  id: string;
+  policyId: string;
+  commissionModelId: string;
+  generatedAt: string;
+  previewStatus: RevenueSharingPreviewStatus;
+  participantShareIds: string[];
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  appliedRuleIds: string[];
+  blockedRuleIds: string[];
+  conflictIds: string[];
+  totalShareValueMock: number;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingAuditEntry {
+  id: string;
+  policyId: string;
+  eventType: RevenueSharingAuditEventType;
+  eventLabel: string;
+  targetType: "policy" | "commission-model" | "split-rule" | "participant-share" | "attribution-source" | "payout-preview" | "settlement-preview" | "boundary";
+  targetId: string;
+  ruleId?: string;
+  participantId?: string;
+  attributionSourceId?: string;
+  reason: string;
+  severity: "info" | "warning" | "conflict" | "blocked";
+  createdAt: string;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ParticipantSplitExplanation {
+  participantId: string;
+  participantLabel: string;
+  participantType: RevenueParticipantType;
+  participantShareId: string;
+  sourceRuleId: string;
+  shareLabel: string;
+  attributionSourceId?: string;
+  commercialOriginId?: string;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canReceivePayout: boolean;
   boundaryNotes: string[];
 }
 

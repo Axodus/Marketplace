@@ -10,7 +10,9 @@ import {
   calculateDashboardMetrics,
   detectParticipantShareConflicts,
   discoverWalletAssets,
+  explainParticipantSplitsByPolicy,
   explainEditorialRules,
+  explainRevenueSharingRuleApplication,
   explainAttributionToSplit,
   explainRevenueSharingBoundary,
   getAttributionSourceById,
@@ -51,6 +53,7 @@ import {
   listDistributionProfiles,
   listProducts,
   listRevenueSharingPolicies,
+  listRevenueSharingPreviews,
   listParticipantSharesByCommissionModel,
   listParticipantSharesByPolicy,
   listRevenueParticipantsByPolicy,
@@ -77,6 +80,11 @@ import {
   resolveDistributionProfileContext,
   resolveSettlementBoundary,
   getRevenueSharingPolicyById,
+  listRevenueSharingAuditEntriesByPolicy,
+  listRevenueSharingPreviewConflicts,
+  resolvePayoutPreviewMock,
+  resolveRevenueSharingPreview,
+  resolveSettlementPreviewMock,
   validateParticipantSharesByCommissionModel,
   resolveTenantCatalog,
   resolveTenantBranding,
@@ -719,6 +727,73 @@ export function useRevenueSharingParticipantShares(policyIdOrSlug?: string) {
     queryKey: ["marketplace-revenue-sharing-participant-shares", policyIdOrSlug],
     enabled: Boolean(policyIdOrSlug),
     queryFn: () => listParticipantSharesByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingPreviews() {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-previews"],
+    queryFn: () => {
+      const previews = listRevenueSharingPreviews();
+      traceMarketplaceLifecycle("marketplace-revenue-sharing-previews-query", "completed", { previewCount: previews.length });
+      return previews;
+    }
+  });
+}
+
+export function useRevenueSharingPreview(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-preview", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => resolveRevenueSharingPreview(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingAuditEntries(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-audit-entries", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => listRevenueSharingAuditEntriesByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useParticipantSplitExplanation(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-participant-split-explanation", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => explainParticipantSplitsByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingRuleApplication(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-rule-application", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => explainRevenueSharingRuleApplication(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueSharingPreviewConflicts(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-preview-conflicts", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => listRevenueSharingPreviewConflicts(policyIdOrSlug ?? "")
+  });
+}
+
+export function usePayoutPreviewMock(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-payout-preview-mock", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => resolvePayoutPreviewMock(policyIdOrSlug ?? "")
+  });
+}
+
+export function useSettlementPreviewMock(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-revenue-sharing-settlement-preview-mock", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => resolveSettlementPreviewMock(policyIdOrSlug ?? "")
   });
 }
 

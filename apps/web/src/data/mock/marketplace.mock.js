@@ -4840,6 +4840,208 @@ export const marketplaceRevenueSharingPolicies = [
   }
 ];
 
+export const marketplaceRevenueSharingPreviews = [
+  {
+    id: "revenue-sharing-preview-academy-tenant",
+    policyId: "revenue-policy-academy-tenant-preview",
+    commissionModelId: "commission-model-academy-tenant-preview",
+    generatedAt: "2026-06-16T12:00:00.000Z",
+    previewStatus: "preview-only",
+    participantShareIds: [
+      "participant-share-split-rule-academy-platform",
+      "participant-share-split-rule-academy-tenant",
+      "participant-share-split-rule-academy-partner"
+    ],
+    attributionSourceIds: ["attribution-record-academy-campaign"],
+    commercialOriginId: "commercial-origin-academy-partner",
+    appliedRuleIds: ["attribution-split-rule-academy-campaign-partner", "split-rule-academy-platform", "split-rule-academy-tenant", "split-rule-academy-partner"],
+    blockedRuleIds: [],
+    conflictIds: [],
+    totalShareValueMock: 100,
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    canInvoice: false,
+    canAccount: false,
+    warnings: ["Revenue Sharing Preview is simulated and cannot become commission due or payable record."],
+    disclaimers: ["Revenue Sharing Preview is preview-only: no payout, no settlement, no invoice, no accounting, no tax and no payment gateway are active."]
+  },
+  {
+    id: "revenue-sharing-preview-community",
+    policyId: "revenue-policy-community-distribution-preview",
+    commissionModelId: "commission-model-community-preview",
+    generatedAt: "2026-06-16T12:05:00.000Z",
+    previewStatus: "warning-mock",
+    participantShareIds: [
+      "participant-share-split-rule-community-platform",
+      "participant-share-split-rule-community-share",
+      "participant-share-split-rule-community-creator"
+    ],
+    attributionSourceIds: ["attribution-record-community-source"],
+    commercialOriginId: "commercial-origin-community-marketplace",
+    appliedRuleIds: ["attribution-split-rule-community-share", "split-rule-community-platform", "split-rule-community-share", "split-rule-community-creator"],
+    blockedRuleIds: [],
+    conflictIds: [],
+    totalShareValueMock: 100,
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    canInvoice: false,
+    canAccount: false,
+    warnings: ["Revenue Sharing Preview preserves federated community trust boundary warnings."],
+    disclaimers: ["Settlement Preview mock and Payout Preview mock are non-executing: no payout, no settlement, no invoice, no accounting and no tax are active."]
+  },
+  {
+    id: "revenue-sharing-preview-product-conflict",
+    policyId: "revenue-policy-product-governance-preview",
+    commissionModelId: "commission-model-product-conflict-preview",
+    generatedAt: "2026-06-16T12:10:00.000Z",
+    previewStatus: "conflict-mock",
+    participantShareIds: [
+      "participant-share-split-rule-product-creator",
+      "participant-share-split-rule-product-platform",
+      "participant-share-split-rule-product-distributor",
+      "participant-share-split-rule-product-agency",
+      "participant-share-split-rule-product-affiliate"
+    ],
+    attributionSourceIds: ["attribution-record-global-placement", "attribution-record-affiliate-referral"],
+    commercialOriginId: "commercial-origin-global-tenant",
+    appliedRuleIds: ["attribution-split-rule-global-placement-platform", "split-rule-product-creator", "split-rule-product-platform"],
+    blockedRuleIds: ["attribution-split-rule-affiliate-referral-blocked"],
+    conflictIds: [
+      "participant-share-conflict-commission-model-product-conflict-preview-share-total-model",
+      "participant-share-conflict-commission-model-product-conflict-preview-cap-participant-share-split-rule-product-distributor",
+      "participant-share-conflict-commission-model-product-conflict-preview-cap-participant-share-split-rule-product-affiliate"
+    ],
+    totalShareValueMock: 120,
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    canInvoice: false,
+    canAccount: false,
+    warnings: ["Conflict warnings are displayed because mock participant shares total 120 and cap warnings exist."],
+    disclaimers: ["Conflict-mock preview is non-executing: no payout, no settlement, no invoice, no accounting, no tax, no treasury routing and no payment gateway are active."]
+  }
+];
+
+export const marketplacePayoutPreviewMocks = marketplaceRevenueSharingPreviews.map((preview) => ({
+  id: `payout-preview-mock-${preview.id}`,
+  previewId: preview.id,
+  policyId: preview.policyId,
+  status: preview.previewStatus === "conflict-mock" ? "blocked" : "preview-only",
+  payoutLabelMock: `${preview.policyId} payout preview disabled`,
+  participantShareIds: preview.participantShareIds,
+  canTriggerPayout: false,
+  canReceivePayout: false,
+  warnings: ["Payout Preview mock is a non-executing display record."],
+  disclaimers: ["Payout Preview mock is not payout, not payable, not invoice, not accounting and cannot trigger payment gateway."]
+}));
+
+export const marketplaceSettlementPreviewMocks = marketplaceRevenueSharingPreviews.map((preview) => ({
+  id: `settlement-preview-mock-${preview.id}`,
+  previewId: preview.id,
+  policyId: preview.policyId,
+  status: preview.previewStatus === "conflict-mock" ? "blocked" : "preview-only",
+  settlementLabelMock: `${preview.policyId} settlement preview disabled`,
+  settlementBoundaryId:
+    preview.policyId === "revenue-policy-academy-tenant-preview"
+      ? "settlement-boundary-academy-tenant-revenue"
+      : preview.policyId === "revenue-policy-community-distribution-preview"
+        ? "settlement-boundary-community-distribution-revenue"
+        : "settlement-boundary-product-revenue",
+  canSettle: false,
+  canRouteTreasury: false,
+  canInvoice: false,
+  canAccount: false,
+  warnings: ["Settlement Preview mock is a non-executing display record."],
+  disclaimers: ["Settlement Preview mock is not settlement, not invoice, not accounting, not tax and cannot route treasury."]
+}));
+
+export const marketplaceRevenueSharingAuditEntries = [
+  {
+    id: "revenue-audit-academy-preview-generated",
+    policyId: "revenue-policy-academy-tenant-preview",
+    eventType: "preview-generated-mock",
+    eventLabel: "Revenue Sharing Preview generated",
+    targetType: "policy",
+    targetId: "revenue-policy-academy-tenant-preview",
+    reason: "Preview generated from Academy tenant commission model and campaign attribution mock.",
+    severity: "info",
+    createdAt: "2026-06-16T12:00:00.000Z",
+    isSimulated: true,
+    warnings: ["Preview generation is local mock/config-first only."],
+    disclaimers: ["No payout, no settlement, no invoice, no accounting, no tax and no payment gateway are active."]
+  },
+  {
+    id: "revenue-audit-academy-rule-applied",
+    policyId: "revenue-policy-academy-tenant-preview",
+    eventType: "rule-applied-mock",
+    eventLabel: "Rule application explanation",
+    targetType: "split-rule",
+    targetId: "split-rule-academy-partner",
+    ruleId: "attribution-split-rule-academy-campaign-partner",
+    participantId: "revenue-participant-academy-partner",
+    attributionSourceId: "attribution-record-academy-campaign",
+    reason: "Campaign mock suggests Partner Share for preview-only explanation.",
+    severity: "info",
+    createdAt: "2026-06-16T12:01:00.000Z",
+    isSimulated: true,
+    warnings: ["Rule application is not commission tracking."],
+    disclaimers: ["No tracking real, no commission tracking, no payout and no settlement are active."]
+  },
+  {
+    id: "revenue-audit-community-boundary",
+    policyId: "revenue-policy-community-distribution-preview",
+    eventType: "boundary-note-mock",
+    eventLabel: "Federated boundary note",
+    targetType: "boundary",
+    targetId: "settlement-boundary-community-distribution-revenue",
+    ruleId: "attribution-split-rule-community-share",
+    participantId: "revenue-participant-community",
+    attributionSourceId: "attribution-record-community-source",
+    reason: "Community source preserves federation and read-only/non-executing boundaries.",
+    severity: "warning",
+    createdAt: "2026-06-16T12:06:00.000Z",
+    isSimulated: true,
+    warnings: ["Community preview requires governance review before any future activation."],
+    disclaimers: ["No community payout, no settlement, no invoice, no accounting and no tax are active."]
+  },
+  {
+    id: "revenue-audit-product-conflict",
+    policyId: "revenue-policy-product-governance-preview",
+    eventType: "conflict-warning-mock",
+    eventLabel: "Conflict warning",
+    targetType: "commission-model",
+    targetId: "commission-model-product-conflict-preview",
+    ruleId: "attribution-split-rule-affiliate-referral-blocked",
+    participantId: "revenue-participant-affiliate-demo",
+    attributionSourceId: "attribution-record-affiliate-referral",
+    reason: "Participant shares total 120 and affiliate referral mapping is blocked without commission tracking.",
+    severity: "conflict",
+    createdAt: "2026-06-16T12:11:00.000Z",
+    isSimulated: true,
+    warnings: ["Conflict warning blocks settlement and payout preview execution."],
+    disclaimers: ["No payout, no settlement, no invoice, no accounting, no tax, no treasury routing and no payment gateway are active."]
+  },
+  {
+    id: "revenue-audit-product-settlement-preview",
+    policyId: "revenue-policy-product-governance-preview",
+    eventType: "settlement-preview-mock",
+    eventLabel: "Settlement Preview mock blocked",
+    targetType: "settlement-preview",
+    targetId: "settlement-preview-mock-revenue-sharing-preview-product-conflict",
+    reason: "Settlement Preview mock remains blocked because conflict warnings exist.",
+    severity: "blocked",
+    createdAt: "2026-06-16T12:12:00.000Z",
+    isSimulated: true,
+    warnings: ["Settlement Preview mock cannot settle, invoice, account or route treasury."],
+    disclaimers: ["No settlement, no invoice, no accounting, no tax, no treasury routing and no payment gateway are active."]
+  }
+];
+
 export const marketplaceProducts = [
   {
     id: "product-governance-dashboard-nft",

@@ -384,7 +384,7 @@ Linked requirements:
 - MEP-REQ-060 — Revenue Sharing Model — implemented mock/config-first
 - MEP-REQ-061 — Commission Models and Participant Shares — implemented mock/config-first
 - MEP-REQ-062 — Attribution-to-Split Rules — implemented mock/config-first
-- MEP-REQ-063 — Revenue Sharing Preview and Audit Trail
+- MEP-REQ-063 — Revenue Sharing Preview and Audit Trail — implemented mock/config-first
 - MEP-REQ-064 — Tenant/Distribution Revenue Sharing Integration
 - MEP-PHASE-06-CLOSURE — QA, navigation and Revenue Sharing boundary validation
 

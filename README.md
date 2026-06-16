@@ -44,6 +44,8 @@ Phase 06 - Revenue Sharing planning is documented in `docs/PHASE_06_REVENUE_SHAR
 
 `MEP-REQ-062` adds mock/config-first Attribution-to-Split Rules to the Attribution Sources surface. Attribution Split Mapping, Commercial Origin Split Mapping and Distribution Source Split Mapping can suggest simulated participant shares from referral mock, campaign mock, placement mock and community source context. Attribution-to-Split does not activate tracking real, commission tracking, attribution financeira real, payout, settlement, billing, analytics tracking, BI, Marketplace Intelligence, backend, API or database.
 
+`MEP-REQ-063` adds mock/config-first Revenue Sharing Preview, Payout Preview mock, Settlement Preview mock and Revenue Sharing Audit Trail sections to the Revenue Sharing surface. Previews show participant split explanation, rule application explanation and conflict warnings, but do not create payment, payout, settlement, invoice, accounting, tax, treasury routing, payment gateway, wallet signature, backend, database, BI or Marketplace Intelligence.
+
 Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  

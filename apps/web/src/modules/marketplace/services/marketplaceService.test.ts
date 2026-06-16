@@ -113,6 +113,7 @@ import {
   listParticipantSharesByPolicy,
   listRevenueParticipantsByPolicy,
   listRevenueSharingPolicies,
+  listRevenueSharingPreviews,
   listRevenueSplitRulesByPolicy,
   listTenants,
   getTenantDisplayName,
@@ -140,6 +141,13 @@ import {
   resolveSettlementBoundary,
   getRevenueSharingPolicyById,
   explainRevenueSharingBoundary,
+  explainParticipantSplitsByPolicy,
+  explainRevenueSharingRuleApplication,
+  listRevenueSharingAuditEntriesByPolicy,
+  listRevenueSharingPreviewConflicts,
+  resolvePayoutPreviewMock,
+  resolveRevenueSharingPreview,
+  resolveSettlementPreviewMock,
   validateParticipantSharesByCommissionModel,
   resolveTenantCatalog,
   resolveTenantContext,
@@ -1046,6 +1054,64 @@ describe("marketplaceService", () => {
     expect(productNotes).toContain("no billing");
     expect(productNotes).toContain("no payment gateway");
     expect(models.every((view) => view.participantShares.every((share) => share.canSettle === false && share.canTriggerPayout === false && share.canReceivePayout === false))).toBe(true);
+  });
+
+  it("builds Revenue Sharing Preview and Audit Trail mocks without financial execution", () => {
+    const previews = listRevenueSharingPreviews();
+    const academyPreview = resolveRevenueSharingPreview("academy-tenant-revenue-preview");
+    const productPreview = resolveRevenueSharingPreview("governance-product-revenue-preview");
+    const academyAudit = listRevenueSharingAuditEntriesByPolicy("academy-tenant-revenue-preview");
+    const productAudit = listRevenueSharingAuditEntriesByPolicy("governance-product-revenue-preview");
+    const academySplits = explainParticipantSplitsByPolicy("academy-tenant-revenue-preview");
+    const productRules = explainRevenueSharingRuleApplication("governance-product-revenue-preview");
+    const productConflicts = listRevenueSharingPreviewConflicts("governance-product-revenue-preview");
+    const payoutPreview = resolvePayoutPreviewMock("governance-product-revenue-preview");
+    const settlementPreview = resolveSettlementPreviewMock("governance-product-revenue-preview");
+    const productNotes = productPreview?.boundaryNotes.join(" ") ?? "";
+
+    expect(previews.map((view) => view.preview.previewStatus)).toEqual(["preview-only", "warning-mock", "conflict-mock"]);
+    expect(academyPreview?.preview.totalShareValueMock).toBe(100);
+    expect(academyPreview?.preview.appliedRuleIds).toContain("attribution-split-rule-academy-campaign-partner");
+    expect(academyPreview?.preview.blockedRuleIds).toEqual([]);
+    expect(academyPreview?.participantSplitExplanations.map((entry) => entry.participantId)).toEqual([
+      "revenue-participant-platform",
+      "revenue-participant-academy-tenant",
+      "revenue-participant-academy-partner"
+    ]);
+    expect(academyAudit.map((entry) => entry.eventType)).toEqual(["preview-generated-mock", "rule-applied-mock"]);
+    expect(academySplits.every((entry) => entry.canSettle === false && entry.canTriggerPayout === false && entry.canReceivePayout === false)).toBe(true);
+    expect(productPreview?.preview.previewStatus).toBe("conflict-mock");
+    expect(productPreview?.preview.totalShareValueMock).toBe(120);
+    expect(productPreview?.preview.blockedRuleIds).toContain("attribution-split-rule-affiliate-referral-blocked");
+    expect(productPreview?.auditEntries.map((entry) => entry.eventType)).toContain("settlement-preview-mock");
+    expect(productAudit.map((entry) => entry.severity)).toEqual(["conflict", "blocked"]);
+    expect(productRules.map((entry) => entry.ruleId)).toContain("attribution-split-rule-global-placement-platform");
+    expect(productConflicts.join(" ")).toContain("Participant Share mock total is 120");
+    expect(productConflicts.join(" ")).toContain("affiliate");
+    expect(payoutPreview?.status).toBe("blocked");
+    expect(payoutPreview?.canTriggerPayout).toBe(false);
+    expect(payoutPreview?.canReceivePayout).toBe(false);
+    expect(settlementPreview?.status).toBe("blocked");
+    expect(settlementPreview?.canSettle).toBe(false);
+    expect(settlementPreview?.canRouteTreasury).toBe(false);
+    expect(settlementPreview?.canInvoice).toBe(false);
+    expect(settlementPreview?.canAccount).toBe(false);
+    expect(productNotes).toContain("Revenue Sharing Preview");
+    expect(productNotes).toContain("Payout Preview mock");
+    expect(productNotes).toContain("Settlement Preview mock");
+    expect(productNotes).toContain("Revenue Sharing Audit Trail");
+    expect(productNotes).toContain("no payout");
+    expect(productNotes).toContain("no settlement");
+    expect(productNotes).toContain("no invoice");
+    expect(productNotes).toContain("no accounting");
+    expect(productNotes).toContain("no tax");
+    expect(productNotes).toContain("no payment gateway");
+    expect(previews.every((view) => view.preview.canCalculatePreview === true)).toBe(true);
+    expect(previews.every((view) => view.preview.canSettle === false)).toBe(true);
+    expect(previews.every((view) => view.preview.canTriggerPayout === false)).toBe(true);
+    expect(previews.every((view) => view.preview.canRouteTreasury === false)).toBe(true);
+    expect(previews.every((view) => view.preview.canInvoice === false)).toBe(true);
+    expect(previews.every((view) => view.preview.canAccount === false)).toBe(true);
   });
 
   it("issues mock purchase records without settlement", () => {
