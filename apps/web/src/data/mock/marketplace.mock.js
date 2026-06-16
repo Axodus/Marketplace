@@ -4125,6 +4125,48 @@ export const marketplaceRevenueParticipants = [
     disclaimers: ["No commercial contract real, commission due, payout, settlement or billing is active."]
   },
   {
+    id: "revenue-participant-acs-distributor",
+    participantType: "distributor",
+    participantRefId: "distribution-profile-acs-distributor",
+    displayName: "ACS Distributor Profile",
+    status: "preview-only",
+    governanceStatus: "review-required",
+    walletLabelMock: "acs-distributor-wallet-label-mock",
+    payoutLabelMock: "acs-distributor-payout-disabled",
+    canReceivePayout: false,
+    canSettle: false,
+    warnings: ["Distributor Share mock is preview-only and cannot become commission due."],
+    disclaimers: ["No distributor commission real, no payout, no settlement, no billing and no treasury routing are active."]
+  },
+  {
+    id: "revenue-participant-agency-preview",
+    participantType: "agency",
+    participantRefId: "distribution-profile-agency-preview",
+    displayName: "Agency Preview Profile",
+    status: "review-required",
+    governanceStatus: "review-required",
+    walletLabelMock: "agency-wallet-label-mock",
+    payoutLabelMock: "agency-payout-disabled",
+    canReceivePayout: false,
+    canSettle: false,
+    warnings: ["Agency Share mock is incomplete and requires governance review before any future activation."],
+    disclaimers: ["No agency commission real, no payable record, no payout, no settlement and no billing are active."]
+  },
+  {
+    id: "revenue-participant-affiliate-demo",
+    participantType: "affiliate",
+    participantRefId: "distribution-profile-affiliate-demo",
+    displayName: "Affiliate Demo Profile",
+    status: "preview-only",
+    governanceStatus: "not-reviewed",
+    walletLabelMock: "affiliate-wallet-label-mock",
+    payoutLabelMock: "affiliate-payout-disabled",
+    canReceivePayout: false,
+    canSettle: false,
+    warnings: ["Affiliate Share mock does not use tracking real, cookies or commission tracking."],
+    disclaimers: ["No affiliate commission real, no commission tracking, no payout, no settlement and no billing are active."]
+  },
+  {
     id: "revenue-participant-community",
     participantType: "community",
     participantRefId: "community-distribution-creator-federated",
@@ -4381,13 +4423,84 @@ export const marketplaceRevenueSplitRules = [
     disclaimers: ["No treasury routing, no accounting entry and no payment gateway are active."],
     createdAt: "2026-06-16T09:20:00.000Z",
     updatedAt: "2026-06-16T09:20:00.000Z"
+  },
+  {
+    id: "split-rule-product-distributor",
+    policyId: "revenue-policy-product-governance-preview",
+    ruleType: "distribution-based-mock",
+    scope: "distribution-profile",
+    targetType: "distribution-profile",
+    targetId: "distribution-profile-acs-distributor",
+    participantType: "distributor",
+    participantId: "revenue-participant-acs-distributor",
+    shareType: "percentage-mock",
+    shareValue: 10,
+    priority: 30,
+    status: "review-required",
+    capValueMock: 8,
+    floorValueMock: 0,
+    conflictPolicy: "review-required",
+    warnings: ["Distributor Share mock exceeds capValueMock and must stay conflict-mock until reviewed."],
+    disclaimers: ["No distributor commission real, no payout, no settlement and no billing are active."],
+    createdAt: "2026-06-16T09:25:00.000Z",
+    updatedAt: "2026-06-16T09:25:00.000Z"
+  },
+  {
+    id: "split-rule-product-agency",
+    policyId: "revenue-policy-product-governance-preview",
+    ruleType: "distribution-based-mock",
+    scope: "distribution-profile",
+    targetType: "distribution-profile",
+    targetId: "distribution-profile-agency-preview",
+    participantType: "agency",
+    participantId: "revenue-participant-agency-preview",
+    shareType: "percentage-mock",
+    shareValue: 5,
+    priority: 40,
+    status: "review-required",
+    capValueMock: 5,
+    floorValueMock: 0,
+    conflictPolicy: "review-required",
+    warnings: ["Agency Share mock is incomplete and cannot become commission due."],
+    disclaimers: ["No agency commission real, no payable record, no payout and no settlement are active."],
+    createdAt: "2026-06-16T09:25:00.000Z",
+    updatedAt: "2026-06-16T09:25:00.000Z"
+  },
+  {
+    id: "split-rule-product-affiliate",
+    policyId: "revenue-policy-product-governance-preview",
+    ruleType: "attribution-based-mock",
+    scope: "distribution-profile",
+    targetType: "distribution-profile",
+    targetId: "distribution-profile-affiliate-demo",
+    participantType: "affiliate",
+    participantId: "revenue-participant-affiliate-demo",
+    shareType: "percentage-mock",
+    shareValue: 5,
+    priority: 50,
+    status: "preview-only",
+    capValueMock: 4,
+    floorValueMock: 0,
+    conflictPolicy: "review-required",
+    warnings: ["Affiliate Share mock exceeds capValueMock and uses no tracking real or commission tracking."],
+    disclaimers: ["No affiliate commission real, no commission tracking, no payout, no settlement and no billing are active."],
+    createdAt: "2026-06-16T09:25:00.000Z",
+    updatedAt: "2026-06-16T09:25:00.000Z"
   }
 ];
 
 export const marketplaceParticipantShares = marketplaceRevenueSplitRules.map((rule) => ({
   id: `participant-share-${rule.id}`,
   policyId: rule.policyId,
+  commissionModelId:
+    rule.policyId === "revenue-policy-academy-tenant-preview"
+      ? "commission-model-academy-tenant-preview"
+      : rule.policyId === "revenue-policy-community-distribution-preview"
+        ? "commission-model-community-preview"
+        : "commission-model-product-conflict-preview",
   participantId: rule.participantId,
+  participantType: rule.participantType,
+  participantRefId: marketplaceRevenueParticipants.find((participant) => participant.id === rule.participantId)?.participantRefId ?? rule.participantId,
   shareType: rule.shareType,
   shareValue: rule.shareValue,
   sourceRuleId: rule.id,
@@ -4403,13 +4516,99 @@ export const marketplaceParticipantShares = marketplaceRevenueSplitRules.map((ru
       : rule.policyId === "revenue-policy-community-distribution-preview"
         ? "commercial-origin-community-marketplace"
         : "commercial-origin-global-tenant",
+  capValueMock: rule.capValueMock,
+  floorValueMock: rule.floorValueMock,
   isSimulated: true,
   canCalculatePreview: true,
   canSettle: false,
   canTriggerPayout: false,
+  canReceivePayout: false,
   warnings: [...rule.warnings],
-  disclaimers: [...rule.disclaimers, "Participant Share is simulated and cannot settle or trigger payout."]
+  disclaimers: [...rule.disclaimers, "Participant Share is simulated and cannot settle, trigger payout or create commission due."]
 }));
+
+export const marketplaceCommissionModels = [
+  {
+    id: "commission-model-academy-tenant-preview",
+    slug: "academy-tenant-commission-preview",
+    name: "Academy Tenant Commission Model Preview",
+    displayName: "Academy Tenant Commission Preview",
+    description: "Commission Model mock for Academy tenant, platform and partner participant shares.",
+    scope: "tenant",
+    status: "valid-mock",
+    policyId: "revenue-policy-academy-tenant-preview",
+    participantShareIds: [
+      "participant-share-split-rule-academy-platform",
+      "participant-share-split-rule-academy-tenant",
+      "participant-share-split-rule-academy-partner"
+    ],
+    ruleIds: ["split-rule-academy-platform", "split-rule-academy-tenant", "split-rule-academy-partner"],
+    shareType: "percentage-mock",
+    totalShareValueMock: 100,
+    validationStatus: "valid-mock",
+    conflictStatus: "valid-mock",
+    warnings: ["Commission Model is simulated and only validates a mock share total."],
+    disclaimers: ["No commission real, no commission due, no payout, no settlement and no billing are active."],
+    createdAt: "2026-06-16T10:00:00.000Z",
+    updatedAt: "2026-06-16T10:00:00.000Z"
+  },
+  {
+    id: "commission-model-community-preview",
+    slug: "community-commission-preview",
+    name: "Community Commission Model Preview",
+    displayName: "Community Commission Preview",
+    description: "Commission Model mock for platform, community and creator shares in community distribution.",
+    scope: "community-distribution",
+    status: "warning-mock",
+    policyId: "revenue-policy-community-distribution-preview",
+    participantShareIds: [
+      "participant-share-split-rule-community-platform",
+      "participant-share-split-rule-community-share",
+      "participant-share-split-rule-community-creator"
+    ],
+    ruleIds: ["split-rule-community-platform", "split-rule-community-share", "split-rule-community-creator"],
+    shareType: "percentage-mock",
+    totalShareValueMock: 100,
+    validationStatus: "warning-mock",
+    conflictStatus: "warning-mock",
+    warnings: ["Community Share mock requires governance review because federated trust boundaries apply."],
+    disclaimers: ["No community commission real, no payout, no settlement, no billing and no tracking real are active."],
+    createdAt: "2026-06-16T10:05:00.000Z",
+    updatedAt: "2026-06-16T10:05:00.000Z"
+  },
+  {
+    id: "commission-model-product-conflict-preview",
+    slug: "product-commission-conflict-preview",
+    name: "Product Commission Conflict Preview",
+    displayName: "Product Commission Conflict Preview",
+    description: "Commission Model mock that represents Platform Share, Creator Share, Distributor Share, Agency Share and Affiliate Share conflicts.",
+    scope: "product",
+    status: "conflict-mock",
+    policyId: "revenue-policy-product-governance-preview",
+    participantShareIds: [
+      "participant-share-split-rule-product-creator",
+      "participant-share-split-rule-product-platform",
+      "participant-share-split-rule-product-distributor",
+      "participant-share-split-rule-product-agency",
+      "participant-share-split-rule-product-affiliate"
+    ],
+    ruleIds: [
+      "split-rule-product-creator",
+      "split-rule-product-platform",
+      "split-rule-product-distributor",
+      "split-rule-product-agency",
+      "split-rule-product-affiliate"
+    ],
+    shareType: "percentage-mock",
+    totalShareValueMock: 120,
+    validationStatus: "conflict-mock",
+    conflictStatus: "conflict-mock",
+    warnings: ["Product Commission Model mock total is 120 and includes cap warnings; it must remain conflict-mock."],
+    disclaimers: ["No commission real, no obligation financial, no payout, no settlement, no billing and no payment gateway are active."],
+    createdAt: "2026-06-16T10:10:00.000Z",
+    updatedAt: "2026-06-16T10:10:00.000Z"
+  }
+];
 
 export const marketplaceRevenueSharingPolicies = [
   {
@@ -4431,6 +4630,7 @@ export const marketplaceRevenueSharingPolicies = [
     attributionSourceIds: ["attribution-record-academy-campaign"],
     commercialOriginId: "commercial-origin-academy-partner",
     settlementBoundaryId: "settlement-boundary-academy-tenant-revenue",
+    commissionModelIds: ["commission-model-academy-tenant-preview"],
     allowsFederatedAssets: false,
     canCalculatePreview: true,
     canSettle: false,
@@ -4463,6 +4663,7 @@ export const marketplaceRevenueSharingPolicies = [
     attributionSourceIds: ["attribution-record-community-source"],
     commercialOriginId: "commercial-origin-community-marketplace",
     settlementBoundaryId: "settlement-boundary-community-distribution-revenue",
+    commissionModelIds: ["commission-model-community-preview"],
     allowsFederatedAssets: true,
     canCalculatePreview: true,
     canSettle: false,
@@ -4485,11 +4686,24 @@ export const marketplaceRevenueSharingPolicies = [
     distributionChannelId: "distribution-channel-global-tenant",
     productId: "product-governance-dashboard-nft",
     collectionId: "collection-governance-access",
-    participantIds: ["revenue-participant-creator-seller", "revenue-participant-platform"],
-    ruleIds: ["split-rule-product-creator", "split-rule-product-platform"],
+    participantIds: [
+      "revenue-participant-creator-seller",
+      "revenue-participant-platform",
+      "revenue-participant-acs-distributor",
+      "revenue-participant-agency-preview",
+      "revenue-participant-affiliate-demo"
+    ],
+    ruleIds: [
+      "split-rule-product-creator",
+      "split-rule-product-platform",
+      "split-rule-product-distributor",
+      "split-rule-product-agency",
+      "split-rule-product-affiliate"
+    ],
     attributionSourceIds: ["attribution-record-global-placement"],
     commercialOriginId: "commercial-origin-global-tenant",
     settlementBoundaryId: "settlement-boundary-product-revenue",
+    commissionModelIds: ["commission-model-product-conflict-preview"],
     allowsFederatedAssets: false,
     canCalculatePreview: true,
     canSettle: false,

@@ -333,7 +333,9 @@ export type RevenueSplitRuleType =
   | "manual-mock"
   | "demo";
 export type RevenueSplitTargetType = "tenant" | "distribution-channel" | "distribution-profile" | "community-distribution" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "global" | "demo";
-export type ParticipantShareType = "percentage-mock" | "flat-amount-mock" | "weighted-mock" | "manual-mock";
+export type ParticipantShareType = "percentage-mock" | "weighted-percentage-mock" | "flat-amount-mock" | "tiered-mock" | "manual-mock" | "demo";
+export type CommissionModelStatus = "valid-mock" | "warning-mock" | "conflict-mock" | "incomplete" | "restricted" | "disabled";
+export type ParticipantShareValidationStatus = CommissionModelStatus;
 export type RevenueSplitConflictPolicy = "warn-only" | "block-preview" | "review-required" | "manual-resolution";
 export type SettlementBoundaryStatus = "no-settlement" | "preview-only" | "blocked" | "review-required" | "restricted" | "disabled" | "not-configured";
 export type LicenseType =
@@ -1239,18 +1241,86 @@ export interface RevenueSplitRule {
 export interface ParticipantShare {
   id: string;
   policyId: string;
+  commissionModelId?: string;
   participantId: string;
+  participantType: RevenueParticipantType;
+  participantRefId: string;
   shareType: ParticipantShareType;
   shareValue: number;
   sourceRuleId: string;
   attributionSourceId?: string;
   commercialOriginId?: string;
+  capValueMock?: number;
+  floorValueMock?: number;
   isSimulated: boolean;
   canCalculatePreview: boolean;
   canSettle: boolean;
   canTriggerPayout: boolean;
+  canReceivePayout: boolean;
   warnings: string[];
   disclaimers: string[];
+}
+
+export interface CommissionModelRule {
+  id: string;
+  commissionModelId: string;
+  sourceRuleId: string;
+  participantShareId: string;
+  participantType: RevenueParticipantType;
+  shareType: ParticipantShareType;
+  shareValue: number;
+  capValueMock?: number;
+  floorValueMock?: number;
+  validationStatus: ParticipantShareValidationStatus;
+  conflictStatus: ParticipantShareValidationStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ParticipantShareConflict {
+  id: string;
+  commissionModelId: string;
+  participantShareId?: string;
+  severity: "info" | "warning" | "conflict";
+  conflictType: "share-total" | "cap" | "floor" | "missing-participant" | "boundary";
+  message: string;
+  isBlocking: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ParticipantShareValidation {
+  commissionModelId: string;
+  policyId: string;
+  totalShareValueMock: number;
+  validationStatus: ParticipantShareValidationStatus;
+  conflictStatus: ParticipantShareValidationStatus;
+  capWarnings: string[];
+  floorWarnings: string[];
+  conflictWarnings: string[];
+  boundaryNotes: string[];
+  conflicts: ParticipantShareConflict[];
+}
+
+export interface CommissionModel {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  scope: RevenueSharingScope;
+  status: CommissionModelStatus;
+  policyId: string;
+  participantShareIds: string[];
+  ruleIds: string[];
+  shareType: ParticipantShareType;
+  totalShareValueMock: number;
+  validationStatus: ParticipantShareValidationStatus;
+  conflictStatus: ParticipantShareValidationStatus;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SettlementBoundary {
@@ -1287,6 +1357,7 @@ export interface RevenueSharingPolicy {
   collectionId?: string;
   participantIds: string[];
   ruleIds: string[];
+  commissionModelIds?: string[];
   attributionSourceIds: string[];
   commercialOriginId?: string;
   settlementBoundaryId: string;

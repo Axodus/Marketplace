@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   buildSellerProfileView,
   buildMarketplaceAnalytics,
+  calculateCommissionModelShareTotalMock,
   createDraftListingPreview,
+  detectParticipantShareConflicts,
   discoverWalletAssets,
   applyCommunityDistributionRules,
   applyCuratedCatalogDistributionRules,
@@ -47,6 +49,7 @@ import {
   getDistributionProfileBySlug,
   getDistributionProfilesByChannel,
   getDistributionProfilesByType,
+  getCommissionModelById,
   getRevenueSharingPoliciesByCuratedCatalog,
   getRevenueSharingPoliciesByDistributionChannel,
   getRevenueSharingPoliciesByTenant,
@@ -81,6 +84,8 @@ import {
   isValidMockWalletAddress,
   issueMockPurchase,
   listAttributionSources,
+  listCommissionModels,
+  listCommissionModelsByPolicy,
   listCommunityMarketplaceDistributions,
   listCuratedCatalogs,
   listDistributionChannels,
@@ -95,6 +100,7 @@ import {
   listFederationProviders,
   listCollections,
   listProducts,
+  listParticipantSharesByCommissionModel,
   listParticipantSharesByPolicy,
   listRevenueParticipantsByPolicy,
   listRevenueSharingPolicies,
@@ -124,6 +130,7 @@ import {
   resolveSettlementBoundary,
   getRevenueSharingPolicyById,
   explainRevenueSharingBoundary,
+  validateParticipantSharesByCommissionModel,
   resolveTenantCatalog,
   resolveTenantContext,
   resolveTenantCuratedCatalogs,
@@ -893,6 +900,7 @@ describe("marketplaceService", () => {
     expect(rules.map((rule) => rule.ruleType)).toContain("distribution-based-mock");
     expect(shares.every((share) => share.isSimulated)).toBe(true);
     expect(shares.every((share) => share.canCalculatePreview === true)).toBe(true);
+    expect(shares.every((share) => share.canReceivePayout === false)).toBe(true);
     expect(boundary?.status).toBe("preview-only");
     expect(boundary?.canSettle).toBe(false);
     expect(boundary?.canTriggerPayout).toBe(false);
@@ -916,6 +924,59 @@ describe("marketplaceService", () => {
     expect(policies.every((view) => view.settlementBoundary?.canRouteTreasury === false)).toBe(true);
     expect(policies.every((view) => view.settlementBoundary?.canInvoice === false)).toBe(true);
     expect(policies.every((view) => view.settlementBoundary?.canAccount === false)).toBe(true);
+  });
+
+  it("validates Commission Models and Participant Shares as mock records without commission execution", () => {
+    const models = listCommissionModels();
+    const academyModel = getCommissionModelById("academy-tenant-commission-preview");
+    const communityModel = getCommissionModelById("commission-model-community-preview");
+    const productModel = getCommissionModelById("product-commission-conflict-preview");
+    const academyPolicyModels = listCommissionModelsByPolicy("academy-tenant-revenue-preview");
+    const academyShares = listParticipantSharesByCommissionModel("academy-tenant-commission-preview");
+    const productShares = listParticipantSharesByCommissionModel("product-commission-conflict-preview");
+    const academyValidation = validateParticipantSharesByCommissionModel("academy-tenant-commission-preview");
+    const productValidation = validateParticipantSharesByCommissionModel("product-commission-conflict-preview");
+    const productConflicts = detectParticipantShareConflicts("product-commission-conflict-preview");
+    const academyTotal = calculateCommissionModelShareTotalMock("academy-tenant-commission-preview");
+    const productTotal = calculateCommissionModelShareTotalMock("product-commission-conflict-preview");
+    const productNotes = productModel?.boundaryNotes.join(" ") ?? "";
+
+    expect(models.map((view) => view.model.slug)).toEqual([
+      "academy-tenant-commission-preview",
+      "community-commission-preview",
+      "product-commission-conflict-preview"
+    ]);
+    expect(models.map((view) => view.model.status)).toEqual(["valid-mock", "warning-mock", "conflict-mock"]);
+    expect(academyModel?.model.shareType).toBe("percentage-mock");
+    expect(academyModel?.participants.map((participant) => participant.participantType)).toEqual(["platform", "tenant", "partner"]);
+    expect(communityModel?.validation.validationStatus).toBe("warning-mock");
+    expect(academyPolicyModels.map((view) => view.model.id)).toContain("commission-model-academy-tenant-preview");
+    expect(academyShares.map((share) => share.participantType)).toEqual(["platform", "tenant", "partner"]);
+    expect(academyShares.map((share) => share.participantRefId)).toContain("tenant-academy-marketplace");
+    expect(academyShares.every((share) => share.attributionSourceId === "attribution-record-academy-campaign")).toBe(true);
+    expect(academyShares.every((share) => share.commercialOriginId === "commercial-origin-academy-partner")).toBe(true);
+    expect(academyShares.every((share) => share.isSimulated)).toBe(true);
+    expect(academyShares.every((share) => share.canSettle === false && share.canTriggerPayout === false && share.canReceivePayout === false)).toBe(true);
+    expect(academyTotal).toBe(100);
+    expect(academyValidation?.validationStatus).toBe("valid-mock");
+    expect(academyValidation?.conflicts).toEqual([]);
+    expect(productTotal).toBe(120);
+    expect(productValidation?.validationStatus).toBe("conflict-mock");
+    expect(productValidation?.conflictStatus).toBe("conflict-mock");
+    expect(productConflicts.map((conflict) => conflict.conflictType)).toEqual(["share-total", "cap", "cap"]);
+    expect(productValidation?.capWarnings.join(" ")).toContain("distributor");
+    expect(productValidation?.capWarnings.join(" ")).toContain("affiliate");
+    expect(productShares.map((share) => share.participantType)).toEqual(["creator", "platform", "distributor", "agency", "affiliate"]);
+    expect(productShares.every((share) => share.canSettle === false && share.canTriggerPayout === false && share.canReceivePayout === false)).toBe(true);
+    expect(productShares.map((share) => share.shareType)).toEqual(["percentage-mock", "percentage-mock", "percentage-mock", "percentage-mock", "percentage-mock"]);
+    expect(productNotes).toContain("Commission Model is mock/config-first");
+    expect(productNotes).toContain("no commission real");
+    expect(productNotes).toContain("no obligation financial");
+    expect(productNotes).toContain("no payout");
+    expect(productNotes).toContain("no settlement");
+    expect(productNotes).toContain("no billing");
+    expect(productNotes).toContain("no payment gateway");
+    expect(models.every((view) => view.participantShares.every((share) => share.canSettle === false && share.canTriggerPayout === false && share.canReceivePayout === false))).toBe(true);
   });
 
   it("issues mock purchase records without settlement", () => {

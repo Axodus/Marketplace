@@ -40,6 +40,8 @@ Phase 06 - Revenue Sharing planning is documented in `docs/PHASE_06_REVENUE_SHAR
 
 `MEP-REQ-060` adds the mock/config-first Revenue Sharing model and UI surfaces at `/marketplace/revenue-sharing` and `/marketplace/revenue-sharing/:policySlug`. Policies can be listed and opened by id or slug, with participants, split rules, participant shares, settlement boundary, warnings, disclaimers and boundary notes. Revenue Sharing remains preview-only: no payout, settlement, billing, invoice, accounting, tax, treasury routing, payment gateway, wallet signature, backend API, database, analytics tracking, BI or Marketplace Intelligence is activated.
 
+`MEP-REQ-061` adds mock/config-first Commission Models and detailed Participant Shares to the Revenue Sharing surface. Commission models expose simulated Platform Share, Tenant Share, Distributor Share, Partner Share, Affiliate Share, Agency Share, Creator Share and Community Share validation with cap/floor/share-total warnings. Commission Models do not create commission real, obligation financial, payout, settlement, billing, invoice, accounting, tax, treasury routing, split on-chain, payment gateway, backend, database, analytics tracking, BI or Marketplace Intelligence.
+
 Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  

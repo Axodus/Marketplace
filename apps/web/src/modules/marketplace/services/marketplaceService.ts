@@ -5,6 +5,7 @@ import {
   marketplaceCatalogSegments,
   marketplaceCollections,
   marketplaceCommunityDistributions,
+  marketplaceCommissionModels,
   marketplaceCuratedCatalogDistributionConfigs,
   marketplaceCuratedCatalogs,
   marketplaceDistributionChannels,
@@ -58,6 +59,10 @@ import type {
   License,
   MarketplaceBoundaryStatus,
   MarketplaceCollection,
+  CommissionModel,
+  ParticipantShareConflict,
+  ParticipantShareValidation,
+  ParticipantShareValidationStatus,
   ParticipantShare,
   Product,
   ProductCategory,
@@ -141,6 +146,7 @@ const communityDistributions = marketplaceCommunityDistributions as CommunityMar
 const tenantDistributionConfigs = marketplaceTenantDistributionConfigs as TenantDistributionConfig[];
 const curatedCatalogDistributionConfigs = marketplaceCuratedCatalogDistributionConfigs as CuratedCatalogDistributionConfig[];
 const revenueSharingPolicies = marketplaceRevenueSharingPolicies as RevenueSharingPolicy[];
+const commissionModels = marketplaceCommissionModels as CommissionModel[];
 const revenueParticipants = marketplaceRevenueParticipants as RevenueParticipant[];
 const revenueSplitRules = marketplaceRevenueSplitRules as RevenueSplitRule[];
 const participantShares = marketplaceParticipantShares as ParticipantShare[];
@@ -667,6 +673,7 @@ export interface RevenueSharingPolicyView {
   participants: RevenueParticipant[];
   rules: RevenueSplitRule[];
   participantShares: ParticipantShare[];
+  commissionModels: CommissionModelView[];
   settlementBoundary: SettlementBoundary | null;
   tenant?: Tenant;
   distributionChannel?: DistributionChannelView;
@@ -678,6 +685,16 @@ export interface RevenueSharingPolicyView {
   collection?: MarketplaceCollection;
   attributionSources: AttributionSourceView[];
   shareTotal: number;
+  boundaryNotes: string[];
+}
+
+export interface CommissionModelView {
+  model: CommissionModel;
+  policy: RevenueSharingPolicy | null;
+  participants: RevenueParticipant[];
+  rules: RevenueSplitRule[];
+  participantShares: ParticipantShare[];
+  validation: ParticipantShareValidation;
   boundaryNotes: string[];
 }
 
@@ -3005,10 +3022,153 @@ function getRevenueSplitRuleById(ruleId: string) {
   return revenueSplitRules.find((rule) => rule.id === ruleId) ?? null;
 }
 
+function getCommissionModelByIdOrSlug(modelIdOrSlug: string) {
+  const key = modelIdOrSlug.toLowerCase();
+  return commissionModels.find((model) => model.id.toLowerCase() === key || model.slug.toLowerCase() === key) ?? null;
+}
+
+function getParticipantShareById(shareId: string) {
+  return participantShares.find((share) => share.id === shareId) ?? null;
+}
+
+function getCommissionModelShares(model: CommissionModel) {
+  return model.participantShareIds.map(getParticipantShareById).filter((share): share is ParticipantShare => Boolean(share));
+}
+
+function resolveCommissionValidationStatus(model: CommissionModel, conflicts: ParticipantShareConflict[], totalShareValueMock: number): ParticipantShareValidationStatus {
+  if (model.status === "disabled" || model.status === "restricted") return model.status;
+  if (conflicts.some((conflict) => conflict.severity === "conflict")) return "conflict-mock";
+  if (conflicts.length || totalShareValueMock !== 100 || model.status === "warning-mock") return "warning-mock";
+  return "valid-mock";
+}
+
+function buildParticipantShareConflict(
+  model: CommissionModel,
+  conflictType: ParticipantShareConflict["conflictType"],
+  message: string,
+  severity: ParticipantShareConflict["severity"] = "warning",
+  participantShareId?: string
+): ParticipantShareConflict {
+  return {
+    id: `participant-share-conflict-${model.id}-${conflictType}-${participantShareId ?? "model"}`,
+    commissionModelId: model.id,
+    participantShareId,
+    severity,
+    conflictType,
+    message,
+    isBlocking: severity === "conflict",
+    warnings: [message],
+    disclaimers: ["Participant Share conflict is simulated; no commission real, no obligation financial, no payout, no settlement and no billing are active."]
+  };
+}
+
+function validateParticipantSharesForCommissionModel(model: CommissionModel): ParticipantShareValidation {
+  const shares = getCommissionModelShares(model);
+  const totalShareValueMock = shares.reduce((total, share) => total + share.shareValue, 0);
+  const conflicts: ParticipantShareConflict[] = [];
+
+  if (totalShareValueMock !== 100) {
+    conflicts.push(
+      buildParticipantShareConflict(
+        model,
+        "share-total",
+        `Participant Share mock total is ${totalShareValueMock}; review required before any future activation.`,
+        totalShareValueMock > 100 ? "conflict" : "warning"
+      )
+    );
+  }
+
+  shares.forEach((share) => {
+    const participant = getRevenueParticipantById(share.participantId);
+    if (!participant) {
+      conflicts.push(buildParticipantShareConflict(model, "missing-participant", `Participant Share ${share.id} references a missing participant.`, "conflict", share.id));
+    }
+    if (share.capValueMock && share.capValueMock > 0 && share.shareValue > share.capValueMock) {
+      conflicts.push(
+        buildParticipantShareConflict(
+          model,
+          "cap",
+          `${share.participantType} Participant Share mock ${share.shareValue} exceeds capValueMock ${share.capValueMock}.`,
+          "conflict",
+          share.id
+        )
+      );
+    }
+    if (share.floorValueMock && share.floorValueMock > 0 && share.shareValue < share.floorValueMock) {
+      conflicts.push(
+        buildParticipantShareConflict(
+          model,
+          "floor",
+          `${share.participantType} Participant Share mock ${share.shareValue} is below floorValueMock ${share.floorValueMock}.`,
+          "warning",
+          share.id
+        )
+      );
+    }
+    if (share.canSettle || share.canTriggerPayout || share.canReceivePayout) {
+      conflicts.push(
+        buildParticipantShareConflict(
+          model,
+          "boundary",
+          `${share.participantType} Participant Share violates mock/config-first financial execution boundaries.`,
+          "conflict",
+          share.id
+        )
+      );
+    }
+  });
+
+  const capWarnings = conflicts.filter((conflict) => conflict.conflictType === "cap").map((conflict) => conflict.message);
+  const floorWarnings = conflicts.filter((conflict) => conflict.conflictType === "floor").map((conflict) => conflict.message);
+  const conflictWarnings = conflicts.map((conflict) => conflict.message);
+  const validationStatus = resolveCommissionValidationStatus(model, conflicts, totalShareValueMock);
+
+  return {
+    commissionModelId: model.id,
+    policyId: model.policyId,
+    totalShareValueMock,
+    validationStatus,
+    conflictStatus: conflicts.some((conflict) => conflict.severity === "conflict") ? "conflict-mock" : validationStatus,
+    capWarnings,
+    floorWarnings,
+    conflictWarnings,
+    boundaryNotes: Array.from(
+      new Set([
+        ...model.warnings,
+        ...model.disclaimers,
+        ...shares.flatMap((share) => [...share.warnings, ...share.disclaimers]),
+        ...conflictWarnings,
+        "Commission Model is mock/config-first and validates Participant Share records only.",
+        "Commission Model does not create commission due, payable record, payout, settlement, billing, invoice, accounting, tax, treasury routing, split on-chain, payment gateway, backend or database."
+      ])
+    ),
+    conflicts
+  };
+}
+
+function buildCommissionModelView(model: CommissionModel): CommissionModelView {
+  const shares = getCommissionModelShares(model);
+  const participants = shares.map((share) => getRevenueParticipantById(share.participantId)).filter((participant): participant is RevenueParticipant => Boolean(participant));
+  const rules = model.ruleIds.map(getRevenueSplitRuleById).filter((rule): rule is RevenueSplitRule => Boolean(rule));
+  const policy = getRevenueSharingPolicyByIdOrSlug(model.policyId);
+  const validation = validateParticipantSharesForCommissionModel(model);
+
+  return {
+    model,
+    policy,
+    participants,
+    rules,
+    participantShares: shares,
+    validation,
+    boundaryNotes: validation.boundaryNotes
+  };
+}
+
 function buildRevenueSharingPolicyView(policy: RevenueSharingPolicy): RevenueSharingPolicyView {
   const participants = policy.participantIds.map(getRevenueParticipantById).filter((participant): participant is RevenueParticipant => Boolean(participant));
   const rules = policy.ruleIds.map(getRevenueSplitRuleById).filter((rule): rule is RevenueSplitRule => Boolean(rule));
   const shares = participantShares.filter((share) => share.policyId === policy.id);
+  const policyCommissionModels = (policy.commissionModelIds ?? []).map(getCommissionModelByIdOrSlug).filter((model): model is CommissionModel => Boolean(model)).map(buildCommissionModelView);
   const settlementBoundary = settlementBoundaries.find((boundary) => boundary.id === policy.settlementBoundaryId) ?? null;
   const tenant = policy.tenantId ? getTenantById(policy.tenantId) ?? undefined : undefined;
   const distributionChannel = policy.distributionChannelId ? getDistributionChannelById(policy.distributionChannelId) ?? undefined : undefined;
@@ -3027,6 +3187,7 @@ function buildRevenueSharingPolicyView(policy: RevenueSharingPolicy): RevenueSha
     participants,
     rules,
     participantShares: shares,
+    commissionModels: policyCommissionModels,
     settlementBoundary,
     tenant,
     distributionChannel,
@@ -3046,6 +3207,7 @@ function buildRevenueSharingPolicyView(policy: RevenueSharingPolicy): RevenueSha
         ...participants.flatMap((participant) => [...participant.warnings, ...participant.disclaimers]),
         ...rules.flatMap((rule) => [...rule.warnings, ...rule.disclaimers]),
         ...shares.flatMap((share) => [...share.warnings, ...share.disclaimers]),
+        ...policyCommissionModels.flatMap((model) => model.boundaryNotes),
         ...(settlementBoundary ? [...settlementBoundary.warnings, ...settlementBoundary.disclaimers] : ["Settlement Boundary missing; review required."]),
         ...(distributionChannel?.boundaryNotes ?? []),
         ...(distributionProfile?.boundaryNotes ?? []),
@@ -3080,6 +3242,37 @@ export function listRevenueSplitRulesByPolicy(policyIdOrSlug: string) {
 
 export function listParticipantSharesByPolicy(policyIdOrSlug: string) {
   return getRevenueSharingPolicyById(policyIdOrSlug)?.participantShares ?? [];
+}
+
+export function listCommissionModels() {
+  return commissionModels.map(buildCommissionModelView);
+}
+
+export function getCommissionModelById(modelIdOrSlug: string) {
+  const model = getCommissionModelByIdOrSlug(modelIdOrSlug);
+  return model ? buildCommissionModelView(model) : null;
+}
+
+export function listCommissionModelsByPolicy(policyIdOrSlug: string) {
+  const policy = getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug);
+  if (!policy) return [];
+  return listCommissionModels().filter((view) => view.model.policyId === policy.id);
+}
+
+export function listParticipantSharesByCommissionModel(modelIdOrSlug: string) {
+  return getCommissionModelById(modelIdOrSlug)?.participantShares ?? [];
+}
+
+export function calculateCommissionModelShareTotalMock(modelIdOrSlug: string) {
+  return getCommissionModelById(modelIdOrSlug)?.validation.totalShareValueMock ?? 0;
+}
+
+export function detectParticipantShareConflicts(modelIdOrSlug: string) {
+  return getCommissionModelById(modelIdOrSlug)?.validation.conflicts ?? [];
+}
+
+export function validateParticipantSharesByCommissionModel(modelIdOrSlug: string) {
+  return getCommissionModelById(modelIdOrSlug)?.validation ?? null;
 }
 
 export function resolveSettlementBoundary(policyIdOrSlug: string) {

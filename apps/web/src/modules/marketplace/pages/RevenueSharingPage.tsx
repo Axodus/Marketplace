@@ -4,7 +4,7 @@ import { CircleDollarSign, FileSearch, ShieldCheck, Split } from "lucide-react";
 import { NeutralBadge } from "../components/StatusBadge";
 import { useRevenueSharingPolicies, useRevenueSharingPolicy } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
-import type { RevenueSharingPolicyView } from "../services/marketplaceService";
+import type { CommissionModelView, RevenueSharingPolicyView } from "../services/marketplaceService";
 
 export function RevenueSharingPage() {
   const { policySlug } = useParams();
@@ -57,6 +57,7 @@ export function RevenueSharingPage() {
           <NeutralBadge>mock/config-first</NeutralBadge>
           <NeutralBadge>preview-only</NeutralBadge>
           <NeutralBadge>canCalculatePreview simulation</NeutralBadge>
+          <NeutralBadge>no commission real</NeutralBadge>
           <NeutralBadge>no payout</NeutralBadge>
           <NeutralBadge>no settlement</NeutralBadge>
           <NeutralBadge>no billing</NeutralBadge>
@@ -95,6 +96,7 @@ function RevenueSharingPolicyCard({ view, selected }: { view: RevenueSharingPoli
         <Metric label="Scope" value={policy.scope} />
         <Metric label="Participants" value={view.participants.length} />
         <Metric label="Rules" value={view.rules.length} />
+        <Metric label="Commission Models" value={view.commissionModels.length} />
         <Metric label="Share total" value={`${view.shareTotal}% mock`} />
       </div>
       <p className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
@@ -177,29 +179,50 @@ function RevenueSharingPolicyDetail({ view }: { view: RevenueSharingPolicyView }
       <section className="rounded border border-slate-200 bg-white p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Commission Model</p>
+            <h3 className="mt-1 text-lg font-semibold">Simulated commission validation</h3>
+          </div>
+          <NeutralBadge>no commission real</NeutralBadge>
+        </div>
+        <div className="mt-4 grid gap-3">
+          {view.commissionModels.map((modelView) => (
+            <CommissionModelPanel key={modelView.model.id} view={modelView} />
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded border border-slate-200 bg-white p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Revenue Split Rule</p>
             <h3 className="mt-1 text-lg font-semibold">Mock participant shares</h3>
           </div>
           <NeutralBadge>{view.shareTotal}% mock total</NeutralBadge>
         </div>
         <div className="mt-4 grid gap-3">
-          {view.rules.map((rule) => {
-            const participant = view.participants.find((entry) => entry.id === rule.participantId);
+          {view.participantShares.map((share) => {
+            const rule = view.rules.find((entry) => entry.id === share.sourceRuleId);
+            const participant = view.participants.find((entry) => entry.id === share.participantId);
             return (
-              <article key={rule.id} className="rounded border border-slate-200 bg-slate-50 p-4">
+              <article key={share.id} className="rounded border border-slate-200 bg-slate-50 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h4 className="font-semibold">{participant?.displayName ?? rule.participantId}</h4>
-                    <p className="mt-1 text-sm text-slate-600">{rule.ruleType}</p>
+                    <h4 className="font-semibold">{participant?.displayName ?? share.participantId}</h4>
+                    <p className="mt-1 text-sm text-slate-600">{rule?.ruleType ?? "source rule missing"}</p>
                   </div>
-                  <NeutralBadge>{rule.shareValue}% mock</NeutralBadge>
+                  <NeutralBadge>{share.shareValue}% mock</NeutralBadge>
                 </div>
-                <div className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
-                  <Metric label="Participant type" value={rule.participantType} />
-                  <Metric label="Target" value={`${rule.targetType}: ${rule.targetId}`} />
-                  <Metric label="Conflict policy" value={rule.conflictPolicy} />
+                <div className="mt-3 grid gap-2 text-sm sm:grid-cols-4">
+                  <Metric label="Participant type" value={share.participantType} />
+                  <Metric label="Share type" value={share.shareType} />
+                  <Metric label="Cap mock" value={share.capValueMock ?? 0} />
+                  <Metric label="Floor mock" value={share.floorValueMock ?? 0} />
+                  <Metric label="Can settle" value={String(share.canSettle)} />
+                  <Metric label="Can payout" value={String(share.canTriggerPayout)} />
+                  <Metric label="Can receive payout" value={String(share.canReceivePayout)} />
+                  <Metric label="Conflict policy" value={rule?.conflictPolicy ?? "review-required"} />
                 </div>
-                <p className="mt-3 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">{rule.disclaimers[0]}</p>
+                <p className="mt-3 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">{share.disclaimers[0]}</p>
               </article>
             );
           })}
@@ -208,6 +231,42 @@ function RevenueSharingPolicyDetail({ view }: { view: RevenueSharingPolicyView }
 
       <BoundaryNotes notes={view.boundaryNotes} />
     </section>
+  );
+}
+
+function CommissionModelPanel({ view }: { view: CommissionModelView }) {
+  const { model, validation } = view;
+
+  return (
+    <article className="rounded border border-slate-200 bg-slate-50 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h4 className="font-semibold">{model.displayName}</h4>
+          <p className="mt-1 text-sm leading-6 text-slate-600">{model.description}</p>
+        </div>
+        <NeutralBadge>{model.status}</NeutralBadge>
+      </div>
+      <div className="mt-3 grid gap-2 text-sm sm:grid-cols-4">
+        <Metric label="Scope" value={model.scope} />
+        <Metric label="Share type" value={model.shareType} />
+        <Metric label="Total share mock" value={`${validation.totalShareValueMock}%`} />
+        <Metric label="Validation" value={validation.validationStatus} />
+        <Metric label="Conflict" value={validation.conflictStatus} />
+        <Metric label="Shares" value={view.participantShares.length} />
+        <Metric label="Cap warnings" value={validation.capWarnings.length} />
+        <Metric label="Floor warnings" value={validation.floorWarnings.length} />
+      </div>
+      <p className="mt-3 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+        Commission Model mock is not commission due, not a payable record and cannot trigger payout, settlement or billing.
+      </p>
+      {validation.conflicts.length ? (
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-xs leading-5 text-amber-950">
+          {validation.conflicts.map((conflict) => (
+            <li key={conflict.id}>{conflict.message}</li>
+          ))}
+        </ul>
+      ) : null}
+    </article>
   );
 }
 

@@ -10,7 +10,7 @@ Planning artifact:
 Recommended implementation sequence:
 - MEP-06A - Revenue Sharing Planning and Settlement Boundary Audit - COMPLETED
 - MEP-REQ-060 - Revenue Sharing Model - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-061 - Commission Models and Participant Shares - PLANNED
+- MEP-REQ-061 - Commission Models and Participant Shares - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-062 - Attribution-to-Split Rules - PLANNED
 - MEP-REQ-063 - Revenue Sharing Preview and Audit Trail - PLANNED
 - MEP-REQ-064 - Tenant/Distribution Revenue Sharing Integration - PLANNED
@@ -40,6 +40,16 @@ MEP-REQ-060 delivered:
 - added `/marketplace/revenue-sharing` and `/marketplace/revenue-sharing/:policySlug` UI surfaces with preview-only/no-payout/no-settlement boundary labels
 - added tests for policy resolution, participant and rule references, share totals and disabled payout/settlement/billing/treasury execution flags
 - preserved no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend API, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
+
+MEP-REQ-061 delivered:
+- added Commission Model, Commission Model Rule, Participant Share Validation and Participant Share Conflict models
+- expanded Participant Share records with commission model, participant type/ref, cap/floor mock and disabled payout/settlement flags
+- added mock/config-first Commission Models for Academy tenant, Community distribution and Governance product contexts
+- represented Platform Share, Tenant Share, Distributor Share, Partner Share, Affiliate Share, Agency Share, Creator Share and Community Share as simulated participant shares
+- added helpers to list commission models, resolve a model by id or slug, filter by policy, list participant shares by model, calculate mock share totals and detect cap/floor/share-total conflicts
+- added hooks and Revenue Sharing UI sections for Commission Model validation, Participant Share details, cap/floor warnings and conflict-mock status
+- added tests for valid-mock, warning-mock and conflict-mock commission models, share totals, cap warnings and disabled payout/settlement/receive-payout flags
+- preserved no commission real, no obligation financial, no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no split on-chain, no payment gateway, no backend, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
 
 ---
 

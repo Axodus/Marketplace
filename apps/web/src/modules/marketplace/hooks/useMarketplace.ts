@@ -6,7 +6,9 @@ import {
   DEFAULT_PRODUCT_EXPLORER_FILTERS,
   buildMarketplaceAnalytics,
   buildSellerProfileView,
+  calculateCommissionModelShareTotalMock,
   calculateDashboardMetrics,
+  detectParticipantShareConflicts,
   discoverWalletAssets,
   explainEditorialRules,
   explainRevenueSharingBoundary,
@@ -21,6 +23,7 @@ import {
   getDistributionNetworkById,
   getDistributionProfileById,
   getDistributionProfilesByType,
+  getCommissionModelById,
   getRevenueSharingPoliciesByCuratedCatalog,
   getRevenueSharingPoliciesByDistributionChannel,
   getRevenueSharingPoliciesByTenant,
@@ -37,11 +40,14 @@ import {
   listFederationProviders,
   listBoundaries,
   listCollections,
+  listCommissionModels,
+  listCommissionModelsByPolicy,
   listDistributionChannels,
   listDistributionNetworks,
   listDistributionProfiles,
   listProducts,
   listRevenueSharingPolicies,
+  listParticipantSharesByCommissionModel,
   listParticipantSharesByPolicy,
   listRevenueParticipantsByPolicy,
   listRevenueSplitRulesByPolicy,
@@ -61,6 +67,7 @@ import {
   resolveDistributionProfileContext,
   resolveSettlementBoundary,
   getRevenueSharingPolicyById,
+  validateParticipantSharesByCommissionModel,
   resolveTenantCatalog,
   resolveTenantBranding,
   resolveTenantContext,
@@ -619,6 +626,74 @@ export function useRevenueSharingParticipantShares(policyIdOrSlug?: string) {
     queryKey: ["marketplace-revenue-sharing-participant-shares", policyIdOrSlug],
     enabled: Boolean(policyIdOrSlug),
     queryFn: () => listParticipantSharesByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useCommissionModels() {
+  return useQuery({
+    queryKey: ["marketplace-commission-models"],
+    queryFn: () => {
+      const models = listCommissionModels();
+      traceMarketplaceLifecycle("marketplace-commission-models-query", "completed", { modelCount: models.length });
+      return models;
+    }
+  });
+}
+
+export function useCommissionModel(modelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-commission-model", modelIdOrSlug],
+    enabled: Boolean(modelIdOrSlug),
+    queryFn: () => {
+      const model = getCommissionModelById(modelIdOrSlug ?? "");
+      if (!model) {
+        const error = new Error("Commission Model not found");
+        instrumentMarketplaceError("marketplace-commission-model-query", error, { modelIdOrSlug: modelIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-commission-model-query", "completed", { commissionModelId: model.model.id });
+      return model;
+    }
+  });
+}
+
+export function useCommissionModelsByPolicy(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-commission-models-by-policy", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => listCommissionModelsByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useCommissionModelParticipantShares(modelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-commission-model-participant-shares", modelIdOrSlug],
+    enabled: Boolean(modelIdOrSlug),
+    queryFn: () => listParticipantSharesByCommissionModel(modelIdOrSlug ?? "")
+  });
+}
+
+export function useCommissionModelValidation(modelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-commission-model-validation", modelIdOrSlug],
+    enabled: Boolean(modelIdOrSlug),
+    queryFn: () => validateParticipantSharesByCommissionModel(modelIdOrSlug ?? "")
+  });
+}
+
+export function useCommissionModelShareTotalMock(modelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-commission-model-share-total-mock", modelIdOrSlug],
+    enabled: Boolean(modelIdOrSlug),
+    queryFn: () => calculateCommissionModelShareTotalMock(modelIdOrSlug ?? "")
+  });
+}
+
+export function useParticipantShareConflicts(modelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-participant-share-conflicts", modelIdOrSlug],
+    enabled: Boolean(modelIdOrSlug),
+    queryFn: () => detectParticipantShareConflicts(modelIdOrSlug ?? "")
   });
 }
 
