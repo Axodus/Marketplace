@@ -2,9 +2,10 @@ import { Link, useParams } from "react-router-dom";
 import { BookMarked, Building2, Globe2, Share2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import type { CSSProperties } from "react";
 import { ProductCard } from "../components/ProductCard";
+import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
 import type { Tenant, TenantBranding, TenantCatalog, TenantCatalogResolution, TenantDomain, TenantDomainAlias } from "../types/marketplace";
 import type { TenantCuratedCatalogView, TenantDistributionView } from "../services/marketplaceService";
-import { useTenant, useTenantDistribution, useTenants } from "../hooks/useMarketplace";
+import { useTenant, useTenantDistribution, useTenantRevenueSharing, useTenants } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 
 export function TenantStorefrontPage() {
@@ -45,6 +46,7 @@ function TenantRegistrySurface() {
 function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
   const { data } = useTenant(tenantIdOrSlug);
   const tenantDistributionQuery = useTenantDistribution(tenantIdOrSlug);
+  const tenantRevenueSharingQuery = useTenantRevenueSharing(tenantIdOrSlug);
 
   if (!data) return null;
 
@@ -65,6 +67,7 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
     executionBoundaries
   } = data;
   const tenantDistribution = tenantDistributionQuery.data;
+  const tenantRevenueSharing = tenantRevenueSharingQuery.data;
 
   return (
     <div className="space-y-6">
@@ -171,6 +174,13 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
       <TenantCuratedCatalogPanel catalogs={tenantCuratedCatalogs} included={curatedCatalogResolution.includedCatalogIds.length} excluded={curatedCatalogResolution.excludedCatalogIds.length} />
 
       {tenantDistribution ? <TenantDistributionPanel view={tenantDistribution} /> : null}
+      {tenantRevenueSharing ? (
+        <RevenueSharingIntegrationPanel
+          title="Tenant Revenue Sharing Config"
+          description="Tenant Revenue Sharing Config binds this tenant to preview-only policies, commission models, participant shares and attribution-to-split context without enabling payout, settlement, billing or treasury routing."
+          view={tenantRevenueSharing}
+        />
+      ) : null}
 
       <section className="grid gap-4 lg:grid-cols-2">
         <BoundaryPanel title="Warnings" tone="amber" items={[...tenant.warnings, ...branding.warnings]} />

@@ -4210,6 +4210,130 @@ export const marketplaceRevenueParticipants = [
   }
 ];
 
+export const marketplaceTenantRevenueSharingConfigs = [
+  {
+    tenantId: "tenant-academy-marketplace",
+    policyIds: ["revenue-policy-academy-tenant-preview"],
+    defaultPolicyId: "revenue-policy-academy-tenant-preview",
+    allowedDistributionPolicyIds: ["revenue-policy-academy-tenant-preview"],
+    blockedDistributionPolicyIds: ["revenue-policy-product-governance-preview"],
+    allowedCuratedCatalogPolicyIds: ["revenue-policy-academy-tenant-preview"],
+    blockedCuratedCatalogPolicyIds: [],
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Tenant Revenue Sharing Config is simulated and remains preview-only."],
+    disclaimers: ["Tenant Revenue Sharing Config is mock/config-first: no payout, no settlement, no billing and no treasury routing are active."]
+  },
+  {
+    tenantId: "tenant-community-demo",
+    policyIds: ["revenue-policy-community-distribution-preview"],
+    defaultPolicyId: "revenue-policy-community-distribution-preview",
+    allowedDistributionPolicyIds: ["revenue-policy-community-distribution-preview"],
+    blockedDistributionPolicyIds: ["revenue-policy-product-governance-preview"],
+    allowedCuratedCatalogPolicyIds: ["revenue-policy-community-distribution-preview"],
+    blockedCuratedCatalogPolicyIds: ["revenue-policy-academy-tenant-preview"],
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Community tenant revenue sharing preview must preserve trust boundaries and attribution context."],
+    disclaimers: ["Tenant Revenue Sharing Config is mock/config-first: no payout, no settlement, no billing and no treasury routing are active."]
+  }
+];
+
+export const marketplaceDistributionRevenueSharingConfigs = [
+  {
+    distributionChannelId: "distribution-channel-academy-partner",
+    profileId: "distribution-profile-academy-partner",
+    policyIds: ["revenue-policy-academy-tenant-preview"],
+    defaultPolicyId: "revenue-policy-academy-tenant-preview",
+    attributionSourceIds: ["attribution-record-academy-campaign"],
+    commercialOriginId: "commercial-origin-academy-partner",
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Distribution Revenue Sharing Config uses campaign attribution labels only and remains preview-only."],
+    disclaimers: ["Distribution Revenue Sharing Config is mock/config-first: no payout, no settlement, no billing and no treasury routing are active."]
+  },
+  {
+    distributionChannelId: "distribution-channel-global-tenant",
+    profileId: "distribution-profile-community-marketplace",
+    policyIds: ["revenue-policy-product-governance-preview"],
+    defaultPolicyId: "revenue-policy-product-governance-preview",
+    attributionSourceIds: ["attribution-record-global-placement"],
+    commercialOriginId: "commercial-origin-global-tenant",
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Global distribution revenue sharing preview remains conflict-mock and non-executing."],
+    disclaimers: ["Distribution Revenue Sharing Config is mock/config-first: no payout, no settlement, no billing and no treasury routing are active."]
+  },
+  {
+    distributionChannelId: "distribution-channel-community-marketplace",
+    profileId: "distribution-profile-community-marketplace",
+    communityDistributionId: "community-distribution-creator-federated",
+    policyIds: ["revenue-policy-community-distribution-preview"],
+    defaultPolicyId: "revenue-policy-community-distribution-preview",
+    attributionSourceIds: ["attribution-record-community-source"],
+    commercialOriginId: "commercial-origin-community-marketplace",
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Community distribution revenue sharing preview preserves federation trust boundaries."],
+    disclaimers: ["Distribution Revenue Sharing Config is mock/config-first: no payout, no settlement, no billing and no treasury routing are active."]
+  }
+];
+
+export const marketplaceCuratedCatalogRevenueSharingConfigs = [
+  {
+    curatedCatalogId: "curated-catalog-academy-onboarding",
+    policyIds: ["revenue-policy-academy-tenant-preview"],
+    defaultPolicyId: "revenue-policy-academy-tenant-preview",
+    attributionSourceIds: ["attribution-record-academy-campaign"],
+    commercialOriginId: "commercial-origin-academy-partner",
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Curated Catalog Revenue Sharing Config preserves editorial rules and tenant-preview boundaries."],
+    disclaimers: ["Curated Catalog Revenue Sharing Config is mock/config-first: no payout, no settlement, no billing and no treasury routing are active."]
+  },
+  {
+    curatedCatalogId: "curated-catalog-foundational-nft",
+    policyIds: ["revenue-policy-community-distribution-preview", "revenue-policy-product-governance-preview"],
+    defaultPolicyId: "revenue-policy-community-distribution-preview",
+    attributionSourceIds: ["attribution-record-community-source", "attribution-record-global-placement"],
+    commercialOriginId: "commercial-origin-community-marketplace",
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Foundational catalog revenue sharing preview is simulated and preserves federated asset boundaries."],
+    disclaimers: ["Curated Catalog Revenue Sharing Config is mock/config-first: no payout, no settlement, no billing and no treasury routing are active."]
+  }
+];
+
+export const marketplaceCommunityRevenueSharingConfigs = [
+  {
+    communityDistributionId: "community-distribution-creator-federated",
+    policyIds: ["revenue-policy-community-distribution-preview"],
+    defaultPolicyId: "revenue-policy-community-distribution-preview",
+    attributionSourceIds: ["attribution-record-community-source"],
+    commercialOriginId: "commercial-origin-community-marketplace",
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Community Revenue Sharing Config remains read-only and preserves federation trust boundaries."],
+    disclaimers: ["Community Revenue Sharing Config is mock/config-first: no payout, no settlement, no billing and no treasury routing are active."]
+  }
+];
+
 export const marketplaceSettlementBoundaries = [
   {
     id: "settlement-boundary-academy-tenant-revenue",

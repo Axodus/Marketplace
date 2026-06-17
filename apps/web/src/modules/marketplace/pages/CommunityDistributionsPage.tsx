@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { Globe2, Layers3, ShieldAlert, UsersRound } from "lucide-react";
+import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useCommunityDistributionContext, useCommunityMarketplaceDistribution, useCommunityMarketplaceDistributions } from "../hooks/useMarketplace";
+import { useCommunityDistributionContext, useCommunityMarketplaceDistribution, useCommunityMarketplaceDistributions, useCommunityRevenueSharing } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { CommunityDistributionItemView, CommunityDistributionView } from "../services/marketplaceService";
 
@@ -115,6 +116,8 @@ function CommunityDistributionCard({ view, selected }: { view: CommunityDistribu
 
 function CommunityDistributionDetail({ view }: { view: CommunityDistributionView }) {
   const { distribution, context } = view;
+  const revenueSharingQuery = useCommunityRevenueSharing(distribution.slug);
+  const revenueSharing = revenueSharingQuery.data;
   return (
     <section className="space-y-5 rounded border border-teal-200 bg-teal-50 p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -187,6 +190,14 @@ function CommunityDistributionDetail({ view }: { view: CommunityDistributionView
           ))}
         </div>
       </section>
+
+      {revenueSharing ? (
+        <RevenueSharingIntegrationPanel
+          title="Community Revenue Sharing Config"
+          description="Community Revenue Sharing Config preserves community distribution, attribution source, commercial origin, preview and audit context while keeping federation trust boundaries read-only and non-executing."
+          view={revenueSharing}
+        />
+      ) : null}
 
       <BoundaryNotes notes={view.boundaryNotes} />
     </section>

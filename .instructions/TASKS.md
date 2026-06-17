@@ -13,7 +13,7 @@ Recommended implementation sequence:
 - MEP-REQ-061 - Commission Models and Participant Shares - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-062 - Attribution-to-Split Rules - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-063 - Revenue Sharing Preview and Audit Trail - IMPLEMENTED MOCK/CONFIG-FIRST
-- MEP-REQ-064 - Tenant/Distribution Revenue Sharing Integration - PLANNED
+- MEP-REQ-064 - Tenant/Distribution Revenue Sharing Integration - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-PHASE-06-CLOSURE - QA, navigation and Revenue Sharing boundary validation - PLANNED
 
 MEP-06A delivered:
@@ -70,6 +70,14 @@ MEP-REQ-063 delivered:
 - added hooks and Revenue Sharing UI sections for preview, payout preview mock, settlement preview mock, participant split explanation, rule application explanation, conflict warnings and audit trail
 - added tests for preview status, participant split explanation, applied/blocked rules, payout/settlement preview boundaries, audit entries and disabled execution flags
 - preserved no payment, no payout, no settlement, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend, no database, no BI and no Marketplace Intelligence boundaries
+
+MEP-REQ-064 delivered:
+- added Tenant Revenue Sharing Config, Distribution Revenue Sharing Config, Curated Catalog Revenue Sharing Config and Community Revenue Sharing Config mock records
+- added Revenue Sharing Integrated Context and Revenue Sharing Resolution helpers for tenant, distribution channel, distribution profile, curated catalog and community distribution contexts
+- connected policies, commission models, participant shares, attribution-to-split mappings, previews, audit trail and settlement boundaries in preview-only mode
+- added hooks and UI panels across tenant storefront, distribution channel, distribution profile, curated catalog and community distribution detail surfaces
+- preserved tenant isolation, curated catalog editorial rules, distribution boundaries, attribution boundaries and federation trust boundaries
+- preserved no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend, no API, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
 
 ---
 

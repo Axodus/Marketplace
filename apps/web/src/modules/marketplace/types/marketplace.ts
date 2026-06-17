@@ -1343,6 +1343,105 @@ export interface CuratedCatalogDistributionResolution {
   disclaimers: string[];
 }
 
+export interface TenantRevenueSharingConfig {
+  tenantId: string;
+  policyIds: string[];
+  defaultPolicyId: string;
+  allowedDistributionPolicyIds: string[];
+  blockedDistributionPolicyIds: string[];
+  allowedCuratedCatalogPolicyIds: string[];
+  blockedCuratedCatalogPolicyIds: string[];
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionRevenueSharingConfig {
+  distributionChannelId: string;
+  profileId?: string;
+  communityDistributionId?: string;
+  policyIds: string[];
+  defaultPolicyId: string;
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogRevenueSharingConfig {
+  curatedCatalogId: string;
+  policyIds: string[];
+  defaultPolicyId: string;
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommunityRevenueSharingConfig {
+  communityDistributionId: string;
+  policyIds: string[];
+  defaultPolicyId: string;
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingIntegratedContext {
+  contextType: "tenant" | "distribution-channel" | "distribution-profile" | "community-distribution" | "curated-catalog";
+  tenantId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  curatedCatalogId?: string;
+  policyId?: string;
+  commissionModelId?: string;
+  previewId?: string;
+  settlementBoundaryId?: string;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingResolution {
+  contextType: RevenueSharingIntegratedContext["contextType"];
+  contextId: string;
+  resolvedAt: string;
+  policyIds: string[];
+  defaultPolicyId?: string;
+  commissionModelIds: string[];
+  previewIds: string[];
+  settlementBoundaryIds: string[];
+  attributionSourceIds: string[];
+  appliedAttributionRuleIds: string[];
+  blockedAttributionRuleIds: string[];
+  warnings: string[];
+  disclaimers: string[];
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+}
+
 export interface DistributionIntegratedContext {
   contextId: string;
   contextType: DistributionIntegratedContextType;

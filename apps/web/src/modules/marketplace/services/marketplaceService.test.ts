@@ -55,7 +55,9 @@ import {
   getCommissionModelById,
   getRevenueSharingPoliciesByCuratedCatalog,
   getRevenueSharingPoliciesByDistributionChannel,
+  getRevenueSharingPoliciesByDistributionProfile,
   getRevenueSharingPoliciesByTenant,
+  getRevenueSharingPoliciesByCommunityDistribution,
   getCommercialOriginForAttribution,
   getDistributionSourceForAttribution,
   getDistributionSourceSplitMapping,
@@ -146,8 +148,13 @@ import {
   listRevenueSharingAuditEntriesByPolicy,
   listRevenueSharingPreviewConflicts,
   resolvePayoutPreviewMock,
+  resolveDistributionChannelRevenueSharing,
+  resolveDistributionProfileRevenueSharing,
+  resolveCuratedCatalogRevenueSharing,
+  resolveCommunityRevenueSharing,
   resolveRevenueSharingPreview,
   resolveSettlementPreviewMock,
+  resolveTenantRevenueSharing,
   validateParticipantSharesByCommissionModel,
   resolveTenantCatalog,
   resolveTenantContext,
@@ -1112,6 +1119,44 @@ describe("marketplaceService", () => {
     expect(previews.every((view) => view.preview.canRouteTreasury === false)).toBe(true);
     expect(previews.every((view) => view.preview.canInvoice === false)).toBe(true);
     expect(previews.every((view) => view.preview.canAccount === false)).toBe(true);
+  });
+
+  it("integrates Revenue Sharing with tenant, distribution, curated catalog and community contexts without execution", () => {
+    const academyTenant = resolveTenantRevenueSharing("academy");
+    const academyChannel = resolveDistributionChannelRevenueSharing("academy-partner-channel");
+    const academyProfile = resolveDistributionProfileRevenueSharing("academy-partner-profile");
+    const academyCatalog = resolveCuratedCatalogRevenueSharing("academy-onboarding");
+    const communityDistribution = resolveCommunityRevenueSharing("creator-federated-community");
+
+    expect(getRevenueSharingPoliciesByDistributionProfile("academy-partner-profile")).toHaveLength(1);
+    expect(getRevenueSharingPoliciesByCommunityDistribution("creator-federated-community")).toHaveLength(1);
+
+    expect(academyTenant?.policies.map((entry) => entry.policy.id)).toEqual(["revenue-policy-academy-tenant-preview"]);
+    expect(academyTenant?.integratedContext.canCalculatePreview).toBe(true);
+    expect(academyTenant?.integratedContext.canSettle).toBe(false);
+    expect(academyTenant?.integratedContext.canTriggerPayout).toBe(false);
+    expect(academyTenant?.integratedContext.canRouteTreasury).toBe(false);
+    expect(academyTenant?.boundaryNotes.join(" ")).toContain("Tenant isolation preserved.");
+    expect(academyTenant?.boundaryNotes.join(" ")).toContain("no settlement");
+
+    expect(academyChannel?.attributionSources.map((entry) => entry.source.id)).toContain("attribution-record-academy-campaign");
+    expect(academyChannel?.resolution.appliedAttributionRuleIds).toContain("attribution-split-rule-academy-campaign-partner");
+    expect(academyChannel?.integratedContext.canSettle).toBe(false);
+
+    expect(academyProfile?.policies[0]?.policy.id).toBe("revenue-policy-academy-tenant-preview");
+    expect(academyProfile?.integratedContext.canTriggerPayout).toBe(false);
+
+    expect(academyCatalog?.commissionModels[0]?.model.id).toBe("commission-model-academy-tenant-preview");
+    expect(academyCatalog?.previews[0]?.preview.id).toBe("revenue-sharing-preview-academy-tenant");
+    expect(academyCatalog?.boundaryNotes.join(" ")).toContain("Curated catalog editorial rules preserved.");
+
+    expect(communityDistribution?.policies[0]?.policy.id).toBe("revenue-policy-community-distribution-preview");
+    expect(communityDistribution?.resolution.attributionSourceIds).toEqual(["attribution-record-community-source"]);
+    expect(communityDistribution?.auditEntries.length).toBeGreaterThan(0);
+    expect(communityDistribution?.boundaryNotes.join(" ")).toContain("Federation trust boundaries preserved.");
+    expect(communityDistribution?.integratedContext.canSettle).toBe(false);
+    expect(communityDistribution?.integratedContext.canTriggerPayout).toBe(false);
+    expect(communityDistribution?.integratedContext.canRouteTreasury).toBe(false);
   });
 
   it("issues mock purchase records without settlement", () => {

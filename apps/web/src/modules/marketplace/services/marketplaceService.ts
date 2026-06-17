@@ -7,8 +7,11 @@ import {
   marketplaceCollections,
   marketplaceCommunityDistributions,
   marketplaceCommissionModels,
+  marketplaceCommunityRevenueSharingConfigs,
   marketplaceCuratedCatalogDistributionConfigs,
+  marketplaceCuratedCatalogRevenueSharingConfigs,
   marketplaceCuratedCatalogs,
+  marketplaceDistributionRevenueSharingConfigs,
   marketplaceDistributionChannels,
   marketplaceDistributionNetworks,
   marketplaceDistributionPlacements,
@@ -28,6 +31,7 @@ import {
   marketplaceSettlementPreviewMocks,
   marketplaceRevenueSharingAuditEntries,
   marketplaceTenantDistributionConfigs,
+  marketplaceTenantRevenueSharingConfigs,
   marketplaceTenants,
   marketplaceWalletDiscoveryRecords
 } from "../../../data/mock/marketplace.mock";
@@ -44,10 +48,12 @@ import type {
   CommunityDistributionContext,
   CommunityDistributionItem,
   CommunityMarketplaceDistribution,
+  CommunityRevenueSharingConfig,
   CuratedCatalog,
   CuratedCatalogDistributionConfig,
   CuratedCatalogDistributionResolution,
   CuratedCatalogDistributionRule,
+  CuratedCatalogRevenueSharingConfig,
   CuratedCatalogItem,
   CuratedCatalogSection,
   EditorialRule,
@@ -56,6 +62,7 @@ import type {
   DistributionIntegratedContext,
   DistributionIntegratedItem,
   DistributionChannel,
+  DistributionRevenueSharingConfig,
   DistributionNetwork,
   DistributionPlacement,
   DistributionProfile,
@@ -83,8 +90,10 @@ import type {
   PurchaseRecord,
   RevenueParticipant,
   RevenueSharingAuditEntry,
+  RevenueSharingIntegratedContext,
   RevenueSharingPreview,
   RevenueSharingPolicy,
+  RevenueSharingResolution,
   RevenueSplitRule,
   SettlementPreviewMock,
   Seller,
@@ -102,6 +111,7 @@ import type {
   TenantDistributionConfig,
   TenantDistributionResolution,
   TenantDistributionRule,
+  TenantRevenueSharingConfig,
   TenantDomain,
   TenantDomainAlias,
   TenantDomainInputType,
@@ -162,6 +172,10 @@ const attributionToSplitRules = marketplaceAttributionToSplitRules as Attributio
 const communityDistributions = marketplaceCommunityDistributions as CommunityMarketplaceDistribution[];
 const tenantDistributionConfigs = marketplaceTenantDistributionConfigs as TenantDistributionConfig[];
 const curatedCatalogDistributionConfigs = marketplaceCuratedCatalogDistributionConfigs as CuratedCatalogDistributionConfig[];
+const tenantRevenueSharingConfigs = marketplaceTenantRevenueSharingConfigs as TenantRevenueSharingConfig[];
+const distributionRevenueSharingConfigs = marketplaceDistributionRevenueSharingConfigs as DistributionRevenueSharingConfig[];
+const curatedCatalogRevenueSharingConfigs = marketplaceCuratedCatalogRevenueSharingConfigs as CuratedCatalogRevenueSharingConfig[];
+const communityRevenueSharingConfigs = marketplaceCommunityRevenueSharingConfigs as CommunityRevenueSharingConfig[];
 const revenueSharingPolicies = marketplaceRevenueSharingPolicies as RevenueSharingPolicy[];
 const revenueSharingPreviews = marketplaceRevenueSharingPreviews as RevenueSharingPreview[];
 const payoutPreviewMocks = marketplacePayoutPreviewMocks as PayoutPreviewMock[];
@@ -741,6 +755,19 @@ export interface RevenueSharingPreviewView {
   participantSplitExplanations: ParticipantSplitExplanation[];
   ruleApplicationExplanations: AttributionSplitExplanation[];
   conflictWarnings: string[];
+  boundaryNotes: string[];
+}
+
+export interface RevenueSharingIntegrationView {
+  contextType: RevenueSharingIntegratedContext["contextType"];
+  config: TenantRevenueSharingConfig | DistributionRevenueSharingConfig | CuratedCatalogRevenueSharingConfig | CommunityRevenueSharingConfig;
+  resolution: RevenueSharingResolution;
+  integratedContext: RevenueSharingIntegratedContext;
+  policies: RevenueSharingPolicyView[];
+  commissionModels: CommissionModelView[];
+  previews: RevenueSharingPreviewView[];
+  auditEntries: RevenueSharingAuditEntry[];
+  attributionSources: AttributionSourceView[];
   boundaryNotes: string[];
 }
 
@@ -3657,10 +3684,208 @@ export function getRevenueSharingPoliciesByDistributionChannel(channelIdOrSlug: 
   return listRevenueSharingPolicies().filter((view) => view.policy.distributionChannelId === channel.id);
 }
 
+export function getRevenueSharingPoliciesByDistributionProfile(profileIdOrSlug: string) {
+  const profile = getDistributionProfileByIdOrSlug(profileIdOrSlug);
+  if (!profile) return [];
+  return listRevenueSharingPolicies().filter((view) => view.policy.distributionProfileId === profile.id);
+}
+
+export function getRevenueSharingPoliciesByCommunityDistribution(distributionIdOrSlug: string) {
+  const distribution = getCommunityMarketplaceDistributionById(distributionIdOrSlug);
+  if (!distribution) return [];
+  return listRevenueSharingPolicies().filter((view) => view.policy.communityDistributionId === distribution.distribution.id);
+}
+
 export function getRevenueSharingPoliciesByCuratedCatalog(catalogIdOrSlug: string) {
   const catalog = resolveCuratedCatalog(catalogIdOrSlug);
   if (!catalog) return [];
   return listRevenueSharingPolicies().filter((view) => view.policy.curatedCatalogId === catalog.catalog.id);
+}
+
+export function getTenantRevenueSharingConfigByTenant(tenantIdOrSlug: string) {
+  const tenant = getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug);
+  if (!tenant) return null;
+  return tenantRevenueSharingConfigs.find((config) => config.tenantId === tenant.id) ?? null;
+}
+
+export function getDistributionRevenueSharingConfigByChannel(channelIdOrSlug: string) {
+  const channel = getDistributionChannelByIdOrSlug(channelIdOrSlug);
+  if (!channel) return null;
+  return distributionRevenueSharingConfigs.find((config) => config.distributionChannelId === channel.id) ?? null;
+}
+
+export function getDistributionRevenueSharingConfigByProfile(profileIdOrSlug: string) {
+  const profile = getDistributionProfileByIdOrSlug(profileIdOrSlug);
+  if (!profile) return null;
+  return distributionRevenueSharingConfigs.find((config) => config.profileId === profile.id) ?? null;
+}
+
+export function getCuratedCatalogRevenueSharingConfigByCatalog(catalogIdOrSlug: string) {
+  const catalog = resolveCuratedCatalog(catalogIdOrSlug);
+  if (!catalog) return null;
+  return curatedCatalogRevenueSharingConfigs.find((config) => config.curatedCatalogId === catalog.catalog.id) ?? null;
+}
+
+export function getCommunityRevenueSharingConfigByDistribution(distributionIdOrSlug: string) {
+  const distribution = getCommunityMarketplaceDistributionById(distributionIdOrSlug);
+  if (!distribution) return null;
+  return communityRevenueSharingConfigs.find((config) => config.communityDistributionId === distribution.distribution.id) ?? null;
+}
+
+function buildRevenueSharingBoundaryNotes(contextType: RevenueSharingIntegratedContext["contextType"], notes: string[]) {
+  const contextNotes =
+    contextType === "tenant"
+      ? ["Tenant isolation preserved."]
+      : contextType === "curated-catalog"
+        ? ["Curated catalog editorial rules preserved."]
+        : contextType === "community-distribution"
+          ? ["Federation trust boundaries preserved."]
+          : ["Distribution and attribution boundaries preserved."];
+
+  return Array.from(
+    new Set([
+      ...contextNotes,
+      ...notes,
+      "preview-only",
+      "no payout",
+      "no settlement",
+      "no billing",
+      "no treasury routing"
+    ])
+  );
+}
+
+function buildRevenueSharingIntegrationView(
+  contextType: RevenueSharingIntegratedContext["contextType"],
+  contextId: string,
+  config: TenantRevenueSharingConfig | DistributionRevenueSharingConfig | CuratedCatalogRevenueSharingConfig | CommunityRevenueSharingConfig
+): RevenueSharingIntegrationView {
+  const policies = ("policyIds" in config ? config.policyIds : []).map(getRevenueSharingPolicyById).filter((view): view is RevenueSharingPolicyView => Boolean(view));
+  const commissionModels = Array.from(
+    new Map(
+      policies
+        .flatMap((policy) => policy.commissionModels)
+        .map((view) => [view.model.id, view] as const)
+    ).values()
+  );
+  const previews = Array.from(
+    new Map(
+      policies
+        .map((policy) => resolveRevenueSharingPreview(policy.policy.id))
+        .filter((view): view is RevenueSharingPreviewView => Boolean(view))
+        .map((view) => [view.preview.id, view] as const)
+    ).values()
+  );
+  const attributionSourceIds = "attributionSourceIds" in config ? config.attributionSourceIds : policies.flatMap((policy) => policy.policy.attributionSourceIds);
+  const attributionSources = Array.from(
+    new Map(
+      attributionSourceIds
+        .map(getAttributionSourceById)
+        .filter((view): view is AttributionSourceView => Boolean(view))
+        .map((view) => [view.source.id, view] as const)
+    ).values()
+  );
+  const attributionResolutions = attributionSources.map((source) => resolveAttributionSplit(source.source.id));
+  const auditEntries = Array.from(
+    new Map(
+      policies
+        .flatMap((policy) => listRevenueSharingAuditEntriesByPolicy(policy.policy.id))
+        .map((entry) => [entry.id, entry] as const)
+    ).values()
+  );
+  const policyIds = policies.map((policy) => policy.policy.id);
+  const settlementBoundaryIds = policies.map((policy) => policy.settlementBoundary?.id).filter((value): value is string => Boolean(value));
+  const previewIds = previews.map((preview) => preview.preview.id);
+  const defaultPolicyId = "defaultPolicyId" in config ? config.defaultPolicyId : undefined;
+  const boundaryNotes = buildRevenueSharingBoundaryNotes(
+    contextType,
+    [
+      ...policies.flatMap((policy) => policy.boundaryNotes),
+      ...previews.flatMap((preview) => preview.boundaryNotes),
+      ...config.warnings,
+      ...config.disclaimers
+    ]
+  );
+  const integratedContext: RevenueSharingIntegratedContext = {
+    contextType,
+    tenantId: contextType === "tenant" ? contextId : policies[0]?.policy.tenantId,
+    distributionChannelId: contextType === "distribution-channel" ? contextId : policies[0]?.policy.distributionChannelId,
+    distributionProfileId: contextType === "distribution-profile" ? contextId : policies[0]?.policy.distributionProfileId,
+    communityDistributionId: contextType === "community-distribution" ? contextId : policies[0]?.policy.communityDistributionId,
+    curatedCatalogId: contextType === "curated-catalog" ? contextId : policies[0]?.policy.curatedCatalogId,
+    policyId: defaultPolicyId ?? policyIds[0],
+    commissionModelId: commissionModels[0]?.model.id,
+    previewId: previews[0]?.preview.id,
+    settlementBoundaryId: settlementBoundaryIds[0],
+    canCalculatePreview: "canCalculatePreview" in config ? config.canCalculatePreview : false,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: [...config.warnings],
+    disclaimers: [...config.disclaimers]
+  };
+  const resolution: RevenueSharingResolution = {
+    contextType,
+    contextId,
+    resolvedAt: new Date().toISOString(),
+    policyIds,
+    defaultPolicyId,
+    commissionModelIds: commissionModels.map((model) => model.model.id),
+    previewIds,
+    settlementBoundaryIds,
+    attributionSourceIds,
+    appliedAttributionRuleIds: attributionResolutions.flatMap((entry) => entry.appliedRuleIds),
+    blockedAttributionRuleIds: attributionResolutions.flatMap((entry) => entry.blockedRuleIds),
+    warnings: [...config.warnings],
+    disclaimers: [...config.disclaimers],
+    canCalculatePreview: "canCalculatePreview" in config ? config.canCalculatePreview : false,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false
+  };
+
+  return {
+    contextType,
+    config,
+    resolution,
+    integratedContext,
+    policies,
+    commissionModels,
+    previews,
+    auditEntries,
+    attributionSources,
+    boundaryNotes
+  };
+}
+
+export function resolveTenantRevenueSharing(tenantIdOrSlug: string) {
+  const tenant = getTenantById(tenantIdOrSlug) ?? getTenantBySlug(tenantIdOrSlug);
+  const config = tenant ? getTenantRevenueSharingConfigByTenant(tenant.id) : null;
+  return tenant && config ? buildRevenueSharingIntegrationView("tenant", tenant.id, config) : null;
+}
+
+export function resolveDistributionChannelRevenueSharing(channelIdOrSlug: string) {
+  const channel = getDistributionChannelById(channelIdOrSlug);
+  const config = channel ? getDistributionRevenueSharingConfigByChannel(channel.channel.id) : null;
+  return channel && config ? buildRevenueSharingIntegrationView("distribution-channel", channel.channel.id, config) : null;
+}
+
+export function resolveDistributionProfileRevenueSharing(profileIdOrSlug: string) {
+  const profile = getDistributionProfileById(profileIdOrSlug);
+  const config = profile ? getDistributionRevenueSharingConfigByProfile(profile.profile.id) : null;
+  return profile && config ? buildRevenueSharingIntegrationView("distribution-profile", profile.profile.id, config) : null;
+}
+
+export function resolveCuratedCatalogRevenueSharing(catalogIdOrSlug: string) {
+  const catalog = resolveCuratedCatalog(catalogIdOrSlug);
+  const config = catalog ? getCuratedCatalogRevenueSharingConfigByCatalog(catalog.catalog.id) : null;
+  return catalog && config ? buildRevenueSharingIntegrationView("curated-catalog", catalog.catalog.id, config) : null;
+}
+
+export function resolveCommunityRevenueSharing(distributionIdOrSlug: string) {
+  const distribution = getCommunityMarketplaceDistributionById(distributionIdOrSlug);
+  const config = distribution ? getCommunityRevenueSharingConfigByDistribution(distribution.distribution.id) : null;
+  return distribution && config ? buildRevenueSharingIntegrationView("community-distribution", distribution.distribution.id, config) : null;
 }
 
 export function explainRevenueSharingBoundary(policyIdOrSlug: string) {

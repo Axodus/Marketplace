@@ -83,8 +83,13 @@ import {
   listRevenueSharingAuditEntriesByPolicy,
   listRevenueSharingPreviewConflicts,
   resolvePayoutPreviewMock,
+  resolveDistributionChannelRevenueSharing,
+  resolveDistributionProfileRevenueSharing,
+  resolveCuratedCatalogRevenueSharing,
+  resolveCommunityRevenueSharing,
   resolveRevenueSharingPreview,
   resolveSettlementPreviewMock,
+  resolveTenantRevenueSharing,
   validateParticipantSharesByCommissionModel,
   resolveTenantCatalog,
   resolveTenantBranding,
@@ -794,6 +799,46 @@ export function useSettlementPreviewMock(policyIdOrSlug?: string) {
     queryKey: ["marketplace-revenue-sharing-settlement-preview-mock", policyIdOrSlug],
     enabled: Boolean(policyIdOrSlug),
     queryFn: () => resolveSettlementPreviewMock(policyIdOrSlug ?? "")
+  });
+}
+
+export function useTenantRevenueSharing(tenantIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-tenant-revenue-sharing", tenantIdOrSlug],
+    enabled: Boolean(tenantIdOrSlug),
+    queryFn: () => resolveTenantRevenueSharing(tenantIdOrSlug ?? "")
+  });
+}
+
+export function useDistributionChannelRevenueSharing(channelIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-channel-revenue-sharing", channelIdOrSlug],
+    enabled: Boolean(channelIdOrSlug),
+    queryFn: () => resolveDistributionChannelRevenueSharing(channelIdOrSlug ?? "")
+  });
+}
+
+export function useDistributionProfileRevenueSharing(profileIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-distribution-profile-revenue-sharing", profileIdOrSlug],
+    enabled: Boolean(profileIdOrSlug),
+    queryFn: () => resolveDistributionProfileRevenueSharing(profileIdOrSlug ?? "")
+  });
+}
+
+export function useCuratedCatalogRevenueSharing(catalogIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-curated-catalog-revenue-sharing", catalogIdOrSlug],
+    enabled: Boolean(catalogIdOrSlug),
+    queryFn: () => resolveCuratedCatalogRevenueSharing(catalogIdOrSlug ?? "")
+  });
+}
+
+export function useCommunityRevenueSharing(distributionIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-community-revenue-sharing", distributionIdOrSlug],
+    enabled: Boolean(distributionIdOrSlug),
+    queryFn: () => resolveCommunityRevenueSharing(distributionIdOrSlug ?? "")
   });
 }
 

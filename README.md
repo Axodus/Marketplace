@@ -46,6 +46,8 @@ Phase 06 - Revenue Sharing planning is documented in `docs/PHASE_06_REVENUE_SHAR
 
 `MEP-REQ-063` adds mock/config-first Revenue Sharing Preview, Payout Preview mock, Settlement Preview mock and Revenue Sharing Audit Trail sections to the Revenue Sharing surface. Previews show participant split explanation, rule application explanation and conflict warnings, but do not create payment, payout, settlement, invoice, accounting, tax, treasury routing, payment gateway, wallet signature, backend, database, BI or Marketplace Intelligence.
 
+`MEP-REQ-064` integrates mock/config-first Revenue Sharing into tenant storefront, distribution channel, distribution profile, curated catalog and community distribution surfaces. Tenant Revenue Sharing Config, Distribution Revenue Sharing Config, Curated Catalog Revenue Sharing Config and Community Revenue Sharing Config can resolve policies, commission models, participant shares, attribution-to-split mappings, preview, audit trail and settlement boundaries while preserving tenant isolation, curated catalog editorial rules, distribution boundaries, attribution boundaries and federation trust boundaries. No payout, settlement, billing, invoice, accounting, tax, treasury routing, payment gateway, wallet signature, backend, database, analytics tracking, BI or Marketplace Intelligence is activated.
+
 Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  

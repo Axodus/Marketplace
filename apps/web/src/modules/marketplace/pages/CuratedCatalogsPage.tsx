@@ -1,10 +1,12 @@
 import { Link, useParams } from "react-router-dom";
 import { BookMarked, Share2, ShieldAlert, Sparkles } from "lucide-react";
+import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
 import { NeutralBadge } from "../components/StatusBadge";
 import {
   useCatalogSegments,
   useCuratedCatalog,
   useCuratedCatalogDistribution,
+  useCuratedCatalogRevenueSharing,
   useCuratedCatalogs,
   useEditorialRules,
   useFeaturedCatalogs
@@ -24,6 +26,7 @@ export function CuratedCatalogsPage() {
   const listQuery = useCuratedCatalogs();
   const detailQuery = useCuratedCatalog(catalogId);
   const distributionQuery = useCuratedCatalogDistribution(catalogId);
+  const revenueSharingQuery = useCuratedCatalogRevenueSharing(catalogId);
   const editorialRulesQuery = useEditorialRules(catalogId);
   const featuredQuery = useFeaturedCatalogs();
   const segmentsQuery = useCatalogSegments();
@@ -89,7 +92,7 @@ export function CuratedCatalogsPage() {
       <FeaturedCatalogsSection featuredCatalogs={featuredCatalogs} />
       <CatalogSegmentsSection segments={segments} />
 
-      {selected && <CuratedCatalogDetail view={selected} distribution={distributionQuery.data ?? null} editorialRules={editorialRulesQuery.data ?? selected.editorialRules.map((rule) => ({
+      {selected && <CuratedCatalogDetail view={selected} distribution={distributionQuery.data ?? null} revenueSharing={revenueSharingQuery.data ?? null} editorialRules={editorialRulesQuery.data ?? selected.editorialRules.map((rule) => ({
         rule,
         inclusionReason: rule.effect === "include" || rule.effect === "feature" ? rule.reason : undefined,
         exclusionReason: rule.effect === "exclude" || rule.effect === "restrict" ? rule.reason : undefined,
@@ -234,10 +237,12 @@ function CuratedCatalogCard({ view, selected }: { view: CuratedCatalogView; sele
 function CuratedCatalogDetail({
   view,
   distribution,
+  revenueSharing,
   editorialRules
 }: {
   view: CuratedCatalogView;
   distribution: CuratedCatalogDistributionView | null;
+  revenueSharing: import("../services/marketplaceService").RevenueSharingIntegrationView | null;
   editorialRules: Array<{
     rule: CuratedCatalogView["editorialRules"][number];
     inclusionReason?: string;
@@ -267,6 +272,13 @@ function CuratedCatalogDetail({
       </div>
       <BoundaryNotes notes={view.boundaryNotes} />
       {distribution ? <CuratedDistributionSection view={distribution} /> : null}
+      {revenueSharing ? (
+        <RevenueSharingIntegrationPanel
+          title="Curated Catalog Revenue Sharing Config"
+          description="Curated Catalog Revenue Sharing Config binds this editorial surface to preview-only policies, commission models, attribution-to-split mappings, preview and audit trail while preserving curated catalog editorial rules."
+          view={revenueSharing}
+        />
+      ) : null}
       <section className="rounded border border-indigo-200 bg-white p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>

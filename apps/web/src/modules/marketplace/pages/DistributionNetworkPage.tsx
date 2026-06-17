@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { Network, RadioTower, Share2, ShieldAlert } from "lucide-react";
+import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useDistributionChannel, useDistributionChannels, useDistributionContext, useDistributionNetworks } from "../hooks/useMarketplace";
+import { useDistributionChannel, useDistributionChannelRevenueSharing, useDistributionChannels, useDistributionContext, useDistributionNetworks } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { DistributionChannelView, DistributionNetworkView, DistributionPlacementView } from "../services/marketplaceService";
 
@@ -162,6 +163,8 @@ function DistributionChannelCard({ view, selected }: { view: DistributionChannel
 
 function DistributionChannelDetail({ view }: { view: DistributionChannelView }) {
   const { channel } = view;
+  const revenueSharingQuery = useDistributionChannelRevenueSharing(channel.slug);
+  const revenueSharing = revenueSharingQuery.data;
 
   return (
     <section className="space-y-5 rounded border border-teal-200 bg-teal-50 p-5 shadow-sm">
@@ -238,6 +241,14 @@ function DistributionChannelDetail({ view }: { view: DistributionChannelView }) 
           )}
         </div>
       </section>
+
+      {revenueSharing ? (
+        <RevenueSharingIntegrationPanel
+          title="Distribution Revenue Sharing Config"
+          description="Distribution Revenue Sharing Config connects channel attribution, commercial origin, split rules, previews and audit trail in preview-only mode without activating payout, settlement, billing or treasury routing."
+          view={revenueSharing}
+        />
+      ) : null}
 
       <BoundaryNotes notes={view.boundaryNotes} />
     </section>

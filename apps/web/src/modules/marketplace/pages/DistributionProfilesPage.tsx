@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { Handshake, Network, ShieldAlert, UsersRound } from "lucide-react";
+import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useDistributionProfile, useDistributionProfileContext, useDistributionProfiles } from "../hooks/useMarketplace";
+import { useDistributionProfile, useDistributionProfileContext, useDistributionProfileRevenueSharing, useDistributionProfiles } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { DistributionProfileView } from "../services/marketplaceService";
 
@@ -130,6 +131,8 @@ function DistributionProfileCard({ view, selected }: { view: DistributionProfile
 
 function DistributionProfileDetail({ view }: { view: DistributionProfileView }) {
   const { profile } = view;
+  const revenueSharingQuery = useDistributionProfileRevenueSharing(profile.slug);
+  const revenueSharing = revenueSharingQuery.data;
 
   return (
     <section className="space-y-5 rounded border border-teal-200 bg-teal-50 p-5 shadow-sm">
@@ -204,6 +207,14 @@ function DistributionProfileDetail({ view }: { view: DistributionProfileView }) 
           ["No tracking real", "true"]
         ]} />
       </section>
+
+      {revenueSharing ? (
+        <RevenueSharingIntegrationPanel
+          title="Distribution Revenue Sharing Config"
+          description="Distribution Revenue Sharing Config can bind a profile to preview-only policies, commission models and attribution-to-split rules while preserving no payout, no settlement, no billing and no treasury routing boundaries."
+          view={revenueSharing}
+        />
+      ) : null}
 
       <BoundaryNotes notes={view.boundaryNotes} />
     </section>
