@@ -9,8 +9,8 @@ Planning artifact:
 
 Recommended implementation sequence:
 - MEP-07A - Marketplace Intelligence Planning and Data Boundary Audit - COMPLETED
-- MEP-REQ-070 - Marketplace Intelligence Model - PLANNED
-- MEP-REQ-071 - Insight Signals and Intelligence Snapshots - PLANNED
+- MEP-REQ-070 - Marketplace Intelligence Model - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-071 - Insight Signals and Intelligence Snapshots - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-072 - Catalog, Tenant and Distribution Intelligence Panels - PLANNED
 - MEP-REQ-073 - Recommendation Preview and Ranking Explanation - PLANNED
 - MEP-REQ-074 - Revenue, Trust and Risk Intelligence Integration - PLANNED
@@ -26,9 +26,34 @@ MEP-07A delivered:
 - defined governance, privacy, tracking, analytics, BI, scoring, recommendation, automation, decision and trust boundaries
 - preserved no tracking real, no analytics real, no BI, no scoring real, no recommendation engine, no ranking algorithm, no personalization, no profiling, no data export, no ML/AI runtime, no backend, no API and no database boundaries
 
+MEP-REQ-070 delivered:
+- added Marketplace Insight, Insight Signal, Intelligence Snapshot, Data Boundary and Intelligence Audit Note mock/config-first models
+- added mock Marketplace Insight records for global Marketplace readiness, Academy tenant readiness and revenue/trust boundary intelligence
+- added mock Insight Signal, Intelligence Snapshot, Data Boundary and audit note records with all tracking, analytics, BI, scoring, ML, automation, export and commercial action flags disabled
+- added helpers to list Marketplace Insights, resolve an insight by id or slug, list Insight Signals, resolve Data Boundaries, validate mock-only intelligence and explain Marketplace Intelligence boundaries
+- added hooks for Marketplace Insights, Insight detail, Insight Signals, Data Boundary resolution and mock-only validation
+- added `/marketplace/intelligence` and `/marketplace/intelligence/:insightSlug` UI surfaces with mock-only/no-tracking/no-BI/no-scoring/no-automated-decisioning boundary labels
+- added navigation exposure for Marketplace Intelligence
+- added service tests for insight listing, signal resolution, Data Boundary resolution and disabled execution/intelligence flags
+- preserved no tracking real, no analytics real, no BI, no scoring real, no risk scoring real, no trust scoring real, no recommendation engine real, no ranking algorithm real, no personalization, no profiling, no wallet tracking, no behavioral tracking, no event pipeline, no data warehouse, no ML model, no AI runtime, no automated decisioning, no automated commercial action, no retargeting, no data export, no backend, no API and no database boundaries
+
+MEP-REQ-071 delivered:
+- expanded Insight Signal mock records for catalog editorial, distribution coverage, community federated exposure and federation provider risk contexts
+- expanded Intelligence Snapshot mock records for Marketplace, Tenant, Catalog, Distribution Channel, Distribution Profile, Revenue, Community and Federation scopes
+- added slug, title and scoped references to Intelligence Snapshot records while preserving the generic snapshot model
+- added Data Boundary records for catalog, distribution, community and federation intelligence scopes
+- added helpers to list all Insight Signals, resolve signal by id or slug, list Intelligence Snapshots, resolve snapshot by id or slug, list snapshots by scope and resolve specialized snapshots by marketplace, tenant, catalog, distribution, revenue, community and federation context
+- added snapshot mock-only validation and snapshot boundary explanation helpers
+- added hooks for all signals, signal detail, snapshots, snapshot detail, snapshots by scope, specialized snapshot resolution and snapshot validation
+- expanded Marketplace Intelligence UI to display static mock snapshots by scope with mock-only/static-only/no-tracking/no-BI/no-ML/no-automated-decisioning labels
+- added service tests for specialized signals, snapshots by scope, specialized snapshot resolvers and static mock boundary validation
+- preserved no events real, no tracking real, no analytics pipeline, no data warehouse, no BI, no ML model, no scoring, no recommendation engine, no behavioral collection, no wallet tracking, no automated decisioning, no backend, no API and no database boundaries
+
 Constraints:
 - Phase 07 work must remain mock/config-first and non-tracking until explicit implementation requests authorize bounded runtime changes
 - MEP-07A is documentation/audit planning only; it does not modify, extend, activate or validate Marketplace Intelligence runtime
+- MEP-REQ-070 implements only local mock/config-first Marketplace Intelligence read models, helpers, hooks and UI surfaces
+- MEP-REQ-071 implements only static mock Insight Signals and Intelligence Snapshots derived from local mock data/configuration
 - `isSimulated` must remain true for future Phase 07 read models
 - `usesRealTracking`, `usesPersonalData`, `usesBehavioralData`, `usesWalletProfiling`, `usesAnalyticsPipeline`, `usesBI`, `usesMLModel`, `usesAutomatedDecisioning`, `canRecommendAutomatically`, `canRankAutomatically`, `canTriggerCommercialAction` and `canExportData` must remain false during Phase 07
 

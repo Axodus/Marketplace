@@ -406,7 +406,7 @@ Implementation boundary:
 
 # Phase 07 - Marketplace Intelligence
 
-Status: COMPLETED - PLANNING AND DATA BOUNDARY AUDIT
+Status: IN PROGRESS - MARKETPLACE INTELLIGENCE MOCK/CONFIG-FIRST MODEL IMPLEMENTED
 
 Objectives:
 - introduce governance-compatible commercial intelligence for discovery, catalog health, tenant performance, distribution effectiveness and operational risk visibility
@@ -435,8 +435,8 @@ Planning artifact:
 
 Linked requirements:
 - MEP-07A - Marketplace Intelligence Planning and Data Boundary Audit - completed
-- MEP-REQ-070 - Marketplace Intelligence Model - planned
-- MEP-REQ-071 - Insight Signals and Intelligence Snapshots - planned
+- MEP-REQ-070 - Marketplace Intelligence Model - implemented mock/config-first
+- MEP-REQ-071 - Insight Signals and Intelligence Snapshots - implemented mock/config-first
 - MEP-REQ-072 - Catalog, Tenant and Distribution Intelligence Panels - planned
 - MEP-REQ-073 - Recommendation Preview and Ranking Explanation - planned
 - MEP-REQ-074 - Revenue, Trust and Risk Intelligence Integration - planned
@@ -452,9 +452,15 @@ Dependencies:
 
 Implementation boundary:
 - MEP-07A is audit and planning only
-- Phase 07 implementation remains future bounded work
+- MEP-REQ-070 introduces Marketplace Insight, Insight Signal, Intelligence Snapshot, Data Boundary and Intelligence Audit Note as local mock/config-first read models only
+- MEP-REQ-070 adds `/marketplace/intelligence` and `/marketplace/intelligence/:insightSlug` to list and inspect mock Marketplace Intelligence boundaries
+- MEP-REQ-071 expands static mock Insight Signals and Intelligence Snapshots across Marketplace, Tenant, Catalog, Distribution, Revenue, Community and Federation scopes
+- MEP-REQ-071 keeps snapshots derived from local mock data/configuration only and preserves Data Boundary records for every specialized snapshot scope
+- Phase 07 implementation remains bounded mock/config-first work
 - MEP-REQ-005 is documentation-only
 - no tracking real, analytics real, BI real, scoring real, recommendation engine real, ranking algorithm real, personalization, profiling, analytics event pipeline, analytics schema, analytics database, data warehouse, sensitive data collection, API, GraphQL schema, database, persistence, ML model, AI model runtime, automated ranking, automated decision or commercial automation is introduced by MEP-07A
+- no tracking real, analytics real, BI real, scoring real, risk scoring real, trust scoring real, recommendation engine real, ranking algorithm real, personalization, profiling, wallet tracking, behavioral tracking, event pipeline, data warehouse, ML model, AI runtime, automated decisioning, automated commercial action, retargeting, data export, backend, API, database or external analytics integration is introduced by MEP-REQ-070
+- no events real, tracking real, analytics pipeline, data warehouse, BI, ML model, scoring, recommendation engine, behavioral collection, wallet tracking, automated decisioning, backend, API or database is introduced by MEP-REQ-071
 ---
 
 # Phase 08 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Academy Distribution

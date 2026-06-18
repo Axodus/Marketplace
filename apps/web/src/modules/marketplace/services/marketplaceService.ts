@@ -18,6 +18,11 @@ import {
   marketplaceDistributionProfiles,
   marketplaceFederationProviders,
   marketplaceFeaturedCatalogs,
+  marketplaceDataBoundaries,
+  marketplaceInsightSignals,
+  marketplaceInsights,
+  marketplaceIntelligenceAuditNotes,
+  marketplaceIntelligenceSnapshots,
   marketplaceLicenses,
   marketplaceParticipantShares,
   marketplaceProducts,
@@ -67,6 +72,7 @@ import type {
   DistributionPlacement,
   DistributionProfile,
   DistributionSourceSplitMapping,
+  DataBoundary,
   ExternalCollectionStatistics,
   ExternalContractReference,
   DraftListingInput,
@@ -75,8 +81,13 @@ import type {
   FederationTrustBoundary,
   FeaturedCatalog,
   License,
+  InsightSignal,
+  IntelligenceAuditNote,
+  IntelligenceSnapshot,
+  SnapshotScope,
   MarketplaceBoundaryStatus,
   MarketplaceCollection,
+  MarketplaceInsight,
   CommissionModel,
   ParticipantShareConflict,
   ParticipantShareValidation,
@@ -181,6 +192,11 @@ const revenueSharingPreviews = marketplaceRevenueSharingPreviews as RevenueShari
 const payoutPreviewMocks = marketplacePayoutPreviewMocks as PayoutPreviewMock[];
 const settlementPreviewMocks = marketplaceSettlementPreviewMocks as SettlementPreviewMock[];
 const revenueSharingAuditEntries = marketplaceRevenueSharingAuditEntries as RevenueSharingAuditEntry[];
+const marketplaceInsightRecords = marketplaceInsights as MarketplaceInsight[];
+const insightSignals = marketplaceInsightSignals as InsightSignal[];
+const intelligenceSnapshots = marketplaceIntelligenceSnapshots as IntelligenceSnapshot[];
+const dataBoundaries = marketplaceDataBoundaries as DataBoundary[];
+const intelligenceAuditNotes = marketplaceIntelligenceAuditNotes as IntelligenceAuditNote[];
 const commissionModels = marketplaceCommissionModels as CommissionModel[];
 const revenueParticipants = marketplaceRevenueParticipants as RevenueParticipant[];
 const revenueSplitRules = marketplaceRevenueSplitRules as RevenueSplitRule[];
@@ -430,6 +446,25 @@ export interface MarketplaceAnalyticsView {
     reputation: number;
   }>;
   notes: string[];
+}
+
+export interface MarketplaceInsightView {
+  insight: MarketplaceInsight;
+  signals: InsightSignal[];
+  snapshot: IntelligenceSnapshot | null;
+  dataBoundary: DataBoundary | null;
+  auditNotes: IntelligenceAuditNote[];
+  sourceLabel: string;
+  boundaryNotes: string[];
+}
+
+export interface IntelligenceSnapshotView {
+  snapshot: IntelligenceSnapshot;
+  signals: InsightSignal[];
+  insights: MarketplaceInsight[];
+  dataBoundary: DataBoundary | null;
+  sourceLabel: string;
+  boundaryNotes: string[];
 }
 
 export interface WalletDiscoveryView {
@@ -4339,6 +4374,257 @@ export function calculateDashboardMetrics() {
     deliveryPreviewIssuance: deliveryTelemetry.previewIssuance,
     deliveryBlockedEvents: deliveryTelemetry.blockedEvents
   };
+}
+
+function getInsightSourceLabel(insight: MarketplaceInsight) {
+  if (insight.tenantId) return tenants.find((tenant) => tenant.id === insight.tenantId)?.displayName ?? insight.tenantId;
+  if (insight.curatedCatalogId) return curatedCatalogs.find((catalog) => catalog.id === insight.curatedCatalogId)?.displayName ?? insight.curatedCatalogId;
+  if (insight.distributionChannelId) return distributionChannels.find((channel) => channel.id === insight.distributionChannelId)?.displayName ?? insight.distributionChannelId;
+  if (insight.distributionProfileId) return distributionProfiles.find((profile) => profile.id === insight.distributionProfileId)?.displayName ?? insight.distributionProfileId;
+  if (insight.communityDistributionId) return communityDistributions.find((distribution) => distribution.id === insight.communityDistributionId)?.displayName ?? insight.communityDistributionId;
+  if (insight.revenueSharingPolicyId) return revenueSharingPolicies.find((policy) => policy.id === insight.revenueSharingPolicyId)?.displayName ?? insight.revenueSharingPolicyId;
+  if (insight.productId) return products.find((product) => product.id === insight.productId)?.title ?? insight.productId;
+  if (insight.collectionId) return collections.find((collection) => collection.id === insight.collectionId)?.name ?? insight.collectionId;
+  return insight.sourceRefId;
+}
+
+function buildMarketplaceInsightBoundaryNotes(insight: MarketplaceInsight, boundary: DataBoundary | null) {
+  return [
+    "Marketplace Insight is mock intelligence and config-first intelligence only.",
+    "No tracking real, no analytics real, no BI, no scoring real, no recommendation engine, no automated decisioning, no personalization, no profiling and no wallet tracking are active.",
+    "Insight cannot recommend automatically, rank automatically, trigger commercial action or export data.",
+    ...(boundary?.warnings ?? []),
+    ...(boundary?.disclaimers ?? []),
+    ...insight.warnings,
+    ...insight.disclaimers
+  ];
+}
+
+function buildMarketplaceInsightView(insight: MarketplaceInsight): MarketplaceInsightView {
+  const dataBoundary = dataBoundaries.find((boundary) => boundary.id === insight.dataBoundaryId) ?? null;
+  return {
+    insight,
+    signals: insightSignals.filter((signal) => insight.signalIds.includes(signal.id)),
+    snapshot: intelligenceSnapshots.find((snapshot) => snapshot.id === insight.snapshotId) ?? null,
+    dataBoundary,
+    auditNotes: intelligenceAuditNotes.filter((note) => note.insightId === insight.id),
+    sourceLabel: getInsightSourceLabel(insight),
+    boundaryNotes: buildMarketplaceInsightBoundaryNotes(insight, dataBoundary)
+  };
+}
+
+function getSnapshotSourceLabel(snapshot: IntelligenceSnapshot) {
+  if (snapshot.tenantId) return tenants.find((tenant) => tenant.id === snapshot.tenantId)?.displayName ?? snapshot.tenantId;
+  if (snapshot.curatedCatalogId) return curatedCatalogs.find((catalog) => catalog.id === snapshot.curatedCatalogId)?.displayName ?? snapshot.curatedCatalogId;
+  if (snapshot.distributionChannelId) return distributionChannels.find((channel) => channel.id === snapshot.distributionChannelId)?.displayName ?? snapshot.distributionChannelId;
+  if (snapshot.distributionProfileId) return distributionProfiles.find((profile) => profile.id === snapshot.distributionProfileId)?.displayName ?? snapshot.distributionProfileId;
+  if (snapshot.communityDistributionId) return communityDistributions.find((distribution) => distribution.id === snapshot.communityDistributionId)?.displayName ?? snapshot.communityDistributionId;
+  if (snapshot.revenueSharingPolicyId) return revenueSharingPolicies.find((policy) => policy.id === snapshot.revenueSharingPolicyId)?.displayName ?? snapshot.revenueSharingPolicyId;
+  if (snapshot.collectionId) return collections.find((collection) => collection.id === snapshot.collectionId)?.name ?? snapshot.collectionId;
+  return snapshot.scopeId;
+}
+
+function buildIntelligenceSnapshotBoundaryNotes(snapshot: IntelligenceSnapshot, boundary: DataBoundary | null) {
+  return [
+    `${snapshot.title} is a static mock Intelligence Snapshot derived from mock data only.`,
+    "No tracking real, no events real, no analytics pipeline, no data warehouse, no BI, no ML, no scoring and no automated decisioning are active.",
+    "Snapshot cannot export data, trigger commercial action, recommend automatically or rank automatically.",
+    ...(boundary?.warnings ?? []),
+    ...(boundary?.disclaimers ?? []),
+    ...snapshot.warnings,
+    ...snapshot.disclaimers
+  ];
+}
+
+function buildIntelligenceSnapshotView(snapshot: IntelligenceSnapshot): IntelligenceSnapshotView {
+  const dataBoundary = dataBoundaries.find((boundary) => boundary.id === snapshot.dataBoundaryId) ?? null;
+  return {
+    snapshot,
+    signals: insightSignals.filter((signal) => snapshot.signalIds.includes(signal.id)),
+    insights: marketplaceInsightRecords.filter((insight) => snapshot.insightIds.includes(insight.id)),
+    dataBoundary,
+    sourceLabel: getSnapshotSourceLabel(snapshot),
+    boundaryNotes: buildIntelligenceSnapshotBoundaryNotes(snapshot, dataBoundary)
+  };
+}
+
+export function listMarketplaceInsights() {
+  return marketplaceInsightRecords.map(buildMarketplaceInsightView);
+}
+
+export function getMarketplaceInsightById(insightIdOrSlug: string) {
+  const insight = marketplaceInsightRecords.find((entry) => entry.id === insightIdOrSlug || entry.slug === insightIdOrSlug);
+  return insight ? buildMarketplaceInsightView(insight) : null;
+}
+
+export function listInsightSignalsByInsight(insightIdOrSlug: string) {
+  return getMarketplaceInsightById(insightIdOrSlug)?.signals ?? [];
+}
+
+export function listInsightSignals() {
+  return insightSignals;
+}
+
+export function getInsightSignalById(signalIdOrSlug: string) {
+  return insightSignals.find((signal) => signal.id === signalIdOrSlug || signal.slug === signalIdOrSlug) ?? null;
+}
+
+export function listInsightSignalsByScope(scope: MarketplaceInsight["scope"], scopeId?: string) {
+  return insightSignals.filter((signal) => signal.scope === scope && (!scopeId || signal.sourceRefId === scopeId));
+}
+
+export function listIntelligenceSnapshots() {
+  return intelligenceSnapshots.map(buildIntelligenceSnapshotView);
+}
+
+export function getIntelligenceSnapshotById(snapshotIdOrSlug: string) {
+  const snapshot = intelligenceSnapshots.find((entry) => entry.id === snapshotIdOrSlug || entry.slug === snapshotIdOrSlug);
+  return snapshot ? buildIntelligenceSnapshotView(snapshot) : null;
+}
+
+export function resolveIntelligenceSnapshot(snapshotIdOrSlug: string) {
+  return getIntelligenceSnapshotById(snapshotIdOrSlug);
+}
+
+export function listIntelligenceSnapshotsByScope(scope: SnapshotScope, scopeId?: string) {
+  return intelligenceSnapshots.filter((snapshot) => snapshot.scope === scope && (!scopeId || snapshot.scopeId === scopeId)).map(buildIntelligenceSnapshotView);
+}
+
+function resolveFirstSnapshotByScope(scope: SnapshotScope, scopeId: string) {
+  return listIntelligenceSnapshotsByScope(scope, scopeId)[0] ?? null;
+}
+
+export function resolveMarketplaceIntelligenceSnapshot() {
+  return resolveFirstSnapshotByScope("marketplace", "marketplace-global");
+}
+
+export function resolveTenantIntelligenceSnapshot(tenantId: string) {
+  return intelligenceSnapshots
+    .filter((snapshot) => snapshot.scope === "tenant" && (snapshot.scopeId === tenantId || snapshot.tenantId === tenantId))
+    .map(buildIntelligenceSnapshotView)[0] ?? null;
+}
+
+export function resolveCatalogIntelligenceSnapshot(curatedCatalogId: string) {
+  return intelligenceSnapshots
+    .filter((snapshot) => snapshot.scope === "curated-catalog" && (snapshot.scopeId === curatedCatalogId || snapshot.curatedCatalogId === curatedCatalogId))
+    .map(buildIntelligenceSnapshotView)[0] ?? null;
+}
+
+export function resolveDistributionIntelligenceSnapshot(distributionId: string) {
+  return intelligenceSnapshots
+    .filter(
+      (snapshot) =>
+        (snapshot.scope === "distribution-channel" || snapshot.scope === "distribution-profile") &&
+        (snapshot.scopeId === distributionId || snapshot.distributionChannelId === distributionId || snapshot.distributionProfileId === distributionId)
+    )
+    .map(buildIntelligenceSnapshotView)[0] ?? null;
+}
+
+export function resolveRevenueIntelligenceSnapshot(revenueSharingPolicyId: string) {
+  return intelligenceSnapshots
+    .filter((snapshot) => snapshot.scope === "revenue-sharing-policy" && (snapshot.scopeId === revenueSharingPolicyId || snapshot.revenueSharingPolicyId === revenueSharingPolicyId))
+    .map(buildIntelligenceSnapshotView)[0] ?? null;
+}
+
+export function resolveCommunityIntelligenceSnapshot(communityDistributionId: string) {
+  return intelligenceSnapshots
+    .filter((snapshot) => snapshot.scope === "community-distribution" && (snapshot.scopeId === communityDistributionId || snapshot.communityDistributionId === communityDistributionId))
+    .map(buildIntelligenceSnapshotView)[0] ?? null;
+}
+
+export function resolveFederationIntelligenceSnapshot(collectionId: string) {
+  return intelligenceSnapshots
+    .filter((snapshot) => snapshot.scope === "collection" && (snapshot.scopeId === collectionId || snapshot.collectionId === collectionId))
+    .map(buildIntelligenceSnapshotView)[0] ?? null;
+}
+
+export function resolveDataBoundary(scopeOrBoundaryId: DataBoundary["scope"] | string, scopeId?: string) {
+  return dataBoundaries.find((boundary) => boundary.id === scopeOrBoundaryId || (boundary.scope === scopeOrBoundaryId && (!scopeId || boundary.scopeId === scopeId))) ?? null;
+}
+
+export function listDataBoundaries() {
+  return dataBoundaries;
+}
+
+export function validateMarketplaceInsightMockOnly(insightIdOrSlug: string) {
+  const view = getMarketplaceInsightById(insightIdOrSlug);
+  if (!view) return null;
+  const { insight, dataBoundary, signals, snapshot } = view;
+  const isMockOnly =
+    insight.isSimulated &&
+    !insight.usesRealTracking &&
+    !insight.usesPersonalData &&
+    !insight.usesBehavioralData &&
+    !insight.usesWalletProfiling &&
+    !insight.usesAutomatedDecisioning &&
+    !insight.canRecommendAutomatically &&
+    !insight.canRankAutomatically &&
+    !insight.canTriggerCommercialAction &&
+    Boolean(dataBoundary) &&
+    !dataBoundary?.usesRealTracking &&
+    !dataBoundary?.usesAnalyticsPipeline &&
+    !dataBoundary?.usesPersonalData &&
+    !dataBoundary?.usesBehavioralData &&
+    !dataBoundary?.usesWalletProfiling &&
+    !dataBoundary?.usesBI &&
+    !dataBoundary?.usesMLModel &&
+    !dataBoundary?.usesAutomatedDecisioning &&
+    !dataBoundary?.canExportData &&
+    !dataBoundary?.canTriggerAction &&
+    signals.every((signal) => signal.isSimulated && signal.isDerivedFromMockData && !signal.usesRealEvents && !signal.usesRealTracking && !signal.usesAnalyticsPipeline) &&
+    (!snapshot || (snapshot.isSimulated && snapshot.isStaticMock && snapshot.isDerivedFromMockData && !snapshot.usesRealTracking && !snapshot.usesBI && !snapshot.usesMLModel && !snapshot.usesAutomatedDecisioning));
+
+  return {
+    insightId: insight.id,
+    isMockOnly,
+    isNoTracking: !insight.usesRealTracking && !dataBoundary?.usesRealTracking && signals.every((signal) => !signal.usesRealTracking),
+    isNoBI: !dataBoundary?.usesBI && !snapshot?.usesBI,
+    isNoScoring: true,
+    isNoAutomatedDecisioning: !insight.usesAutomatedDecisioning && !dataBoundary?.usesAutomatedDecisioning && !snapshot?.usesAutomatedDecisioning,
+    boundaryNotes: view.boundaryNotes
+  };
+}
+
+export function validateIntelligenceSnapshotMockOnly(snapshotIdOrSlug: string) {
+  const view = getIntelligenceSnapshotById(snapshotIdOrSlug);
+  if (!view) return null;
+  const { snapshot, signals, dataBoundary } = view;
+  const isMockOnly =
+    snapshot.isSimulated &&
+    snapshot.isStaticMock &&
+    snapshot.isDerivedFromMockData &&
+    !snapshot.usesRealTracking &&
+    !snapshot.usesBI &&
+    !snapshot.usesMLModel &&
+    !snapshot.usesAutomatedDecisioning &&
+    Boolean(dataBoundary) &&
+    !dataBoundary?.usesRealTracking &&
+    !dataBoundary?.usesAnalyticsPipeline &&
+    !dataBoundary?.usesBI &&
+    !dataBoundary?.usesMLModel &&
+    !dataBoundary?.usesAutomatedDecisioning &&
+    !dataBoundary?.canExportData &&
+    !dataBoundary?.canTriggerAction &&
+    signals.every((signal) => signal.isSimulated && signal.isDerivedFromMockData && !signal.usesRealEvents && !signal.usesRealTracking && !signal.usesAnalyticsPipeline);
+
+  return {
+    snapshotId: snapshot.id,
+    isMockOnly,
+    isStaticMock: snapshot.isStaticMock,
+    isDerivedFromMockData: snapshot.isDerivedFromMockData,
+    isNoTracking: !snapshot.usesRealTracking && !dataBoundary?.usesRealTracking && signals.every((signal) => !signal.usesRealTracking && !signal.usesRealEvents),
+    isNoBI: !snapshot.usesBI && !dataBoundary?.usesBI,
+    isNoML: !snapshot.usesMLModel && !dataBoundary?.usesMLModel,
+    isNoAutomatedDecisioning: !snapshot.usesAutomatedDecisioning && !dataBoundary?.usesAutomatedDecisioning && !dataBoundary?.canTriggerAction
+  };
+}
+
+export function explainMarketplaceIntelligenceBoundary(insightIdOrSlug: string) {
+  return getMarketplaceInsightById(insightIdOrSlug)?.boundaryNotes ?? [];
+}
+
+export function explainIntelligenceSnapshotBoundary(snapshotIdOrSlug: string) {
+  return getIntelligenceSnapshotById(snapshotIdOrSlug)?.boundaryNotes ?? [];
 }
 
 export function issueMockPurchase(product: Product, buyer = "0xMockBuyer...A11C"): PurchaseRecord {

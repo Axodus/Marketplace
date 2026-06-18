@@ -349,6 +349,51 @@ export type RevenueSharingAuditEventType =
   | "boundary-note-mock";
 export type RevenueSplitConflictPolicy = "warn-only" | "block-preview" | "review-required" | "manual-resolution";
 export type SettlementBoundaryStatus = "no-settlement" | "preview-only" | "blocked" | "review-required" | "restricted" | "disabled" | "not-configured";
+export type InsightStatus = "configured-mock" | "active-mock" | "preview-only" | "review-required" | "restricted" | "blocked" | "disabled" | "archived";
+export type InsightScope =
+  | "marketplace"
+  | "tenant"
+  | "curated-catalog"
+  | "distribution-channel"
+  | "distribution-profile"
+  | "community-distribution"
+  | "revenue-sharing-policy"
+  | "product"
+  | "collection"
+  | "seller"
+  | "demo";
+export type SnapshotStatus = InsightStatus;
+export type SnapshotScope = InsightScope;
+export type InsightType =
+  | "marketplace-summary"
+  | "tenant-summary"
+  | "catalog-summary"
+  | "distribution-summary"
+  | "revenue-summary-mock"
+  | "risk-summary-mock"
+  | "trust-summary-mock"
+  | "federation-summary"
+  | "curation-summary"
+  | "opportunity-note-mock"
+  | "warning-note-mock"
+  | "recommendation-preview"
+  | "ranking-explanation"
+  | "demo";
+export type SignalType =
+  | "catalog-composition-mock"
+  | "tenant-coverage-mock"
+  | "distribution-coverage-mock"
+  | "attribution-coverage-mock"
+  | "revenue-preview-mock"
+  | "federation-risk-mock"
+  | "trust-boundary-mock"
+  | "editorial-rule-mock"
+  | "community-exposure-mock"
+  | "product-availability-mock"
+  | "collection-coverage-mock"
+  | "demo";
+export type ConfidenceLabel = "informational-mock" | "low-confidence-mock" | "medium-confidence-mock" | "high-confidence-mock" | "manual-review-required" | "not-applicable" | "demo";
+export type DataBoundaryStatus = "mock-only" | "static-only" | "no-tracking" | "no-bi" | "no-scoring" | "no-ml" | "no-automated-decisioning" | "restricted" | "blocked" | "review-required";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -1661,6 +1706,130 @@ export interface RevenueSharingPolicy {
   disclaimers: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface MarketplaceInsight {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  insightType: InsightType;
+  scope: InsightScope;
+  status: InsightStatus;
+  confidenceLabel: ConfidenceLabel;
+  sourceType: string;
+  sourceRefId: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  revenueSharingPolicyId?: string;
+  productId?: string;
+  collectionId?: string;
+  signalIds: string[];
+  snapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesRealTracking: boolean;
+  usesPersonalData: boolean;
+  usesBehavioralData: boolean;
+  usesWalletProfiling: boolean;
+  usesAutomatedDecisioning: boolean;
+  canRecommendAutomatically: boolean;
+  canRankAutomatically: boolean;
+  canTriggerCommercialAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InsightSignal {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  signalType: SignalType;
+  scope: InsightScope;
+  status: InsightStatus;
+  sourceType: string;
+  sourceRefId: string;
+  weightMock: number;
+  confidenceLabel: ConfidenceLabel;
+  isSimulated: boolean;
+  isDerivedFromMockData: boolean;
+  usesRealEvents: boolean;
+  usesRealTracking: boolean;
+  usesAnalyticsPipeline: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IntelligenceSnapshot {
+  id: string;
+  slug: string;
+  snapshotType: SnapshotScope;
+  scope: SnapshotScope;
+  scopeId: string;
+  title: string;
+  generatedAt: string;
+  status: SnapshotStatus;
+  summary: string;
+  signalIds: string[];
+  insightIds: string[];
+  dataBoundaryId: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  revenueSharingPolicyId?: string;
+  collectionId?: string;
+  isSimulated: boolean;
+  isStaticMock: boolean;
+  isDerivedFromMockData: boolean;
+  usesRealTracking: boolean;
+  usesBI: boolean;
+  usesMLModel: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DataBoundary {
+  id: string;
+  scope: InsightScope;
+  scopeId: string;
+  status: DataBoundaryStatus;
+  boundaryLabel: string;
+  allowedDataSources: string[];
+  blockedDataSources: string[];
+  usesRealTracking: boolean;
+  usesAnalyticsPipeline: boolean;
+  usesPersonalData: boolean;
+  usesBehavioralData: boolean;
+  usesWalletProfiling: boolean;
+  usesBI: boolean;
+  usesMLModel: boolean;
+  usesAutomatedDecisioning: boolean;
+  canExportData: boolean;
+  canTriggerAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface IntelligenceAuditNote {
+  id: string;
+  insightId: string;
+  noteType: "boundary" | "explanation" | "warning" | "data-source" | "trust";
+  label: string;
+  description: string;
+  severity: "info" | "warning" | "restricted";
+  isSimulated: boolean;
+  createdAt: string;
 }
 
 export interface CuratedCatalogRule {

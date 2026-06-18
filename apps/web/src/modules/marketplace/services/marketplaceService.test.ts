@@ -107,6 +107,13 @@ import {
   listCatalogSegments,
   listCatalogsBySegment,
   listFeaturedCatalogs,
+  listMarketplaceInsights,
+  listIntelligenceSnapshots,
+  listIntelligenceSnapshotsByScope,
+  getIntelligenceSnapshotById,
+  getInsightSignalById,
+  listInsightSignalsByInsight,
+  listInsightSignals,
   listWalletDiscoveryRecords,
   listFederationProviders,
   listCollections,
@@ -138,11 +145,22 @@ import {
   resolveAttributionContext,
   resolveAttributionSplit,
   resolveCommunityDistributionContext,
+  resolveDataBoundary,
   resolveDistributionContext,
   resolveDistributionProfileContext,
+  resolveMarketplaceIntelligenceSnapshot,
+  resolveTenantIntelligenceSnapshot,
+  resolveCatalogIntelligenceSnapshot,
+  resolveDistributionIntelligenceSnapshot,
+  resolveRevenueIntelligenceSnapshot,
+  resolveCommunityIntelligenceSnapshot,
+  resolveFederationIntelligenceSnapshot,
   resolveSettlementBoundary,
   getRevenueSharingPolicyById,
+  getMarketplaceInsightById,
   explainRevenueSharingBoundary,
+  explainMarketplaceIntelligenceBoundary,
+  explainIntelligenceSnapshotBoundary,
   explainParticipantSplitsByPolicy,
   explainRevenueSharingRuleApplication,
   listRevenueSharingAuditEntriesByPolicy,
@@ -155,6 +173,8 @@ import {
   resolveRevenueSharingPreview,
   resolveSettlementPreviewMock,
   resolveTenantRevenueSharing,
+  validateMarketplaceInsightMockOnly,
+  validateIntelligenceSnapshotMockOnly,
   validateParticipantSharesByCommissionModel,
   resolveTenantCatalog,
   resolveTenantContext,
@@ -1176,6 +1196,156 @@ describe("marketplaceService", () => {
     expect(communityDistribution?.integratedContext.canSettle).toBe(false);
     expect(communityDistribution?.integratedContext.canTriggerPayout).toBe(false);
     expect(communityDistribution?.integratedContext.canRouteTreasury).toBe(false);
+  });
+
+  it("lists Marketplace Insights with Data Boundary and non-tracking flags", () => {
+    const insights = listMarketplaceInsights();
+    const globalInsight = getMarketplaceInsightById("global-marketplace-intelligence-readiness");
+
+    expect(insights.map((view) => view.insight.slug)).toContain("global-marketplace-intelligence-readiness");
+    expect(globalInsight?.insight.title).toBe("Global Marketplace Intelligence Readiness");
+    expect(globalInsight?.dataBoundary?.status).toBe("mock-only");
+    expect(globalInsight?.signals.map((signal) => signal.signalType)).toContain("catalog-composition-mock");
+    expect(globalInsight?.snapshot?.id).toBe("intelligence-snapshot-marketplace-global");
+    expect(globalInsight?.insight.isSimulated).toBe(true);
+    expect(globalInsight?.insight.usesRealTracking).toBe(false);
+    expect(globalInsight?.insight.usesPersonalData).toBe(false);
+    expect(globalInsight?.insight.usesBehavioralData).toBe(false);
+    expect(globalInsight?.insight.usesWalletProfiling).toBe(false);
+    expect(globalInsight?.insight.usesAutomatedDecisioning).toBe(false);
+    expect(globalInsight?.insight.canRecommendAutomatically).toBe(false);
+    expect(globalInsight?.insight.canRankAutomatically).toBe(false);
+    expect(globalInsight?.insight.canTriggerCommercialAction).toBe(false);
+  });
+
+  it("resolves Insight Signals and Data Boundary by scope without analytics or BI activation", () => {
+    const signals = listInsightSignalsByInsight("academy-tenant-intelligence-readiness");
+    const tenantBoundary = resolveDataBoundary("tenant", "tenant-academy-marketplace");
+    const revenueBoundary = resolveDataBoundary("data-boundary-revenue-trust-intelligence");
+
+    expect(signals.map((signal) => signal.slug)).toContain("academy-tenant-coverage-mock");
+    expect(signals.every((signal) => signal.isSimulated && signal.isDerivedFromMockData)).toBe(true);
+    expect(signals.every((signal) => !signal.usesRealEvents && !signal.usesRealTracking && !signal.usesAnalyticsPipeline)).toBe(true);
+    expect(tenantBoundary?.usesRealTracking).toBe(false);
+    expect(tenantBoundary?.usesPersonalData).toBe(false);
+    expect(tenantBoundary?.usesBehavioralData).toBe(false);
+    expect(tenantBoundary?.usesWalletProfiling).toBe(false);
+    expect(tenantBoundary?.usesBI).toBe(false);
+    expect(tenantBoundary?.usesMLModel).toBe(false);
+    expect(tenantBoundary?.usesAutomatedDecisioning).toBe(false);
+    expect(tenantBoundary?.canExportData).toBe(false);
+    expect(tenantBoundary?.canTriggerAction).toBe(false);
+    expect(revenueBoundary?.blockedDataSources).toContain("BI real");
+  });
+
+  it("validates Marketplace Insights as mock-only and explains boundaries", () => {
+    const validation = validateMarketplaceInsightMockOnly("revenue-trust-boundary-intelligence");
+    const notes = explainMarketplaceIntelligenceBoundary("revenue-trust-boundary-intelligence").join(" ");
+
+    expect(validation?.isMockOnly).toBe(true);
+    expect(validation?.isNoTracking).toBe(true);
+    expect(validation?.isNoBI).toBe(true);
+    expect(validation?.isNoScoring).toBe(true);
+    expect(validation?.isNoAutomatedDecisioning).toBe(true);
+    expect(notes).toContain("mock intelligence");
+    expect(notes).toContain("No tracking real");
+    expect(notes).toContain("no BI");
+    expect(notes).toContain("no scoring real");
+    expect(notes).toContain("no recommendation engine");
+    expect(notes).toContain("no automated decisioning");
+    expect(notes).toContain("no wallet tracking");
+    expect(getMarketplaceInsightById("missing-insight")).toBeNull();
+    expect(validateMarketplaceInsightMockOnly("missing-insight")).toBeNull();
+  });
+
+  it("lists specialized Insight Signals and resolves signals by id or slug", () => {
+    const signals = listInsightSignals();
+    const catalogSignal = getInsightSignalById("academy-catalog-editorial-static-mock");
+    const federationSignal = getInsightSignalById("insight-signal-federation-provider-risk");
+
+    expect(signals.map((signal) => signal.name)).toContain("Academy Catalog Editorial Signal");
+    expect(signals.map((signal) => signal.name)).toContain("Academy Distribution Coverage Signal");
+    expect(signals.map((signal) => signal.name)).toContain("Community Federated Exposure Signal");
+    expect(signals.map((signal) => signal.name)).toContain("Federation Provider Risk Signal");
+    expect(catalogSignal?.scope).toBe("curated-catalog");
+    expect(federationSignal?.scope).toBe("collection");
+    expect(signals.every((signal) => signal.isSimulated && signal.isDerivedFromMockData)).toBe(true);
+    expect(signals.every((signal) => !signal.usesRealEvents && !signal.usesRealTracking && !signal.usesAnalyticsPipeline)).toBe(true);
+  });
+
+  it("lists Intelligence Snapshots by scope with Data Boundary and static mock flags", () => {
+    const snapshots = listIntelligenceSnapshots();
+    const catalogSnapshots = listIntelligenceSnapshotsByScope("curated-catalog", "curated-catalog-academy-onboarding");
+    const distributionSnapshots = listIntelligenceSnapshotsByScope("distribution-channel", "distribution-channel-academy-partner");
+    const federationSnapshot = getIntelligenceSnapshotById("federation-harmony-intelligence-snapshot");
+
+    expect(snapshots.map((view) => view.snapshot.title)).toContain("Tenant Intelligence Snapshot");
+    expect(snapshots.map((view) => view.snapshot.title)).toContain("Catalog Intelligence Snapshot");
+    expect(snapshots.map((view) => view.snapshot.title)).toContain("Distribution Intelligence Snapshot");
+    expect(snapshots.map((view) => view.snapshot.title)).toContain("Revenue Intelligence Snapshot");
+    expect(snapshots.map((view) => view.snapshot.title)).toContain("Community Intelligence Snapshot");
+    expect(snapshots.map((view) => view.snapshot.title)).toContain("Federation Intelligence Snapshot");
+    expect(catalogSnapshots[0].dataBoundary?.status).toBe("static-only");
+    expect(distributionSnapshots[0].signals[0].signalType).toBe("distribution-coverage-mock");
+    expect(federationSnapshot?.snapshot.scope).toBe("collection");
+    expect(snapshots.every((view) => view.snapshot.isStaticMock && view.snapshot.isDerivedFromMockData)).toBe(true);
+    expect(snapshots.every((view) => !view.snapshot.usesRealTracking && !view.snapshot.usesBI && !view.snapshot.usesMLModel && !view.snapshot.usesAutomatedDecisioning)).toBe(true);
+  });
+
+  it("resolves specialized Intelligence Snapshots without tracking, BI, ML or automated decisions", () => {
+    const marketplace = resolveMarketplaceIntelligenceSnapshot();
+    const tenant = resolveTenantIntelligenceSnapshot("tenant-academy-marketplace");
+    const catalog = resolveCatalogIntelligenceSnapshot("curated-catalog-academy-onboarding");
+    const distributionChannel = resolveDistributionIntelligenceSnapshot("distribution-channel-academy-partner");
+    const distributionProfile = resolveDistributionIntelligenceSnapshot("distribution-profile-academy-partner");
+    const revenue = resolveRevenueIntelligenceSnapshot("revenue-policy-academy-tenant-preview");
+    const community = resolveCommunityIntelligenceSnapshot("community-distribution-creator-federated");
+    const federation = resolveFederationIntelligenceSnapshot("external-collection-harmony-creator-keys");
+
+    expect(marketplace?.snapshot.title).toBe("Marketplace Intelligence Snapshot");
+    expect(tenant?.snapshot.title).toBe("Tenant Intelligence Snapshot");
+    expect(catalog?.snapshot.title).toBe("Catalog Intelligence Snapshot");
+    expect(distributionChannel?.snapshot.title).toBe("Distribution Intelligence Snapshot");
+    expect(distributionProfile?.snapshot.title).toBe("Distribution Intelligence Snapshot");
+    expect(revenue?.snapshot.title).toBe("Revenue Intelligence Snapshot");
+    expect(community?.snapshot.title).toBe("Community Intelligence Snapshot");
+    expect(federation?.snapshot.title).toBe("Federation Intelligence Snapshot");
+
+    for (const view of [marketplace, tenant, catalog, distributionChannel, distributionProfile, revenue, community, federation]) {
+      expect(view?.dataBoundary).toBeTruthy();
+      expect(view?.snapshot.isSimulated).toBe(true);
+      expect(view?.snapshot.isStaticMock).toBe(true);
+      expect(view?.snapshot.isDerivedFromMockData).toBe(true);
+      expect(view?.snapshot.usesRealTracking).toBe(false);
+      expect(view?.snapshot.usesBI).toBe(false);
+      expect(view?.snapshot.usesMLModel).toBe(false);
+      expect(view?.snapshot.usesAutomatedDecisioning).toBe(false);
+      expect(view?.dataBoundary?.usesAnalyticsPipeline).toBe(false);
+      expect(view?.dataBoundary?.canExportData).toBe(false);
+      expect(view?.dataBoundary?.canTriggerAction).toBe(false);
+    }
+  });
+
+  it("validates Intelligence Snapshots as static mock and explains snapshot boundaries", () => {
+    const validation = validateIntelligenceSnapshotMockOnly("academy-revenue-intelligence-snapshot");
+    const notes = explainIntelligenceSnapshotBoundary("academy-revenue-intelligence-snapshot").join(" ");
+
+    expect(validation?.isMockOnly).toBe(true);
+    expect(validation?.isStaticMock).toBe(true);
+    expect(validation?.isDerivedFromMockData).toBe(true);
+    expect(validation?.isNoTracking).toBe(true);
+    expect(validation?.isNoBI).toBe(true);
+    expect(validation?.isNoML).toBe(true);
+    expect(validation?.isNoAutomatedDecisioning).toBe(true);
+    expect(notes).toContain("static mock Intelligence Snapshot");
+    expect(notes).toContain("No tracking real");
+    expect(notes).toContain("no analytics pipeline");
+    expect(notes).toContain("no data warehouse");
+    expect(notes).toContain("no BI");
+    expect(notes).toContain("no ML");
+    expect(notes).toContain("no automated decisioning");
+    expect(getIntelligenceSnapshotById("missing-snapshot")).toBeNull();
+    expect(validateIntelligenceSnapshotMockOnly("missing-snapshot")).toBeNull();
   });
 
   it("issues mock purchase records without settlement", () => {

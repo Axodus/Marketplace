@@ -65,6 +65,10 @@ import {
   listTenants,
   listFeaturedCatalogs,
   listCatalogsBySegment,
+  listMarketplaceInsights,
+  listIntelligenceSnapshots,
+  listIntelligenceSnapshotsByScope,
+  getIntelligenceSnapshotById,
   listAttributionSources,
   listAttributionToSplitRules,
   listAttributionToSplitRulesByAttributionSource,
@@ -76,10 +80,25 @@ import {
   resolveAttributionSplit,
   resolveCommunityDistributionContext,
   resolveCuratedCatalogDistribution,
+  resolveDataBoundary,
   resolveDistributionContext,
   resolveDistributionProfileContext,
+  resolveMarketplaceIntelligenceSnapshot,
+  resolveTenantIntelligenceSnapshot,
+  resolveCatalogIntelligenceSnapshot,
+  resolveDistributionIntelligenceSnapshot,
+  resolveRevenueIntelligenceSnapshot,
+  resolveCommunityIntelligenceSnapshot,
+  resolveFederationIntelligenceSnapshot,
   resolveSettlementBoundary,
+  getMarketplaceInsightById,
+  getInsightSignalById,
   getRevenueSharingPolicyById,
+  listInsightSignals,
+  listInsightSignalsByInsight,
+  listInsightSignalsByScope,
+  validateIntelligenceSnapshotMockOnly,
+  validateMarketplaceInsightMockOnly,
   listRevenueSharingAuditEntriesByPolicy,
   listRevenueSharingPreviewConflicts,
   resolvePayoutPreviewMock,
@@ -656,6 +675,167 @@ export function useDistributionContextForCuratedCatalog(catalogIdOrSlug?: string
       });
       return context;
     }
+  });
+}
+
+export function useMarketplaceInsights() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-insights"],
+    queryFn: () => {
+      const insights = listMarketplaceInsights();
+      traceMarketplaceLifecycle("marketplace-intelligence-insights-query", "completed", { insightCount: insights.length });
+      return insights;
+    }
+  });
+}
+
+export function useMarketplaceInsight(insightIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-insight", insightIdOrSlug],
+    enabled: Boolean(insightIdOrSlug),
+    queryFn: () => {
+      const insight = getMarketplaceInsightById(insightIdOrSlug ?? "");
+      if (!insight) {
+        const error = new Error("Marketplace Insight not found");
+        instrumentMarketplaceError("marketplace-intelligence-insight-query", error, { insightIdOrSlug: insightIdOrSlug ?? null });
+        throw error;
+      }
+      traceMarketplaceLifecycle("marketplace-intelligence-insight-query", "completed", { insightId: insight.insight.id });
+      return insight;
+    }
+  });
+}
+
+export function useInsightSignals(insightIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-signals", insightIdOrSlug],
+    enabled: Boolean(insightIdOrSlug),
+    queryFn: () => listInsightSignalsByInsight(insightIdOrSlug ?? "")
+  });
+}
+
+export function useAllInsightSignals() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-all-signals"],
+    queryFn: () => listInsightSignals()
+  });
+}
+
+export function useInsightSignal(signalIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-signal", signalIdOrSlug],
+    enabled: Boolean(signalIdOrSlug),
+    queryFn: () => getInsightSignalById(signalIdOrSlug ?? "")
+  });
+}
+
+export function useInsightSignalsByScope(scope?: Parameters<typeof listInsightSignalsByScope>[0], scopeId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-signals-by-scope", scope, scopeId],
+    enabled: Boolean(scope),
+    queryFn: () => listInsightSignalsByScope(scope as Parameters<typeof listInsightSignalsByScope>[0], scopeId)
+  });
+}
+
+export function useIntelligenceSnapshots() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshots"],
+    queryFn: () => listIntelligenceSnapshots()
+  });
+}
+
+export function useIntelligenceSnapshot(snapshotIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot", snapshotIdOrSlug],
+    enabled: Boolean(snapshotIdOrSlug),
+    queryFn: () => getIntelligenceSnapshotById(snapshotIdOrSlug ?? "")
+  });
+}
+
+export function useIntelligenceSnapshotsByScope(scope?: Parameters<typeof listIntelligenceSnapshotsByScope>[0], scopeId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshots-by-scope", scope, scopeId],
+    enabled: Boolean(scope),
+    queryFn: () => listIntelligenceSnapshotsByScope(scope as Parameters<typeof listIntelligenceSnapshotsByScope>[0], scopeId)
+  });
+}
+
+export function useMarketplaceIntelligenceSnapshot() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot-global"],
+    queryFn: () => resolveMarketplaceIntelligenceSnapshot()
+  });
+}
+
+export function useTenantIntelligenceSnapshot(tenantId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot-tenant", tenantId],
+    enabled: Boolean(tenantId),
+    queryFn: () => resolveTenantIntelligenceSnapshot(tenantId ?? "")
+  });
+}
+
+export function useCatalogIntelligenceSnapshot(curatedCatalogId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot-catalog", curatedCatalogId],
+    enabled: Boolean(curatedCatalogId),
+    queryFn: () => resolveCatalogIntelligenceSnapshot(curatedCatalogId ?? "")
+  });
+}
+
+export function useDistributionIntelligenceSnapshot(distributionId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot-distribution", distributionId],
+    enabled: Boolean(distributionId),
+    queryFn: () => resolveDistributionIntelligenceSnapshot(distributionId ?? "")
+  });
+}
+
+export function useRevenueIntelligenceSnapshot(policyId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot-revenue", policyId],
+    enabled: Boolean(policyId),
+    queryFn: () => resolveRevenueIntelligenceSnapshot(policyId ?? "")
+  });
+}
+
+export function useCommunityIntelligenceSnapshot(communityDistributionId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot-community", communityDistributionId],
+    enabled: Boolean(communityDistributionId),
+    queryFn: () => resolveCommunityIntelligenceSnapshot(communityDistributionId ?? "")
+  });
+}
+
+export function useFederationIntelligenceSnapshot(collectionId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot-federation", collectionId],
+    enabled: Boolean(collectionId),
+    queryFn: () => resolveFederationIntelligenceSnapshot(collectionId ?? "")
+  });
+}
+
+export function useDataBoundary(scopeOrBoundaryId?: string, scopeId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-data-boundary", scopeOrBoundaryId, scopeId],
+    enabled: Boolean(scopeOrBoundaryId),
+    queryFn: () => resolveDataBoundary(scopeOrBoundaryId ?? "", scopeId)
+  });
+}
+
+export function useMarketplaceInsightValidation(insightIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-validation", insightIdOrSlug],
+    enabled: Boolean(insightIdOrSlug),
+    queryFn: () => validateMarketplaceInsightMockOnly(insightIdOrSlug ?? "")
+  });
+}
+
+export function useIntelligenceSnapshotValidation(snapshotIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-snapshot-validation", snapshotIdOrSlug],
+    enabled: Boolean(snapshotIdOrSlug),
+    queryFn: () => validateIntelligenceSnapshotMockOnly(snapshotIdOrSlug ?? "")
   });
 }
 
