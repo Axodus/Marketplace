@@ -50,6 +50,8 @@ Phase 06 - Revenue Sharing planning is documented in `docs/PHASE_06_REVENUE_SHAR
 
 Phase 06 closure is documented in docs/PHASE_06_CLOSURE_REPORT.md. MEP-PHASE-06-CLOSURE validates Revenue Sharing Policies, Revenue Split Rules, Commission Models, Revenue Participants, Participant Shares, Attribution-to-Split Rules, Revenue Sharing Preview, Payout Preview mock, Settlement Preview mock, Revenue Sharing Audit Trail and tenant/distribution/curated/community revenue sharing integration. Phase 06 remains strictly preview-only and mock/config-first: no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend, no API, no database, no analytics tracking, no BI and no Marketplace Intelligence are activated.
 
+Phase 07 planning is documented in `docs/PHASE_07_MARKETPLACE_INTELLIGENCE_AUDIT.md`. MEP-07A prepares Marketplace Insight, Insight Signal, Intelligence Snapshot, Recommendation Preview, Ranking Explanation, Risk/Trust Insight and Data Boundary concepts over the existing tenant, curated, distribution, attribution, revenue-sharing and federation surfaces. Phase 07 planning remains non-tracking and mock/config-first: no tracking real, no analytics real, no BI, no scoring real, no recommendation engine real, no ranking algorithm real, no personalization, no profiling, no ML/AI runtime, no backend, no API and no database are activated.
+
 Marketplace architecture remains governance-aware, treasury-compatible, operationally transparent, modular, security-first and NFT-foundation preserving.
 
 > Conventions: code in **English**, comments in **English**, env files named `.env-*` (e.g., `.env-web`).  

@@ -1,8 +1,8 @@
 # Marketplace Roadmap
 
-# Phase 00 Ã¢â‚¬â€ Marketplace Architecture Revision
+# Phase 00 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Marketplace Architecture Revision
 
-Status: COMPLETED Ã¢â‚¬â€ DOCUMENTATION VALIDATED
+Status: COMPLETED ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â DOCUMENTATION VALIDATED
 
 Objectives:
 - revise Marketplace from NFT-only framing into federated Axodus digital distribution infrastructure
@@ -25,7 +25,7 @@ Closure:
 - MEP-REQ-001 through MEP-REQ-005 documented the five Phase 00 architecture domains
 - Phase 00 is closed as an architecture and documentation phase
 - no runtime, API, schema, contract, indexer, dashboard, billing, settlement, tracking, connector, tenant routing or on-chain execution was approved by Phase 00
-- Phase 01 Ã¢â‚¬â€ NFT Marketplace Consolidation is the next implementation phase
+- Phase 01 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â NFT Marketplace Consolidation is the next implementation phase
 
 Non-goals:
 - no runtime code
@@ -38,9 +38,9 @@ Non-goals:
 
 ---
 
-# Phase 01 Ã¢â‚¬â€ NFT Marketplace Consolidation
+# Phase 01 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â NFT Marketplace Consolidation
 
-Status: COMPLETED Ã¢â‚¬â€ MOCK-FIRST RUNTIME VALIDATED
+Status: COMPLETED ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â MOCK-FIRST RUNTIME VALIDATED
 
 Objectives:
 - consolidate the NFT marketplace vertical as the first Marketplace commercial product surface
@@ -64,26 +64,26 @@ Closure artifact:
 - `docs/PHASE_01_CLOSURE_REPORT.md`
 
 Linked requirements:
-- MEP-01A Ã¢â‚¬â€ Phase 01 Planning and Runtime Audit Ã¢â‚¬â€ completed
-- MEP-REQ-010 Ã¢â‚¬â€ Explorer Consolidation Ã¢â‚¬â€ completed mock-first
-- MEP-REQ-011 Ã¢â‚¬â€ Collection System Ã¢â‚¬â€ completed mock-first
-- MEP-REQ-012 Ã¢â‚¬â€ Seller Profiles Ã¢â‚¬â€ completed mock-first
-- MEP-REQ-013 Ã¢â‚¬â€ Asset Registry Ã¢â‚¬â€ completed mock-first
-- MEP-REQ-014 Ã¢â‚¬â€ Marketplace Analytics Ã¢â‚¬â€ completed mock-first
-- MEP-PHASE-01-CLOSURE Ã¢â‚¬â€ QA, navigation and no-execution boundary validation Ã¢â‚¬â€ completed
+- MEP-01A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Phase 01 Planning and Runtime Audit ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
+- MEP-REQ-010 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Explorer Consolidation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-REQ-011 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Collection System ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-REQ-012 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Seller Profiles ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-REQ-013 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Asset Registry ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-REQ-014 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Marketplace Analytics ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-PHASE-01-CLOSURE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â QA, navigation and no-execution boundary validation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
 
 Implementation boundary:
 - Phase 01 is closed as a mock-first NFT Marketplace consolidation phase
 - Explorer, collections, seller profiles, asset registry and marketplace analytics are runtime-ready over local mock data
 - MEP-01A remains audit and planning only
 - no real search infrastructure, tracking, events, API, GraphQL schema, database, contract, wallet signature, payment, settlement, billing execution, bridge execution, treasury routing, external integration, federation provider, tenant registry, revenue sharing or Marketplace Intelligence runtime was introduced by Phase 01
-- Phase 02 Ã¢â‚¬â€ Federation Layer remains future work
+- Phase 02 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Federation Layer remains future work
 
 ---
 
-# Phase 02 Ã¢â‚¬â€ Federation Layer
+# Phase 02 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Federation Layer
 
-Status: COMPLETED Ã¢â‚¬â€ MOCK-FIRST FEDERATION LAYER VALIDATED
+Status: COMPLETED ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â MOCK-FIRST FEDERATION LAYER VALIDATED
 
 Objectives:
 - introduce Marketplace Federation Domain implementation boundaries
@@ -112,16 +112,16 @@ Closure artifact:
 - `docs/PHASE_02_CLOSURE_REPORT.md`
 
 Linked requirements:
-- MEP-02A Ã¢â‚¬â€ Federation Layer Planning and Boundary Audit Ã¢â‚¬â€ completed
-- MEP-REQ-020 Ã¢â‚¬â€ Contract Import Ã¢â‚¬â€ completed mock-first
-- MEP-REQ-021 Ã¢â‚¬â€ Collection Import Ã¢â‚¬â€ completed mock-first
-- MEP-REQ-022 Ã¢â‚¬â€ Wallet Discovery Ã¢â‚¬â€ completed mock-first
-- MEP-REQ-023 Ã¢â‚¬â€ Federation Providers Ã¢â‚¬â€ completed mock-first
-- MEP-PHASE-02-CLOSURE Ã¢â‚¬â€ QA, navigation and internal/external asset validation Ã¢â‚¬â€ completed
+- MEP-02A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Federation Layer Planning and Boundary Audit ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
+- MEP-REQ-020 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Contract Import ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-REQ-021 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Collection Import ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-REQ-022 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Wallet Discovery ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-REQ-023 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Federation Providers ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock-first
+- MEP-PHASE-02-CLOSURE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â QA, navigation and internal/external asset validation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
 
 Dependencies:
-- PHASE 00 Ã¢â‚¬â€ Marketplace Architecture Revision
-- Phase 01 Ã¢â‚¬â€ NFT Marketplace Consolidation
+- PHASE 00 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Marketplace Architecture Revision
+- Phase 01 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â NFT Marketplace Consolidation
 
 Implementation boundary:
 - Phase 02 is closed as a mock-first/read-only Federation Layer phase
@@ -129,13 +129,13 @@ Implementation boundary:
 - Contract Import, Collection Import, Wallet Discovery and Federation Providers are represented over local mock data only
 - no real provider integration, connector, SDK, endpoint, indexer, GraphQL schema, HTTP call, contract change, wallet signature, custody, settlement, bridge execution, treasury routing, tracking, BI or on-chain execution is introduced by Phase 02
 - federated assets must remain read-only/mock-first and carry origin, provider, validation status, provenance, risk classification and trust boundaries before user-facing exposure
-- Phase 03 Ã¢â‚¬â€ Tenant Infrastructure remains future work
+- Phase 03 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant Infrastructure remains future work
 
 ---
 
-# Phase 03 Ã¢â‚¬â€ Tenant Infrastructure
+# Phase 03 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant Infrastructure
 
-Status: COMPLETED Ã¢â‚¬â€ MARKETPLACE-AS-A-SERVICE MOCK/CONFIG-FIRST VALIDATED
+Status: COMPLETED ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â MARKETPLACE-AS-A-SERVICE MOCK/CONFIG-FIRST VALIDATED
 
 Objectives:
 - introduce Marketplace-as-a-Service tenant infrastructure
@@ -168,21 +168,21 @@ Closure artifact:
 - `docs/PHASE_03_CLOSURE_REPORT.md`
 
 Linked requirements:
-- MEP-03A Ã¢â‚¬â€ Tenant Infrastructure Planning and Isolation Audit Ã¢â‚¬â€ completed
-- MEP-REQ-030 Ã¢â‚¬â€ Multi-Tenant Foundation Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-031 Ã¢â‚¬â€ Marketplace Branding Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-032 Ã¢â‚¬â€ Tenant Domains Ã¢â‚¬â€ completed mock/read-only
-- MEP-REQ-033 Ã¢â‚¬â€ Tenant Isolation Ã¢â‚¬â€ completed mock/config-first
-- MEP-PHASE-03-CLOSURE Ã¢â‚¬â€ QA, navigation and Marketplace-as-a-Service validation Ã¢â‚¬â€ completed
+- MEP-03A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant Infrastructure Planning and Isolation Audit ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
+- MEP-REQ-030 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Multi-Tenant Foundation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-031 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Marketplace Branding ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-032 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant Domains ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/read-only
+- MEP-REQ-033 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant Isolation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-PHASE-03-CLOSURE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â QA, navigation and Marketplace-as-a-Service validation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
 
 Dependencies:
-- PHASE 00 Ã¢â‚¬â€ Marketplace Architecture Revision
-- Phase 01 Ã¢â‚¬â€ NFT Marketplace Consolidation
-- Phase 02 Ã¢â‚¬â€ Federation Layer
+- PHASE 00 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Marketplace Architecture Revision
+- Phase 01 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â NFT Marketplace Consolidation
+- Phase 02 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Federation Layer
 
 Relationship to Phase 04:
 - Phase 03 prepares tenant identity, configuration and isolation boundaries
-- Phase 04 Ã¢â‚¬â€ Curated Catalogs depends on Tenant Infrastructure for tenant-specific catalog selection, product exposure and curation rules
+- Phase 04 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Curated Catalogs depends on Tenant Infrastructure for tenant-specific catalog selection, product exposure and curation rules
 
 Implementation boundary:
 - Phase 03 is closed as a mock/config-first Marketplace-as-a-Service phase
@@ -201,9 +201,9 @@ Implementation boundary:
 
 ---
 
-# Phase 04 Ã¢â‚¬â€ Curated Catalogs
+# Phase 04 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Curated Catalogs
 
-Status: COMPLETED Ã¢â‚¬â€ CURATED CATALOGS VALIDATED MOCK/CONFIG-FIRST
+Status: COMPLETED ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â CURATED CATALOGS VALIDATED MOCK/CONFIG-FIRST
 
 Objectives:
 - model tenant, partner, community, DAO, Academy, ACS and enterprise curated catalogs
@@ -229,24 +229,24 @@ Closure artifact:
 - `docs/PHASE_04_CLOSURE_REPORT.md`
 
 Linked requirements:
-- MEP-04A Ã¢â‚¬â€ Curated Catalogs Planning and Governance Audit Ã¢â‚¬â€ completed
-- MEP-REQ-040 Ã¢â‚¬â€ Curated Catalog Model Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-041 Ã¢â‚¬â€ Editorial Rules Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-042 Ã¢â‚¬â€ Featured Catalogs Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-043 Ã¢â‚¬â€ Tenant Curated Catalog Integration Ã¢â‚¬â€ completed mock/config-first
-- MEP-PHASE-04-CLOSURE Ã¢â‚¬â€ QA, governance and no-execution validation Ã¢â‚¬â€ completed
+- MEP-04A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Curated Catalogs Planning and Governance Audit ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
+- MEP-REQ-040 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Curated Catalog Model ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-041 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Editorial Rules ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-042 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Featured Catalogs ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-043 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant Curated Catalog Integration ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-PHASE-04-CLOSURE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â QA, governance and no-execution validation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
 
 Dependencies:
-- PHASE 00 Ã¢â‚¬â€ Marketplace Architecture Revision
-- Phase 01 Ã¢â‚¬â€ NFT Marketplace Consolidation
-- Phase 02 Ã¢â‚¬â€ Federation Layer
-- Phase 03 Ã¢â‚¬â€ Tenant Infrastructure
+- PHASE 00 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Marketplace Architecture Revision
+- Phase 01 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â NFT Marketplace Consolidation
+- Phase 02 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Federation Layer
+- Phase 03 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant Infrastructure
 
 Relationship to later phases:
 - Phase 04 prepares curated and editorial catalog concepts
-- Phase 05 Ã¢â‚¬â€ Distribution Network remains future work and must not be activated by curated catalog planning
-- Phase 06 Ã¢â‚¬â€ Revenue Sharing remains future work and must not be activated by curated catalog planning
-- Phase 07 Ã¢â‚¬â€ Marketplace Intelligence remains future work and must not be activated by curated catalog planning
+- Phase 05 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Distribution Network remains future work and must not be activated by curated catalog planning
+- Phase 06 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Revenue Sharing remains future work and must not be activated by curated catalog planning
+- Phase 07 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Marketplace Intelligence remains future work and must not be activated by curated catalog planning
 
 Implementation boundary:
 - MEP-04A is audit and planning only
@@ -260,15 +260,15 @@ Implementation boundary:
 - MEP-REQ-043 applies Tenant Catalog isolation to Curated Catalog items and preserves tenant branding/theme and mock/read-only domain routing
 - MEP-REQ-043 does not introduce Distribution Network, Revenue Sharing, Marketplace Intelligence, tenant billing, tenant settlement, treasury routing, partner/affiliate attribution, real ranking, recommendation engine, automated curation, backend, API, database, tracking or BI
 - MEP-PHASE-04-CLOSURE validates Curated Catalogs, Editorial Rules, Curation Workflow mock, Featured Catalogs, Catalog Segments, Tenant Curated Catalog Integration, global navigation, tenant-aware navigation and federation boundary preservation
-- Phase 05 Ã¢â‚¬â€ Distribution Network remains future work and is the next planned phase
+- Phase 05 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Distribution Network remains future work and is the next planned phase
 - no curated catalog runtime, approval workflow, AI curation, automated recommendation, real ranking, Marketplace Intelligence, Distribution Network, Revenue Sharing, billing, settlement, tracking, BI, API, database, GraphQL schema, provider call, indexer, contract write, wallet signature, payment, bridge or custody is introduced by MEP-04A
 - future curated catalogs must preserve product truth, tenant boundaries and federated origin, provider, validation status, provenance, risk classification and trust boundaries
 
 ---
 
-# Phase 05 Ã¢â‚¬â€ Distribution Network
+# Phase 05 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Distribution Network
 
-Status: COMPLETED Ã¢â‚¬â€ DISTRIBUTION NETWORK VALIDATED MOCK/CONFIG-FIRST
+Status: COMPLETED ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â DISTRIBUTION NETWORK VALIDATED MOCK/CONFIG-FIRST
 
 Objectives:
 - model Axodus distribution channels for NFTs, ACS, Academy, DAO, enterprise, partner and affiliate products
@@ -302,17 +302,17 @@ Closure artifact:
 - `docs/PHASE_05_CLOSURE_REPORT.md`
 
 Linked requirements:
-- MEP-05A Ã¢â‚¬â€ Distribution Network Planning and Attribution Audit Ã¢â‚¬â€ completed
-- MEP-REQ-050 Ã¢â‚¬â€ Distribution Network Model Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-051 Ã¢â‚¬â€ Distributor and Partner Profiles Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-052 Ã¢â‚¬â€ Attribution and Distribution Sources Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-053 Ã¢â‚¬â€ Community Marketplace Distribution Ã¢â‚¬â€ completed mock/config-first
-- MEP-REQ-054 Ã¢â‚¬â€ Tenant and Curated Catalog Distribution Integration Ã¢â‚¬â€ completed mock/config-first
-- MEP-PHASE-05-CLOSURE Ã¢â‚¬â€ QA, navigation and Distribution Network boundary validation Ã¢â‚¬â€ completed
+- MEP-05A ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Distribution Network Planning and Attribution Audit ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
+- MEP-REQ-050 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Distribution Network Model ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-051 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Distributor and Partner Profiles ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-052 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Attribution and Distribution Sources ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-053 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Community Marketplace Distribution ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-REQ-054 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant and Curated Catalog Distribution Integration ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed mock/config-first
+- MEP-PHASE-05-CLOSURE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â QA, navigation and Distribution Network boundary validation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â completed
 
 Dependencies:
-- Phase 03 Ã¢â‚¬â€ Tenant Infrastructure
-- Phase 04 Ã¢â‚¬â€ Curated Catalogs
+- Phase 03 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tenant Infrastructure
+- Phase 04 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Curated Catalogs
 
 Implementation boundary:
 - MEP-05A is audit and planning only
@@ -404,9 +404,9 @@ Implementation boundary:
 - during Phase 06, `canCalculatePreview` may be true only for simulation; `canSettle`, `canTriggerPayout`, `canRouteTreasury`, `canInvoice`, `canAccount` and `canReceivePayout` remain false
 ---
 
-# Phase 07 Ã¢â‚¬â€ Marketplace Intelligence
+# Phase 07 - Marketplace Intelligence
 
-Status: FUTURE
+Status: COMPLETED - PLANNING AND DATA BOUNDARY AUDIT
 
 Objectives:
 - introduce governance-compatible commercial intelligence for discovery, catalog health, tenant performance, distribution effectiveness and operational risk visibility
@@ -430,28 +430,34 @@ Deliverables:
 - Auditability requirements
 - Operational Intelligence boundaries
 
+Planning artifact:
+- docs/PHASE_07_MARKETPLACE_INTELLIGENCE_AUDIT.md
+
 Linked requirements:
-- MEP-REQ-070 Ã¢â‚¬â€ Commercial Analytics
-- MEP-REQ-071 Ã¢â‚¬â€ Collection Analytics
-- MEP-REQ-072 Ã¢â‚¬â€ Tenant Analytics
-- MEP-REQ-073 Ã¢â‚¬â€ Distribution Analytics
+- MEP-07A - Marketplace Intelligence Planning and Data Boundary Audit - completed
+- MEP-REQ-070 - Marketplace Intelligence Model - planned
+- MEP-REQ-071 - Insight Signals and Intelligence Snapshots - planned
+- MEP-REQ-072 - Catalog, Tenant and Distribution Intelligence Panels - planned
+- MEP-REQ-073 - Recommendation Preview and Ranking Explanation - planned
+- MEP-REQ-074 - Revenue, Trust and Risk Intelligence Integration - planned
+- MEP-PHASE-07-CLOSURE - QA, navigation and Marketplace Intelligence boundary validation - planned
 
 Dependencies:
-- Phase 01 Ã¢â‚¬â€ NFT Marketplace Consolidation
-- Phase 02 Ã¢â‚¬â€ Federation Layer
-- Phase 03 Ã¢â‚¬â€ Tenant Infrastructure
-- Phase 04 Ã¢â‚¬â€ Curated Catalogs
-- Phase 05 Ã¢â‚¬â€ Distribution Network
-- Phase 06 Ã¢â‚¬â€ Revenue Sharing
+- Phase 01 - NFT Marketplace Consolidation
+- Phase 02 - Federation Layer
+- Phase 03 - Tenant Infrastructure
+- Phase 04 - Curated Catalogs
+- Phase 05 - Distribution Network
+- Phase 06 - Revenue Sharing
 
 Implementation boundary:
-- Phase 07 implementation is future work
+- MEP-07A is audit and planning only
+- Phase 07 implementation remains future bounded work
 - MEP-REQ-005 is documentation-only
-- no dashboard, tracking, analytics event, BI integration, telemetry pipeline, analytics schema, analytics database, sensitive data collection, API, GraphQL schema, database, persistence, frontend component, route, automated ranking or automated decision is introduced by Phase 00
-
+- no tracking real, analytics real, BI real, scoring real, recommendation engine real, ranking algorithm real, personalization, profiling, analytics event pipeline, analytics schema, analytics database, data warehouse, sensitive data collection, API, GraphQL schema, database, persistence, ML model, AI model runtime, automated ranking, automated decision or commercial automation is introduced by MEP-07A
 ---
 
-# Phase 08 Ã¢â‚¬â€ Academy Distribution
+# Phase 08 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Academy Distribution
 
 Status: FUTURE
 
@@ -471,7 +477,7 @@ Implementation boundary:
 
 ---
 
-# Phase 09 Ã¢â‚¬â€ ACS Distribution
+# Phase 09 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ACS Distribution
 
 Status: FUTURE
 
@@ -491,7 +497,7 @@ Implementation boundary:
 
 ---
 
-# Phase 10 Ã¢â‚¬â€ Enterprise Marketplace
+# Phase 10 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Enterprise Marketplace
 
 Status: FUTURE
 
@@ -511,7 +517,7 @@ Implementation boundary:
 
 ---
 
-# Phase 11 Ã¢â‚¬â€ Sovereign Commerce Network
+# Phase 11 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Sovereign Commerce Network
 
 Status: FUTURE
 
