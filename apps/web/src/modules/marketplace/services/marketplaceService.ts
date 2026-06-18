@@ -3785,7 +3785,9 @@ function buildRevenueSharingIntegrationView(
         .map((view) => [view.source.id, view] as const)
     ).values()
   );
-  const attributionResolutions = attributionSources.map((source) => resolveAttributionSplit(source.source.id));
+  const attributionResolutions = attributionSources
+    .map((source) => resolveAttributionSplit(source.source.id))
+    .filter((entry): entry is AttributionSplitResolution => Boolean(entry));
   const auditEntries = Array.from(
     new Map(
       policies

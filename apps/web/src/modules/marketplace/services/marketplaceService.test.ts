@@ -951,6 +951,7 @@ describe("marketplaceService", () => {
     const academyPolicy = getRevenueSharingPolicyById("academy-tenant-revenue-preview");
     const communityPolicy = getRevenueSharingPolicyById("revenue-policy-community-distribution-preview");
     const productPolicy = getRevenueSharingPolicyById("governance-product-revenue-preview");
+    const restrictedPolicy = getRevenueSharingPolicyById("restricted-distribution-profile-revenue");
     const tenantPolicies = getRevenueSharingPoliciesByTenant("academy");
     const channelPolicies = getRevenueSharingPoliciesByDistributionChannel("academy-partner-channel");
     const catalogPolicies = getRevenueSharingPoliciesByCuratedCatalog("academy-onboarding");
@@ -959,11 +960,15 @@ describe("marketplaceService", () => {
     const shares = listParticipantSharesByPolicy("academy-tenant-revenue-preview");
     const boundary = resolveSettlementBoundary("academy-tenant-revenue-preview");
     const notes = explainRevenueSharingBoundary("academy-tenant-revenue-preview").join(" ");
+    const notesLower = notes.toLowerCase();
+    const missingPolicy = getRevenueSharingPolicyById("missing-revenue-policy");
+    const restrictedPreview = resolveRevenueSharingPreview("restricted-distribution-profile-revenue");
 
     expect(policies.map((view) => view.policy.slug)).toEqual([
       "academy-tenant-revenue-preview",
       "community-distribution-revenue-preview",
-      "governance-product-revenue-preview"
+      "governance-product-revenue-preview",
+      "restricted-distribution-profile-revenue"
     ]);
     expect(academyPolicy?.policy.scope).toBe("tenant");
     expect(academyPolicy?.tenant?.slug).toBe("academy");
@@ -976,6 +981,14 @@ describe("marketplaceService", () => {
     expect(communityPolicy?.policy.allowsFederatedAssets).toBe(true);
     expect(communityPolicy?.boundaryNotes.join(" ")).toContain("origin, provider, validation status, provenance, risk classification and trust boundaries");
     expect(productPolicy?.product?.slug).toBe("governance-dashboard-nft-access");
+    expect(restrictedPolicy?.policy.status).toBe("restricted");
+    expect(restrictedPolicy?.policy.canCalculatePreview).toBe(false);
+    expect(restrictedPolicy?.distributionProfile?.profile.status).toBe("disabled");
+    expect(restrictedPolicy?.commissionModels).toEqual([]);
+    expect(restrictedPolicy?.participantShares).toEqual([]);
+    expect(restrictedPolicy?.settlementBoundary?.status).toBe("restricted");
+    expect(missingPolicy).toBeNull();
+    expect(restrictedPreview).toBeNull();
     expect(tenantPolicies.map((view) => view.policy.id)).toContain("revenue-policy-academy-tenant-preview");
     expect(channelPolicies.map((view) => view.policy.id)).toContain("revenue-policy-academy-tenant-preview");
     expect(catalogPolicies.map((view) => view.policy.id)).toContain("revenue-policy-academy-tenant-preview");
@@ -992,12 +1005,17 @@ describe("marketplaceService", () => {
     expect(boundary?.canInvoice).toBe(false);
     expect(boundary?.canAccount).toBe(false);
     expect(notes).toContain("mock/config-first");
-    expect(notes).toContain("No payout");
-    expect(notes).toContain("no settlement");
-    expect(notes).toContain("no billing");
-    expect(notes).toContain("no treasury routing");
-    expect(notes).toContain("no wallet signature");
-    expect(policies.every((view) => view.policy.canCalculatePreview === true)).toBe(true);
+    expect(notesLower).toContain("no payout");
+    expect(notesLower).toContain("no settlement");
+    expect(notesLower).toContain("no billing");
+    expect(notesLower).toContain("no treasury routing");
+    expect(notesLower).toContain("no wallet signature");
+    expect(policies.filter((view) => view.policy.canCalculatePreview).map((view) => view.policy.id)).toEqual([
+      "revenue-policy-academy-tenant-preview",
+      "revenue-policy-community-distribution-preview",
+      "revenue-policy-product-governance-preview"
+    ]);
+    expect(restrictedPolicy?.policy.canCalculatePreview).toBe(false);
     expect(policies.every((view) => view.policy.canSettle === false)).toBe(true);
     expect(policies.every((view) => view.policy.canTriggerPayout === false)).toBe(true);
     expect(policies.every((view) => view.policy.canRouteTreasury === false)).toBe(true);
@@ -1024,6 +1042,7 @@ describe("marketplaceService", () => {
     const academyTotal = calculateCommissionModelShareTotalMock("academy-tenant-commission-preview");
     const productTotal = calculateCommissionModelShareTotalMock("product-commission-conflict-preview");
     const productNotes = productModel?.boundaryNotes.join(" ") ?? "";
+    const productNotesLower = productNotes.toLowerCase();
 
     expect(models.map((view) => view.model.slug)).toEqual([
       "academy-tenant-commission-preview",
@@ -1054,12 +1073,12 @@ describe("marketplaceService", () => {
     expect(productShares.every((share) => share.canSettle === false && share.canTriggerPayout === false && share.canReceivePayout === false)).toBe(true);
     expect(productShares.map((share) => share.shareType)).toEqual(["percentage-mock", "percentage-mock", "percentage-mock", "percentage-mock", "percentage-mock"]);
     expect(productNotes).toContain("Commission Model is mock/config-first");
-    expect(productNotes).toContain("no commission real");
-    expect(productNotes).toContain("no obligation financial");
-    expect(productNotes).toContain("no payout");
-    expect(productNotes).toContain("no settlement");
-    expect(productNotes).toContain("no billing");
-    expect(productNotes).toContain("no payment gateway");
+    expect(productNotesLower).toContain("no commission real");
+    expect(productNotesLower).toContain("no obligation financial");
+    expect(productNotesLower).toContain("no payout");
+    expect(productNotesLower).toContain("no settlement");
+    expect(productNotesLower).toContain("no billing");
+    expect(productNotesLower).toContain("no payment gateway");
     expect(models.every((view) => view.participantShares.every((share) => share.canSettle === false && share.canTriggerPayout === false && share.canReceivePayout === false))).toBe(true);
   });
 

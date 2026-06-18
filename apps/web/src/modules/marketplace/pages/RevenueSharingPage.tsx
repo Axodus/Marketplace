@@ -192,9 +192,13 @@ function RevenueSharingPolicyDetail({ view, preview }: { view: RevenueSharingPol
           <NeutralBadge>no commission real</NeutralBadge>
         </div>
         <div className="mt-4 grid gap-3">
-          {view.commissionModels.map((modelView) => (
-            <CommissionModelPanel key={modelView.model.id} view={modelView} />
-          ))}
+          {view.commissionModels.length ? (
+            view.commissionModels.map((modelView) => <CommissionModelPanel key={modelView.model.id} view={modelView} />)
+          ) : (
+            <p className="rounded border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+              No Commission Model is active for this restricted or boundary-only policy. No commission real, payout, settlement or billing is enabled.
+            </p>
+          )}
         </div>
       </section>
 
@@ -207,32 +211,38 @@ function RevenueSharingPolicyDetail({ view, preview }: { view: RevenueSharingPol
           <NeutralBadge>{view.shareTotal}% mock total</NeutralBadge>
         </div>
         <div className="mt-4 grid gap-3">
-          {view.participantShares.map((share) => {
-            const rule = view.rules.find((entry) => entry.id === share.sourceRuleId);
-            const participant = view.participants.find((entry) => entry.id === share.participantId);
-            return (
-              <article key={share.id} className="rounded border border-slate-200 bg-slate-50 p-4">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h4 className="font-semibold">{participant?.displayName ?? share.participantId}</h4>
-                    <p className="mt-1 text-sm text-slate-600">{rule?.ruleType ?? "source rule missing"}</p>
+          {view.participantShares.length ? (
+            view.participantShares.map((share) => {
+              const rule = view.rules.find((entry) => entry.id === share.sourceRuleId);
+              const participant = view.participants.find((entry) => entry.id === share.participantId);
+              return (
+                <article key={share.id} className="rounded border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h4 className="font-semibold">{participant?.displayName ?? share.participantId}</h4>
+                      <p className="mt-1 text-sm text-slate-600">{rule?.ruleType ?? "source rule missing"}</p>
+                    </div>
+                    <NeutralBadge>{share.shareValue}% mock</NeutralBadge>
                   </div>
-                  <NeutralBadge>{share.shareValue}% mock</NeutralBadge>
-                </div>
-                <div className="mt-3 grid gap-2 text-sm sm:grid-cols-4">
-                  <Metric label="Participant type" value={share.participantType} />
-                  <Metric label="Share type" value={share.shareType} />
-                  <Metric label="Cap mock" value={share.capValueMock ?? 0} />
-                  <Metric label="Floor mock" value={share.floorValueMock ?? 0} />
-                  <Metric label="Can settle" value={String(share.canSettle)} />
-                  <Metric label="Can payout" value={String(share.canTriggerPayout)} />
-                  <Metric label="Can receive payout" value={String(share.canReceivePayout)} />
-                  <Metric label="Conflict policy" value={rule?.conflictPolicy ?? "review-required"} />
-                </div>
-                <p className="mt-3 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">{share.disclaimers[0]}</p>
-              </article>
-            );
-          })}
+                  <div className="mt-3 grid gap-2 text-sm sm:grid-cols-4">
+                    <Metric label="Participant type" value={share.participantType} />
+                    <Metric label="Share type" value={share.shareType} />
+                    <Metric label="Cap mock" value={share.capValueMock ?? 0} />
+                    <Metric label="Floor mock" value={share.floorValueMock ?? 0} />
+                    <Metric label="Can settle" value={String(share.canSettle)} />
+                    <Metric label="Can payout" value={String(share.canTriggerPayout)} />
+                    <Metric label="Can receive payout" value={String(share.canReceivePayout)} />
+                    <Metric label="Conflict policy" value={rule?.conflictPolicy ?? "review-required"} />
+                  </div>
+                  <p className="mt-3 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">{share.disclaimers[0]}</p>
+                </article>
+              );
+            })
+          ) : (
+            <p className="rounded border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+              No Participant Shares are configured for this restricted or boundary-only policy. No payout, settlement, billing or treasury routing is enabled.
+            </p>
+          )}
         </div>
       </section>
 

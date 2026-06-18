@@ -33,7 +33,7 @@ export function RevenueSharingIntegrationPanel({
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <NamesPanel title="Revenue Sharing Policies" items={view.policies.map((entry) => `${entry.policy.displayName} (${entry.policy.status})`)} />
-        <NamesPanel title="Commission Models" items={view.commissionModels.map((entry) => `${entry.model.displayName} (${entry.model.validation.validationStatus})`)} />
+        <NamesPanel title="Commission Models" items={view.commissionModels.map((entry) => `${entry.model.displayName} (${entry.validation.validationStatus})`)} />
         <NamesPanel title="Participant Shares" items={view.policies.flatMap((entry) => entry.participantShares.map((share) => `${share.participantType} ${share.shareValue}${share.shareType === "flat-amount-mock" ? "" : "%"}`))} />
         <NamesPanel title="Attribution Sources" items={view.attributionSources.map((entry) => `${entry.source.displayName} (${entry.source.status})`)} />
       </div>

@@ -4376,6 +4376,20 @@ export const marketplaceSettlementBoundaries = [
     boundaryLabel: "Product revenue sharing preview boundary",
     warnings: ["Product revenue sharing does not change listing, buy-now or bid execution."],
     disclaimers: ["No payment execution, no payout, no settlement, no billing, no treasury routing and no split on-chain."]
+  },
+  {
+    id: "settlement-boundary-restricted-profile-revenue",
+    scope: "distribution-profile",
+    scopeId: "distribution-profile-demo-sandbox",
+    status: "restricted",
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    canInvoice: false,
+    canAccount: false,
+    boundaryLabel: "Restricted distribution profile revenue boundary",
+    warnings: ["Restricted profile revenue sharing remains blocked for preview-only governance validation."],
+    disclaimers: ["No payout, no settlement, no invoice, no accounting, no tax and no treasury routing are active."]
   }
 ];
 
@@ -4885,7 +4899,7 @@ export const marketplaceRevenueSharingPolicies = [
     canTriggerPayout: false,
     canRouteTreasury: false,
     warnings: ["Academy tenant revenue sharing is preview-only and requires governance review before any future activation."],
-    disclaimers: ["No payout, no settlement, no billing, no invoice, no accounting, no tax and no treasury routing are active."],
+    disclaimers: ["No payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing and no wallet signature are active."],
     createdAt: "2026-06-16T09:00:00.000Z",
     updatedAt: "2026-06-16T09:00:00.000Z"
   },
@@ -4961,6 +4975,31 @@ export const marketplaceRevenueSharingPolicies = [
     disclaimers: ["No payment execution, no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing and no wallet signature are active."],
     createdAt: "2026-06-16T09:20:00.000Z",
     updatedAt: "2026-06-16T09:20:00.000Z"
+  },
+  {
+    id: "revenue-policy-restricted-distribution-profile",
+    slug: "restricted-distribution-profile-revenue",
+    name: "Restricted Distribution Profile Revenue Sharing Preview",
+    displayName: "Restricted Distribution Profile Revenue Preview",
+    description: "Mock/config-first restricted Revenue Sharing Policy used to validate restricted policy navigation, empty states and financial boundary wording.",
+    scope: "distribution-profile",
+    status: "restricted",
+    governanceStatus: "restricted",
+    distributionProfileId: "distribution-profile-demo-sandbox",
+    participantIds: [],
+    ruleIds: [],
+    attributionSourceIds: [],
+    settlementBoundaryId: "settlement-boundary-restricted-profile-revenue",
+    commissionModelIds: [],
+    allowsFederatedAssets: false,
+    canCalculatePreview: false,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["Restricted revenue sharing policy remains non-executing and available only for governance and QA validation."],
+    disclaimers: ["Restricted policy is boundary-only: no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing and no wallet signature are active."],
+    createdAt: "2026-06-17T08:30:00.000Z",
+    updatedAt: "2026-06-17T08:30:00.000Z"
   }
 ];
 
