@@ -1,9 +1,21 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { Network, RadioTower, Share2, ShieldAlert } from "lucide-react";
+import { MarketplaceIntelligencePanel } from "../components/MarketplaceIntelligencePanel";
+import { RecommendationPreviewPanel } from "../components/RecommendationPreviewPanel";
 import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
+import { RevenueTrustRiskIntelligencePanel } from "../components/RevenueTrustRiskIntelligencePanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useDistributionChannel, useDistributionChannelRevenueSharing, useDistributionChannels, useDistributionContext, useDistributionNetworks } from "../hooks/useMarketplace";
+import {
+  useDistributionChannel,
+  useDistributionChannelRevenueSharing,
+  useDistributionChannels,
+  useDistributionContext,
+  useDistributionIntelligenceSnapshot,
+  useDistributionNetworks,
+  useRecommendationPreviewsByScope,
+  useRiskTrustContext
+} from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { DistributionChannelView, DistributionNetworkView, DistributionPlacementView } from "../services/marketplaceService";
 
@@ -164,6 +176,9 @@ function DistributionChannelCard({ view, selected }: { view: DistributionChannel
 function DistributionChannelDetail({ view }: { view: DistributionChannelView }) {
   const { channel } = view;
   const revenueSharingQuery = useDistributionChannelRevenueSharing(channel.slug);
+  const intelligenceQuery = useDistributionIntelligenceSnapshot(channel.id);
+  const recommendationPreviewsQuery = useRecommendationPreviewsByScope("distribution-channel", channel.id);
+  const riskTrustQuery = useRiskTrustContext("attribution-source", channel.attributionSource.id);
   const revenueSharing = revenueSharingQuery.data;
 
   return (
@@ -183,6 +198,24 @@ function DistributionChannelDetail({ view }: { view: DistributionChannelView }) 
         <Metric label="Tenant" value={view.tenant?.displayName ?? "none"} />
         <Metric label="Federated assets" value={channel.allowsFederatedAssets ? "allowed with boundaries" : "blocked"} />
       </div>
+
+      <MarketplaceIntelligencePanel
+        title="Distribution Intelligence Panel"
+        description="Distribution Intelligence Panel summarizes channel coverage, attribution context and commercial origin boundaries from mock/config-first records only. It does not enable tracking real, analytics real, BI real, scoring or automated decisions."
+        snapshot={intelligenceQuery.data}
+      />
+
+      <RecommendationPreviewPanel
+        title="Distribution Recommendation Preview"
+        description="Distribution Recommendation Preview explains manual placement order and mock opportunity labels without campaign optimization, recommendation engine, automated ranking, behavioral tracking, wallet profiling or retargeting."
+        previews={recommendationPreviewsQuery.data}
+      />
+
+      <RevenueTrustRiskIntelligencePanel
+        title="Distribution Attribution Insight"
+        description="Distribution Attribution Insight explains attribution, community trust and risk context in mock mode only. It does not track, score risk, score trust, monetize attribution or trigger commercial action."
+        view={riskTrustQuery.data}
+      />
 
       <section className="grid gap-4 lg:grid-cols-3">
         <InfoPanel

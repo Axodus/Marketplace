@@ -58,6 +58,12 @@ import {
   getRevenueSharingPoliciesByDistributionProfile,
   getRevenueSharingPoliciesByTenant,
   getRevenueSharingPoliciesByCommunityDistribution,
+  getRevenueIntelligenceSummaryByPolicy,
+  getRevenuePreviewInsightByPolicy,
+  getRiskTrustInsightById,
+  getRiskTrustInsightsByDistributionAttribution,
+  getRiskTrustInsightsByRevenuePolicy,
+  getSettlementBoundaryInsightByPolicy,
   getCommercialOriginForAttribution,
   getDistributionSourceForAttribution,
   getDistributionSourceSplitMapping,
@@ -112,8 +118,14 @@ import {
   listIntelligenceSnapshotsByScope,
   getIntelligenceSnapshotById,
   getInsightSignalById,
+  getRankingExplanationById,
+  getRecommendationPreviewById,
   listInsightSignalsByInsight,
   listInsightSignals,
+  listRankingExplanations,
+  listRankingExplanationsByScope,
+  listRecommendationPreviews,
+  listRecommendationPreviewsByScope,
   listWalletDiscoveryRecords,
   listFederationProviders,
   listCollections,
@@ -123,6 +135,9 @@ import {
   listRevenueParticipantsByPolicy,
   listRevenueSharingPolicies,
   listRevenueSharingPreviews,
+  listRevenueIntelligenceSummaries,
+  listRiskTrustInsights,
+  listRiskTrustInsightsByScope,
   listRevenueSplitRulesByPolicy,
   listTenants,
   getTenantDisplayName,
@@ -155,12 +170,20 @@ import {
   resolveRevenueIntelligenceSnapshot,
   resolveCommunityIntelligenceSnapshot,
   resolveFederationIntelligenceSnapshot,
+  resolveFederationIntelligenceContext,
+  resolveMarketplaceIntelligencePanel,
+  resolveTenantIntelligencePanel,
+  resolveCatalogIntelligencePanel,
+  resolveDistributionIntelligencePanel,
+  resolveCommunityIntelligencePanel,
+  resolveAttributionIntelligencePanel,
   resolveSettlementBoundary,
   getRevenueSharingPolicyById,
   getMarketplaceInsightById,
   explainRevenueSharingBoundary,
   explainMarketplaceIntelligenceBoundary,
   explainIntelligenceSnapshotBoundary,
+  explainRecommendationRanking,
   explainParticipantSplitsByPolicy,
   explainRevenueSharingRuleApplication,
   listRevenueSharingAuditEntriesByPolicy,
@@ -175,6 +198,11 @@ import {
   resolveTenantRevenueSharing,
   validateMarketplaceInsightMockOnly,
   validateIntelligenceSnapshotMockOnly,
+  validateRevenuePreviewInsightMockOnly,
+  validateRiskTrustInsightMockOnly,
+  validateRecommendationPreviewMockOnly,
+  resolveRevenueTrustRiskIntelligence,
+  resolveRiskTrustContext,
   validateParticipantSharesByCommissionModel,
   resolveTenantCatalog,
   resolveTenantContext,
@@ -1346,6 +1374,141 @@ describe("marketplaceService", () => {
     expect(notes).toContain("no automated decisioning");
     expect(getIntelligenceSnapshotById("missing-snapshot")).toBeNull();
     expect(validateIntelligenceSnapshotMockOnly("missing-snapshot")).toBeNull();
+  });
+
+  it("lists Recommendation Preview records with Ranking Explanation and non-automated boundaries", () => {
+    const previews = listRecommendationPreviews();
+    const tenantPreviews = listRecommendationPreviewsByScope("tenant", "tenant-academy-marketplace");
+    const academyPreview = getRecommendationPreviewById("academy-certification-recommendation-preview");
+
+    expect(previews.map((view) => view.preview.title)).toContain("Recommendation Preview mock - Academy Certification Bundle");
+    expect(tenantPreviews).toHaveLength(1);
+    expect(academyPreview?.targetLabel).toBe("Academy Certification ERC1155 Bundle");
+    expect(academyPreview?.rankingExplanation?.title).toBe("Tenant Config Order Explanation");
+    expect(academyPreview?.mockSignals.map((signal) => signal.name)).toContain("Academy Tenant Coverage Signal");
+    expect(previews.every((view) => view.preview.isSimulated)).toBe(true);
+    expect(previews.every((view) => !view.preview.isPersonalized && !view.preview.usesBehavioralData && !view.preview.usesWalletProfiling)).toBe(true);
+    expect(previews.every((view) => !view.preview.usesAutomatedRanking && !view.preview.usesRecommendationEngine && !view.preview.canTriggerAction)).toBe(true);
+    expect(previews.every((view) => view.boundaryNotes.join(" ").includes("No recommendation engine"))).toBe(true);
+    expect(getRecommendationPreviewById("missing-preview")).toBeNull();
+  });
+
+  it("resolves Ranking Explanation records without algorithmic ranking, personalization or automated decisioning", () => {
+    const explanations = listRankingExplanations();
+    const catalogExplanations = listRankingExplanationsByScope("curated-catalog", "curated-catalog-academy-onboarding");
+    const catalogExplanation = getRankingExplanationById("academy-catalog-editorial-ranking-explanation");
+    const notes = explainRecommendationRanking("academy-catalog-recommendation-preview").join(" ");
+    const validation = validateRecommendationPreviewMockOnly("academy-catalog-recommendation-preview");
+
+    expect(explanations.map((entry) => entry.title)).toContain("Catalog Editorial Ranking Explanation");
+    expect(catalogExplanations).toHaveLength(1);
+    expect(catalogExplanation?.rankingType).toBe("curated-catalog-order");
+    expect(explanations.every((entry) => entry.isSimulated)).toBe(true);
+    expect(explanations.every((entry) => !entry.isAlgorithmic && !entry.usesBehavioralData && !entry.usesPersonalization && !entry.usesAutomatedDecisioning)).toBe(true);
+    expect(notes).toContain("Mock Opportunity Label");
+    expect(notes).toContain("No recommendation engine");
+    expect(notes).toContain("no automated ranking");
+    expect(validation?.isMockOnly).toBe(true);
+    expect(validation?.isNoRecommendationEngine).toBe(true);
+    expect(validation?.isNoAutomatedRanking).toBe(true);
+    expect(validation?.isNoPersonalization).toBe(true);
+    expect(validation?.isNoProfiling).toBe(true);
+    expect(validation?.isNoAutomatedDecisioning).toBe(true);
+    expect(validateRecommendationPreviewMockOnly("missing-preview")).toBeNull();
+  });
+
+  it("integrates Revenue Intelligence Summary and Settlement Boundary Insight without financial BI or settlement", () => {
+    const summaries = listRevenueIntelligenceSummaries();
+    const summary = getRevenueIntelligenceSummaryByPolicy("revenue-policy-academy-tenant-preview");
+    const previewInsight = getRevenuePreviewInsightByPolicy("revenue-policy-academy-tenant-preview");
+    const settlementInsight = getSettlementBoundaryInsightByPolicy("revenue-policy-academy-tenant-preview");
+    const view = resolveRevenueTrustRiskIntelligence("revenue-policy-academy-tenant-preview");
+    const validation = validateRevenuePreviewInsightMockOnly("revenue-policy-academy-tenant-preview");
+
+    expect(summaries.map((entry) => entry.title)).toContain("Revenue Intelligence Summary mock - Academy Tenant");
+    expect(summary?.previewId).toBe("revenue-sharing-preview-academy-tenant");
+    expect(previewInsight?.title).toContain("Revenue Preview Insight");
+    expect(settlementInsight?.title).toContain("Settlement Boundary Insight");
+    expect(view?.revenuePreview?.preview.policyId).toBe("revenue-policy-academy-tenant-preview");
+    expect(view?.settlementBoundary?.canSettle).toBe(false);
+    expect(view?.boundaryNotes.join(" ")).toContain("No financial BI");
+    expect(validation?.isMockOnly).toBe(true);
+    expect(validation?.isNoFinancialBI).toBe(true);
+    expect(validation?.isNoAccounting).toBe(true);
+    expect(validation?.isNoTax).toBe(true);
+    expect(validation?.isNoSettlement).toBe(true);
+    expect(validation?.isNoPayout).toBe(true);
+    expect(validation?.isNoTreasuryRouting).toBe(true);
+    expect(validation?.isNoInvoice).toBe(true);
+    expect(resolveRevenueTrustRiskIntelligence("missing-policy")).toBeNull();
+  });
+
+  it("resolves Risk Trust Insight and Federation Intelligence Context without scoring or automated actions", () => {
+    const insights = listRiskTrustInsights();
+    const federationInsight = getRiskTrustInsightById("harmony-federation-risk-trust-insight");
+    const collectionInsights = listRiskTrustInsightsByScope("collection", "external-collection-harmony-creator-keys");
+    const revenueInsights = getRiskTrustInsightsByRevenuePolicy("revenue-policy-community-distribution-preview");
+    const attributionInsights = getRiskTrustInsightsByDistributionAttribution("attribution-record-community-source");
+    const federationContext = resolveFederationIntelligenceContext("external-collection-harmony-creator-keys");
+    const scopedContext = resolveRiskTrustContext("collection", "external-collection-harmony-creator-keys");
+    const validation = validateRiskTrustInsightMockOnly("harmony-federation-risk-trust-insight");
+
+    expect(insights.map((entry) => entry.title)).toContain("Risk Trust Insight mock - Harmony Creator Keys");
+    expect(federationInsight?.riskLabelMock).toBe("unknown-external");
+    expect(federationInsight?.trustLabelMock).toBe("provider-reported-mock");
+    expect(collectionInsights).toHaveLength(1);
+    expect(revenueInsights.map((entry) => entry.id)).toContain("risk-trust-insight-harmony-federation");
+    expect(attributionInsights.map((entry) => entry.id)).toContain("risk-trust-insight-community-attribution");
+    expect(federationContext?.federationContext?.validationStatus).toBe("provider-reported");
+    expect(federationContext?.collection?.trustBoundary?.executionState).toBe("read-only");
+    expect(federationContext?.providerValidationInsight?.usesTrustScoring).toBe(false);
+    expect(federationContext?.provenanceInsight?.usesRiskScoring).toBe(false);
+    expect(scopedContext?.boundaryNotes.join(" ")).toContain("No financial BI");
+    expect(validation?.isMockOnly).toBe(true);
+    expect(validation?.isNoRiskScoring).toBe(true);
+    expect(validation?.isNoTrustScoring).toBe(true);
+    expect(validation?.isNoAutomatedDecisioning).toBe(true);
+    expect(validation?.isNoAutomatedBlocking).toBe(true);
+    expect(validation?.isNoAutomatedApproval).toBe(true);
+    expect(validation?.isNoCommercialAction).toBe(true);
+    expect(resolveFederationIntelligenceContext("missing-collection")).toBeNull();
+    expect(validateRiskTrustInsightMockOnly("missing-insight")).toBeNull();
+  });
+
+  it("resolves Marketplace Intelligence Panels for tenant, catalog, distribution, community and attribution contexts", () => {
+    const panels = [
+      resolveMarketplaceIntelligencePanel(),
+      resolveTenantIntelligencePanel("tenant-academy-marketplace"),
+      resolveCatalogIntelligencePanel("curated-catalog-academy-onboarding"),
+      resolveDistributionIntelligencePanel("distribution-channel-academy-partner"),
+      resolveDistributionIntelligencePanel("distribution-profile-academy-partner"),
+      resolveCommunityIntelligencePanel("community-distribution-creator-federated"),
+      resolveAttributionIntelligencePanel("academy-campaign-source")
+    ];
+
+    expect(panels.map((panel) => panel.title)).toContain("Marketplace Intelligence Panel");
+    expect(panels.map((panel) => panel.title)).toContain("Tenant Intelligence Panel");
+    expect(panels.map((panel) => panel.title)).toContain("Catalog Intelligence Panel");
+    expect(panels.map((panel) => panel.title)).toContain("Distribution Intelligence Panel");
+    expect(panels.map((panel) => panel.title)).toContain("Community Intelligence Panel");
+    expect(panels.map((panel) => panel.title)).toContain("Attribution Intelligence Panel");
+
+    for (const panel of panels) {
+      expect(panel.snapshot).toBeTruthy();
+      expect(panel.badges).toEqual(expect.arrayContaining(["mock-only", "no-tracking", "no-BI", "no-scoring", "no-recommendation-engine", "no-automated-decisioning"]));
+      expect(panel.boundaryWarnings.join(" ")).toContain("No tracking real");
+      expect(panel.canUseAnalyticsReal).toBe(false);
+      expect(panel.canUseTrackingReal).toBe(false);
+      expect(panel.canUseBIReal).toBe(false);
+      expect(panel.canScore).toBe(false);
+      expect(panel.canRecommendAutomatically).toBe(false);
+      expect(panel.canUseAutomatedDecisioning).toBe(false);
+      expect(panel.canExportData).toBe(false);
+    }
+
+    const missingAttribution = resolveAttributionIntelligencePanel("missing-attribution-source");
+    expect(missingAttribution.snapshot).toBeNull();
+    expect(missingAttribution.boundaryWarnings.join(" ")).toContain("No Intelligence Snapshot is configured");
   });
 
   it("issues mock purchase records without settlement", () => {

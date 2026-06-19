@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { BadgeCheck, FileText, Megaphone, MousePointerClick, ShieldAlert } from "lucide-react";
+import { MarketplaceIntelligencePanel } from "../components/MarketplaceIntelligencePanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useAttributionContext, useAttributionSource, useAttributionSources } from "../hooks/useMarketplace";
+import { useAttributionContext, useAttributionSource, useAttributionSources, useDistributionIntelligenceSnapshot } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { AttributionSourceView } from "../services/marketplaceService";
 
@@ -130,6 +131,7 @@ function AttributionSourceCard({ view, selected }: { view: AttributionSourceView
 
 function AttributionSourceDetail({ view }: { view: AttributionSourceView }) {
   const { source, context } = view;
+  const intelligenceQuery = useDistributionIntelligenceSnapshot(view.channel?.channel.id);
   return (
     <section className="space-y-5 rounded border border-teal-200 bg-teal-50 p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -147,6 +149,12 @@ function AttributionSourceDetail({ view }: { view: AttributionSourceView }) {
         <Metric label="Commercial origin" value={source.commercialOrigin.originLabel} />
         <Metric label="Source label" value={source.sourceLabel} />
       </div>
+
+      <MarketplaceIntelligencePanel
+        title="Attribution Intelligence Panel"
+        description="Attribution Intelligence Panel reuses the related distribution static mock snapshot to summarize attribution context without tracking real, cookies, behavioral collection, commission tracking, BI real, scoring or automated decisions."
+        snapshot={intelligenceQuery.data}
+      />
 
       <section className="grid gap-4 lg:grid-cols-3">
         <InfoPanel title="Attribution Context" icon={<BadgeCheck size={18} />} rows={[

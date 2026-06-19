@@ -1,7 +1,18 @@
 import { Link, useParams } from "react-router-dom";
 import { BarChart3, Brain, FileSearch, ShieldCheck } from "lucide-react";
+import { MarketplaceIntelligencePanel } from "../components/MarketplaceIntelligencePanel";
+import { RecommendationPreviewPanel } from "../components/RecommendationPreviewPanel";
+import { RevenueTrustRiskIntelligencePanel } from "../components/RevenueTrustRiskIntelligencePanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useIntelligenceSnapshots, useMarketplaceInsight, useMarketplaceInsightValidation, useMarketplaceInsights } from "../hooks/useMarketplace";
+import {
+  useFederationIntelligenceContext,
+  useIntelligenceSnapshots,
+  useMarketplaceInsight,
+  useMarketplaceInsightValidation,
+  useMarketplaceInsights,
+  useRecommendationPreviews,
+  useRevenueTrustRiskIntelligence
+} from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { IntelligenceSnapshotView, MarketplaceInsightView } from "../services/marketplaceService";
 
@@ -12,8 +23,12 @@ export function MarketplaceIntelligencePage() {
   const insightsQuery = useMarketplaceInsights();
   const snapshotsQuery = useIntelligenceSnapshots();
   const detailQuery = useMarketplaceInsight(insightSlug);
+  const recommendationPreviewsQuery = useRecommendationPreviews();
+  const revenueTrustRiskQuery = useRevenueTrustRiskIntelligence("revenue-policy-community-distribution-preview");
+  const federationTrustQuery = useFederationIntelligenceContext("external-collection-harmony-creator-keys");
   const insights = insightsQuery.data ?? [];
   const snapshots = snapshotsQuery.data ?? [];
+  const recommendationPreviews = recommendationPreviewsQuery.data ?? [];
   const selected = insightSlug ? detailQuery.data : insights[0];
   const selectedSnapshot = selected?.snapshot ? snapshots.find((view) => view.snapshot.id === selected.snapshot?.id) : null;
 
@@ -64,6 +79,31 @@ export function MarketplaceIntelligencePage() {
           <NeutralBadge>mock intelligence</NeutralBadge>
           <NeutralBadge>config-first intelligence</NeutralBadge>
         </div>
+      </section>
+
+      <MarketplaceIntelligencePanel
+        title="Marketplace Intelligence Panel"
+        description="Marketplace Intelligence Panel summarizes global mock Marketplace signals, snapshots and Data Boundary posture without dashboard BI real, analytics real, tracking real, scoring real, recommendation engine or automated decisioning."
+        snapshot={selectedSnapshot}
+      />
+
+      <RecommendationPreviewPanel
+        title="Recommendation Preview and Ranking Explanation"
+        description="Recommendation Preview exposes editorial/mock discovery notes and Ranking Explanation records only. It does not enable a recommendation engine, automated ranking, personalization, profiling, behavioral tracking, wallet profiling, automated decisioning or commercial action."
+        previews={recommendationPreviews}
+      />
+
+      <section className="grid gap-4 xl:grid-cols-2">
+        <RevenueTrustRiskIntelligencePanel
+          title="Revenue, Trust and Risk Intelligence"
+          description="Revenue, Trust and Risk Intelligence connects revenue preview, settlement boundary and community trust context without financial BI, risk scoring, trust scoring, settlement, payout or automated monetization."
+          view={revenueTrustRiskQuery.data}
+        />
+        <RevenueTrustRiskIntelligencePanel
+          title="Federation Risk Trust Insight"
+          description="Federation Risk Trust Insight preserves origin, provider, validation status, provenance, risk classification and trust boundaries for federated assets without changing validation status or triggering automated decisions."
+          view={federationTrustQuery.data}
+        />
       </section>
 
       {selected ? <MarketplaceInsightDetail view={selected} snapshotView={selectedSnapshot ?? undefined} /> : null}

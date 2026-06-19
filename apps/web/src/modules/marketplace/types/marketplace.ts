@@ -357,6 +357,7 @@ export type InsightScope =
   | "distribution-channel"
   | "distribution-profile"
   | "community-distribution"
+  | "attribution-source"
   | "revenue-sharing-policy"
   | "product"
   | "collection"
@@ -394,6 +395,14 @@ export type SignalType =
   | "demo";
 export type ConfidenceLabel = "informational-mock" | "low-confidence-mock" | "medium-confidence-mock" | "high-confidence-mock" | "manual-review-required" | "not-applicable" | "demo";
 export type DataBoundaryStatus = "mock-only" | "static-only" | "no-tracking" | "no-bi" | "no-scoring" | "no-ml" | "no-automated-decisioning" | "restricted" | "blocked" | "review-required";
+export type RecommendationPreviewStatus = "preview-only" | "editorial-mock" | "manual-review-required" | "restricted" | "disabled" | "not-configured";
+export type RankingExplanationType = "editorial-mock" | "manual-mock" | "static-mock" | "curated-catalog-order" | "tenant-config-order" | "distribution-placement-order" | "demo";
+export type MockFitLabel = "strong-fit-mock" | "good-fit-mock" | "context-fit-mock" | "manual-review-fit" | "restricted-fit" | "not-applicable";
+export type MockOpportunityLabel = "discovery-opportunity-mock" | "catalog-gap-mock" | "tenant-alignment-mock" | "distribution-context-mock" | "community-exposure-mock" | "manual-review-opportunity" | "restricted";
+export type EditorialRankingNote = string;
+export type DiscoveryNote = string;
+export type RiskLabelMock = "low-risk-mock" | "medium-risk-mock" | "high-risk-mock" | "unknown-external" | "manual-review-required" | "restricted";
+export type TrustLabelMock = "native-trust-mock" | "provider-reported-mock" | "manual-review-trust" | "restricted-trust" | "untrusted-mock";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -1830,6 +1839,209 @@ export interface IntelligenceAuditNote {
   severity: "info" | "warning" | "restricted";
   isSimulated: boolean;
   createdAt: string;
+}
+
+export interface RecommendationPreview {
+  id: string;
+  slug: string;
+  scope: InsightScope;
+  scopeId: string;
+  status: RecommendationPreviewStatus;
+  targetType: "product" | "collection" | "curated-catalog" | "tenant" | "distribution-channel" | "community-distribution" | "demo";
+  targetId: string;
+  title: string;
+  reason: string;
+  discoveryNote: DiscoveryNote;
+  fitLabel: MockFitLabel;
+  opportunityLabel: MockOpportunityLabel;
+  confidenceLabel: ConfidenceLabel;
+  rankingExplanationId: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  isPersonalized: boolean;
+  usesBehavioralData: boolean;
+  usesWalletProfiling: boolean;
+  usesAutomatedRanking: boolean;
+  usesRecommendationEngine: boolean;
+  canTriggerAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RankingExplanation {
+  id: string;
+  slug: string;
+  scope: InsightScope;
+  scopeId: string;
+  rankingType: RankingExplanationType;
+  status: RecommendationPreviewStatus;
+  title: string;
+  reason: string;
+  editorialReason: string;
+  editorialRankingNote: EditorialRankingNote;
+  mockSignalIds: string[];
+  confidenceLabel: ConfidenceLabel;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  isAlgorithmic: boolean;
+  usesBehavioralData: boolean;
+  usesPersonalization: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RevenueIntelligenceSummary {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  policyId: string;
+  previewId: string;
+  settlementBoundaryId: string;
+  revenuePreviewInsightId: string;
+  settlementBoundaryInsightId: string;
+  confidenceLabel: ConfidenceLabel;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesFinancialBI: boolean;
+  usesAccounting: boolean;
+  usesTax: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RevenuePreviewInsight {
+  id: string;
+  slug: string;
+  policyId: string;
+  previewId: string;
+  settlementBoundaryId: string;
+  title: string;
+  summary: string;
+  confidenceLabel: ConfidenceLabel;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesFinancialBI: boolean;
+  usesAccounting: boolean;
+  usesTax: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SettlementBoundaryInsight {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  settlementBoundaryId: string;
+  policyId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RiskTrustInsight {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  scope: InsightScope;
+  scopeId: string;
+  riskLabelMock: RiskLabelMock;
+  trustLabelMock: TrustLabelMock;
+  confidenceLabel: ConfidenceLabel;
+  sourceType: "revenue-preview" | "settlement-boundary" | "federated-asset" | "provider" | "distribution-attribution" | "community-trust" | "provenance" | "demo";
+  sourceRefId: string;
+  providerId?: string;
+  assetId?: string;
+  collectionId?: string;
+  revenueSharingPolicyId?: string;
+  distributionChannelId?: string;
+  attributionSourceId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesRiskScoring: boolean;
+  usesTrustScoring: boolean;
+  usesAutomatedDecisioning: boolean;
+  canBlockAutomatically: boolean;
+  canApproveAutomatically: boolean;
+  canTriggerCommercialAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProviderValidationInsight {
+  id: string;
+  providerId: string;
+  validationLabel: string;
+  trustLabelMock: TrustLabelMock;
+  confidenceLabel: ConfidenceLabel;
+  isSimulated: boolean;
+  usesTrustScoring: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ProvenanceInsight {
+  id: string;
+  collectionId: string;
+  providerId: string;
+  provenanceLabel: string;
+  riskLabelMock: RiskLabelMock;
+  confidenceLabel: ConfidenceLabel;
+  isSimulated: boolean;
+  usesRiskScoring: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface FederationIntelligenceContext {
+  id: string;
+  collectionId: string;
+  providerId: string;
+  riskTrustInsightId: string;
+  providerValidationInsightId: string;
+  provenanceInsightId: string;
+  dataBoundaryId: string;
+  origin: string;
+  provider: string;
+  validationStatus: FederationValidationStatus;
+  provenance: string;
+  riskClassification: FederationRiskClassification;
+  trustBoundaryLabel: string;
+  isSimulated: boolean;
+  canTrade: boolean;
+  canSettle: boolean;
+  canBlockAutomatically: boolean;
+  canApproveAutomatically: boolean;
+  canTriggerCommercialAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
 }
 
 export interface CuratedCatalogRule {

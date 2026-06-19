@@ -1,9 +1,10 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { Handshake, Network, ShieldAlert, UsersRound } from "lucide-react";
+import { MarketplaceIntelligencePanel } from "../components/MarketplaceIntelligencePanel";
 import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useDistributionProfile, useDistributionProfileContext, useDistributionProfileRevenueSharing, useDistributionProfiles } from "../hooks/useMarketplace";
+import { useDistributionIntelligenceSnapshot, useDistributionProfile, useDistributionProfileContext, useDistributionProfileRevenueSharing, useDistributionProfiles } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { DistributionProfileView } from "../services/marketplaceService";
 
@@ -132,6 +133,7 @@ function DistributionProfileCard({ view, selected }: { view: DistributionProfile
 function DistributionProfileDetail({ view }: { view: DistributionProfileView }) {
   const { profile } = view;
   const revenueSharingQuery = useDistributionProfileRevenueSharing(profile.slug);
+  const intelligenceQuery = useDistributionIntelligenceSnapshot(profile.id);
   const revenueSharing = revenueSharingQuery.data;
 
   return (
@@ -151,6 +153,12 @@ function DistributionProfileDetail({ view }: { view: DistributionProfileView }) 
         <Metric label="Trust label" value={profile.trustLabel} />
         <Metric label="Commercial label" value={profile.commercialLabel} />
       </div>
+
+      <MarketplaceIntelligencePanel
+        title="Distribution Intelligence Panel"
+        description="Distribution Intelligence Panel summarizes profile relationships, associated channels and distribution boundaries from static mock data only. It does not enable partner analytics, tracking real, BI real, scoring or automated commercial action."
+        snapshot={intelligenceQuery.data}
+      />
 
       <section className="grid gap-4 lg:grid-cols-2">
         <ReferencePanel title="Associated channels" items={view.channels.map((channel) => channel.channel.displayName)} />

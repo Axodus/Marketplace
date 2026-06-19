@@ -1,15 +1,19 @@
 import { Link, useParams } from "react-router-dom";
 import { BookMarked, Share2, ShieldAlert, Sparkles } from "lucide-react";
+import { MarketplaceIntelligencePanel } from "../components/MarketplaceIntelligencePanel";
+import { RecommendationPreviewPanel } from "../components/RecommendationPreviewPanel";
 import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
 import { NeutralBadge } from "../components/StatusBadge";
 import {
   useCatalogSegments,
+  useCatalogIntelligenceSnapshot,
   useCuratedCatalog,
   useCuratedCatalogDistribution,
   useCuratedCatalogRevenueSharing,
   useCuratedCatalogs,
   useEditorialRules,
-  useFeaturedCatalogs
+  useFeaturedCatalogs,
+  useRecommendationPreviewsByScope
 } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type {
@@ -34,6 +38,8 @@ export function CuratedCatalogsPage() {
   const featuredCatalogs = featuredQuery.data ?? [];
   const segments = segmentsQuery.data ?? [];
   const selected = catalogId ? detailQuery.data : null;
+  const catalogIntelligenceQuery = useCatalogIntelligenceSnapshot(selected?.catalog.id);
+  const recommendationPreviewsQuery = useRecommendationPreviewsByScope("curated-catalog", selected?.catalog.id);
   useMarketplaceTelemetry("curated-catalogs-page", {
     catalogCount: catalogs.length,
     featuredCount: featuredCatalogs.length,
@@ -92,7 +98,7 @@ export function CuratedCatalogsPage() {
       <FeaturedCatalogsSection featuredCatalogs={featuredCatalogs} />
       <CatalogSegmentsSection segments={segments} />
 
-      {selected && <CuratedCatalogDetail view={selected} distribution={distributionQuery.data ?? null} revenueSharing={revenueSharingQuery.data ?? null} editorialRules={editorialRulesQuery.data ?? selected.editorialRules.map((rule) => ({
+      {selected && <CuratedCatalogDetail view={selected} distribution={distributionQuery.data ?? null} revenueSharing={revenueSharingQuery.data ?? null} intelligence={catalogIntelligenceQuery.data} recommendationPreviews={recommendationPreviewsQuery.data} editorialRules={editorialRulesQuery.data ?? selected.editorialRules.map((rule) => ({
         rule,
         inclusionReason: rule.effect === "include" || rule.effect === "feature" ? rule.reason : undefined,
         exclusionReason: rule.effect === "exclude" || rule.effect === "restrict" ? rule.reason : undefined,
@@ -238,11 +244,15 @@ function CuratedCatalogDetail({
   view,
   distribution,
   revenueSharing,
+  intelligence,
+  recommendationPreviews,
   editorialRules
 }: {
   view: CuratedCatalogView;
   distribution: CuratedCatalogDistributionView | null;
   revenueSharing: import("../services/marketplaceService").RevenueSharingIntegrationView | null;
+  intelligence: ReturnType<typeof useCatalogIntelligenceSnapshot>["data"];
+  recommendationPreviews: ReturnType<typeof useRecommendationPreviewsByScope>["data"];
   editorialRules: Array<{
     rule: CuratedCatalogView["editorialRules"][number];
     inclusionReason?: string;
@@ -271,6 +281,16 @@ function CuratedCatalogDetail({
         <Metric label="Can settle" value={view.items.some((item) => item.item.canSettle) ? "unexpected" : "false"} />
       </div>
       <BoundaryNotes notes={view.boundaryNotes} />
+      <MarketplaceIntelligencePanel
+        title="Catalog Intelligence Panel"
+        description="Catalog Intelligence Panel summarizes curated catalog composition, editorial rules and tenant catalog alignment from static mock records only. It is not BI, scoring, recommendation engine or automated curation."
+        snapshot={intelligence}
+      />
+      <RecommendationPreviewPanel
+        title="Curated Catalog Recommendation Preview"
+        description="Curated Catalog Recommendation Preview explains editorial order, mock fit and mock opportunity labels without recommendation engine, automated ranking, personalization, profiling or automated curation."
+        previews={recommendationPreviews}
+      />
       {distribution ? <CuratedDistributionSection view={distribution} /> : null}
       {revenueSharing ? (
         <RevenueSharingIntegrationPanel

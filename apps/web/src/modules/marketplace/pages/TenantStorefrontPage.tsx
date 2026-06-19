@@ -2,10 +2,12 @@ import { Link, useParams } from "react-router-dom";
 import { BookMarked, Building2, Globe2, Share2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import type { CSSProperties } from "react";
 import { ProductCard } from "../components/ProductCard";
+import { MarketplaceIntelligencePanel } from "../components/MarketplaceIntelligencePanel";
+import { RecommendationPreviewPanel } from "../components/RecommendationPreviewPanel";
 import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
 import type { Tenant, TenantBranding, TenantCatalog, TenantCatalogResolution, TenantDomain, TenantDomainAlias } from "../types/marketplace";
 import type { TenantCuratedCatalogView, TenantDistributionView } from "../services/marketplaceService";
-import { useTenant, useTenantDistribution, useTenantRevenueSharing, useTenants } from "../hooks/useMarketplace";
+import { useRecommendationPreviewsByScope, useTenant, useTenantDistribution, useTenantIntelligenceSnapshot, useTenantRevenueSharing, useTenants } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 
 export function TenantStorefrontPage() {
@@ -47,6 +49,8 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
   const { data } = useTenant(tenantIdOrSlug);
   const tenantDistributionQuery = useTenantDistribution(tenantIdOrSlug);
   const tenantRevenueSharingQuery = useTenantRevenueSharing(tenantIdOrSlug);
+  const tenantIntelligenceQuery = useTenantIntelligenceSnapshot(data?.tenant.id);
+  const recommendationPreviewsQuery = useRecommendationPreviewsByScope("tenant", data?.tenant.id);
 
   if (!data) return null;
 
@@ -98,6 +102,18 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
           <Stat label="Routing mode" value={routingContext.resolution.routingMode} />
         </div>
       </section>
+
+      <MarketplaceIntelligencePanel
+        title="Tenant Intelligence Panel"
+        description="Tenant Intelligence Panel summarizes tenant catalog, curated catalog, distribution and revenue-sharing mock context without tenant profiling, tracking real, BI real, scoring real or automated decisioning."
+        snapshot={tenantIntelligenceQuery.data}
+      />
+
+      <RecommendationPreviewPanel
+        title="Tenant Recommendation Preview"
+        description="Tenant Recommendation Preview shows static editorial/mock fit and opportunity labels for this tenant context only. It does not personalize, profile users, use behavioral tracking, rank automatically or trigger commercial action."
+        previews={recommendationPreviewsQuery.data}
+      />
 
       <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded border border-slate-200 bg-white p-5 shadow-sm">

@@ -1,8 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { CircleDollarSign, FileSearch, History, ShieldCheck, Split } from "lucide-react";
+import { RevenueTrustRiskIntelligencePanel } from "../components/RevenueTrustRiskIntelligencePanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useRevenueSharingPolicies, useRevenueSharingPolicy, useRevenueSharingPreview } from "../hooks/useMarketplace";
+import { useRevenueSharingPolicies, useRevenueSharingPolicy, useRevenueSharingPreview, useRevenueTrustRiskIntelligence } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { CommissionModelView, RevenueSharingPolicyView, RevenueSharingPreviewView } from "../services/marketplaceService";
 
@@ -13,6 +14,7 @@ export function RevenueSharingPage() {
   const policies = policiesQuery.data ?? [];
   const selected = policySlug ? detailQuery.data : policies[0];
   const previewQuery = useRevenueSharingPreview(selected?.policy.slug);
+  const revenueTrustRiskQuery = useRevenueTrustRiskIntelligence(selected?.policy.slug);
   const preview = previewQuery.data ?? null;
 
   useMarketplaceTelemetry("revenue-sharing-page", {
@@ -71,7 +73,7 @@ export function RevenueSharingPage() {
         </div>
       </section>
 
-      {selected ? <RevenueSharingPolicyDetail view={selected} preview={preview} /> : null}
+      {selected ? <RevenueSharingPolicyDetail view={selected} preview={preview} revenueTrustRisk={revenueTrustRiskQuery.data} /> : null}
 
       <section className="grid gap-4 lg:grid-cols-3">
         {policies.map((view) => (
@@ -114,7 +116,15 @@ function RevenueSharingPolicyCard({ view, selected }: { view: RevenueSharingPoli
   );
 }
 
-function RevenueSharingPolicyDetail({ view, preview }: { view: RevenueSharingPolicyView; preview: RevenueSharingPreviewView | null }) {
+function RevenueSharingPolicyDetail({
+  view,
+  preview,
+  revenueTrustRisk
+}: {
+  view: RevenueSharingPolicyView;
+  preview: RevenueSharingPreviewView | null;
+  revenueTrustRisk: ReturnType<typeof useRevenueTrustRiskIntelligence>["data"];
+}) {
   const { policy, settlementBoundary } = view;
 
   return (
@@ -180,6 +190,12 @@ function RevenueSharingPolicyDetail({ view, preview }: { view: RevenueSharingPol
         <ReferencePanel title="Revenue Participants" items={view.participants.map((participant) => `${participant.displayName} - ${participant.participantType} - payout ${participant.canReceivePayout}`)} />
         <ReferencePanel title="Attribution Sources" items={view.attributionSources.map((source) => `${source.source.displayName} - ${source.source.trackingMode}`)} />
       </section>
+
+      <RevenueTrustRiskIntelligencePanel
+        title="Revenue Intelligence Summary"
+        description="Revenue Intelligence Summary links preview, settlement boundary and trust/risk context without financial BI, accounting, tax, settlement, payout, automated monetization or commercial action."
+        view={revenueTrustRisk}
+      />
 
       {preview ? <RevenueSharingPreviewPanel view={preview} /> : null}
 

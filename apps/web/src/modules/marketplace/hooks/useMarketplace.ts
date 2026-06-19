@@ -90,13 +90,41 @@ import {
   resolveRevenueIntelligenceSnapshot,
   resolveCommunityIntelligenceSnapshot,
   resolveFederationIntelligenceSnapshot,
+  resolveMarketplaceIntelligencePanel,
+  resolveTenantIntelligencePanel,
+  resolveCatalogIntelligencePanel,
+  resolveDistributionIntelligencePanel,
+  resolveCommunityIntelligencePanel,
+  resolveAttributionIntelligencePanel,
   resolveSettlementBoundary,
   getMarketplaceInsightById,
   getInsightSignalById,
+  getRevenueIntelligenceSummaryByPolicy,
+  getRevenuePreviewInsightByPolicy,
+  getRiskTrustInsightById,
+  getRiskTrustInsightsByDistributionAttribution,
+  getRiskTrustInsightsByRevenuePolicy,
+  getSettlementBoundaryInsightByPolicy,
+  getRecommendationPreviewById,
+  getRankingExplanationById,
   getRevenueSharingPolicyById,
   listInsightSignals,
   listInsightSignalsByInsight,
   listInsightSignalsByScope,
+  listRecommendationPreviews,
+  listRecommendationPreviewsByScope,
+  listRankingExplanations,
+  listRankingExplanationsByScope,
+  listRevenueIntelligenceSummaries,
+  listRiskTrustInsights,
+  listRiskTrustInsightsByScope,
+  explainRecommendationRanking,
+  resolveFederationIntelligenceContext,
+  resolveRevenueTrustRiskIntelligence,
+  resolveRiskTrustContext,
+  validateRevenuePreviewInsightMockOnly,
+  validateRiskTrustInsightMockOnly,
+  validateRecommendationPreviewMockOnly,
   validateIntelligenceSnapshotMockOnly,
   validateMarketplaceInsightMockOnly,
   listRevenueSharingAuditEntriesByPolicy,
@@ -812,6 +840,225 @@ export function useFederationIntelligenceSnapshot(collectionId?: string) {
     queryKey: ["marketplace-intelligence-snapshot-federation", collectionId],
     enabled: Boolean(collectionId),
     queryFn: () => resolveFederationIntelligenceSnapshot(collectionId ?? "")
+  });
+}
+
+export function useMarketplaceIntelligencePanel() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-panel"],
+    queryFn: () => resolveMarketplaceIntelligencePanel()
+  });
+}
+
+export function useTenantIntelligencePanel(tenantId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-panel-tenant", tenantId],
+    enabled: Boolean(tenantId),
+    queryFn: () => resolveTenantIntelligencePanel(tenantId ?? "")
+  });
+}
+
+export function useCatalogIntelligencePanel(curatedCatalogId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-panel-catalog", curatedCatalogId],
+    enabled: Boolean(curatedCatalogId),
+    queryFn: () => resolveCatalogIntelligencePanel(curatedCatalogId ?? "")
+  });
+}
+
+export function useDistributionIntelligencePanel(distributionId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-panel-distribution", distributionId],
+    enabled: Boolean(distributionId),
+    queryFn: () => resolveDistributionIntelligencePanel(distributionId ?? "")
+  });
+}
+
+export function useCommunityIntelligencePanel(communityDistributionId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-panel-community", communityDistributionId],
+    enabled: Boolean(communityDistributionId),
+    queryFn: () => resolveCommunityIntelligencePanel(communityDistributionId ?? "")
+  });
+}
+
+export function useAttributionIntelligencePanel(attributionSourceIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-panel-attribution", attributionSourceIdOrSlug],
+    enabled: Boolean(attributionSourceIdOrSlug),
+    queryFn: () => resolveAttributionIntelligencePanel(attributionSourceIdOrSlug ?? "")
+  });
+}
+
+export function useRecommendationPreviews() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-recommendation-previews"],
+    queryFn: () => listRecommendationPreviews()
+  });
+}
+
+export function useRecommendationPreview(previewIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-recommendation-preview", previewIdOrSlug],
+    enabled: Boolean(previewIdOrSlug),
+    queryFn: () => getRecommendationPreviewById(previewIdOrSlug ?? "")
+  });
+}
+
+export function useRecommendationPreviewsByScope(scope?: Parameters<typeof listRecommendationPreviewsByScope>[0], scopeId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-recommendation-previews-by-scope", scope, scopeId],
+    enabled: Boolean(scope),
+    queryFn: () => listRecommendationPreviewsByScope(scope as Parameters<typeof listRecommendationPreviewsByScope>[0], scopeId)
+  });
+}
+
+export function useRankingExplanations() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-ranking-explanations"],
+    queryFn: () => listRankingExplanations()
+  });
+}
+
+export function useRankingExplanation(explanationIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-ranking-explanation", explanationIdOrSlug],
+    enabled: Boolean(explanationIdOrSlug),
+    queryFn: () => getRankingExplanationById(explanationIdOrSlug ?? "")
+  });
+}
+
+export function useRankingExplanationsByScope(scope?: Parameters<typeof listRankingExplanationsByScope>[0], scopeId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-ranking-explanations-by-scope", scope, scopeId],
+    enabled: Boolean(scope),
+    queryFn: () => listRankingExplanationsByScope(scope as Parameters<typeof listRankingExplanationsByScope>[0], scopeId)
+  });
+}
+
+export function useRecommendationRankingExplanation(previewIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-recommendation-ranking-explanation", previewIdOrSlug],
+    enabled: Boolean(previewIdOrSlug),
+    queryFn: () => explainRecommendationRanking(previewIdOrSlug ?? "")
+  });
+}
+
+export function useRecommendationPreviewValidation(previewIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-recommendation-preview-validation", previewIdOrSlug],
+    enabled: Boolean(previewIdOrSlug),
+    queryFn: () => validateRecommendationPreviewMockOnly(previewIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueIntelligenceSummaries() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-revenue-summaries"],
+    queryFn: () => listRevenueIntelligenceSummaries()
+  });
+}
+
+export function useRevenueTrustRiskIntelligence(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-revenue-trust-risk", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => resolveRevenueTrustRiskIntelligence(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenueIntelligenceSummary(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-revenue-summary", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => getRevenueIntelligenceSummaryByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRevenuePreviewInsight(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-revenue-preview-insight", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => getRevenuePreviewInsightByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useSettlementBoundaryInsight(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-settlement-boundary-insight", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => getSettlementBoundaryInsightByPolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRiskTrustInsights() {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-risk-trust-insights"],
+    queryFn: () => listRiskTrustInsights()
+  });
+}
+
+export function useRiskTrustInsight(insightIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-risk-trust-insight", insightIdOrSlug],
+    enabled: Boolean(insightIdOrSlug),
+    queryFn: () => getRiskTrustInsightById(insightIdOrSlug ?? "")
+  });
+}
+
+export function useRiskTrustInsightsByScope(scope?: Parameters<typeof listRiskTrustInsightsByScope>[0], scopeId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-risk-trust-insights-by-scope", scope, scopeId],
+    enabled: Boolean(scope),
+    queryFn: () => listRiskTrustInsightsByScope(scope as Parameters<typeof listRiskTrustInsightsByScope>[0], scopeId)
+  });
+}
+
+export function useRiskTrustInsightsByRevenuePolicy(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-risk-trust-by-revenue-policy", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => getRiskTrustInsightsByRevenuePolicy(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRiskTrustInsightsByDistributionAttribution(attributionSourceIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-risk-trust-by-attribution", attributionSourceIdOrSlug],
+    enabled: Boolean(attributionSourceIdOrSlug),
+    queryFn: () => getRiskTrustInsightsByDistributionAttribution(attributionSourceIdOrSlug ?? "")
+  });
+}
+
+export function useFederationIntelligenceContext(collectionIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-federation-context", collectionIdOrSlug],
+    enabled: Boolean(collectionIdOrSlug),
+    queryFn: () => resolveFederationIntelligenceContext(collectionIdOrSlug ?? "")
+  });
+}
+
+export function useRiskTrustContext(scope?: Parameters<typeof resolveRiskTrustContext>[0], scopeId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-risk-trust-context", scope, scopeId],
+    enabled: Boolean(scope && scopeId),
+    queryFn: () => resolveRiskTrustContext(scope as Parameters<typeof resolveRiskTrustContext>[0], scopeId ?? "")
+  });
+}
+
+export function useRevenuePreviewInsightValidation(policyIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-revenue-preview-insight-validation", policyIdOrSlug],
+    enabled: Boolean(policyIdOrSlug),
+    queryFn: () => validateRevenuePreviewInsightMockOnly(policyIdOrSlug ?? "")
+  });
+}
+
+export function useRiskTrustInsightValidation(insightIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-intelligence-risk-trust-insight-validation", insightIdOrSlug],
+    enabled: Boolean(insightIdOrSlug),
+    queryFn: () => validateRiskTrustInsightMockOnly(insightIdOrSlug ?? "")
   });
 }
 

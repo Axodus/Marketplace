@@ -1,9 +1,20 @@
 import { Link, useParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { Globe2, Layers3, ShieldAlert, UsersRound } from "lucide-react";
+import { MarketplaceIntelligencePanel } from "../components/MarketplaceIntelligencePanel";
+import { RecommendationPreviewPanel } from "../components/RecommendationPreviewPanel";
 import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
+import { RevenueTrustRiskIntelligencePanel } from "../components/RevenueTrustRiskIntelligencePanel";
 import { NeutralBadge } from "../components/StatusBadge";
-import { useCommunityDistributionContext, useCommunityMarketplaceDistribution, useCommunityMarketplaceDistributions, useCommunityRevenueSharing } from "../hooks/useMarketplace";
+import {
+  useCommunityDistributionContext,
+  useCommunityIntelligenceSnapshot,
+  useCommunityMarketplaceDistribution,
+  useCommunityMarketplaceDistributions,
+  useCommunityRevenueSharing,
+  useFederationIntelligenceContext,
+  useRecommendationPreviewsByScope
+} from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 import type { CommunityDistributionItemView, CommunityDistributionView } from "../services/marketplaceService";
 
@@ -117,6 +128,9 @@ function CommunityDistributionCard({ view, selected }: { view: CommunityDistribu
 function CommunityDistributionDetail({ view }: { view: CommunityDistributionView }) {
   const { distribution, context } = view;
   const revenueSharingQuery = useCommunityRevenueSharing(distribution.slug);
+  const intelligenceQuery = useCommunityIntelligenceSnapshot(distribution.id);
+  const recommendationPreviewsQuery = useRecommendationPreviewsByScope("community-distribution", distribution.id);
+  const federationContextQuery = useFederationIntelligenceContext(view.collections.find((collection) => collection.isFederated)?.id);
   const revenueSharing = revenueSharingQuery.data;
   return (
     <section className="space-y-5 rounded border border-teal-200 bg-teal-50 p-5 shadow-sm">
@@ -135,6 +149,24 @@ function CommunityDistributionDetail({ view }: { view: CommunityDistributionView
         <Metric label="Attribution" value={view.attributionSource?.source.displayName ?? "none"} />
         <Metric label="Commercial origin" value={context.commercialOriginLabel} />
       </div>
+
+      <MarketplaceIntelligencePanel
+        title="Community Intelligence Panel"
+        description="Community Intelligence Panel summarizes community distribution, federated exposure and attribution boundaries from static mock records only. It is not member analytics, behavioral collection, wallet tracking, retargeting or automated commercial action."
+        snapshot={intelligenceQuery.data}
+      />
+
+      <RecommendationPreviewPanel
+        title="Community Recommendation Preview"
+        description="Community Recommendation Preview explains manual community exposure and federated visibility notes only. It does not profile members, track behavior, use wallet profiling, retarget, rank automatically or trigger commercial action."
+        previews={recommendationPreviewsQuery.data}
+      />
+
+      <RevenueTrustRiskIntelligencePanel
+        title="Community Trust Insight"
+        description="Community Trust Insight preserves federated asset origin, provider, validation status, provenance, risk classification and read-only trust boundaries without member analytics, risk scoring, trust scoring or automated monetization."
+        view={federationContextQuery.data}
+      />
 
       <section className="grid gap-4 lg:grid-cols-2">
         <ReferencePanel title="Tenants exposed" items={view.tenants.map((tenant) => tenant.displayName)} />

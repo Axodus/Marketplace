@@ -23,6 +23,14 @@ import {
   marketplaceInsights,
   marketplaceIntelligenceAuditNotes,
   marketplaceIntelligenceSnapshots,
+  marketplaceFederationIntelligenceContexts,
+  marketplaceProviderValidationInsights,
+  marketplaceRankingExplanations,
+  marketplaceRecommendationPreviews,
+  marketplaceProvenanceInsights,
+  marketplaceRevenueIntelligenceSummaries,
+  marketplaceRevenuePreviewInsights,
+  marketplaceRiskTrustInsights,
   marketplaceLicenses,
   marketplaceParticipantShares,
   marketplaceProducts,
@@ -33,6 +41,7 @@ import {
   marketplaceRevenueSplitRules,
   marketplaceSellers,
   marketplaceSettlementBoundaries,
+  marketplaceSettlementBoundaryInsights,
   marketplaceSettlementPreviewMocks,
   marketplaceRevenueSharingAuditEntries,
   marketplaceTenantDistributionConfigs,
@@ -78,6 +87,7 @@ import type {
   DraftListingInput,
   DraftListingPreview,
   FederationProviderDescriptor,
+  FederationIntelligenceContext,
   FederationTrustBoundary,
   FeaturedCatalog,
   License,
@@ -99,7 +109,13 @@ import type {
   ProductCategory,
   ProductStanding,
   PurchaseRecord,
+  RankingExplanation,
+  RecommendationPreview,
+  ProviderValidationInsight,
+  ProvenanceInsight,
   RevenueParticipant,
+  RevenueIntelligenceSummary,
+  RevenuePreviewInsight,
   RevenueSharingAuditEntry,
   RevenueSharingIntegratedContext,
   RevenueSharingPreview,
@@ -109,6 +125,8 @@ import type {
   SettlementPreviewMock,
   Seller,
   SettlementBoundary,
+  SettlementBoundaryInsight,
+  RiskTrustInsight,
   Tenant,
   TenantBranding,
   TenantCatalog,
@@ -197,6 +215,15 @@ const insightSignals = marketplaceInsightSignals as InsightSignal[];
 const intelligenceSnapshots = marketplaceIntelligenceSnapshots as IntelligenceSnapshot[];
 const dataBoundaries = marketplaceDataBoundaries as DataBoundary[];
 const intelligenceAuditNotes = marketplaceIntelligenceAuditNotes as IntelligenceAuditNote[];
+const recommendationPreviews = marketplaceRecommendationPreviews as RecommendationPreview[];
+const rankingExplanations = marketplaceRankingExplanations as RankingExplanation[];
+const revenueIntelligenceSummaries = marketplaceRevenueIntelligenceSummaries as RevenueIntelligenceSummary[];
+const revenuePreviewInsights = marketplaceRevenuePreviewInsights as RevenuePreviewInsight[];
+const settlementBoundaryInsights = marketplaceSettlementBoundaryInsights as SettlementBoundaryInsight[];
+const riskTrustInsights = marketplaceRiskTrustInsights as RiskTrustInsight[];
+const federationIntelligenceContexts = marketplaceFederationIntelligenceContexts as FederationIntelligenceContext[];
+const providerValidationInsights = marketplaceProviderValidationInsights as ProviderValidationInsight[];
+const provenanceInsights = marketplaceProvenanceInsights as ProvenanceInsight[];
 const commissionModels = marketplaceCommissionModels as CommissionModel[];
 const revenueParticipants = marketplaceRevenueParticipants as RevenueParticipant[];
 const revenueSplitRules = marketplaceRevenueSplitRules as RevenueSplitRule[];
@@ -464,6 +491,46 @@ export interface IntelligenceSnapshotView {
   insights: MarketplaceInsight[];
   dataBoundary: DataBoundary | null;
   sourceLabel: string;
+  boundaryNotes: string[];
+}
+
+export interface MarketplaceIntelligencePanelView {
+  panelType: "marketplace" | "tenant" | "catalog" | "distribution" | "community" | "attribution";
+  title: string;
+  snapshot: IntelligenceSnapshotView | null;
+  badges: string[];
+  boundaryWarnings: string[];
+  canUseAnalyticsReal: boolean;
+  canUseTrackingReal: boolean;
+  canUseBIReal: boolean;
+  canScore: boolean;
+  canRecommendAutomatically: boolean;
+  canUseAutomatedDecisioning: boolean;
+  canExportData: boolean;
+}
+
+export interface RecommendationPreviewView {
+  preview: RecommendationPreview;
+  rankingExplanation: RankingExplanation | null;
+  mockSignals: InsightSignal[];
+  dataBoundary: DataBoundary | null;
+  targetLabel: string;
+  boundaryNotes: string[];
+}
+
+export interface RevenueTrustRiskIntelligenceView {
+  revenueSummary: RevenueIntelligenceSummary | null;
+  revenuePreviewInsight: RevenuePreviewInsight | null;
+  settlementBoundaryInsight: SettlementBoundaryInsight | null;
+  riskTrustInsights: RiskTrustInsight[];
+  federationContext: FederationIntelligenceContext | null;
+  providerValidationInsight: ProviderValidationInsight | null;
+  provenanceInsight: ProvenanceInsight | null;
+  dataBoundary: DataBoundary | null;
+  revenuePreview: RevenueSharingPreviewView | null;
+  settlementBoundary: SettlementBoundary | null;
+  collection: MarketplaceCollection | null;
+  provider: FederationProviderDescriptor | null;
   boundaryNotes: string[];
 }
 
@@ -4616,6 +4683,373 @@ export function validateIntelligenceSnapshotMockOnly(snapshotIdOrSlug: string) {
     isNoBI: !snapshot.usesBI && !dataBoundary?.usesBI,
     isNoML: !snapshot.usesMLModel && !dataBoundary?.usesMLModel,
     isNoAutomatedDecisioning: !snapshot.usesAutomatedDecisioning && !dataBoundary?.usesAutomatedDecisioning && !dataBoundary?.canTriggerAction
+  };
+}
+
+const intelligencePanelBadges = ["mock-only", "no-tracking", "no-BI", "no-scoring", "no-recommendation-engine", "no-automated-decisioning"];
+
+function buildMarketplaceIntelligencePanelView(
+  panelType: MarketplaceIntelligencePanelView["panelType"],
+  title: string,
+  snapshot: IntelligenceSnapshotView | null
+): MarketplaceIntelligencePanelView {
+  return {
+    panelType,
+    title,
+    snapshot,
+    badges: intelligencePanelBadges,
+    boundaryWarnings: snapshot?.boundaryNotes ?? [
+      "No Intelligence Snapshot is configured for this mock context.",
+      "No analytics real, tracking real, BI real, scoring real, recommendation engine or automated decisioning was attempted."
+    ],
+    canUseAnalyticsReal: false,
+    canUseTrackingReal: false,
+    canUseBIReal: false,
+    canScore: false,
+    canRecommendAutomatically: false,
+    canUseAutomatedDecisioning: false,
+    canExportData: false
+  };
+}
+
+export function resolveMarketplaceIntelligencePanel() {
+  return buildMarketplaceIntelligencePanelView("marketplace", "Marketplace Intelligence Panel", resolveMarketplaceIntelligenceSnapshot());
+}
+
+export function resolveTenantIntelligencePanel(tenantId: string) {
+  return buildMarketplaceIntelligencePanelView("tenant", "Tenant Intelligence Panel", resolveTenantIntelligenceSnapshot(tenantId));
+}
+
+export function resolveCatalogIntelligencePanel(curatedCatalogId: string) {
+  return buildMarketplaceIntelligencePanelView("catalog", "Catalog Intelligence Panel", resolveCatalogIntelligenceSnapshot(curatedCatalogId));
+}
+
+export function resolveDistributionIntelligencePanel(distributionId: string) {
+  return buildMarketplaceIntelligencePanelView("distribution", "Distribution Intelligence Panel", resolveDistributionIntelligenceSnapshot(distributionId));
+}
+
+export function resolveCommunityIntelligencePanel(communityDistributionId: string) {
+  return buildMarketplaceIntelligencePanelView("community", "Community Intelligence Panel", resolveCommunityIntelligenceSnapshot(communityDistributionId));
+}
+
+export function resolveAttributionIntelligencePanel(attributionSourceIdOrSlug: string) {
+  const sourceView = getAttributionSourceById(attributionSourceIdOrSlug) ?? getAttributionSourceBySlug(attributionSourceIdOrSlug);
+  const distributionId = sourceView?.channel?.channel.id ?? sourceView?.source.channelId ?? "";
+  return buildMarketplaceIntelligencePanelView("attribution", "Attribution Intelligence Panel", distributionId ? resolveDistributionIntelligenceSnapshot(distributionId) : null);
+}
+
+function getRecommendationTargetLabel(preview: RecommendationPreview) {
+  if (preview.targetType === "product") return products.find((product) => product.id === preview.targetId)?.title ?? preview.targetId;
+  if (preview.targetType === "collection") return collections.find((collection) => collection.id === preview.targetId)?.name ?? preview.targetId;
+  if (preview.targetType === "curated-catalog") return curatedCatalogs.find((catalog) => catalog.id === preview.targetId)?.displayName ?? preview.targetId;
+  if (preview.targetType === "tenant") return tenants.find((tenant) => tenant.id === preview.targetId)?.displayName ?? preview.targetId;
+  if (preview.targetType === "distribution-channel") return distributionChannels.find((channel) => channel.id === preview.targetId)?.displayName ?? preview.targetId;
+  if (preview.targetType === "community-distribution") return communityDistributions.find((distribution) => distribution.id === preview.targetId)?.displayName ?? preview.targetId;
+  return preview.targetId;
+}
+
+function buildRecommendationBoundaryNotes(preview: RecommendationPreview, rankingExplanation: RankingExplanation | null, dataBoundary: DataBoundary | null) {
+  return [
+    "Recommendation Preview is preview-only and mock/config-first.",
+    "Ranking Explanation is editorial mock or manual mock only.",
+    "No recommendation engine, no automated ranking, no personalization, no profiling, no behavioral tracking, no wallet profiling, no automated decisioning and no commercial action are active.",
+    ...(dataBoundary?.warnings ?? []),
+    ...(dataBoundary?.disclaimers ?? []),
+    ...(rankingExplanation?.warnings ?? []),
+    ...(rankingExplanation?.disclaimers ?? []),
+    ...preview.warnings,
+    ...preview.disclaimers
+  ];
+}
+
+function buildRecommendationPreviewView(preview: RecommendationPreview): RecommendationPreviewView {
+  const rankingExplanation = rankingExplanations.find((explanation) => explanation.id === preview.rankingExplanationId) ?? null;
+  const dataBoundary = dataBoundaries.find((boundary) => boundary.id === preview.dataBoundaryId) ?? null;
+  return {
+    preview,
+    rankingExplanation,
+    mockSignals: rankingExplanation ? insightSignals.filter((signal) => rankingExplanation.mockSignalIds.includes(signal.id)) : [],
+    dataBoundary,
+    targetLabel: getRecommendationTargetLabel(preview),
+    boundaryNotes: buildRecommendationBoundaryNotes(preview, rankingExplanation, dataBoundary)
+  };
+}
+
+export function listRecommendationPreviews() {
+  return recommendationPreviews.map(buildRecommendationPreviewView);
+}
+
+export function getRecommendationPreviewById(previewIdOrSlug: string) {
+  const preview = recommendationPreviews.find((entry) => entry.id === previewIdOrSlug || entry.slug === previewIdOrSlug);
+  return preview ? buildRecommendationPreviewView(preview) : null;
+}
+
+export function listRecommendationPreviewsByScope(scope: RecommendationPreview["scope"], scopeId?: string) {
+  return recommendationPreviews.filter((preview) => preview.scope === scope && (!scopeId || preview.scopeId === scopeId)).map(buildRecommendationPreviewView);
+}
+
+export function listRankingExplanations() {
+  return rankingExplanations;
+}
+
+export function getRankingExplanationById(explanationIdOrSlug: string) {
+  return rankingExplanations.find((entry) => entry.id === explanationIdOrSlug || entry.slug === explanationIdOrSlug) ?? null;
+}
+
+export function listRankingExplanationsByScope(scope: RankingExplanation["scope"], scopeId?: string) {
+  return rankingExplanations.filter((explanation) => explanation.scope === scope && (!scopeId || explanation.scopeId === scopeId));
+}
+
+export function explainRecommendationRanking(previewIdOrSlug: string) {
+  const view = getRecommendationPreviewById(previewIdOrSlug);
+  if (!view) return [];
+  return [
+    view.preview.reason,
+    view.preview.discoveryNote,
+    view.rankingExplanation?.reason ?? "No Ranking Explanation configured.",
+    view.rankingExplanation?.editorialReason ?? "No Editorial Ranking Notes configured.",
+    view.rankingExplanation?.editorialRankingNote ?? "No Editorial Ranking Note configured.",
+    ...view.boundaryNotes
+  ];
+}
+
+export function validateRecommendationPreviewMockOnly(previewIdOrSlug: string) {
+  const view = getRecommendationPreviewById(previewIdOrSlug);
+  if (!view) return null;
+  const { preview, rankingExplanation, dataBoundary } = view;
+  const isMockOnly =
+    preview.isSimulated &&
+    !preview.isPersonalized &&
+    !preview.usesBehavioralData &&
+    !preview.usesWalletProfiling &&
+    !preview.usesAutomatedRanking &&
+    !preview.usesRecommendationEngine &&
+    !preview.canTriggerAction &&
+    Boolean(rankingExplanation) &&
+    !rankingExplanation?.isAlgorithmic &&
+    !rankingExplanation?.usesBehavioralData &&
+    !rankingExplanation?.usesPersonalization &&
+    !rankingExplanation?.usesAutomatedDecisioning &&
+    Boolean(dataBoundary) &&
+    !dataBoundary?.usesRealTracking &&
+    !dataBoundary?.usesBehavioralData &&
+    !dataBoundary?.usesWalletProfiling &&
+    !dataBoundary?.usesBI &&
+    !dataBoundary?.usesMLModel &&
+    !dataBoundary?.usesAutomatedDecisioning &&
+    !dataBoundary?.canExportData &&
+    !dataBoundary?.canTriggerAction;
+
+  return {
+    previewId: preview.id,
+    isMockOnly,
+    isPreviewOnly: preview.status === "preview-only" || preview.status === "editorial-mock" || preview.status === "manual-review-required",
+    isNoRecommendationEngine: !preview.usesRecommendationEngine,
+    isNoAutomatedRanking: !preview.usesAutomatedRanking && !rankingExplanation?.isAlgorithmic,
+    isNoPersonalization: !preview.isPersonalized && !rankingExplanation?.usesPersonalization,
+    isNoProfiling: !preview.usesWalletProfiling && !preview.usesBehavioralData,
+    isNoAutomatedDecisioning: !preview.canTriggerAction && !rankingExplanation?.usesAutomatedDecisioning && !dataBoundary?.canTriggerAction
+  };
+}
+
+function getDataBoundaryById(boundaryId?: string) {
+  return boundaryId ? dataBoundaries.find((boundary) => boundary.id === boundaryId) ?? null : null;
+}
+
+function getSettlementBoundaryById(boundaryId?: string) {
+  return boundaryId ? settlementBoundaries.find((boundary) => boundary.id === boundaryId) ?? null : null;
+}
+
+function getRevenueSummaryByPolicy(policyIdOrSlug: string) {
+  const policy = getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug);
+  const key = policy?.id ?? policyIdOrSlug;
+  return revenueIntelligenceSummaries.find((summary) => summary.policyId === key || summary.id === policyIdOrSlug || summary.slug === policyIdOrSlug) ?? null;
+}
+
+function buildRevenueTrustRiskBoundaryNotes(view: Omit<RevenueTrustRiskIntelligenceView, "boundaryNotes">) {
+  return [
+    "Revenue Intelligence Summary is mock/config-first and cannot become financial BI.",
+    "Risk Trust Insight is mock/config-first and cannot become risk scoring real or trust scoring real.",
+    "No financial BI, no accounting, no tax, no settlement, no payout, no billing, no risk scoring, no trust scoring, no automated decisioning, no automated blocking, no automated approval and no automated monetization are active.",
+    ...(view.dataBoundary?.warnings ?? []),
+    ...(view.dataBoundary?.disclaimers ?? []),
+    ...(view.revenueSummary?.warnings ?? []),
+    ...(view.revenueSummary?.disclaimers ?? []),
+    ...(view.revenuePreviewInsight?.warnings ?? []),
+    ...(view.revenuePreviewInsight?.disclaimers ?? []),
+    ...(view.settlementBoundaryInsight?.warnings ?? []),
+    ...(view.settlementBoundaryInsight?.disclaimers ?? []),
+    ...view.riskTrustInsights.flatMap((insight) => [...insight.warnings, ...insight.disclaimers]),
+    ...(view.federationContext?.warnings ?? []),
+    ...(view.federationContext?.disclaimers ?? []),
+    ...(view.providerValidationInsight?.warnings ?? []),
+    ...(view.providerValidationInsight?.disclaimers ?? []),
+    ...(view.provenanceInsight?.warnings ?? []),
+    ...(view.provenanceInsight?.disclaimers ?? [])
+  ];
+}
+
+function buildRevenueTrustRiskIntelligenceView(input: {
+  revenueSummary?: RevenueIntelligenceSummary | null;
+  revenuePreviewInsight?: RevenuePreviewInsight | null;
+  settlementBoundaryInsight?: SettlementBoundaryInsight | null;
+  riskTrustInsights?: RiskTrustInsight[];
+  federationContext?: FederationIntelligenceContext | null;
+}): RevenueTrustRiskIntelligenceView {
+  const revenueSummary = input.revenueSummary ?? null;
+  const revenuePreviewInsight = input.revenuePreviewInsight ?? (revenueSummary ? revenuePreviewInsights.find((insight) => insight.id === revenueSummary.revenuePreviewInsightId) ?? null : null);
+  const settlementBoundaryInsight =
+    input.settlementBoundaryInsight ?? (revenueSummary ? settlementBoundaryInsights.find((insight) => insight.id === revenueSummary.settlementBoundaryInsightId) ?? null : null);
+  const federationContext = input.federationContext ?? null;
+  const riskTrustInsightList = input.riskTrustInsights ?? [];
+  const primaryBoundaryId = revenueSummary?.dataBoundaryId ?? revenuePreviewInsight?.dataBoundaryId ?? settlementBoundaryInsight?.dataBoundaryId ?? federationContext?.dataBoundaryId ?? riskTrustInsightList[0]?.dataBoundaryId;
+  const collectionId = federationContext?.collectionId ?? riskTrustInsightList.find((insight) => insight.collectionId)?.collectionId;
+  const providerId = federationContext?.providerId ?? riskTrustInsightList.find((insight) => insight.providerId)?.providerId;
+  const viewBase = {
+    revenueSummary,
+    revenuePreviewInsight,
+    settlementBoundaryInsight,
+    riskTrustInsights: riskTrustInsightList,
+    federationContext,
+    providerValidationInsight: federationContext ? providerValidationInsights.find((insight) => insight.id === federationContext.providerValidationInsightId) ?? null : null,
+    provenanceInsight: federationContext ? provenanceInsights.find((insight) => insight.id === federationContext.provenanceInsightId) ?? null : null,
+    dataBoundary: getDataBoundaryById(primaryBoundaryId),
+    revenuePreview: revenueSummary ? resolveRevenueSharingPreview(revenueSummary.policyId) : revenuePreviewInsight ? resolveRevenueSharingPreview(revenuePreviewInsight.policyId) : null,
+    settlementBoundary: getSettlementBoundaryById(revenueSummary?.settlementBoundaryId ?? revenuePreviewInsight?.settlementBoundaryId ?? settlementBoundaryInsight?.settlementBoundaryId),
+    collection: collectionId ? collections.find((collection) => collection.id === collectionId || collection.slug === collectionId) ?? null : null,
+    provider: providerId ? getFederationProviderReference(providerId) : null
+  };
+
+  return {
+    ...viewBase,
+    boundaryNotes: buildRevenueTrustRiskBoundaryNotes(viewBase)
+  };
+}
+
+export function listRevenueIntelligenceSummaries() {
+  return revenueIntelligenceSummaries;
+}
+
+export function getRevenueIntelligenceSummaryByPolicy(policyIdOrSlug: string) {
+  return getRevenueSummaryByPolicy(policyIdOrSlug);
+}
+
+export function getRevenuePreviewInsightByPolicy(policyIdOrSlug: string) {
+  const policy = getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug);
+  const key = policy?.id ?? policyIdOrSlug;
+  return revenuePreviewInsights.find((insight) => insight.policyId === key || insight.previewId === policyIdOrSlug || insight.id === policyIdOrSlug || insight.slug === policyIdOrSlug) ?? null;
+}
+
+export function getSettlementBoundaryInsightByPolicy(policyIdOrSlug: string) {
+  const summary = getRevenueSummaryByPolicy(policyIdOrSlug);
+  const policy = getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug);
+  const key = policy?.id ?? policyIdOrSlug;
+  return (
+    (summary ? settlementBoundaryInsights.find((insight) => insight.id === summary.settlementBoundaryInsightId) : null) ??
+    settlementBoundaryInsights.find((insight) => insight.policyId === key || insight.settlementBoundaryId === policyIdOrSlug || insight.id === policyIdOrSlug || insight.slug === policyIdOrSlug) ??
+    null
+  );
+}
+
+export function listRiskTrustInsights() {
+  return riskTrustInsights;
+}
+
+export function getRiskTrustInsightById(insightIdOrSlug: string) {
+  return riskTrustInsights.find((insight) => insight.id === insightIdOrSlug || insight.slug === insightIdOrSlug) ?? null;
+}
+
+export function listRiskTrustInsightsByScope(scope: RiskTrustInsight["scope"], scopeId?: string) {
+  return riskTrustInsights.filter((insight) => insight.scope === scope && (!scopeId || insight.scopeId === scopeId));
+}
+
+export function getRiskTrustInsightsByRevenuePolicy(policyIdOrSlug: string) {
+  const policy = getRevenueSharingPolicyByIdOrSlug(policyIdOrSlug);
+  const key = policy?.id ?? policyIdOrSlug;
+  return riskTrustInsights.filter((insight) => insight.revenueSharingPolicyId === key || insight.scopeId === key);
+}
+
+export function getRiskTrustInsightsByDistributionAttribution(attributionSourceIdOrSlug: string) {
+  const source = getAttributionSourceById(attributionSourceIdOrSlug) ?? getAttributionSourceBySlug(attributionSourceIdOrSlug);
+  const key = source?.source.id ?? attributionSourceIdOrSlug;
+  return riskTrustInsights.filter((insight) => insight.attributionSourceId === key || insight.scopeId === key || insight.sourceRefId === key);
+}
+
+export function resolveFederationIntelligenceContext(collectionIdOrSlug: string) {
+  const collection = collections.find((item) => item.id === collectionIdOrSlug || item.slug === collectionIdOrSlug);
+  const key = collection?.id ?? collectionIdOrSlug;
+  const context = federationIntelligenceContexts.find((entry) => entry.collectionId === key || entry.id === collectionIdOrSlug);
+  return context
+    ? buildRevenueTrustRiskIntelligenceView({
+        federationContext: context,
+        riskTrustInsights: riskTrustInsights.filter((insight) => insight.collectionId === context.collectionId || insight.providerId === context.providerId)
+      })
+    : null;
+}
+
+export function resolveRevenueTrustRiskIntelligence(policyIdOrSlug: string) {
+  const revenueSummary = getRevenueSummaryByPolicy(policyIdOrSlug);
+  if (!revenueSummary) return null;
+  return buildRevenueTrustRiskIntelligenceView({
+    revenueSummary,
+    riskTrustInsights: getRiskTrustInsightsByRevenuePolicy(revenueSummary.policyId)
+  });
+}
+
+export function resolveRiskTrustContext(scope: RiskTrustInsight["scope"], scopeId: string) {
+  const insights = listRiskTrustInsightsByScope(scope, scopeId);
+  const federationContext = scope === "collection" ? federationIntelligenceContexts.find((entry) => entry.collectionId === scopeId) ?? null : null;
+  return insights.length || federationContext ? buildRevenueTrustRiskIntelligenceView({ riskTrustInsights: insights, federationContext }) : null;
+}
+
+export function validateRevenuePreviewInsightMockOnly(policyIdOrSlug: string) {
+  const view = resolveRevenueTrustRiskIntelligence(policyIdOrSlug);
+  if (!view?.revenueSummary || !view.revenuePreviewInsight) return null;
+  const records = [view.revenueSummary, view.revenuePreviewInsight];
+  const isMockOnly = records.every(
+    (record) =>
+      record.isSimulated &&
+      !record.usesFinancialBI &&
+      !record.usesAccounting &&
+      !record.usesTax &&
+      !record.canSettle &&
+      !record.canTriggerPayout &&
+      !record.canRouteTreasury &&
+      !record.canInvoice
+  );
+
+  return {
+    policyId: view.revenueSummary.policyId,
+    isMockOnly,
+    isNoFinancialBI: records.every((record) => !record.usesFinancialBI),
+    isNoAccounting: records.every((record) => !record.usesAccounting),
+    isNoTax: records.every((record) => !record.usesTax),
+    isNoSettlement: records.every((record) => !record.canSettle),
+    isNoPayout: records.every((record) => !record.canTriggerPayout),
+    isNoTreasuryRouting: records.every((record) => !record.canRouteTreasury),
+    isNoInvoice: records.every((record) => !record.canInvoice)
+  };
+}
+
+export function validateRiskTrustInsightMockOnly(insightIdOrSlug: string) {
+  const insight = getRiskTrustInsightById(insightIdOrSlug);
+  if (!insight) return null;
+  return {
+    insightId: insight.id,
+    isMockOnly:
+      insight.isSimulated &&
+      !insight.usesRiskScoring &&
+      !insight.usesTrustScoring &&
+      !insight.usesAutomatedDecisioning &&
+      !insight.canBlockAutomatically &&
+      !insight.canApproveAutomatically &&
+      !insight.canTriggerCommercialAction,
+    isNoRiskScoring: !insight.usesRiskScoring,
+    isNoTrustScoring: !insight.usesTrustScoring,
+    isNoAutomatedDecisioning: !insight.usesAutomatedDecisioning,
+    isNoAutomatedBlocking: !insight.canBlockAutomatically,
+    isNoAutomatedApproval: !insight.canApproveAutomatically,
+    isNoCommercialAction: !insight.canTriggerCommercialAction
   };
 }
 
