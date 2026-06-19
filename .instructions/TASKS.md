@@ -1,5 +1,30 @@
 # Marketplace Roadmap
 
+# Phase 09 - ACS Distribution
+
+Status: COMPLETED - MOCK/CONFIG-FIRST ACS DISTRIBUTION VALIDATED
+
+Closure artifact:
+- `docs/PHASE_09_CLOSURE_REPORT.md`
+
+Delivered:
+- AI Agents and Agent Capabilities in mock/config-first mode
+- MCP Packages and MCP Versions in review-required/preview-only mode
+- Workflow Systems, Workflow Templates and Workflow Bundles in preview-only mode
+- Compute Access and Compute Tiers with no allocation, no runtime start and no billing
+- ACS Access Previews with no access grant, no provisioning, no execution, no deployment, no workflow run and no compute allocation
+- Execution Boundaries, Provisioning Boundaries and Capability Data Boundaries validating no agent execution, no MCP deployment, no workflow run, no compute allocation, no provisioning, no secret access, no tracking, no analytics and no data export
+- ACS Distribution Context linked to tenant, curated catalog, catalog segment, distribution, attribution, revenue sharing and intelligence context
+- ACS navigation at `/marketplace/acs`
+
+Constraints:
+- Phase 09 keeps `isSimulated=true`
+- `canExecute`, `canCallTools`, `canDeploy`, `canInstall`, `canConnectServer`, `canExposeTools`, `canRunWorkflow`, `canScheduleWorkflow`, `canAllocateCompute`, `canScaleCompute`, `canStartRuntime`, `canProvision`, `canAccessSecrets`, `canBill`, `canSettle` and `canTriggerPayout` remain false
+- no ACS runtime, agent execution, MCP deployment, workflow execution, compute allocation, provisioning, secret access, external integration, billing, settlement, payout, backend, API or database was introduced
+- Phase 10 - Enterprise Marketplace remains future work
+
+---
+
 # Phase 08 - Academy Distribution
 
 Status: COMPLETED - MOCK/CONFIG-FIRST ACADEMY DISTRIBUTION VALIDATED

@@ -136,6 +136,13 @@ import {
   resolveAcademyDistributionContext,
   resolveAcademyDistributionOverview,
   validateAcademyDistributionMockOnly,
+  getAIAgentById,
+  getComputeAccessById,
+  getMCPPackageById,
+  getWorkflowSystemById,
+  resolveACSDistributionContext,
+  resolveACSDistributionOverview,
+  validateACSDistributionMockOnly,
   listRevenueSharingAuditEntriesByPolicy,
   listRevenueSharingPreviewConflicts,
   resolvePayoutPreviewMock,
@@ -1167,6 +1174,69 @@ export function useAcademyDistributionValidation(targetId?: string) {
   return useQuery({
     queryKey: ["marketplace-academy-distribution-validation", targetId],
     queryFn: () => validateAcademyDistributionMockOnly(targetId)
+  });
+}
+
+export function useACSDistributionOverview() {
+  return useQuery({
+    queryKey: ["marketplace-acs-distribution-overview"],
+    queryFn: () => {
+      const overview = resolveACSDistributionOverview();
+      traceMarketplaceLifecycle("marketplace-acs-distribution-overview-query", "completed", {
+        agentCount: overview.agents.length,
+        mcpPackageCount: overview.mcpPackages.length,
+        workflowSystemCount: overview.workflowSystems.length,
+        computeAccessCount: overview.computeAccess.length
+      });
+      return overview;
+    }
+  });
+}
+
+export function useAIAgent(agentIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-acs-ai-agent", agentIdOrSlug],
+    enabled: Boolean(agentIdOrSlug),
+    queryFn: () => getAIAgentById(agentIdOrSlug ?? "")
+  });
+}
+
+export function useMCPPackage(packageIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-acs-mcp-package", packageIdOrSlug],
+    enabled: Boolean(packageIdOrSlug),
+    queryFn: () => getMCPPackageById(packageIdOrSlug ?? "")
+  });
+}
+
+export function useWorkflowSystem(systemIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-acs-workflow-system", systemIdOrSlug],
+    enabled: Boolean(systemIdOrSlug),
+    queryFn: () => getWorkflowSystemById(systemIdOrSlug ?? "")
+  });
+}
+
+export function useComputeAccess(computeAccessIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-acs-compute-access", computeAccessIdOrSlug],
+    enabled: Boolean(computeAccessIdOrSlug),
+    queryFn: () => getComputeAccessById(computeAccessIdOrSlug ?? "")
+  });
+}
+
+export function useACSDistributionContext(targetId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-acs-distribution-context", targetId],
+    enabled: Boolean(targetId),
+    queryFn: () => resolveACSDistributionContext(targetId ?? "")
+  });
+}
+
+export function useACSDistributionValidation(targetId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-acs-distribution-validation", targetId],
+    queryFn: () => validateACSDistributionMockOnly(targetId)
   });
 }
 

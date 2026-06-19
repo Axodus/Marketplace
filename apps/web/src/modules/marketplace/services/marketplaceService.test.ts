@@ -105,6 +105,10 @@ import {
   listAcademyCertifications,
   listAcademyLearningEntitlementMocks,
   listAcademyLearningSubscriptions,
+  listAIAgents,
+  listComputeAccess,
+  listMCPPackages,
+  listWorkflowSystems,
   listCommissionModels,
   listCommissionModelsByPolicy,
   listCommunityMarketplaceDistributions,
@@ -166,6 +170,8 @@ import {
   resolveAcademyDistributionContext,
   resolveAcademyDistributionOverview,
   resolveAcademyLearningEntitlementMock,
+  resolveACSDistributionContext,
+  resolveACSDistributionOverview,
   resolveCommunityDistributionContext,
   resolveDataBoundary,
   resolveDistributionContext,
@@ -209,6 +215,7 @@ import {
   validateRiskTrustInsightMockOnly,
   validateRecommendationPreviewMockOnly,
   validateAcademyDistributionMockOnly,
+  validateACSDistributionMockOnly,
   resolveRevenueTrustRiskIntelligence,
   resolveRiskTrustContext,
   validateParticipantSharesByCommissionModel,
@@ -564,7 +571,7 @@ describe("marketplaceService", () => {
     expect(community.resolution.includedCatalogIds).toContain("curated-catalog-foundational-nft");
     expect(community.resolution.excludedCatalogIds).toContain("curated-catalog-academy-onboarding");
     expect(community.resolution.excludedItems.some((item) => item.catalogId === "curated-catalog-academy-onboarding" && item.exclusionReason === "blocked curated catalogs")).toBe(true);
-    expect(acs.resolution.includedCatalogIds).toEqual([]);
+    expect(acs.resolution.includedCatalogIds).toEqual(["curated-catalog-acs-capabilities"]);
     expect(acs.resolution.excludedItems.some((item) => item.exclusionReason === "blocked curated catalogs" || item.exclusionReason === "federated curated catalog blocked")).toBe(true);
     expect(academy.resolution.disclaimers.join(" ")).toContain("Tenant Catalog isolation");
     expect(academy.resolution.disclaimers.join(" ")).toContain("No revenue sharing");
@@ -1024,7 +1031,8 @@ describe("marketplaceService", () => {
       "academy-tenant-revenue-preview",
       "community-distribution-revenue-preview",
       "governance-product-revenue-preview",
-      "restricted-distribution-profile-revenue"
+      "restricted-distribution-profile-revenue",
+      "acs-capability-revenue-preview"
     ]);
     expect(academyPolicy?.policy.scope).toBe("tenant");
     expect(academyPolicy?.tenant?.slug).toBe("academy");
@@ -1069,7 +1077,8 @@ describe("marketplaceService", () => {
     expect(policies.filter((view) => view.policy.canCalculatePreview).map((view) => view.policy.id)).toEqual([
       "revenue-policy-academy-tenant-preview",
       "revenue-policy-community-distribution-preview",
-      "revenue-policy-product-governance-preview"
+      "revenue-policy-product-governance-preview",
+      "revenue-policy-acs-capability-preview"
     ]);
     expect(restrictedPolicy?.policy.canCalculatePreview).toBe(false);
     expect(policies.every((view) => view.policy.canSettle === false)).toBe(true);
@@ -1603,6 +1612,81 @@ describe("marketplaceService", () => {
     expect(validation.isNoCredentialVerification).toBe(true);
     expect(validation.isNoBilling).toBe(true);
     expect(validation.isNoEntitlement).toBe(true);
+  });
+
+  it("resolves ACS AI Agents with tenant, curated catalog, distribution, revenue and intelligence context", () => {
+    const agents = listAIAgents();
+    const operator = agents.find((entry) => entry.agent.slug === "marketplace-operator-agent-preview");
+
+    expect(agents.length).toBeGreaterThan(0);
+    expect(operator?.capabilities.length).toBeGreaterThan(0);
+    expect(operator?.mcpPackages.length).toBeGreaterThan(0);
+    expect(operator?.workflowTemplates.length).toBeGreaterThan(0);
+    expect(operator?.tenant?.slug).toBe("acs-services");
+    expect(operator?.curatedCatalog?.slug).toBe("acs-capabilities-preview");
+    expect(operator?.distributionChannel?.slug).toBe("acs-distributor-preview");
+    expect(operator?.revenuePolicy?.policy.slug).toBe("acs-capability-revenue-preview");
+    expect(operator?.intelligenceSnapshot?.snapshot.slug).toBe("acs-capability-intelligence-snapshot");
+    expect(operator?.agent.canExecute).toBe(false);
+    expect(operator?.agent.canCallTools).toBe(false);
+    expect(operator?.agent.canAccessSecrets).toBe(false);
+    expect(operator?.agent.canUseExternalModels).toBe(false);
+    expect(operator?.agent.canWriteMemory).toBe(false);
+    expect(operator?.boundaryNotes.join(" ")).toContain("no agent execution");
+  });
+
+  it("resolves MCP Packages, Workflow Systems and Compute Access without provisioning", () => {
+    const packages = listMCPPackages();
+    const workflows = listWorkflowSystems();
+    const compute = listComputeAccess();
+    const mcpPackage = packages.find((entry) => entry.package.slug === "marketplace-agent-template-mcp");
+    const workflow = workflows.find((entry) => entry.system.slug === "marketplace-ops-workflow-preview");
+    const computePreview = compute.find((entry) => entry.computeAccess.slug === "acs-sandbox-compute-preview");
+
+    expect(mcpPackage?.versions.length).toBe(1);
+    expect(mcpPackage?.package.canDeploy).toBe(false);
+    expect(mcpPackage?.package.canInstall).toBe(false);
+    expect(mcpPackage?.package.canConnectServer).toBe(false);
+    expect(mcpPackage?.package.canExposeTools).toBe(false);
+    expect(mcpPackage?.package.canAccessSecrets).toBe(false);
+    expect(workflow?.templates.length).toBeGreaterThan(0);
+    expect(workflow?.bundles.length).toBeGreaterThan(0);
+    expect(workflow?.system.canRunWorkflow).toBe(false);
+    expect(workflow?.system.canScheduleWorkflow).toBe(false);
+    expect(workflow?.system.canCallAgents).toBe(false);
+    expect(workflow?.system.canMutateExternalSystems).toBe(false);
+    expect(computePreview?.tiers.length).toBe(1);
+    expect(computePreview?.computeAccess.canAllocateCompute).toBe(false);
+    expect(computePreview?.computeAccess.canScaleCompute).toBe(false);
+    expect(computePreview?.computeAccess.canStartRuntime).toBe(false);
+    expect(computePreview?.computeAccess.canBill).toBe(false);
+  });
+
+  it("validates ACS Distribution overview and boundaries as mock/config-first only", () => {
+    const overview = resolveACSDistributionOverview();
+    const context = resolveACSDistributionContext("ai-agent-marketplace-operator");
+    const validation = validateACSDistributionMockOnly();
+
+    expect(overview.capabilityProducts.length).toBeGreaterThan(0);
+    expect(overview.agents.length).toBeGreaterThan(0);
+    expect(overview.mcpPackages.length).toBeGreaterThan(0);
+    expect(overview.workflowSystems.length).toBeGreaterThan(0);
+    expect(overview.workflowBundles.length).toBeGreaterThan(0);
+    expect(overview.computeAccess.length).toBeGreaterThan(0);
+    expect(overview.accessPreviews.every((entry) => !entry.canGrantAccess && !entry.canProvision && !entry.canExecuteAgent && !entry.canDeployMcp && !entry.canRunWorkflow && !entry.canAllocateCompute && !entry.canBill)).toBe(true);
+    expect(context?.tenantId).toBe("tenant-acs-services");
+    expect(context?.curatedCatalogId).toBe("curated-catalog-acs-capabilities");
+    expect(context?.distributionChannelId).toBe("distribution-channel-acs-distributor");
+    expect(context?.revenueSharingPolicyId).toBe("revenue-policy-acs-capability-preview");
+    expect(context?.intelligenceSnapshotId).toBe("intelligence-snapshot-acs-capability");
+    expect(validation.isMockOnly).toBe(true);
+    expect(validation.isNoAgentExecution).toBe(true);
+    expect(validation.isNoMcpDeployment).toBe(true);
+    expect(validation.isNoWorkflowRun).toBe(true);
+    expect(validation.isNoComputeAllocation).toBe(true);
+    expect(validation.isNoProvisioning).toBe(true);
+    expect(validation.isNoSecretAccess).toBe(true);
+    expect(validation.isNoBilling).toBe(true);
   });
 
   it("issues mock purchase records without settlement", () => {

@@ -422,6 +422,23 @@ export type AcademyDataBoundaryStatus =
   | "restricted"
   | "blocked"
   | "review-required";
+export type ACSCapabilityType = "ai-agent" | "agent-capability" | "mcp-package" | "workflow-system" | "workflow-template" | "workflow-bundle" | "compute-access" | "demo";
+export type ACSCapabilityStatus = "draft" | "configured-mock" | "preview-only" | "active-mock" | "review-required" | "restricted" | "disabled" | "archived";
+export type ACSAccessPreviewStatus = "preview-only" | "not-provisionable" | "restricted" | "disabled" | "requires-manual-review" | "not-configured";
+export type ACSBoundaryStatus =
+  | "mock-only"
+  | "static-only"
+  | "no-agent-execution"
+  | "no-mcp-deployment"
+  | "no-workflow-run"
+  | "no-compute-allocation"
+  | "no-provisioning"
+  | "no-secret-access"
+  | "no-external-integration"
+  | "no-billing"
+  | "restricted"
+  | "blocked"
+  | "review-required";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -2278,6 +2295,334 @@ export interface AcademyIntelligenceSummary {
   usesProfiling: boolean;
   usesRecommendationEngine: boolean;
   usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSCapabilityProduct {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  capabilityType: ACSCapabilityType;
+  status: ACSCapabilityStatus;
+  visibility: "public-mock" | "tenant-preview" | "private-preview" | "restricted";
+  tenantId?: string;
+  productId?: string;
+  providerId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  attributionSourceId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceInsightIds: string[];
+  accessPreviewId?: string;
+  executionBoundaryId: string;
+  provisioningBoundaryId: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  canExecuteAgent: boolean;
+  canDeployMcp: boolean;
+  canRunWorkflow: boolean;
+  canAllocateCompute: boolean;
+  canProvisionAccess: boolean;
+  canAccessSecrets: boolean;
+  canBill: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AIAgent {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  agentType: "assistant-mock" | "operator-mock" | "workflow-agent-mock" | "research-agent-mock" | "demo";
+  status: ACSCapabilityStatus;
+  capabilityIds: string[];
+  mcpPackageIds: string[];
+  workflowTemplateIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  accessPreviewId: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  executionBoundaryId: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  canExecute: boolean;
+  canCallTools: boolean;
+  canAccessSecrets: boolean;
+  canUseExternalModels: boolean;
+  canWriteMemory: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AgentCapability {
+  id: string;
+  agentId: string;
+  name: string;
+  description: string;
+  capabilityType: "tool-call-preview" | "retrieval-preview" | "workflow-orchestration-preview" | "analysis-preview" | "demo";
+  status: ACSCapabilityStatus;
+  isSimulated: boolean;
+  canExecute: boolean;
+  canCallExternalTool: boolean;
+  canReadSecrets: boolean;
+  canMutateData: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface MCPPackage {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  versionIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  accessPreviewId: string;
+  provisioningBoundaryId: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  canDeploy: boolean;
+  canInstall: boolean;
+  canConnectServer: boolean;
+  canExposeTools: boolean;
+  canAccessSecrets: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface MCPVersion {
+  id: string;
+  packageId: string;
+  version: string;
+  releaseLabel: string;
+  status: ACSCapabilityStatus;
+  compatibilityLabel: string;
+  isSimulated: boolean;
+  canDeploy: boolean;
+  canUpgrade: boolean;
+  canRollback: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface WorkflowSystem {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  templateIds: string[];
+  bundleIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  accessPreviewId: string;
+  executionBoundaryId: string;
+  isSimulated: boolean;
+  canRunWorkflow: boolean;
+  canScheduleWorkflow: boolean;
+  canCallAgents: boolean;
+  canMutateExternalSystems: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface WorkflowTemplate {
+  id: string;
+  systemId: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  stepLabels: string[];
+  isSimulated: boolean;
+  canRun: boolean;
+  canSchedule: boolean;
+  canCallExternalSystems: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface WorkflowBundle {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  workflowSystemId: string;
+  templateIds: string[];
+  agentIds: string[];
+  mcpPackageIds: string[];
+  accessPreviewId: string;
+  isSimulated: boolean;
+  canProvisionBundle: boolean;
+  canRunBundle: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ComputeAccess {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  tierIds: string[];
+  tenantId?: string;
+  accessPreviewId: string;
+  provisioningBoundaryId: string;
+  isSimulated: boolean;
+  canAllocateCompute: boolean;
+  canScaleCompute: boolean;
+  canStartRuntime: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ComputeTier {
+  id: string;
+  computeAccessId: string;
+  name: string;
+  description: string;
+  tierLabel: string;
+  status: ACSCapabilityStatus;
+  isSimulated: boolean;
+  canAllocate: boolean;
+  canScale: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSAccessPreview {
+  id: string;
+  scope: ACSCapabilityType;
+  scopeId: string;
+  status: ACSAccessPreviewStatus;
+  accessLabel: string;
+  includedAgentIds: string[];
+  includedMcpPackageIds: string[];
+  includedWorkflowSystemIds: string[];
+  includedComputeAccessIds: string[];
+  isSimulated: boolean;
+  canGrantAccess: boolean;
+  canProvision: boolean;
+  canExecuteAgent: boolean;
+  canDeployMcp: boolean;
+  canRunWorkflow: boolean;
+  canAllocateCompute: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSExecutionBoundary {
+  id: string;
+  scope: ACSCapabilityType;
+  scopeId: string;
+  status: ACSBoundaryStatus;
+  boundaryLabel: string;
+  isSimulated: boolean;
+  canExecuteAgent: boolean;
+  canCallTools: boolean;
+  canRunWorkflow: boolean;
+  canMutateData: boolean;
+  canUseExternalModels: boolean;
+  canWriteMemory: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSProvisioningBoundary {
+  id: string;
+  scope: ACSCapabilityType;
+  scopeId: string;
+  status: ACSBoundaryStatus;
+  boundaryLabel: string;
+  isSimulated: boolean;
+  canProvision: boolean;
+  canDeployMcp: boolean;
+  canInstallPackage: boolean;
+  canAllocateCompute: boolean;
+  canStartRuntime: boolean;
+  canAccessSecrets: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSCapabilityDataBoundary {
+  id: string;
+  scope: ACSCapabilityType;
+  scopeId: string;
+  status: ACSBoundaryStatus;
+  boundaryLabel: string;
+  isSimulated: boolean;
+  usesProductionData: boolean;
+  usesSecrets: boolean;
+  usesExternalIntegration: boolean;
+  usesTracking: boolean;
+  usesAnalytics: boolean;
+  canExportData: boolean;
+  canTrainModel: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSDistributionContext {
+  id: string;
+  contextType: ACSCapabilityType | "tenant" | "curated-catalog" | "distribution";
+  acsCapabilityProductId?: string;
+  agentId?: string;
+  mcpPackageId?: string;
+  workflowSystemId?: string;
+  workflowBundleId?: string;
+  computeAccessId?: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  attributionSourceId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  executionBoundaryId: string;
+  provisioningBoundaryId: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSIntelligenceSummary {
+  id: string;
+  scope: ACSCapabilityType | "tenant" | "curated-catalog" | "distribution";
+  scopeId: string;
+  title: string;
+  summary: string;
+  insightSignalIds: string[];
+  intelligenceSnapshotId?: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  usesRuntimeTelemetry: boolean;
+  usesAgentScoring: boolean;
+  usesAutomation: boolean;
+  usesExternalAnalytics: boolean;
   warnings: string[];
   disclaimers: string[];
 }

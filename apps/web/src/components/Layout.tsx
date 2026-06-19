@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { BarChart3, BookMarked, Box, Building2, CircleDollarSign, FileCode2, FileSearch, FilePlus2, Gavel, Globe2, GraduationCap, Handshake, LayoutDashboard, Layers3, MousePointerClick, RadioTower, ReceiptText, Share2, ShieldCheck, Tags, WalletCards } from "lucide-react";
+import { BarChart3, BookMarked, Bot, Box, Building2, CircleDollarSign, FileCode2, FileSearch, FilePlus2, Gavel, Globe2, GraduationCap, Handshake, LayoutDashboard, Layers3, MousePointerClick, RadioTower, ReceiptText, Share2, ShieldCheck, Tags, WalletCards } from "lucide-react";
 import { useWallet } from "../hooks/useWallet";
 import { resolveTenantBranding } from "../modules/marketplace/services/marketplaceService";
 
@@ -15,6 +15,7 @@ const links = [
   { to: "/marketplace/revenue-sharing", label: "Revenue", icon: CircleDollarSign },
   { to: "/marketplace/intelligence", label: "Intelligence", icon: BarChart3 },
   { to: "/marketplace/academy", label: "Academy", icon: GraduationCap },
+  { to: "/marketplace/acs", label: "ACS", icon: Bot },
   { to: "/marketplace/create", label: "Create/Sell", icon: FilePlus2 },
   { to: "/marketplace/tenants", label: "Tenants", icon: Building2 },
   { to: "/marketplace/governance", label: "Governance", icon: ShieldCheck },

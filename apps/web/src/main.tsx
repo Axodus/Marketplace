@@ -18,6 +18,7 @@ const CommunityDistributionsPage = lazy(() => import("./modules/marketplace/page
 const RevenueSharingPage = lazy(() => import("./modules/marketplace/pages/RevenueSharingPage").then((module) => ({ default: module.RevenueSharingPage })));
 const MarketplaceIntelligencePage = lazy(() => import("./modules/marketplace/pages/MarketplaceIntelligencePage").then((module) => ({ default: module.MarketplaceIntelligencePage })));
 const AcademyDistributionPage = lazy(() => import("./modules/marketplace/pages/AcademyDistributionPage").then((module) => ({ default: module.AcademyDistributionPage })));
+const ACSDistributionPage = lazy(() => import("./modules/marketplace/pages/ACSDistributionPage").then((module) => ({ default: module.ACSDistributionPage })));
 const CreateSellPage = lazy(() => import("./modules/marketplace/pages/CreateSellPage").then((module) => ({ default: module.CreateSellPage })));
 const ProductDetailPage = lazy(() => import("./modules/marketplace/pages/ProductDetailPage").then((module) => ({ default: module.ProductDetailPage })));
 const SellerProfilePage = lazy(() => import("./modules/marketplace/pages/SellerProfilePage").then((module) => ({ default: module.SellerProfilePage })));
@@ -88,6 +89,8 @@ const router = createBrowserRouter([
       { path: "marketplace/intelligence/:insightSlug", element: routeElement(<MarketplaceIntelligencePage />) },
       { path: "marketplace/academy", element: routeElement(<AcademyDistributionPage />) },
       { path: "marketplace/academy/:academySlug", element: routeElement(<AcademyDistributionPage />) },
+      { path: "marketplace/acs", element: routeElement(<ACSDistributionPage />) },
+      { path: "marketplace/acs/:acsSlug", element: routeElement(<ACSDistributionPage />) },
       { path: "marketplace/distribution/profiles", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/profiles/:profileSlug", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/:channelId", element: routeElement(<DistributionNetworkPage />) },

@@ -1874,6 +1874,159 @@ export const marketplaceCuratedCatalogs = [
     ],
     createdAt: "2026-06-14T10:05:00.000Z",
     updatedAt: "2026-06-14T10:05:00.000Z"
+  },
+  {
+    id: "curated-catalog-acs-capabilities",
+    slug: "acs-capabilities-preview",
+    name: "ACS Capabilities Preview",
+    displayName: "ACS Capabilities Preview",
+    description: "Tenant-scoped Curated Catalog for ACS agent, MCP package, workflow and compute access previews.",
+    catalogType: "products",
+    status: "review-required",
+    visibility: "private-preview",
+    governanceStatus: "governance-review",
+    ownerScope: "acs",
+    tenantId: "tenant-acs-services",
+    segmentIds: ["catalog-segment-acs"],
+    sectionIds: ["section-acs-capabilities"],
+    featuredProductIds: ["product-mcp-agent-template"],
+    featuredCollectionIds: [],
+    allowedProductIds: ["product-mcp-agent-template"],
+    blockedProductIds: [],
+    allowedCollectionIds: [],
+    blockedCollectionIds: [],
+    allowedCategoryIds: ["MCPs", "Business"],
+    blockedCategoryIds: ["Trading"],
+    allowedExternalCollectionIds: [],
+    blockedExternalCollectionIds: ["external-collection-harmony-creator-keys", "external-collection-opensea-academy-badges"],
+    allowsFederatedAssets: false,
+    inheritsGlobalCatalog: false,
+    inheritsTenantCatalog: true,
+    curationNotes: [
+      "ACS capability curation is private-preview and governance-review only.",
+      "MCP and agent records preserve execution, provisioning and data boundaries."
+    ],
+    sections: [
+      {
+        id: "section-acs-capabilities",
+        catalogId: "curated-catalog-acs-capabilities",
+        title: "ACS capability previews",
+        description: "Static ACS capability references for agent, MCP, workflow and compute access planning.",
+        sectionType: "products",
+        position: 1,
+        featuredProductIds: ["product-mcp-agent-template"],
+        featuredCollectionIds: [],
+        itemIds: ["item-acs-mcp-agent-template"],
+        ruleIds: ["rule-acs-curated-allow-mcp-template", "rule-acs-curated-no-execution"],
+        visibility: "private-preview",
+        warnings: ["ACS curated section is review-required and cannot execute agents."],
+        disclaimers: ["Curated ACS display does not deploy MCP packages, provision compute, grant service access, bill or settle."]
+      }
+    ],
+    items: [
+      {
+        id: "item-acs-mcp-agent-template",
+        catalogId: "curated-catalog-acs-capabilities",
+        sectionId: "section-acs-capabilities",
+        itemType: "product",
+        productId: "product-mcp-agent-template",
+        source: "ACS tenant catalog reference",
+        inclusionReason: "ACS tenant catalog allows this MCP agent template for private-preview display.",
+        editorialNote: "Manual mock curation for ACS capability distribution planning.",
+        editorialStatus: "review-required",
+        governanceLabel: "ACS governance review mock",
+        reviewState: "review-required",
+        isFeatured: true,
+        isFederated: false,
+        isExternal: false,
+        isNative: true,
+        canDisplay: true,
+        canTrade: false,
+        canSettle: false,
+        warnings: ["ACS capability item remains non-executing."],
+        disclaimers: ["Curation does not grant ACS entitlement, MCP deployment, agent execution, compute allocation, billing or settlement."]
+      }
+    ],
+    rules: [
+      {
+        id: "rule-acs-curated-allow-mcp-template",
+        catalogId: "curated-catalog-acs-capabilities",
+        sectionId: "section-acs-capabilities",
+        ruleType: "allow-product",
+        targetType: "product",
+        targetId: "product-mcp-agent-template",
+        effect: "include",
+        priority: 10,
+        reason: "MCP agent template is allowed for ACS private-preview display.",
+        status: "review-required",
+        source: "ACS curated catalog rule",
+        warnings: ["Allowed display is not service provisioning."],
+        disclaimers: ["No ACS provisioning, no agent execution, no MCP deployment, no compute allocation, no billing and no settlement are active."]
+      },
+      {
+        id: "rule-acs-curated-no-execution",
+        catalogId: "curated-catalog-acs-capabilities",
+        sectionId: "section-acs-capabilities",
+        ruleType: "execution-boundary",
+        targetType: "product",
+        targetId: "product-mcp-agent-template",
+        effect: "warn",
+        priority: 20,
+        reason: "ACS capability previews must preserve execution and provisioning boundaries.",
+        status: "review-required",
+        source: "ACS boundary rule",
+        warnings: ["Execution and provisioning are blocked in Phase 09."],
+        disclaimers: ["No tool call, workflow run, MCP server connection, secret access, compute start or external integration is active."]
+      }
+    ],
+    editorialRules: [
+      {
+        id: "editorial-rule-acs-mcp-template-include",
+        catalogId: "curated-catalog-acs-capabilities",
+        sectionId: "section-acs-capabilities",
+        targetType: "product",
+        targetId: "product-mcp-agent-template",
+        ruleType: "review-required",
+        effect: "warn",
+        reason: "MCP agent template is visible only as an ACS capability preview.",
+        editorialNote: "Review-required editorial state is not a recommendation engine or productive approval.",
+        reviewStatus: "governance-review-mock",
+        governanceLabel: "ACS editorial mock review",
+        priority: 10,
+        status: "review-required",
+        warnings: ["ACS editorial review is descriptive only."],
+        disclaimers: ["No marketplace intelligence, no ranking real, no service approval, no deployment and no billing are active."],
+        createdAt: "2026-06-19T13:00:00.000Z",
+        updatedAt: "2026-06-19T13:00:00.000Z"
+      }
+    ],
+    curationWorkflow: {
+      state: "governance-review-mock",
+      decision: "needs-review",
+      reviewStatus: "governance-review-mock",
+      governanceLabel: "ACS curation workflow mock",
+      notes: [
+        {
+          id: "curation-note-acs-mcp-template",
+          targetType: "product",
+          targetId: "product-mcp-agent-template",
+          noteType: "inclusion reason",
+          note: "Included because it anchors ACS Distribution mock coverage for agent and MCP capability previews.",
+          reviewStatus: "governance-review-mock",
+          governanceLabel: "ACS editorial mock review",
+          createdAt: "2026-06-19T13:00:00.000Z"
+        }
+      ],
+      warnings: ["ACS Curation Workflow is private-preview and mock/config-first."],
+      disclaimers: ["No productive approval workflow, no ACS provisioning, no MCP deployment, no compute allocation and no marketplace intelligence are active."]
+    },
+    warnings: ["ACS Curated Catalog is private-preview and governance-review mock."],
+    disclaimers: [
+      "Config-first ACS curation does not create agent execution, workflow run, MCP deployment, compute allocation, billing, settlement or revenue sharing.",
+      "Tenant integration remains mock-only and does not implement ACS runtime provisioning."
+    ],
+    createdAt: "2026-06-19T13:00:00.000Z",
+    updatedAt: "2026-06-19T13:00:00.000Z"
   }
 ];
 
@@ -5000,6 +5153,37 @@ export const marketplaceRevenueSharingPolicies = [
     disclaimers: ["Restricted policy is boundary-only: no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing and no wallet signature are active."],
     createdAt: "2026-06-17T08:30:00.000Z",
     updatedAt: "2026-06-17T08:30:00.000Z"
+  },
+  {
+    id: "revenue-policy-acs-capability-preview",
+    slug: "acs-capability-revenue-preview",
+    name: "ACS Capability Revenue Sharing Preview",
+    displayName: "ACS Capability Revenue Preview",
+    description: "Mock/config-first Revenue Sharing Policy for ACS capability distribution without service billing, payout or settlement.",
+    scope: "distribution-channel",
+    status: "preview-only",
+    governanceStatus: "governance-review-mock",
+    tenantId: "tenant-acs-services",
+    distributionChannelId: "distribution-channel-acs-distributor",
+    distributionProfileId: "distribution-profile-acs-distributor",
+    curatedCatalogId: "curated-catalog-acs-capabilities",
+    catalogSegmentId: "catalog-segment-acs",
+    productId: "product-mcp-agent-template",
+    participantIds: ["revenue-participant-platform", "revenue-participant-acs-distributor"],
+    ruleIds: [],
+    attributionSourceIds: ["attribution-record-acs-manual"],
+    commercialOriginId: "commercial-origin-acs-manual",
+    settlementBoundaryId: "settlement-boundary-restricted-profile-revenue",
+    commissionModelIds: [],
+    allowsFederatedAssets: false,
+    canCalculatePreview: true,
+    canSettle: false,
+    canTriggerPayout: false,
+    canRouteTreasury: false,
+    warnings: ["ACS capability revenue sharing is preview-only and cannot become service billing or payout execution."],
+    disclaimers: ["No ACS billing, no payout, no settlement, no invoice, no accounting, no tax, no treasury routing and no wallet signature are active."],
+    createdAt: "2026-06-19T13:05:00.000Z",
+    updatedAt: "2026-06-19T13:05:00.000Z"
   }
 ];
 
@@ -6024,6 +6208,27 @@ export const marketplaceDataBoundaries = [
     disclaimers: ["No payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway and no wallet signature are active."]
   },
   {
+    id: "data-boundary-acs-capability-intelligence",
+    scope: "tenant",
+    scopeId: "tenant-acs-services",
+    status: "static-only",
+    boundaryLabel: "ACS capability intelligence static-only boundary",
+    allowedDataSources: ["ACS tenant mock", "ACS curated catalog mock", "ACS distribution config", "ACS capability boundary mock"],
+    blockedDataSources: ["agent runtime telemetry", "tool call logs", "secret access logs", "compute metrics real", "analytics pipeline", "BI export"],
+    usesRealTracking: false,
+    usesAnalyticsPipeline: false,
+    usesPersonalData: false,
+    usesBehavioralData: false,
+    usesWalletProfiling: false,
+    usesBI: false,
+    usesMLModel: false,
+    usesAutomatedDecisioning: false,
+    canExportData: false,
+    canTriggerAction: false,
+    warnings: ["ACS capability intelligence is derived from static mock/config-first records only."],
+    disclaimers: ["No agent runtime telemetry, no tool tracking, no compute analytics, no BI, no ML model and no automated ACS action are active."]
+  },
+  {
     id: "data-boundary-catalog-intelligence-academy",
     scope: "curated-catalog",
     scopeId: "curated-catalog-academy-onboarding",
@@ -6153,6 +6358,28 @@ export const marketplaceInsightSignals = [
     disclaimers: ["No personal data, no visitor identity, no wallet tracking and no personalization are used."],
     createdAt: "2026-06-18T10:05:00.000Z",
     updatedAt: "2026-06-18T10:05:00.000Z"
+  },
+  {
+    id: "insight-signal-acs-capability-coverage",
+    slug: "acs-capability-coverage-mock",
+    name: "ACS Capability Coverage Signal",
+    description: "Mock signal summarizing ACS tenant, curated catalog, distribution and capability boundary coverage.",
+    signalType: "acs-capability-coverage-mock",
+    scope: "tenant",
+    status: "configured-mock",
+    sourceType: "acs-mock-config",
+    sourceRefId: "tenant-acs-services",
+    weightMock: 30,
+    confidenceLabel: "informational-mock",
+    isSimulated: true,
+    isDerivedFromMockData: true,
+    usesRealEvents: false,
+    usesRealTracking: false,
+    usesAnalyticsPipeline: false,
+    warnings: ["ACS capability signal is not runtime telemetry or agent scoring."],
+    disclaimers: ["No agent execution logs, no tool tracking, no compute telemetry, no BI and no automated ACS decisioning are used."],
+    createdAt: "2026-06-19T13:10:00.000Z",
+    updatedAt: "2026-06-19T13:10:00.000Z"
   },
   {
     id: "insight-signal-revenue-preview-boundary",
@@ -6316,6 +6543,33 @@ export const marketplaceIntelligenceSnapshots = [
     usesAutomatedDecisioning: false,
     warnings: ["Tenant snapshot is not tenant profiling."],
     disclaimers: ["No personalization, no behavioral data, no wallet tracking and no BI are active."]
+  },
+  {
+    id: "intelligence-snapshot-acs-capability",
+    slug: "acs-capability-intelligence-snapshot",
+    snapshotType: "tenant",
+    scope: "tenant",
+    scopeId: "tenant-acs-services",
+    title: "ACS Capability Intelligence Snapshot",
+    generatedAt: "2026-06-19T13:15:00.000Z",
+    status: "preview-only",
+    summary: "Static mock ACS intelligence snapshot over ACS tenant, curated catalog, distribution, revenue-sharing and capability boundary references.",
+    signalIds: ["insight-signal-acs-capability-coverage"],
+    insightIds: [],
+    dataBoundaryId: "data-boundary-acs-capability-intelligence",
+    tenantId: "tenant-acs-services",
+    curatedCatalogId: "curated-catalog-acs-capabilities",
+    distributionChannelId: "distribution-channel-acs-distributor",
+    revenueSharingPolicyId: "revenue-policy-acs-capability-preview",
+    isSimulated: true,
+    isStaticMock: true,
+    isDerivedFromMockData: true,
+    usesRealTracking: false,
+    usesBI: false,
+    usesMLModel: false,
+    usesAutomatedDecisioning: false,
+    warnings: ["ACS snapshot is static and cannot score agents or automate provisioning."],
+    disclaimers: ["No runtime telemetry, no agent scoring, no BI, no ML model, no automated decisioning and no ACS provisioning are active."]
   },
   {
     id: "intelligence-snapshot-academy-catalog",
@@ -7807,6 +8061,452 @@ export const marketplaceAcademyIntelligenceSummaries = [
     usesAutomatedDecisioning: false,
     warnings: ["Academy Intelligence Summary is static and cannot profile learners."],
     disclaimers: ["No learning analytics, no personalization, no profiling, no recommendation engine and no automated decisioning are active."]
+  }
+];
+
+export const marketplaceACSExecutionBoundaries = [
+  {
+    id: "acs-execution-boundary-agent-operator",
+    scope: "ai-agent",
+    scopeId: "ai-agent-marketplace-operator",
+    status: "no-agent-execution",
+    boundaryLabel: "AI Agent boundary - no execution",
+    isSimulated: true,
+    canExecuteAgent: false,
+    canCallTools: false,
+    canRunWorkflow: false,
+    canMutateData: false,
+    canUseExternalModels: false,
+    canWriteMemory: false,
+    warnings: ["AI Agent is a static capability preview and cannot execute."],
+    disclaimers: ["No agent execution, no tool call, no model invocation, no memory write and no external integration are active."]
+  },
+  {
+    id: "acs-execution-boundary-workflow-orchestration",
+    scope: "workflow-system",
+    scopeId: "workflow-system-marketplace-ops",
+    status: "no-workflow-run",
+    boundaryLabel: "Workflow boundary - no workflow run",
+    isSimulated: true,
+    canExecuteAgent: false,
+    canCallTools: false,
+    canRunWorkflow: false,
+    canMutateData: false,
+    canUseExternalModels: false,
+    canWriteMemory: false,
+    warnings: ["Workflow System is a static orchestration preview and cannot run."],
+    disclaimers: ["No workflow run, no scheduling, no external system mutation and no automation are active."]
+  }
+];
+
+export const marketplaceACSProvisioningBoundaries = [
+  {
+    id: "acs-provisioning-boundary-mcp-package",
+    scope: "mcp-package",
+    scopeId: "mcp-package-marketplace-agent-template",
+    status: "no-mcp-deployment",
+    boundaryLabel: "MCP Package boundary - no deployment",
+    isSimulated: true,
+    canProvision: false,
+    canDeployMcp: false,
+    canInstallPackage: false,
+    canAllocateCompute: false,
+    canStartRuntime: false,
+    canAccessSecrets: false,
+    canBill: false,
+    warnings: ["MCP Package is a package preview and cannot deploy or install."],
+    disclaimers: ["No MCP deployment, no package installation, no MCP server connection, no secret access, no compute allocation and no billing are active."]
+  },
+  {
+    id: "acs-provisioning-boundary-compute-preview",
+    scope: "compute-access",
+    scopeId: "compute-access-acs-sandbox",
+    status: "no-compute-allocation",
+    boundaryLabel: "Compute Access boundary - no allocation",
+    isSimulated: true,
+    canProvision: false,
+    canDeployMcp: false,
+    canInstallPackage: false,
+    canAllocateCompute: false,
+    canStartRuntime: false,
+    canAccessSecrets: false,
+    canBill: false,
+    warnings: ["Compute Access is preview-only and cannot allocate resources."],
+    disclaimers: ["No compute allocation, no runtime start, no scaling, no service account, no billing and no settlement are active."]
+  }
+];
+
+export const marketplaceACSCapabilityDataBoundaries = [
+  {
+    id: "acs-capability-data-boundary-agent",
+    scope: "ai-agent",
+    scopeId: "ai-agent-marketplace-operator",
+    status: "static-only",
+    boundaryLabel: "AI Agent data boundary - static only",
+    isSimulated: true,
+    usesProductionData: false,
+    usesSecrets: false,
+    usesExternalIntegration: false,
+    usesTracking: false,
+    usesAnalytics: false,
+    canExportData: false,
+    canTrainModel: false,
+    warnings: ["Agent preview cannot read production data or secrets."],
+    disclaimers: ["No production data, no secret access, no external integration, no tracking, no analytics and no model training are active."]
+  },
+  {
+    id: "acs-capability-data-boundary-mcp",
+    scope: "mcp-package",
+    scopeId: "mcp-package-marketplace-agent-template",
+    status: "static-only",
+    boundaryLabel: "MCP Package data boundary - static only",
+    isSimulated: true,
+    usesProductionData: false,
+    usesSecrets: false,
+    usesExternalIntegration: false,
+    usesTracking: false,
+    usesAnalytics: false,
+    canExportData: false,
+    canTrainModel: false,
+    warnings: ["MCP package preview cannot expose tools or connect servers."],
+    disclaimers: ["No MCP server, no tool exposure, no secret access, no external connector and no telemetry pipeline are active."]
+  }
+];
+
+export const marketplaceACSAccessPreviews = [
+  {
+    id: "acs-access-preview-agent-operator",
+    scope: "ai-agent",
+    scopeId: "ai-agent-marketplace-operator",
+    status: "preview-only",
+    accessLabel: "AI Agent access preview - no execution",
+    includedAgentIds: ["ai-agent-marketplace-operator"],
+    includedMcpPackageIds: ["mcp-package-marketplace-agent-template"],
+    includedWorkflowSystemIds: ["workflow-system-marketplace-ops"],
+    includedComputeAccessIds: ["compute-access-acs-sandbox"],
+    isSimulated: true,
+    canGrantAccess: false,
+    canProvision: false,
+    canExecuteAgent: false,
+    canDeployMcp: false,
+    canRunWorkflow: false,
+    canAllocateCompute: false,
+    canBill: false,
+    warnings: ["ACS access preview cannot grant runtime access."],
+    disclaimers: ["No ACS entitlement productive, no agent execution, no MCP deployment, no workflow run, no compute allocation and no billing are active."]
+  },
+  {
+    id: "acs-access-preview-bundle-ops",
+    scope: "workflow-bundle",
+    scopeId: "workflow-bundle-marketplace-ops",
+    status: "preview-only",
+    accessLabel: "Workflow Bundle access preview - no provisioning",
+    includedAgentIds: ["ai-agent-marketplace-operator"],
+    includedMcpPackageIds: ["mcp-package-marketplace-agent-template"],
+    includedWorkflowSystemIds: ["workflow-system-marketplace-ops"],
+    includedComputeAccessIds: ["compute-access-acs-sandbox"],
+    isSimulated: true,
+    canGrantAccess: false,
+    canProvision: false,
+    canExecuteAgent: false,
+    canDeployMcp: false,
+    canRunWorkflow: false,
+    canAllocateCompute: false,
+    canBill: false,
+    warnings: ["Workflow Bundle access preview cannot provision services."],
+    disclaimers: ["No bundle provisioning, no workflow execution, no compute allocation, no service delivery and no billing are active."]
+  }
+];
+
+export const marketplaceAIAgents = [
+  {
+    id: "ai-agent-marketplace-operator",
+    slug: "marketplace-operator-agent-preview",
+    name: "Marketplace Operator Agent Preview",
+    description: "AI Agent mock for Marketplace operator assistance, represented without runtime execution.",
+    agentType: "operator-mock",
+    status: "preview-only",
+    capabilityIds: ["agent-capability-catalog-review", "agent-capability-distribution-explanation"],
+    mcpPackageIds: ["mcp-package-marketplace-agent-template"],
+    workflowTemplateIds: ["workflow-template-catalog-review"],
+    tenantId: "tenant-acs-services",
+    curatedCatalogId: "curated-catalog-acs-capabilities",
+    distributionChannelId: "distribution-channel-acs-distributor",
+    accessPreviewId: "acs-access-preview-agent-operator",
+    revenueSharingPolicyId: "revenue-policy-acs-capability-preview",
+    intelligenceSnapshotId: "intelligence-snapshot-acs-capability",
+    executionBoundaryId: "acs-execution-boundary-agent-operator",
+    capabilityDataBoundaryId: "acs-capability-data-boundary-agent",
+    isSimulated: true,
+    canExecute: false,
+    canCallTools: false,
+    canAccessSecrets: false,
+    canUseExternalModels: false,
+    canWriteMemory: false,
+    warnings: ["Agent preview cannot execute tasks or call tools."],
+    disclaimers: ["No agent runtime, no tool call, no secret access, no model call, no memory write and no external integration are active."]
+  }
+];
+
+export const marketplaceAgentCapabilities = [
+  {
+    id: "agent-capability-catalog-review",
+    agentId: "ai-agent-marketplace-operator",
+    name: "Catalog Review Capability Preview",
+    description: "Static capability describing catalog review assistance without execution.",
+    capabilityType: "analysis-preview",
+    status: "configured-mock",
+    isSimulated: true,
+    canExecute: false,
+    canCallExternalTool: false,
+    canReadSecrets: false,
+    canMutateData: false,
+    warnings: ["Capability is descriptive only."],
+    disclaimers: ["No tool execution, no external API, no secret read and no data mutation are active."]
+  },
+  {
+    id: "agent-capability-distribution-explanation",
+    agentId: "ai-agent-marketplace-operator",
+    name: "Distribution Explanation Capability Preview",
+    description: "Static capability describing distribution boundary explanations without runtime automation.",
+    capabilityType: "workflow-orchestration-preview",
+    status: "configured-mock",
+    isSimulated: true,
+    canExecute: false,
+    canCallExternalTool: false,
+    canReadSecrets: false,
+    canMutateData: false,
+    warnings: ["Capability cannot orchestrate workflows."],
+    disclaimers: ["No workflow execution, no automation, no tracking and no commercial action are active."]
+  }
+];
+
+export const marketplaceMCPPackages = [
+  {
+    id: "mcp-package-marketplace-agent-template",
+    slug: "marketplace-agent-template-mcp",
+    name: "Marketplace Agent Template MCP Package",
+    description: "MCP Package mock for Marketplace agent template distribution without deployment.",
+    status: "review-required",
+    versionIds: ["mcp-version-marketplace-agent-template-010"],
+    tenantId: "tenant-acs-services",
+    curatedCatalogId: "curated-catalog-acs-capabilities",
+    distributionChannelId: "distribution-channel-acs-distributor",
+    accessPreviewId: "acs-access-preview-agent-operator",
+    provisioningBoundaryId: "acs-provisioning-boundary-mcp-package",
+    capabilityDataBoundaryId: "acs-capability-data-boundary-mcp",
+    isSimulated: true,
+    canDeploy: false,
+    canInstall: false,
+    canConnectServer: false,
+    canExposeTools: false,
+    canAccessSecrets: false,
+    warnings: ["MCP Package cannot deploy, install or connect to a server."],
+    disclaimers: ["No MCP deployment, no package installation, no server connection, no tool exposure and no secret access are active."]
+  }
+];
+
+export const marketplaceMCPVersions = [
+  {
+    id: "mcp-version-marketplace-agent-template-010",
+    packageId: "mcp-package-marketplace-agent-template",
+    version: "0.1.0-mock",
+    releaseLabel: "Mock package preview",
+    status: "preview-only",
+    compatibilityLabel: "Marketplace mock runtime only",
+    isSimulated: true,
+    canDeploy: false,
+    canUpgrade: false,
+    canRollback: false,
+    warnings: ["Version is not deployable."],
+    disclaimers: ["No package deployment, upgrade, rollback or registry publishing is active."]
+  }
+];
+
+export const marketplaceWorkflowSystems = [
+  {
+    id: "workflow-system-marketplace-ops",
+    slug: "marketplace-ops-workflow-preview",
+    name: "Marketplace Ops Workflow System Preview",
+    description: "Workflow System mock for Marketplace operations orchestration without execution.",
+    status: "preview-only",
+    templateIds: ["workflow-template-catalog-review"],
+    bundleIds: ["workflow-bundle-marketplace-ops"],
+    tenantId: "tenant-acs-services",
+    curatedCatalogId: "curated-catalog-acs-capabilities",
+    distributionChannelId: "distribution-channel-acs-distributor",
+    accessPreviewId: "acs-access-preview-bundle-ops",
+    executionBoundaryId: "acs-execution-boundary-workflow-orchestration",
+    isSimulated: true,
+    canRunWorkflow: false,
+    canScheduleWorkflow: false,
+    canCallAgents: false,
+    canMutateExternalSystems: false,
+    warnings: ["Workflow System is non-executing."],
+    disclaimers: ["No workflow run, no schedule, no agent call, no external mutation and no automation are active."]
+  }
+];
+
+export const marketplaceWorkflowTemplates = [
+  {
+    id: "workflow-template-catalog-review",
+    systemId: "workflow-system-marketplace-ops",
+    name: "Catalog Review Workflow Template",
+    description: "Workflow Template mock for catalog review steps without execution.",
+    status: "configured-mock",
+    stepLabels: ["Inspect catalog mock", "Review boundary notes", "Prepare governance note"],
+    isSimulated: true,
+    canRun: false,
+    canSchedule: false,
+    canCallExternalSystems: false,
+    warnings: ["Workflow Template cannot run."],
+    disclaimers: ["No workflow execution, no scheduling and no external system call are active."]
+  }
+];
+
+export const marketplaceWorkflowBundles = [
+  {
+    id: "workflow-bundle-marketplace-ops",
+    slug: "marketplace-ops-workflow-bundle",
+    name: "Marketplace Ops Workflow Bundle Preview",
+    description: "Workflow Bundle mock combining an AI Agent, MCP Package and Workflow Template without provisioning.",
+    status: "preview-only",
+    workflowSystemId: "workflow-system-marketplace-ops",
+    templateIds: ["workflow-template-catalog-review"],
+    agentIds: ["ai-agent-marketplace-operator"],
+    mcpPackageIds: ["mcp-package-marketplace-agent-template"],
+    accessPreviewId: "acs-access-preview-bundle-ops",
+    isSimulated: true,
+    canProvisionBundle: false,
+    canRunBundle: false,
+    canBill: false,
+    warnings: ["Workflow Bundle cannot provision or execute."],
+    disclaimers: ["No bundle provisioning, no workflow run, no agent execution, no MCP deployment and no billing are active."]
+  }
+];
+
+export const marketplaceComputeAccess = [
+  {
+    id: "compute-access-acs-sandbox",
+    slug: "acs-sandbox-compute-preview",
+    name: "ACS Sandbox Compute Access Preview",
+    description: "Compute Access mock for ACS sandbox capacity planning without allocation.",
+    status: "preview-only",
+    tierIds: ["compute-tier-acs-sandbox-small"],
+    tenantId: "tenant-acs-services",
+    accessPreviewId: "acs-access-preview-agent-operator",
+    provisioningBoundaryId: "acs-provisioning-boundary-compute-preview",
+    isSimulated: true,
+    canAllocateCompute: false,
+    canScaleCompute: false,
+    canStartRuntime: false,
+    canBill: false,
+    warnings: ["Compute Access cannot allocate resources."],
+    disclaimers: ["No compute allocation, no scaling, no runtime start, no service account, no billing and no settlement are active."]
+  }
+];
+
+export const marketplaceComputeTiers = [
+  {
+    id: "compute-tier-acs-sandbox-small",
+    computeAccessId: "compute-access-acs-sandbox",
+    name: "Sandbox Small mock tier",
+    description: "Static compute tier label for ACS preview planning.",
+    tierLabel: "small-mock",
+    status: "preview-only",
+    isSimulated: true,
+    canAllocate: false,
+    canScale: false,
+    canBill: false,
+    warnings: ["Compute tier is descriptive only."],
+    disclaimers: ["No compute allocation, no scaling, no quota reservation and no billing are active."]
+  }
+];
+
+export const marketplaceACSCapabilityProducts = [
+  {
+    id: "acs-capability-product-marketplace-operator-agent",
+    slug: "marketplace-operator-agent-capability",
+    title: "Marketplace Operator Agent Capability Preview",
+    description: "ACS Capability Product wrapper for AI Agent, MCP Package, Workflow and Compute previews.",
+    capabilityType: "ai-agent",
+    status: "preview-only",
+    visibility: "private-preview",
+    tenantId: "tenant-acs-services",
+    productId: "product-mcp-agent-template",
+    providerId: "seller-mcp-labs",
+    curatedCatalogId: "curated-catalog-acs-capabilities",
+    catalogSegmentId: "catalog-segment-acs",
+    distributionChannelId: "distribution-channel-acs-distributor",
+    distributionProfileId: "distribution-profile-acs-distributor",
+    attributionSourceId: "attribution-record-acs-manual",
+    revenueSharingPolicyId: "revenue-policy-acs-capability-preview",
+    intelligenceInsightIds: ["insight-signal-acs-capability-coverage"],
+    accessPreviewId: "acs-access-preview-agent-operator",
+    executionBoundaryId: "acs-execution-boundary-agent-operator",
+    provisioningBoundaryId: "acs-provisioning-boundary-mcp-package",
+    capabilityDataBoundaryId: "acs-capability-data-boundary-agent",
+    isSimulated: true,
+    canExecuteAgent: false,
+    canDeployMcp: false,
+    canRunWorkflow: false,
+    canAllocateCompute: false,
+    canProvisionAccess: false,
+    canAccessSecrets: false,
+    canBill: false,
+    canSettle: false,
+    canTriggerPayout: false,
+    warnings: ["ACS Capability Product is preview-only and cannot execute."],
+    disclaimers: ["No agent execution, no MCP deployment, no workflow run, no compute allocation, no provisioning, no billing, no settlement and no payout are active."],
+    createdAt: "2026-06-19T13:20:00.000Z",
+    updatedAt: "2026-06-19T13:20:00.000Z"
+  }
+];
+
+export const marketplaceACSDistributionContexts = [
+  {
+    id: "acs-distribution-context-marketplace-operator-agent",
+    contextType: "ai-agent",
+    acsCapabilityProductId: "acs-capability-product-marketplace-operator-agent",
+    agentId: "ai-agent-marketplace-operator",
+    mcpPackageId: "mcp-package-marketplace-agent-template",
+    workflowSystemId: "workflow-system-marketplace-ops",
+    workflowBundleId: "workflow-bundle-marketplace-ops",
+    computeAccessId: "compute-access-acs-sandbox",
+    tenantId: "tenant-acs-services",
+    curatedCatalogId: "curated-catalog-acs-capabilities",
+    catalogSegmentId: "catalog-segment-acs",
+    distributionChannelId: "distribution-channel-acs-distributor",
+    distributionProfileId: "distribution-profile-acs-distributor",
+    attributionSourceId: "attribution-record-acs-manual",
+    revenueSharingPolicyId: "revenue-policy-acs-capability-preview",
+    intelligenceSnapshotId: "intelligence-snapshot-acs-capability",
+    executionBoundaryId: "acs-execution-boundary-agent-operator",
+    provisioningBoundaryId: "acs-provisioning-boundary-mcp-package",
+    capabilityDataBoundaryId: "acs-capability-data-boundary-agent",
+    isSimulated: true,
+    warnings: ["ACS Distribution Context is mock-only and cannot execute or provision capabilities."],
+    disclaimers: ["Tenant, curated catalog, distribution, revenue sharing and intelligence context are preserved without ACS runtime, MCP deployment, compute allocation or billing."]
+  }
+];
+
+export const marketplaceACSIntelligenceSummaries = [
+  {
+    id: "acs-intelligence-summary-capability",
+    scope: "ai-agent",
+    scopeId: "ai-agent-marketplace-operator",
+    title: "ACS Intelligence Summary mock - Capability",
+    summary: "Static ACS summary derived from tenant, curated catalog, distribution, revenue preview and capability boundary records without runtime telemetry.",
+    insightSignalIds: ["insight-signal-acs-capability-coverage"],
+    intelligenceSnapshotId: "intelligence-snapshot-acs-capability",
+    capabilityDataBoundaryId: "acs-capability-data-boundary-agent",
+    isSimulated: true,
+    usesRuntimeTelemetry: false,
+    usesAgentScoring: false,
+    usesAutomation: false,
+    usesExternalAnalytics: false,
+    warnings: ["ACS Intelligence Summary cannot score agents or automate provisioning."],
+    disclaimers: ["No runtime telemetry, no agent scoring, no automation, no external analytics and no BI are active."]
   }
 ];
 

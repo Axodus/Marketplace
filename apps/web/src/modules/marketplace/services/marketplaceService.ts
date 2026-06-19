@@ -5,6 +5,15 @@ import {
   marketplaceAcademyDistributionContexts,
   marketplaceAcademyIntelligenceSummaries,
   marketplaceAcademyProducts,
+  marketplaceACSAccessPreviews,
+  marketplaceACSCapabilityDataBoundaries,
+  marketplaceACSCapabilityProducts,
+  marketplaceACSDistributionContexts,
+  marketplaceACSExecutionBoundaries,
+  marketplaceACSIntelligenceSummaries,
+  marketplaceACSProvisioningBoundaries,
+  marketplaceAgentCapabilities,
+  marketplaceAIAgents,
   marketplaceBoundaries,
   marketplaceCertificateBadgeMocks,
   marketplaceCertificationRequirements,
@@ -34,6 +43,8 @@ import {
   marketplaceLearningPaths,
   marketplaceLearningSubscriptions,
   marketplaceLearningSubscriptionTiers,
+  marketplaceComputeAccess,
+  marketplaceComputeTiers,
   marketplaceDataBoundaries,
   marketplaceInsightSignals,
   marketplaceInsights,
@@ -60,6 +71,11 @@ import {
   marketplaceSettlementBoundaryInsights,
   marketplaceSettlementPreviewMocks,
   marketplaceRevenueSharingAuditEntries,
+  marketplaceMCPPackages,
+  marketplaceMCPVersions,
+  marketplaceWorkflowBundles,
+  marketplaceWorkflowSystems,
+  marketplaceWorkflowTemplates,
   marketplaceTenantDistributionConfigs,
   marketplaceTenantRevenueSharingConfigs,
   marketplaceTenants,
@@ -70,6 +86,15 @@ import type {
   AcademyDistributionContext,
   AcademyIntelligenceSummary,
   AcademyProduct,
+  ACSAccessPreview,
+  ACSCapabilityDataBoundary,
+  ACSCapabilityProduct,
+  ACSDistributionContext,
+  ACSExecutionBoundary,
+  ACSIntelligenceSummary,
+  ACSProvisioningBoundary,
+  AgentCapability,
+  AIAgent,
   AssetRegistryRecord,
   AttributionContext,
   AttributionSplitExplanation,
@@ -79,6 +104,8 @@ import type {
   AttributionToSplitRule,
   Chain,
   CommercialOriginSplitMapping,
+  ComputeAccess,
+  ComputeTier,
   CommunityDistributionContext,
   CommunityDistributionItem,
   CommunityMarketplaceDistribution,
@@ -130,6 +157,8 @@ import type {
   MarketplaceBoundaryStatus,
   MarketplaceCollection,
   MarketplaceInsight,
+  MCPPackage,
+  MCPVersion,
   CommissionModel,
   ParticipantShareConflict,
   ParticipantShareValidation,
@@ -181,7 +210,10 @@ import type {
   TenantTheme,
   TokenStandard,
   WalletDiscoveryRecord,
-  WalletDiscoveryStatus
+  WalletDiscoveryStatus,
+  WorkflowBundle,
+  WorkflowSystem,
+  WorkflowTemplate
 } from "../types/marketplace";
 import { getDeliveryTelemetrySummary } from "./deliveryRuntime";
 
@@ -281,6 +313,22 @@ const learningSubscriptions = marketplaceLearningSubscriptions as LearningSubscr
 const learningSubscriptionTiers = marketplaceLearningSubscriptionTiers as LearningSubscriptionTier[];
 const learningAccessPreviews = marketplaceLearningAccessPreviews as LearningAccessPreview[];
 const learningEntitlementMocks = marketplaceLearningEntitlementMocks as LearningEntitlementMock[];
+const acsCapabilityProducts = marketplaceACSCapabilityProducts as ACSCapabilityProduct[];
+const aiAgents = marketplaceAIAgents as AIAgent[];
+const agentCapabilities = marketplaceAgentCapabilities as AgentCapability[];
+const mcpPackages = marketplaceMCPPackages as MCPPackage[];
+const mcpVersions = marketplaceMCPVersions as MCPVersion[];
+const workflowSystems = marketplaceWorkflowSystems as WorkflowSystem[];
+const workflowTemplates = marketplaceWorkflowTemplates as WorkflowTemplate[];
+const workflowBundles = marketplaceWorkflowBundles as WorkflowBundle[];
+const computeAccessRecords = marketplaceComputeAccess as ComputeAccess[];
+const computeTiers = marketplaceComputeTiers as ComputeTier[];
+const acsAccessPreviews = marketplaceACSAccessPreviews as ACSAccessPreview[];
+const acsExecutionBoundaries = marketplaceACSExecutionBoundaries as ACSExecutionBoundary[];
+const acsProvisioningBoundaries = marketplaceACSProvisioningBoundaries as ACSProvisioningBoundary[];
+const acsCapabilityDataBoundaries = marketplaceACSCapabilityDataBoundaries as ACSCapabilityDataBoundary[];
+const acsDistributionContexts = marketplaceACSDistributionContexts as ACSDistributionContext[];
+const acsIntelligenceSummaries = marketplaceACSIntelligenceSummaries as ACSIntelligenceSummary[];
 
 function normalizeSearch(value?: string) {
   return value?.trim().toLowerCase() ?? "";
@@ -650,6 +698,74 @@ export interface AcademyDistributionOverview {
   dataBoundaries: AcademyDataBoundary[];
   contexts: AcademyDistributionContext[];
   intelligenceSummaries: AcademyIntelligenceSummary[];
+  boundaryNotes: string[];
+}
+
+export interface AIAgentView {
+  agent: AIAgent;
+  capabilities: AgentCapability[];
+  mcpPackages: MCPPackageView[];
+  workflowTemplates: WorkflowTemplate[];
+  accessPreview: ACSAccessPreview | null;
+  executionBoundary: ACSExecutionBoundary | null;
+  capabilityDataBoundary: ACSCapabilityDataBoundary | null;
+  acsCapabilityProduct: ACSCapabilityProduct | null;
+  distributionContext: ACSDistributionContext | null;
+  revenuePolicy: RevenueSharingPolicyView | null;
+  intelligenceSummary: ACSIntelligenceSummary | null;
+  intelligenceSnapshot: IntelligenceSnapshotView | null;
+  tenant: Tenant | null;
+  curatedCatalog: CuratedCatalog | null;
+  distributionChannel: DistributionChannel | null;
+  boundaryNotes: string[];
+}
+
+export interface MCPPackageView {
+  package: MCPPackage;
+  versions: MCPVersion[];
+  accessPreview: ACSAccessPreview | null;
+  provisioningBoundary: ACSProvisioningBoundary | null;
+  capabilityDataBoundary: ACSCapabilityDataBoundary | null;
+  tenant: Tenant | null;
+  curatedCatalog: CuratedCatalog | null;
+  distributionChannel: DistributionChannel | null;
+  boundaryNotes: string[];
+}
+
+export interface WorkflowSystemView {
+  system: WorkflowSystem;
+  templates: WorkflowTemplate[];
+  bundles: WorkflowBundle[];
+  accessPreview: ACSAccessPreview | null;
+  executionBoundary: ACSExecutionBoundary | null;
+  tenant: Tenant | null;
+  curatedCatalog: CuratedCatalog | null;
+  distributionChannel: DistributionChannel | null;
+  boundaryNotes: string[];
+}
+
+export interface ComputeAccessView {
+  computeAccess: ComputeAccess;
+  tiers: ComputeTier[];
+  accessPreview: ACSAccessPreview | null;
+  provisioningBoundary: ACSProvisioningBoundary | null;
+  tenant: Tenant | null;
+  boundaryNotes: string[];
+}
+
+export interface ACSDistributionOverview {
+  capabilityProducts: ACSCapabilityProduct[];
+  agents: AIAgentView[];
+  mcpPackages: MCPPackageView[];
+  workflowSystems: WorkflowSystemView[];
+  workflowBundles: WorkflowBundle[];
+  computeAccess: ComputeAccessView[];
+  accessPreviews: ACSAccessPreview[];
+  executionBoundaries: ACSExecutionBoundary[];
+  provisioningBoundaries: ACSProvisioningBoundary[];
+  capabilityDataBoundaries: ACSCapabilityDataBoundary[];
+  contexts: ACSDistributionContext[];
+  intelligenceSummaries: ACSIntelligenceSummary[];
   boundaryNotes: string[];
 }
 
@@ -5420,6 +5536,212 @@ export function validateAcademyDistributionMockOnly(targetId?: string) {
     isNoBilling: boundaries.every((entry) => !entry.usesBilling),
     isNoEntitlement: boundaries.every((entry) => !entry.usesEntitlement) && entitlementRecords.every((entry) => !entry.canGrantEntitlement && !entry.canRevokeEntitlement),
     boundaryCount: boundaries.length
+  };
+}
+
+function acsBoundaryNotes(recordWarnings: string[] = [], recordDisclaimers: string[] = []) {
+  return [
+    ...recordWarnings,
+    ...recordDisclaimers,
+    "mock ACS / config-first ACS / no agent execution / no MCP deployment / no workflow run / no compute allocation / no provisioning / no secret access / no billing / no settlement"
+  ];
+}
+
+function findACSCapabilityProductByAccessPreview(accessPreviewId: string) {
+  return acsCapabilityProducts.find((entry) => entry.accessPreviewId === accessPreviewId) ?? null;
+}
+
+function buildMCPPackageView(mcpPackage: MCPPackage): MCPPackageView {
+  return {
+    package: mcpPackage,
+    versions: mcpVersions.filter((entry) => mcpPackage.versionIds.includes(entry.id)),
+    accessPreview: acsAccessPreviews.find((entry) => entry.id === mcpPackage.accessPreviewId) ?? null,
+    provisioningBoundary: acsProvisioningBoundaries.find((entry) => entry.id === mcpPackage.provisioningBoundaryId) ?? null,
+    capabilityDataBoundary: acsCapabilityDataBoundaries.find((entry) => entry.id === mcpPackage.capabilityDataBoundaryId) ?? null,
+    tenant: mcpPackage.tenantId ? tenants.find((entry) => entry.id === mcpPackage.tenantId) ?? null : null,
+    curatedCatalog: mcpPackage.curatedCatalogId ? curatedCatalogs.find((entry) => entry.id === mcpPackage.curatedCatalogId) ?? null : null,
+    distributionChannel: mcpPackage.distributionChannelId ? distributionChannels.find((entry) => entry.id === mcpPackage.distributionChannelId) ?? null : null,
+    boundaryNotes: acsBoundaryNotes(mcpPackage.warnings, mcpPackage.disclaimers)
+  };
+}
+
+function buildAIAgentView(agent: AIAgent): AIAgentView {
+  const intelligenceSummary = acsIntelligenceSummaries.find((entry) => entry.scopeId === agent.id || entry.scopeId === agent.tenantId) ?? null;
+  return {
+    agent,
+    capabilities: agentCapabilities.filter((entry) => agent.capabilityIds.includes(entry.id)),
+    mcpPackages: agent.mcpPackageIds.map(getMCPPackageById).filter((entry): entry is MCPPackageView => Boolean(entry)),
+    workflowTemplates: workflowTemplates.filter((entry) => agent.workflowTemplateIds.includes(entry.id)),
+    accessPreview: acsAccessPreviews.find((entry) => entry.id === agent.accessPreviewId) ?? null,
+    executionBoundary: acsExecutionBoundaries.find((entry) => entry.id === agent.executionBoundaryId) ?? null,
+    capabilityDataBoundary: acsCapabilityDataBoundaries.find((entry) => entry.id === agent.capabilityDataBoundaryId) ?? null,
+    acsCapabilityProduct: findACSCapabilityProductByAccessPreview(agent.accessPreviewId),
+    distributionContext: acsDistributionContexts.find((entry) => entry.agentId === agent.id) ?? null,
+    revenuePolicy: agent.revenueSharingPolicyId ? getRevenueSharingPolicyById(agent.revenueSharingPolicyId) : null,
+    intelligenceSummary,
+    intelligenceSnapshot: agent.intelligenceSnapshotId ? getIntelligenceSnapshotById(agent.intelligenceSnapshotId) : null,
+    tenant: agent.tenantId ? tenants.find((entry) => entry.id === agent.tenantId) ?? null : null,
+    curatedCatalog: agent.curatedCatalogId ? curatedCatalogs.find((entry) => entry.id === agent.curatedCatalogId) ?? null : null,
+    distributionChannel: agent.distributionChannelId ? distributionChannels.find((entry) => entry.id === agent.distributionChannelId) ?? null : null,
+    boundaryNotes: acsBoundaryNotes(agent.warnings, agent.disclaimers)
+  };
+}
+
+function buildWorkflowSystemView(system: WorkflowSystem): WorkflowSystemView {
+  return {
+    system,
+    templates: workflowTemplates.filter((entry) => system.templateIds.includes(entry.id)),
+    bundles: workflowBundles.filter((entry) => system.bundleIds.includes(entry.id)),
+    accessPreview: acsAccessPreviews.find((entry) => entry.id === system.accessPreviewId) ?? null,
+    executionBoundary: acsExecutionBoundaries.find((entry) => entry.id === system.executionBoundaryId) ?? null,
+    tenant: system.tenantId ? tenants.find((entry) => entry.id === system.tenantId) ?? null : null,
+    curatedCatalog: system.curatedCatalogId ? curatedCatalogs.find((entry) => entry.id === system.curatedCatalogId) ?? null : null,
+    distributionChannel: system.distributionChannelId ? distributionChannels.find((entry) => entry.id === system.distributionChannelId) ?? null : null,
+    boundaryNotes: acsBoundaryNotes(system.warnings, system.disclaimers)
+  };
+}
+
+function buildComputeAccessView(computeAccess: ComputeAccess): ComputeAccessView {
+  return {
+    computeAccess,
+    tiers: computeTiers.filter((entry) => computeAccess.tierIds.includes(entry.id)),
+    accessPreview: acsAccessPreviews.find((entry) => entry.id === computeAccess.accessPreviewId) ?? null,
+    provisioningBoundary: acsProvisioningBoundaries.find((entry) => entry.id === computeAccess.provisioningBoundaryId) ?? null,
+    tenant: computeAccess.tenantId ? tenants.find((entry) => entry.id === computeAccess.tenantId) ?? null : null,
+    boundaryNotes: acsBoundaryNotes(computeAccess.warnings, computeAccess.disclaimers)
+  };
+}
+
+export function listACSCapabilityProducts() {
+  return acsCapabilityProducts;
+}
+
+export function listAIAgents() {
+  return aiAgents.map(buildAIAgentView);
+}
+
+export function getAIAgentById(agentIdOrSlug: string) {
+  const agent = aiAgents.find((entry) => entry.id === agentIdOrSlug || entry.slug === agentIdOrSlug);
+  return agent ? buildAIAgentView(agent) : null;
+}
+
+export function listMCPPackages() {
+  return mcpPackages.map(buildMCPPackageView);
+}
+
+export function getMCPPackageById(packageIdOrSlug: string) {
+  const mcpPackage = mcpPackages.find((entry) => entry.id === packageIdOrSlug || entry.slug === packageIdOrSlug);
+  return mcpPackage ? buildMCPPackageView(mcpPackage) : null;
+}
+
+export function listWorkflowSystems() {
+  return workflowSystems.map(buildWorkflowSystemView);
+}
+
+export function getWorkflowSystemById(systemIdOrSlug: string) {
+  const system = workflowSystems.find((entry) => entry.id === systemIdOrSlug || entry.slug === systemIdOrSlug);
+  return system ? buildWorkflowSystemView(system) : null;
+}
+
+export function listComputeAccess() {
+  return computeAccessRecords.map(buildComputeAccessView);
+}
+
+export function getComputeAccessById(computeAccessIdOrSlug: string) {
+  const computeAccess = computeAccessRecords.find((entry) => entry.id === computeAccessIdOrSlug || entry.slug === computeAccessIdOrSlug);
+  return computeAccess ? buildComputeAccessView(computeAccess) : null;
+}
+
+export function listACSAccessPreviews() {
+  return acsAccessPreviews;
+}
+
+export function listACSExecutionBoundaries() {
+  return acsExecutionBoundaries;
+}
+
+export function listACSProvisioningBoundaries() {
+  return acsProvisioningBoundaries;
+}
+
+export function listACSCapabilityDataBoundaries() {
+  return acsCapabilityDataBoundaries;
+}
+
+export function listACSDistributionContexts() {
+  return acsDistributionContexts;
+}
+
+export function resolveACSDistributionContext(contextIdOrTargetId: string) {
+  return (
+    acsDistributionContexts.find(
+      (entry) =>
+        entry.id === contextIdOrTargetId ||
+        entry.acsCapabilityProductId === contextIdOrTargetId ||
+        entry.agentId === contextIdOrTargetId ||
+        entry.mcpPackageId === contextIdOrTargetId ||
+        entry.workflowSystemId === contextIdOrTargetId ||
+        entry.workflowBundleId === contextIdOrTargetId ||
+        entry.computeAccessId === contextIdOrTargetId
+    ) ?? null
+  );
+}
+
+export function listACSIntelligenceSummaries() {
+  return acsIntelligenceSummaries;
+}
+
+export function resolveACSDistributionOverview(): ACSDistributionOverview {
+  return {
+    capabilityProducts: acsCapabilityProducts,
+    agents: listAIAgents(),
+    mcpPackages: listMCPPackages(),
+    workflowSystems: listWorkflowSystems(),
+    workflowBundles,
+    computeAccess: listComputeAccess(),
+    accessPreviews: acsAccessPreviews,
+    executionBoundaries: acsExecutionBoundaries,
+    provisioningBoundaries: acsProvisioningBoundaries,
+    capabilityDataBoundaries: acsCapabilityDataBoundaries,
+    contexts: acsDistributionContexts,
+    intelligenceSummaries: acsIntelligenceSummaries,
+    boundaryNotes: acsBoundaryNotes(["ACS Distribution is mock/config-first and non-executing."], ["No agent execution, no MCP deployment, no workflow run, no compute allocation, no provisioning, no secret access and no billing are active."])
+  };
+}
+
+export function validateACSDistributionMockOnly(targetId?: string) {
+  const overview = resolveACSDistributionOverview();
+  const agentRecords = targetId ? overview.agents.filter((entry) => entry.agent.id === targetId || entry.agent.slug === targetId) : overview.agents;
+  const packageRecords = targetId ? overview.mcpPackages.filter((entry) => entry.package.id === targetId || entry.package.slug === targetId) : overview.mcpPackages;
+  const workflowRecords = targetId ? overview.workflowSystems.filter((entry) => entry.system.id === targetId || entry.system.slug === targetId) : overview.workflowSystems;
+  const computeRecords = targetId ? overview.computeAccess.filter((entry) => entry.computeAccess.id === targetId || entry.computeAccess.slug === targetId) : overview.computeAccess;
+  const hasScopedRecords = Boolean(agentRecords.length || packageRecords.length || workflowRecords.length || computeRecords.length);
+  const selectedAgents = hasScopedRecords ? agentRecords : overview.agents;
+  const selectedPackages = hasScopedRecords ? packageRecords : overview.mcpPackages;
+  const selectedWorkflows = hasScopedRecords ? workflowRecords : overview.workflowSystems;
+  const selectedCompute = hasScopedRecords ? computeRecords : overview.computeAccess;
+
+  const executionBoundaries = selectedAgents.map((entry) => entry.executionBoundary).concat(selectedWorkflows.map((entry) => entry.executionBoundary)).filter((entry): entry is ACSExecutionBoundary => Boolean(entry));
+  const provisioningBoundaries = selectedPackages.map((entry) => entry.provisioningBoundary).concat(selectedCompute.map((entry) => entry.provisioningBoundary)).filter((entry): entry is ACSProvisioningBoundary => Boolean(entry));
+  const dataBoundaries = selectedAgents.map((entry) => entry.capabilityDataBoundary).concat(selectedPackages.map((entry) => entry.capabilityDataBoundary)).filter((entry): entry is ACSCapabilityDataBoundary => Boolean(entry));
+
+  return {
+    isMockOnly:
+      selectedAgents.every((entry) => entry.agent.isSimulated && !entry.agent.canExecute && !entry.agent.canCallTools && !entry.agent.canAccessSecrets && !entry.agent.canUseExternalModels && !entry.agent.canWriteMemory) &&
+      selectedPackages.every((entry) => entry.package.isSimulated && !entry.package.canDeploy && !entry.package.canInstall && !entry.package.canConnectServer && !entry.package.canExposeTools && !entry.package.canAccessSecrets) &&
+      selectedWorkflows.every((entry) => entry.system.isSimulated && !entry.system.canRunWorkflow && !entry.system.canScheduleWorkflow && !entry.system.canCallAgents && !entry.system.canMutateExternalSystems) &&
+      selectedCompute.every((entry) => entry.computeAccess.isSimulated && !entry.computeAccess.canAllocateCompute && !entry.computeAccess.canScaleCompute && !entry.computeAccess.canStartRuntime && !entry.computeAccess.canBill) &&
+      executionBoundaries.every((entry) => entry.isSimulated && !entry.canExecuteAgent && !entry.canCallTools && !entry.canRunWorkflow && !entry.canMutateData && !entry.canUseExternalModels && !entry.canWriteMemory) &&
+      provisioningBoundaries.every((entry) => entry.isSimulated && !entry.canProvision && !entry.canDeployMcp && !entry.canInstallPackage && !entry.canAllocateCompute && !entry.canStartRuntime && !entry.canAccessSecrets && !entry.canBill) &&
+      dataBoundaries.every((entry) => entry.isSimulated && !entry.usesProductionData && !entry.usesSecrets && !entry.usesExternalIntegration && !entry.usesTracking && !entry.usesAnalytics && !entry.canExportData && !entry.canTrainModel),
+    isNoAgentExecution: executionBoundaries.every((entry) => !entry.canExecuteAgent && !entry.canCallTools),
+    isNoMcpDeployment: provisioningBoundaries.every((entry) => !entry.canDeployMcp && !entry.canInstallPackage),
+    isNoWorkflowRun: executionBoundaries.every((entry) => !entry.canRunWorkflow),
+    isNoComputeAllocation: provisioningBoundaries.every((entry) => !entry.canAllocateCompute && !entry.canStartRuntime),
+    isNoProvisioning: provisioningBoundaries.every((entry) => !entry.canProvision),
+    isNoSecretAccess: provisioningBoundaries.every((entry) => !entry.canAccessSecrets) && dataBoundaries.every((entry) => !entry.usesSecrets),
+    isNoBilling: selectedCompute.every((entry) => !entry.computeAccess.canBill) && provisioningBoundaries.every((entry) => !entry.canBill),
+    boundaryCount: executionBoundaries.length + provisioningBoundaries.length + dataBoundaries.length
   };
 }
 
