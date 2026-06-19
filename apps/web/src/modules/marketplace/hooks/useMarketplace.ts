@@ -70,6 +70,9 @@ import {
   listIntelligenceSnapshotsByScope,
   getIntelligenceSnapshotById,
   listAttributionSources,
+  listAcademyCourses,
+  listAcademyCertifications,
+  listAcademyLearningSubscriptions,
   listAttributionToSplitRules,
   listAttributionToSplitRulesByAttributionSource,
   listAttributionToSplitRulesByCommunityDistribution,
@@ -127,6 +130,12 @@ import {
   validateRecommendationPreviewMockOnly,
   validateIntelligenceSnapshotMockOnly,
   validateMarketplaceInsightMockOnly,
+  getAcademyCourseById,
+  getAcademyCertificationById,
+  getAcademyLearningSubscriptionById,
+  resolveAcademyDistributionContext,
+  resolveAcademyDistributionOverview,
+  validateAcademyDistributionMockOnly,
   listRevenueSharingAuditEntriesByPolicy,
   listRevenueSharingPreviewConflicts,
   resolvePayoutPreviewMock,
@@ -1083,6 +1092,81 @@ export function useIntelligenceSnapshotValidation(snapshotIdOrSlug?: string) {
     queryKey: ["marketplace-intelligence-snapshot-validation", snapshotIdOrSlug],
     enabled: Boolean(snapshotIdOrSlug),
     queryFn: () => validateIntelligenceSnapshotMockOnly(snapshotIdOrSlug ?? "")
+  });
+}
+
+export function useAcademyDistributionOverview() {
+  return useQuery({
+    queryKey: ["marketplace-academy-distribution-overview"],
+    queryFn: () => {
+      const overview = resolveAcademyDistributionOverview();
+      traceMarketplaceLifecycle("marketplace-academy-distribution-overview-query", "completed", {
+        courseCount: overview.courses.length,
+        certificationCount: overview.certifications.length,
+        subscriptionCount: overview.subscriptions.length
+      });
+      return overview;
+    }
+  });
+}
+
+export function useAcademyCourses() {
+  return useQuery({
+    queryKey: ["marketplace-academy-courses"],
+    queryFn: () => listAcademyCourses()
+  });
+}
+
+export function useAcademyCourse(courseIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-academy-course", courseIdOrSlug],
+    enabled: Boolean(courseIdOrSlug),
+    queryFn: () => getAcademyCourseById(courseIdOrSlug ?? "")
+  });
+}
+
+export function useAcademyCertifications() {
+  return useQuery({
+    queryKey: ["marketplace-academy-certifications"],
+    queryFn: () => listAcademyCertifications()
+  });
+}
+
+export function useAcademyCertification(certificationIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-academy-certification", certificationIdOrSlug],
+    enabled: Boolean(certificationIdOrSlug),
+    queryFn: () => getAcademyCertificationById(certificationIdOrSlug ?? "")
+  });
+}
+
+export function useAcademyLearningSubscriptions() {
+  return useQuery({
+    queryKey: ["marketplace-academy-learning-subscriptions"],
+    queryFn: () => listAcademyLearningSubscriptions()
+  });
+}
+
+export function useAcademyLearningSubscription(subscriptionIdOrSlug?: string) {
+  return useQuery({
+    queryKey: ["marketplace-academy-learning-subscription", subscriptionIdOrSlug],
+    enabled: Boolean(subscriptionIdOrSlug),
+    queryFn: () => getAcademyLearningSubscriptionById(subscriptionIdOrSlug ?? "")
+  });
+}
+
+export function useAcademyDistributionContext(targetId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-academy-distribution-context", targetId],
+    enabled: Boolean(targetId),
+    queryFn: () => resolveAcademyDistributionContext(targetId ?? "")
+  });
+}
+
+export function useAcademyDistributionValidation(targetId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-academy-distribution-validation", targetId],
+    queryFn: () => validateAcademyDistributionMockOnly(targetId)
   });
 }
 

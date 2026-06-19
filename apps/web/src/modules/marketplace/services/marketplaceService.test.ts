@@ -101,6 +101,10 @@ import {
   listAttributionToSplitRulesByCommunityDistribution,
   listAttributionToSplitRulesByDistributionChannel,
   listAttributionToSplitRulesByDistributionProfile,
+  listAcademyCourses,
+  listAcademyCertifications,
+  listAcademyLearningEntitlementMocks,
+  listAcademyLearningSubscriptions,
   listCommissionModels,
   listCommissionModelsByPolicy,
   listCommunityMarketplaceDistributions,
@@ -159,6 +163,9 @@ import {
   resolveCuratedCatalogDistribution,
   resolveAttributionContext,
   resolveAttributionSplit,
+  resolveAcademyDistributionContext,
+  resolveAcademyDistributionOverview,
+  resolveAcademyLearningEntitlementMock,
   resolveCommunityDistributionContext,
   resolveDataBoundary,
   resolveDistributionContext,
@@ -201,6 +208,7 @@ import {
   validateRevenuePreviewInsightMockOnly,
   validateRiskTrustInsightMockOnly,
   validateRecommendationPreviewMockOnly,
+  validateAcademyDistributionMockOnly,
   resolveRevenueTrustRiskIntelligence,
   resolveRiskTrustContext,
   validateParticipantSharesByCommissionModel,
@@ -1509,6 +1517,92 @@ describe("marketplaceService", () => {
     const missingAttribution = resolveAttributionIntelligencePanel("missing-attribution-source");
     expect(missingAttribution.snapshot).toBeNull();
     expect(missingAttribution.boundaryWarnings.join(" ")).toContain("No Intelligence Snapshot is configured");
+  });
+
+  it("resolves Academy Courses with tenant, curated catalog, distribution, revenue and intelligence context", () => {
+    const courses = listAcademyCourses();
+    const foundations = courses.find((entry) => entry.course.slug === "academy-marketplace-foundations");
+
+    expect(courses.length).toBeGreaterThan(0);
+    expect(foundations?.modules.length).toBeGreaterThan(0);
+    expect(foundations?.lessons.length).toBeGreaterThan(0);
+    expect(foundations?.learningPaths.map((path) => path.slug)).toContain("academy-marketplace-operator-path");
+    expect(foundations?.tenant?.slug).toBe("academy");
+    expect(foundations?.curatedCatalog?.slug).toBe("academy-onboarding");
+    expect(foundations?.distributionChannel?.slug).toBe("academy-partner-channel");
+    expect(foundations?.revenuePolicy?.policy.slug).toBe("academy-tenant-revenue-preview");
+    expect(foundations?.intelligenceSnapshot?.snapshot.slug).toBe("academy-tenant-intelligence-snapshot");
+    expect(foundations?.accessPreview?.canStartLearning).toBe(false);
+    expect(foundations?.course.hasRealPlayer).toBe(false);
+    expect(foundations?.course.canTrackProgress).toBe(false);
+    expect(foundations?.course.canRecordCompletion).toBe(false);
+    expect(foundations?.boundaryNotes.join(" ")).toContain("no LMS");
+  });
+
+  it("resolves Academy Certifications and credential previews without issuance or verification", () => {
+    const certifications = listAcademyCertifications();
+    const operator = certifications.find((entry) => entry.certification.slug === "academy-marketplace-operator");
+
+    expect(certifications.length).toBeGreaterThan(0);
+    expect(operator?.requirements.length).toBeGreaterThan(0);
+    expect(operator?.credentialPreview?.status).toBe("preview-only");
+    expect(operator?.certificateBadgeMock?.displayStatus).toBe("preview-only");
+    expect(operator?.certificateBadgeMock?.isVerifiable).toBe(false);
+    expect(operator?.certification.canIssueCredential).toBe(false);
+    expect(operator?.certification.canVerifyCredential).toBe(false);
+    expect(operator?.certification.canMintOnChain).toBe(false);
+    expect(operator?.certification.canSignCredential).toBe(false);
+    expect(operator?.certification.canRecordAssessment).toBe(false);
+    expect(operator?.accessPreview?.canIssueCredential).toBe(false);
+    expect(operator?.boundaryNotes.join(" ")).toContain("no credential issuance");
+  });
+
+  it("resolves Learning Subscriptions and Learning Entitlement mock without billing or access grants", () => {
+    const subscriptions = listAcademyLearningSubscriptions();
+    const entitlementMocks = listAcademyLearningEntitlementMocks();
+    const subscription = subscriptions.find((entry) => entry.subscription.slug === "academy-pass-preview");
+    const entitlement = resolveAcademyLearningEntitlementMock("learning-subscription-academy-pass-preview");
+
+    expect(subscriptions.length).toBeGreaterThan(0);
+    expect(entitlementMocks.length).toBeGreaterThan(0);
+    expect(subscription?.tiers.length).toBe(1);
+    expect(subscription?.courses.length).toBeGreaterThan(0);
+    expect(subscription?.certifications.length).toBeGreaterThan(0);
+    expect(subscription?.learningEntitlementMock?.status).toBe("preview-only");
+    expect(entitlement?.entitlementLabel).toContain("Learning Entitlement mock");
+    expect(subscription?.subscription.canBill).toBe(false);
+    expect(subscription?.subscription.canInvoice).toBe(false);
+    expect(subscription?.subscription.canChargePayment).toBe(false);
+    expect(subscription?.subscription.canGrantEntitlement).toBe(false);
+    expect(subscription?.subscription.canSettle).toBe(false);
+    expect(subscription?.subscription.canTriggerPayout).toBe(false);
+    expect(subscription?.learningEntitlementMock?.canGrantEntitlement).toBe(false);
+    expect(subscription?.learningEntitlementMock?.canStartLearning).toBe(false);
+    expect(subscription?.learningEntitlementMock?.canTrackProgress).toBe(false);
+    expect(subscription?.learningEntitlementMock?.canBill).toBe(false);
+  });
+
+  it("validates Academy Distribution overview and data boundaries as mock/config-first only", () => {
+    const overview = resolveAcademyDistributionOverview();
+    const courseContext = resolveAcademyDistributionContext("course-academy-marketplace-foundations");
+    const subscriptionContext = resolveAcademyDistributionContext("learning-subscription-academy-pass-preview");
+    const validation = validateAcademyDistributionMockOnly();
+
+    expect(overview.products.length).toBeGreaterThan(0);
+    expect(overview.courses.length).toBeGreaterThan(0);
+    expect(overview.certifications.length).toBeGreaterThan(0);
+    expect(overview.subscriptions.length).toBeGreaterThan(0);
+    expect(overview.learningEntitlementMocks.length).toBeGreaterThan(0);
+    expect(courseContext?.tenantId).toBe("tenant-academy-marketplace");
+    expect(subscriptionContext?.revenueSharingPolicyId).toBe("revenue-policy-academy-tenant-preview");
+    expect(validation.isMockOnly).toBe(true);
+    expect(validation.isNoLms).toBe(true);
+    expect(validation.isNoProgressTracking).toBe(true);
+    expect(validation.isNoLearningAnalytics).toBe(true);
+    expect(validation.isNoCredentialIssuance).toBe(true);
+    expect(validation.isNoCredentialVerification).toBe(true);
+    expect(validation.isNoBilling).toBe(true);
+    expect(validation.isNoEntitlement).toBe(true);
   });
 
   it("issues mock purchase records without settlement", () => {

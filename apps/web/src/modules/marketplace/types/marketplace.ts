@@ -403,6 +403,25 @@ export type EditorialRankingNote = string;
 export type DiscoveryNote = string;
 export type RiskLabelMock = "low-risk-mock" | "medium-risk-mock" | "high-risk-mock" | "unknown-external" | "manual-review-required" | "restricted";
 export type TrustLabelMock = "native-trust-mock" | "provider-reported-mock" | "manual-review-trust" | "restricted-trust" | "untrusted-mock";
+export type AcademyProductType = "course" | "certification" | "learning-path" | "learning-subscription" | "course-bundle" | "certification-bundle" | "academy-pass" | "demo";
+export type CourseType = "self-paced-mock" | "cohort-mock" | "workshop-mock" | "masterclass-mock" | "learning-path-mock" | "micro-course-mock" | "demo";
+export type CourseStatus = "draft" | "configured-mock" | "preview-only" | "active-mock" | "review-required" | "restricted" | "disabled" | "archived";
+export type CertificationStatus = "draft" | "configured-mock" | "preview-only" | "eligibility-preview" | "issuer-review" | "restricted" | "disabled" | "archived";
+export type LearningSubscriptionStatus = "draft" | "configured-mock" | "preview-only" | "active-mock" | "restricted" | "disabled" | "archived";
+export type AccessPreviewStatus = "preview-only" | "not-enrollable" | "restricted" | "disabled" | "requires-manual-review" | "not-configured";
+export type AcademyDataBoundaryStatus =
+  | "mock-only"
+  | "static-only"
+  | "no-lms"
+  | "no-progress-tracking"
+  | "no-learning-analytics"
+  | "no-credential-issuance"
+  | "no-credential-verification"
+  | "no-billing"
+  | "no-entitlement"
+  | "restricted"
+  | "blocked"
+  | "review-required";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -1919,6 +1938,348 @@ export interface RevenueIntelligenceSummary {
   disclaimers: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AcademyProduct {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  academyProductType: AcademyProductType;
+  status: CourseStatus | CertificationStatus | LearningSubscriptionStatus;
+  visibility: "public-mock" | "tenant-preview" | "private-preview" | "restricted";
+  tenantId?: string;
+  providerId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceInsightIds: string[];
+  dataBoundaryId: string;
+  accessPreviewId?: string;
+  isSimulated: boolean;
+  canEnroll: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canIssueCredential: boolean;
+  canVerifyCredential: boolean;
+  canBill: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Course {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  courseType: CourseType;
+  status: CourseStatus;
+  level: string;
+  durationLabel: string;
+  languageLabel: string;
+  providerLabel: string;
+  instructorLabel: string;
+  moduleIds: string[];
+  lessonIds: string[];
+  learningPathIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  accessPreviewId: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  hasRealPlayer: boolean;
+  canEnroll: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canRecordCompletion: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CourseModule {
+  id: string;
+  courseId: string;
+  title: string;
+  description: string;
+  order: number;
+  lessonIds: string[];
+  durationLabel: string;
+  isSimulated: boolean;
+  hasRealPlayer: boolean;
+  canTrackProgress: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface Lesson {
+  id: string;
+  courseId: string;
+  moduleId: string;
+  title: string;
+  description: string;
+  lessonType: "video-mock" | "reading-mock" | "workshop-mock" | "assessment-preview-mock" | "demo";
+  durationLabel: string;
+  order: number;
+  previewLabel: string;
+  isSimulated: boolean;
+  hasRealPlayer: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canRecordCompletion: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningPath {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  courseIds: string[];
+  certificationIds: string[];
+  status: CourseStatus;
+  level: string;
+  providerLabel: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  accessPreviewId: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  canEnroll: boolean;
+  canTrackProgress: boolean;
+  canRecordCompletion: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface Certification {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  certificationType: "certificate-mock" | "badge-mock" | "academy-credential-preview" | "demo";
+  status: CertificationStatus;
+  issuerLabel: string;
+  validityLabel: string;
+  requirementIds: string[];
+  credentialPreviewId: string;
+  certificateBadgeMockId: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  canIssueCredential: boolean;
+  canVerifyCredential: boolean;
+  canMintOnChain: boolean;
+  canSignCredential: boolean;
+  canRecordAssessment: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CertificationRequirement {
+  id: string;
+  certificationId: string;
+  requirementType: "course-completion-preview" | "manual-review-preview" | "assessment-preview" | "demo";
+  title: string;
+  description: string;
+  status: "configured-mock" | "preview-only" | "restricted" | "disabled";
+  isSimulated: boolean;
+  canRecordAssessment: boolean;
+  canVerifyCompletion: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CredentialPreview {
+  id: string;
+  certificationId: string;
+  credentialLabel: string;
+  issuerLabel: string;
+  validityLabel: string;
+  verificationLabel: string;
+  status: CertificationStatus;
+  isSimulated: boolean;
+  canIssueCredential: boolean;
+  canVerifyCredential: boolean;
+  canMintOnChain: boolean;
+  canSignCredential: boolean;
+  externalRegistryId?: string;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CertificateBadgeMock {
+  id: string;
+  certificationId: string;
+  badgeLabel: string;
+  certificateLabel: string;
+  displayStatus: "preview-only" | "configured-mock" | "restricted" | "disabled";
+  isSimulated: boolean;
+  isVerifiable: boolean;
+  canMintOnChain: boolean;
+  canSignCredential: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningSubscription {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: LearningSubscriptionStatus;
+  tierIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  includedCourseIds: string[];
+  includedCertificationIds: string[];
+  accessPreviewId: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  canBill: boolean;
+  canInvoice: boolean;
+  canChargePayment: boolean;
+  canGrantEntitlement: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningSubscriptionTier {
+  id: string;
+  subscriptionId: string;
+  name: string;
+  description: string;
+  tierLevel: string;
+  includedCourseIds: string[];
+  includedCertificationIds: string[];
+  accessPreviewId: string;
+  isSimulated: boolean;
+  canBill: boolean;
+  canGrantEntitlement: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningAccessPreview {
+  id: string;
+  scope: "academy-product" | "course" | "certification" | "learning-path" | "learning-subscription";
+  scopeId: string;
+  status: AccessPreviewStatus;
+  accessLabel: string;
+  includedCourseIds: string[];
+  includedCertificationIds: string[];
+  includedLearningPathIds: string[];
+  isSimulated: boolean;
+  canGrantAccess: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canRecordCompletion: boolean;
+  canIssueCredential: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningEntitlementMock {
+  id: string;
+  scope: "academy-product" | "course" | "certification" | "learning-path" | "learning-subscription";
+  scopeId: string;
+  accessPreviewId: string;
+  entitlementLabel: string;
+  status: "preview-only" | "not-configured" | "blocked" | "disabled";
+  isSimulated: boolean;
+  canGrantEntitlement: boolean;
+  canRevokeEntitlement: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canBill: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AcademyDistributionContext {
+  id: string;
+  contextType: "course" | "certification" | "learning-subscription" | "tenant" | "curated-catalog" | "distribution";
+  academyProductId?: string;
+  courseId?: string;
+  certificationId?: string;
+  learningSubscriptionId?: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  attributionSourceId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  federationProviderId?: string;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AcademyDataBoundary {
+  id: string;
+  scope: LearningAccessPreview["scope"] | AcademyDistributionContext["contextType"];
+  scopeId: string;
+  status: AcademyDataBoundaryStatus;
+  boundaryLabel: string;
+  isSimulated: boolean;
+  usesLms: boolean;
+  usesRealPlayer: boolean;
+  usesProgressTracking: boolean;
+  usesLearningAnalytics: boolean;
+  usesAssessment: boolean;
+  usesCredentialIssuance: boolean;
+  usesCredentialVerification: boolean;
+  usesBilling: boolean;
+  usesEntitlement: boolean;
+  usesExternalEducationPlatform: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AcademyIntelligenceSummary {
+  id: string;
+  scope: "academy-product" | "course" | "certification" | "learning-subscription" | "tenant" | "curated-catalog" | "distribution";
+  scopeId: string;
+  title: string;
+  summary: string;
+  insightSignalIds: string[];
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesLearningAnalytics: boolean;
+  usesPersonalization: boolean;
+  usesProfiling: boolean;
+  usesRecommendationEngine: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
 }
 
 export interface RevenuePreviewInsight {

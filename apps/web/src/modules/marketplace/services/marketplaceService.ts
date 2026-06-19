@@ -1,7 +1,15 @@
 import {
   marketplaceAttributionSources,
   marketplaceAssetRegistry,
+  marketplaceAcademyDataBoundaries,
+  marketplaceAcademyDistributionContexts,
+  marketplaceAcademyIntelligenceSummaries,
+  marketplaceAcademyProducts,
   marketplaceBoundaries,
+  marketplaceCertificateBadgeMocks,
+  marketplaceCertificationRequirements,
+  marketplaceCertifications,
+  marketplaceCredentialPreviews,
   marketplaceAttributionToSplitRules,
   marketplaceCatalogSegments,
   marketplaceCollections,
@@ -18,6 +26,14 @@ import {
   marketplaceDistributionProfiles,
   marketplaceFederationProviders,
   marketplaceFeaturedCatalogs,
+  marketplaceCourseModules,
+  marketplaceCourses,
+  marketplaceLessons,
+  marketplaceLearningAccessPreviews,
+  marketplaceLearningEntitlementMocks,
+  marketplaceLearningPaths,
+  marketplaceLearningSubscriptions,
+  marketplaceLearningSubscriptionTiers,
   marketplaceDataBoundaries,
   marketplaceInsightSignals,
   marketplaceInsights,
@@ -50,6 +66,10 @@ import {
   marketplaceWalletDiscoveryRecords
 } from "../../../data/mock/marketplace.mock";
 import type {
+  AcademyDataBoundary,
+  AcademyDistributionContext,
+  AcademyIntelligenceSummary,
+  AcademyProduct,
   AssetRegistryRecord,
   AttributionContext,
   AttributionSplitExplanation,
@@ -63,6 +83,12 @@ import type {
   CommunityDistributionItem,
   CommunityMarketplaceDistribution,
   CommunityRevenueSharingConfig,
+  CertificateBadgeMock,
+  Certification,
+  CertificationRequirement,
+  Course,
+  CourseModule,
+  CredentialPreview,
   CuratedCatalog,
   CuratedCatalogDistributionConfig,
   CuratedCatalogDistributionResolution,
@@ -91,6 +117,12 @@ import type {
   FederationTrustBoundary,
   FeaturedCatalog,
   License,
+  LearningAccessPreview,
+  LearningEntitlementMock,
+  LearningPath,
+  LearningSubscription,
+  LearningSubscriptionTier,
+  Lesson,
   InsightSignal,
   IntelligenceAuditNote,
   IntelligenceSnapshot,
@@ -233,6 +265,22 @@ const boundaries = marketplaceBoundaries as MarketplaceBoundaryStatus[];
 const assetRegistry = marketplaceAssetRegistry as AssetRegistryRecord[];
 const walletDiscoveryRecords = marketplaceWalletDiscoveryRecords as WalletDiscoveryRecord[];
 const federationProviders = marketplaceFederationProviders as FederationProviderDescriptor[];
+const academyProducts = marketplaceAcademyProducts as AcademyProduct[];
+const academyDataBoundaries = marketplaceAcademyDataBoundaries as AcademyDataBoundary[];
+const academyDistributionContexts = marketplaceAcademyDistributionContexts as AcademyDistributionContext[];
+const academyIntelligenceSummaries = marketplaceAcademyIntelligenceSummaries as AcademyIntelligenceSummary[];
+const courses = marketplaceCourses as Course[];
+const courseModules = marketplaceCourseModules as CourseModule[];
+const lessons = marketplaceLessons as Lesson[];
+const learningPaths = marketplaceLearningPaths as LearningPath[];
+const certifications = marketplaceCertifications as Certification[];
+const certificationRequirements = marketplaceCertificationRequirements as CertificationRequirement[];
+const credentialPreviews = marketplaceCredentialPreviews as CredentialPreview[];
+const certificateBadgeMocks = marketplaceCertificateBadgeMocks as CertificateBadgeMock[];
+const learningSubscriptions = marketplaceLearningSubscriptions as LearningSubscription[];
+const learningSubscriptionTiers = marketplaceLearningSubscriptionTiers as LearningSubscriptionTier[];
+const learningAccessPreviews = marketplaceLearningAccessPreviews as LearningAccessPreview[];
+const learningEntitlementMocks = marketplaceLearningEntitlementMocks as LearningEntitlementMock[];
 
 function normalizeSearch(value?: string) {
   return value?.trim().toLowerCase() ?? "";
@@ -531,6 +579,77 @@ export interface RevenueTrustRiskIntelligenceView {
   settlementBoundary: SettlementBoundary | null;
   collection: MarketplaceCollection | null;
   provider: FederationProviderDescriptor | null;
+  boundaryNotes: string[];
+}
+
+export interface AcademyCourseView {
+  course: Course;
+  modules: CourseModule[];
+  lessons: Lesson[];
+  learningPaths: LearningPath[];
+  accessPreview: LearningAccessPreview | null;
+  academyProduct: AcademyProduct | null;
+  distributionContext: AcademyDistributionContext | null;
+  dataBoundary: AcademyDataBoundary | null;
+  revenuePolicy: RevenueSharingPolicyView | null;
+  revenuePreview: RevenueSharingPreviewView | null;
+  intelligenceSummary: AcademyIntelligenceSummary | null;
+  intelligenceSnapshot: IntelligenceSnapshotView | null;
+  tenant: Tenant | null;
+  curatedCatalog: CuratedCatalog | null;
+  distributionChannel: DistributionChannel | null;
+  boundaryNotes: string[];
+}
+
+export interface AcademyCertificationView {
+  certification: Certification;
+  requirements: CertificationRequirement[];
+  credentialPreview: CredentialPreview | null;
+  certificateBadgeMock: CertificateBadgeMock | null;
+  accessPreview: LearningAccessPreview | null;
+  academyProduct: AcademyProduct | null;
+  distributionContext: AcademyDistributionContext | null;
+  dataBoundary: AcademyDataBoundary | null;
+  revenuePolicy: RevenueSharingPolicyView | null;
+  revenuePreview: RevenueSharingPreviewView | null;
+  intelligenceSummary: AcademyIntelligenceSummary | null;
+  intelligenceSnapshot: IntelligenceSnapshotView | null;
+  tenant: Tenant | null;
+  curatedCatalog: CuratedCatalog | null;
+  distributionChannel: DistributionChannel | null;
+  boundaryNotes: string[];
+}
+
+export interface AcademySubscriptionView {
+  subscription: LearningSubscription;
+  tiers: LearningSubscriptionTier[];
+  courses: AcademyCourseView[];
+  certifications: AcademyCertificationView[];
+  accessPreview: LearningAccessPreview | null;
+  learningEntitlementMock: LearningEntitlementMock | null;
+  academyProduct: AcademyProduct | null;
+  distributionContext: AcademyDistributionContext | null;
+  dataBoundary: AcademyDataBoundary | null;
+  revenuePolicy: RevenueSharingPolicyView | null;
+  revenuePreview: RevenueSharingPreviewView | null;
+  intelligenceSummary: AcademyIntelligenceSummary | null;
+  intelligenceSnapshot: IntelligenceSnapshotView | null;
+  tenant: Tenant | null;
+  curatedCatalog: CuratedCatalog | null;
+  distributionChannel: DistributionChannel | null;
+  boundaryNotes: string[];
+}
+
+export interface AcademyDistributionOverview {
+  products: AcademyProduct[];
+  courses: AcademyCourseView[];
+  certifications: AcademyCertificationView[];
+  learningPaths: LearningPath[];
+  subscriptions: AcademySubscriptionView[];
+  learningEntitlementMocks: LearningEntitlementMock[];
+  dataBoundaries: AcademyDataBoundary[];
+  contexts: AcademyDistributionContext[];
+  intelligenceSummaries: AcademyIntelligenceSummary[];
   boundaryNotes: string[];
 }
 
@@ -5059,6 +5178,249 @@ export function explainMarketplaceIntelligenceBoundary(insightIdOrSlug: string) 
 
 export function explainIntelligenceSnapshotBoundary(snapshotIdOrSlug: string) {
   return getIntelligenceSnapshotById(snapshotIdOrSlug)?.boundaryNotes ?? [];
+}
+
+function academyBoundaryNotes(recordWarnings: string[] = [], recordDisclaimers: string[] = []) {
+  return [
+    ...recordWarnings,
+    ...recordDisclaimers,
+    "mock academy / config-first academy / no LMS / no progress tracking / no learning analytics / no credential issuance / no credential verification / no billing / no entitlement / no settlement"
+  ];
+}
+
+function findAcademyProductByAccessPreview(accessPreviewId: string) {
+  return academyProducts.find((entry) => entry.accessPreviewId === accessPreviewId) ?? null;
+}
+
+function buildAcademyCourseView(course: Course): AcademyCourseView {
+  const accessPreview = learningAccessPreviews.find((entry) => entry.id === course.accessPreviewId) ?? null;
+  const intelligenceSummary = academyIntelligenceSummaries.find((entry) => entry.scopeId === course.tenantId || entry.scopeId === course.id) ?? null;
+  return {
+    course,
+    modules: courseModules.filter((entry) => course.moduleIds.includes(entry.id)),
+    lessons: lessons.filter((entry) => course.lessonIds.includes(entry.id)),
+    learningPaths: learningPaths.filter((entry) => course.learningPathIds.includes(entry.id)),
+    accessPreview,
+    academyProduct: findAcademyProductByAccessPreview(course.accessPreviewId),
+    distributionContext: academyDistributionContexts.find((entry) => entry.courseId === course.id) ?? null,
+    dataBoundary: academyDataBoundaries.find((entry) => entry.id === course.dataBoundaryId) ?? null,
+    revenuePolicy: course.revenueSharingPolicyId ? getRevenueSharingPolicyById(course.revenueSharingPolicyId) : null,
+    revenuePreview: course.revenueSharingPolicyId ? resolveRevenueSharingPreview(course.revenueSharingPolicyId) : null,
+    intelligenceSummary,
+    intelligenceSnapshot: course.intelligenceSnapshotId ? getIntelligenceSnapshotById(course.intelligenceSnapshotId) : null,
+    tenant: tenants.find((entry) => entry.id === course.tenantId) ?? null,
+    curatedCatalog: curatedCatalogs.find((entry) => entry.id === course.curatedCatalogId) ?? null,
+    distributionChannel: distributionChannels.find((entry) => entry.id === course.distributionChannelId) ?? null,
+    boundaryNotes: academyBoundaryNotes(course.warnings, course.disclaimers)
+  };
+}
+
+function buildAcademyCertificationView(certification: Certification): AcademyCertificationView {
+  const accessPreview = learningAccessPreviews.find((entry) => entry.scopeId === certification.id) ?? null;
+  const intelligenceSummary = academyIntelligenceSummaries.find((entry) => entry.scopeId === certification.tenantId || entry.scopeId === certification.id) ?? null;
+  return {
+    certification,
+    requirements: certificationRequirements.filter((entry) => certification.requirementIds.includes(entry.id)),
+    credentialPreview: credentialPreviews.find((entry) => entry.id === certification.credentialPreviewId) ?? null,
+    certificateBadgeMock: certificateBadgeMocks.find((entry) => entry.id === certification.certificateBadgeMockId) ?? null,
+    accessPreview,
+    academyProduct: accessPreview ? findAcademyProductByAccessPreview(accessPreview.id) : null,
+    distributionContext: academyDistributionContexts.find((entry) => entry.certificationId === certification.id) ?? null,
+    dataBoundary: academyDataBoundaries.find((entry) => entry.id === certification.dataBoundaryId) ?? null,
+    revenuePolicy: certification.revenueSharingPolicyId ? getRevenueSharingPolicyById(certification.revenueSharingPolicyId) : null,
+    revenuePreview: certification.revenueSharingPolicyId ? resolveRevenueSharingPreview(certification.revenueSharingPolicyId) : null,
+    intelligenceSummary,
+    intelligenceSnapshot: certification.intelligenceSnapshotId ? getIntelligenceSnapshotById(certification.intelligenceSnapshotId) : null,
+    tenant: tenants.find((entry) => entry.id === certification.tenantId) ?? null,
+    curatedCatalog: curatedCatalogs.find((entry) => entry.id === certification.curatedCatalogId) ?? null,
+    distributionChannel: distributionChannels.find((entry) => entry.id === certification.distributionChannelId) ?? null,
+    boundaryNotes: academyBoundaryNotes(certification.warnings, certification.disclaimers)
+  };
+}
+
+function buildAcademySubscriptionView(subscription: LearningSubscription): AcademySubscriptionView {
+  const accessPreview = learningAccessPreviews.find((entry) => entry.id === subscription.accessPreviewId) ?? null;
+  const learningEntitlementMock = learningEntitlementMocks.find((entry) => entry.scopeId === subscription.id || entry.accessPreviewId === subscription.accessPreviewId) ?? null;
+  const intelligenceSummary = academyIntelligenceSummaries.find((entry) => entry.scopeId === subscription.tenantId || entry.scopeId === subscription.id) ?? null;
+  return {
+    subscription,
+    tiers: learningSubscriptionTiers.filter((entry) => subscription.tierIds.includes(entry.id)),
+    courses: subscription.includedCourseIds.map(getAcademyCourseById).filter((entry): entry is AcademyCourseView => Boolean(entry)),
+    certifications: subscription.includedCertificationIds.map(getAcademyCertificationById).filter((entry): entry is AcademyCertificationView => Boolean(entry)),
+    accessPreview,
+    learningEntitlementMock,
+    academyProduct: findAcademyProductByAccessPreview(subscription.accessPreviewId),
+    distributionContext: academyDistributionContexts.find((entry) => entry.learningSubscriptionId === subscription.id) ?? null,
+    dataBoundary: academyDataBoundaries.find((entry) => entry.id === subscription.dataBoundaryId) ?? null,
+    revenuePolicy: subscription.revenueSharingPolicyId ? getRevenueSharingPolicyById(subscription.revenueSharingPolicyId) : null,
+    revenuePreview: subscription.revenueSharingPolicyId ? resolveRevenueSharingPreview(subscription.revenueSharingPolicyId) : null,
+    intelligenceSummary,
+    intelligenceSnapshot: subscription.intelligenceSnapshotId ? getIntelligenceSnapshotById(subscription.intelligenceSnapshotId) : null,
+    tenant: tenants.find((entry) => entry.id === subscription.tenantId) ?? null,
+    curatedCatalog: curatedCatalogs.find((entry) => entry.id === subscription.curatedCatalogId) ?? null,
+    distributionChannel: distributionChannels.find((entry) => entry.id === subscription.distributionChannelId) ?? null,
+    boundaryNotes: academyBoundaryNotes(subscription.warnings, subscription.disclaimers)
+  };
+}
+
+export function listAcademyProducts() {
+  return academyProducts;
+}
+
+export function listAcademyCourses() {
+  return courses.map(buildAcademyCourseView);
+}
+
+export function getAcademyCourseById(courseIdOrSlug: string) {
+  const course = courses.find((entry) => entry.id === courseIdOrSlug || entry.slug === courseIdOrSlug);
+  return course ? buildAcademyCourseView(course) : null;
+}
+
+export function listAcademyCertifications() {
+  return certifications.map(buildAcademyCertificationView);
+}
+
+export function getAcademyCertificationById(certificationIdOrSlug: string) {
+  const certification = certifications.find((entry) => entry.id === certificationIdOrSlug || entry.slug === certificationIdOrSlug);
+  return certification ? buildAcademyCertificationView(certification) : null;
+}
+
+export function listAcademyLearningSubscriptions() {
+  return learningSubscriptions.map(buildAcademySubscriptionView);
+}
+
+export function getAcademyLearningSubscriptionById(subscriptionIdOrSlug: string) {
+  const subscription = learningSubscriptions.find((entry) => entry.id === subscriptionIdOrSlug || entry.slug === subscriptionIdOrSlug);
+  return subscription ? buildAcademySubscriptionView(subscription) : null;
+}
+
+export function listAcademyLearningPaths() {
+  return learningPaths;
+}
+
+export function listAcademyLearningEntitlementMocks() {
+  return learningEntitlementMocks;
+}
+
+export function resolveAcademyLearningEntitlementMock(entitlementIdOrScopeId: string) {
+  return learningEntitlementMocks.find((entry) => entry.id === entitlementIdOrScopeId || entry.scopeId === entitlementIdOrScopeId || entry.accessPreviewId === entitlementIdOrScopeId) ?? null;
+}
+
+export function listAcademyDataBoundaries() {
+  return academyDataBoundaries;
+}
+
+export function resolveAcademyDataBoundary(boundaryIdOrScope: string, scopeId?: string) {
+  return academyDataBoundaries.find((entry) => entry.id === boundaryIdOrScope || (entry.scope === boundaryIdOrScope && (!scopeId || entry.scopeId === scopeId))) ?? null;
+}
+
+export function listAcademyDistributionContexts() {
+  return academyDistributionContexts;
+}
+
+export function resolveAcademyDistributionContext(contextIdOrTargetId: string) {
+  return (
+    academyDistributionContexts.find(
+      (entry) =>
+        entry.id === contextIdOrTargetId ||
+        entry.academyProductId === contextIdOrTargetId ||
+        entry.courseId === contextIdOrTargetId ||
+        entry.certificationId === contextIdOrTargetId ||
+        entry.learningSubscriptionId === contextIdOrTargetId
+    ) ?? null
+  );
+}
+
+export function listAcademyIntelligenceSummaries() {
+  return academyIntelligenceSummaries;
+}
+
+export function resolveAcademyDistributionOverview(): AcademyDistributionOverview {
+  return {
+    products: academyProducts,
+    courses: listAcademyCourses(),
+    certifications: listAcademyCertifications(),
+    learningPaths,
+    subscriptions: listAcademyLearningSubscriptions(),
+    learningEntitlementMocks,
+    dataBoundaries: academyDataBoundaries,
+    contexts: academyDistributionContexts,
+    intelligenceSummaries: academyIntelligenceSummaries,
+    boundaryNotes: academyBoundaryNotes(["Academy Distribution is mock/config-first and non-executing."], ["No LMS real, no credential real, no billing real and no entitlement productive are active."])
+  };
+}
+
+export function validateAcademyDistributionMockOnly(targetId?: string) {
+  const overview = resolveAcademyDistributionOverview();
+  const courseRecords = targetId ? overview.courses.filter((entry) => entry.course.id === targetId || entry.course.slug === targetId) : overview.courses;
+  const certificationRecords = targetId ? overview.certifications.filter((entry) => entry.certification.id === targetId || entry.certification.slug === targetId) : overview.certifications;
+  const subscriptionRecords = targetId ? overview.subscriptions.filter((entry) => entry.subscription.id === targetId || entry.subscription.slug === targetId) : overview.subscriptions;
+  const selectedCourses = courseRecords.length || certificationRecords.length || subscriptionRecords.length ? courseRecords : overview.courses;
+  const selectedCertifications = courseRecords.length || certificationRecords.length || subscriptionRecords.length ? certificationRecords : overview.certifications;
+  const selectedSubscriptions = courseRecords.length || certificationRecords.length || subscriptionRecords.length ? subscriptionRecords : overview.subscriptions;
+  const entitlementRecords = selectedSubscriptions.map((entry) => entry.learningEntitlementMock).filter((entry): entry is LearningEntitlementMock => Boolean(entry));
+  const boundaries = [
+    ...selectedCourses.map((entry) => entry.dataBoundary),
+    ...selectedCertifications.map((entry) => entry.dataBoundary),
+    ...selectedSubscriptions.map((entry) => entry.dataBoundary)
+  ].filter((entry): entry is AcademyDataBoundary => Boolean(entry));
+
+  return {
+    isMockOnly:
+      selectedCourses.every((entry) => entry.course.isSimulated && !entry.course.hasRealPlayer && !entry.course.canTrackProgress && !entry.course.canRecordCompletion) &&
+      selectedCertifications.every(
+        (entry) =>
+          entry.certification.isSimulated &&
+          !entry.certification.canIssueCredential &&
+          !entry.certification.canVerifyCredential &&
+          !entry.certification.canMintOnChain &&
+          !entry.certification.canSignCredential &&
+          !entry.certification.canRecordAssessment
+      ) &&
+      selectedSubscriptions.every(
+        (entry) =>
+          entry.subscription.isSimulated &&
+          !entry.subscription.canBill &&
+          !entry.subscription.canInvoice &&
+          !entry.subscription.canChargePayment &&
+          !entry.subscription.canGrantEntitlement &&
+          !entry.subscription.canSettle &&
+          !entry.subscription.canTriggerPayout
+      ) &&
+      entitlementRecords.every(
+        (entry) =>
+          entry.isSimulated &&
+          !entry.canGrantEntitlement &&
+          !entry.canRevokeEntitlement &&
+          !entry.canStartLearning &&
+          !entry.canTrackProgress &&
+          !entry.canBill &&
+          !entry.canSettle &&
+          !entry.canTriggerPayout
+      ) &&
+      boundaries.every(
+        (entry) =>
+          entry.isSimulated &&
+          !entry.usesLms &&
+          !entry.usesRealPlayer &&
+          !entry.usesProgressTracking &&
+          !entry.usesLearningAnalytics &&
+          !entry.usesAssessment &&
+          !entry.usesCredentialIssuance &&
+          !entry.usesCredentialVerification &&
+          !entry.usesBilling &&
+          !entry.usesEntitlement &&
+          !entry.usesExternalEducationPlatform
+      ),
+    isNoLms: boundaries.every((entry) => !entry.usesLms && !entry.usesRealPlayer),
+    isNoProgressTracking: boundaries.every((entry) => !entry.usesProgressTracking),
+    isNoLearningAnalytics: boundaries.every((entry) => !entry.usesLearningAnalytics),
+    isNoCredentialIssuance: boundaries.every((entry) => !entry.usesCredentialIssuance),
+    isNoCredentialVerification: boundaries.every((entry) => !entry.usesCredentialVerification),
+    isNoBilling: boundaries.every((entry) => !entry.usesBilling),
+    isNoEntitlement: boundaries.every((entry) => !entry.usesEntitlement) && entitlementRecords.every((entry) => !entry.canGrantEntitlement && !entry.canRevokeEntitlement),
+    boundaryCount: boundaries.length
+  };
 }
 
 export function issueMockPurchase(product: Product, buyer = "0xMockBuyer...A11C"): PurchaseRecord {

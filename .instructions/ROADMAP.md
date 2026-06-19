@@ -479,7 +479,7 @@ Implementation boundary:
 
 # Phase 08 - Academy Distribution
 
-Status: COMPLETED - PLANNING AND LEARNING COMMERCE BOUNDARY AUDIT
+Status: COMPLETED - MOCK/CONFIG-FIRST ACADEMY DISTRIBUTION VALIDATED
 
 Objectives:
 - distribute Academy courses, certifications, learning paths and educational products through Marketplace infrastructure
@@ -496,15 +496,21 @@ Planning artifact:
 
 Linked requirements:
 - MEP-08A - Academy Distribution Planning and Learning Commerce Boundary Audit - completed
-- MEP-REQ-080 - Courses - planned
-- MEP-REQ-081 - Certifications - planned
-- MEP-REQ-082 - Learning Subscriptions - planned
-- MEP-PHASE-08-CLOSURE - QA, navigation and Academy Distribution boundary validation - planned
+- MEP-REQ-080 - Courses - completed
+- MEP-REQ-081 - Certifications - completed
+- MEP-REQ-082 - Learning Subscriptions - completed
+- MEP-PHASE-08-CLOSURE - QA, navigation and Academy Distribution boundary validation - completed
 
 Implementation boundary:
 - MEP-08A is audit and planning only
 - Phase 08 begins as mock/config-first Academy Distribution planning over existing tenant, curated catalog, distribution, attribution, revenue sharing preview, Marketplace Intelligence and federation trust boundaries
 - no Academy runtime, course runtime, certifications runtime, learning subscriptions runtime, LMS real, course player, enrollment real, paid access, entitlement productive, progress tracking, learning analytics, assessment, exam, grade, credential issuance, credential verification, certificate real, badge verifiable real, credential on-chain, mint, wallet signature, billing, invoice, accounting, tax, payment gateway, payout, settlement, treasury routing, enterprise provisioning, backend, API, GraphQL schema, database, contracts, payments, bridge or external education integration is introduced by MEP-08A
+
+Closure:
+- Phase 08 now implements Academy Distribution in mock/config-first mode and is documented in `docs/PHASE_08_CLOSURE_REPORT.md`
+- Academy navigation is available at `/marketplace/academy`
+- Academy Products, Courses, Course Modules, Lessons, Learning Paths, Certifications, Certification Requirements, Credential Preview, Certificate/Badge mock, Learning Subscriptions, Learning Access Preview, Learning Entitlement mock, Academy Distribution Context and Academy Data Boundary are represented as static preview records
+- no LMS real, course player, enrollment real, paid access, entitlement productive, progress tracking, learning analytics, assessment, exam, grade, credential issuance, credential verification, certificate mint, wallet signature, billing, invoice, accounting, tax, payment gateway, payout, settlement, treasury routing, backend, API, database, contracts, payments, bridge, ACS Distribution or Enterprise Marketplace was activated
 
 ---
 

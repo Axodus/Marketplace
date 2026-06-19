@@ -2,17 +2,17 @@
 
 # Phase 08 - Academy Distribution
 
-Status: COMPLETED - PLANNING AND LEARNING COMMERCE BOUNDARY AUDIT
+Status: COMPLETED - MOCK/CONFIG-FIRST ACADEMY DISTRIBUTION VALIDATED
 
 Planning artifact:
 - `docs/PHASE_08_ACADEMY_DISTRIBUTION_AUDIT.md`
 
 Recommended implementation sequence:
 - MEP-08A - Academy Distribution Planning and Learning Commerce Boundary Audit - COMPLETED
-- MEP-REQ-080 - Courses - PLANNED
-- MEP-REQ-081 - Certifications - PLANNED
-- MEP-REQ-082 - Learning Subscriptions - PLANNED
-- MEP-PHASE-08-CLOSURE - QA, navigation and Academy Distribution boundary validation - PLANNED
+- MEP-REQ-080 - Courses - COMPLETED
+- MEP-REQ-081 - Certifications - COMPLETED
+- MEP-REQ-082 - Learning Subscriptions - COMPLETED
+- MEP-PHASE-08-CLOSURE - QA, navigation and Academy Distribution boundary validation - COMPLETED
 
 MEP-08A delivered:
 - mapped the current post-Phase 07 Marketplace runtime and documentation state for Academy Distribution planning
@@ -29,6 +29,15 @@ Constraints:
 - future Phase 08 work must keep `isSimulated=true`
 - `hasRealPlayer`, `canTrackProgress`, `canRecordCompletion`, `canIssueCredential`, `canVerifyCredential`, `canMintOnChain`, `canSignCredential`, `canRecordAssessment`, `canBill`, `canInvoice`, `canChargePayment`, `canGrantEntitlement`, `canSettle` and `canTriggerPayout` must remain false during Phase 08
 - Phase 09 - ACS Distribution and Phase 10 - Enterprise Marketplace remain future work
+
+MEP-PHASE-08-CLOSURE delivered:
+- Academy Products, Courses, Course Modules, Lessons and Learning Paths in mock/config-first mode
+- Certifications, Certification Requirements, Credential Preview and Certificate/Badge mock in preview-only mode
+- Learning Subscriptions, Learning Access Preview and Learning Entitlement mock with no billing and no productive entitlement
+- Academy Distribution Context linked to tenant, curated catalog, distribution, attribution, revenue sharing, intelligence and federation context
+- Academy Data Boundary validation with no LMS, no progress tracking, no learning analytics, no credential issuance, no credential verification, no billing, no entitlement productive, no settlement and no payout
+- Academy navigation at `/marketplace/academy`
+- Closure report: `docs/PHASE_08_CLOSURE_REPORT.md`
 
 ---
 
