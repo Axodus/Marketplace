@@ -1,5 +1,37 @@
 # Marketplace Roadmap
 
+# Phase 08 - Academy Distribution
+
+Status: COMPLETED - PLANNING AND LEARNING COMMERCE BOUNDARY AUDIT
+
+Planning artifact:
+- `docs/PHASE_08_ACADEMY_DISTRIBUTION_AUDIT.md`
+
+Recommended implementation sequence:
+- MEP-08A - Academy Distribution Planning and Learning Commerce Boundary Audit - COMPLETED
+- MEP-REQ-080 - Courses - PLANNED
+- MEP-REQ-081 - Certifications - PLANNED
+- MEP-REQ-082 - Learning Subscriptions - PLANNED
+- MEP-PHASE-08-CLOSURE - QA, navigation and Academy Distribution boundary validation - PLANNED
+
+MEP-08A delivered:
+- mapped the current post-Phase 07 Marketplace runtime and documentation state for Academy Distribution planning
+- identified existing tenant, curated catalog, featured catalog, catalog segment, distribution, attribution, revenue sharing preview, Marketplace Intelligence, data boundary and federation trust contexts that can carry future academy context
+- differentiated Academy Distribution from LMS real, credentialing real, subscription billing real and enterprise provisioning
+- defined conceptual models for Academy Product, Course, Course Module, Lesson, Learning Path, Certification, Certification Requirement, Credential Preview mock, Certificate/Badge mock, Learning Subscription, Learning Subscription Tier, Learning Access Preview, Academy Distribution Context, Academy Data Boundary and Academy Intelligence Summary
+- recommended academy product types, course types, course statuses, certification statuses, learning subscription statuses, access preview statuses and academy data boundary statuses
+- mapped future entry points across navigation, marketplace home, explorer, tenant storefronts, curated catalogs, featured catalogs, catalog segments, distribution channels, profiles, community distributions, attribution sources, revenue sharing, Marketplace Intelligence, product details, collections, sellers, asset registry, create/sell preview, buy-now, bid and dashboard surfaces
+- defined learning commerce, LMS, credential, assessment, access/entitlement, subscription/billing, tracking/analytics, revenue sharing, intelligence, federation and trust boundaries
+- preserved no LMS real, no course player, no enrollment real, no paid access, no entitlement productive, no progress tracking, no learning analytics, no assessment, no exam, no grade, no credential issuance, no credential verification, no certificate mint, no wallet signature, no billing, no invoice, no accounting, no tax, no payment gateway, no payout, no settlement, no treasury routing, no enterprise provisioning, no backend, no API, no database and no external education integration boundaries
+
+Constraints:
+- MEP-08A is documentation/audit planning only and does not implement Academy Distribution runtime
+- future Phase 08 work must keep `isSimulated=true`
+- `hasRealPlayer`, `canTrackProgress`, `canRecordCompletion`, `canIssueCredential`, `canVerifyCredential`, `canMintOnChain`, `canSignCredential`, `canRecordAssessment`, `canBill`, `canInvoice`, `canChargePayment`, `canGrantEntitlement`, `canSettle` and `canTriggerPayout` must remain false during Phase 08
+- Phase 09 - ACS Distribution and Phase 10 - Enterprise Marketplace remain future work
+
+---
+
 # Phase 07 - Marketplace Intelligence
 
 Status: COMPLETED - MARKETPLACE INTELLIGENCE VALIDATED MOCK/CONFIG-FIRST
