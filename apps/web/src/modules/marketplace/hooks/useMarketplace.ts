@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "../../../services/apiClient";
-import type { ProductFilters } from "../services/marketplaceService";
+import type { EnterpriseProductFilters, ProductFilters } from "../services/marketplaceService";
 import {
   DEFAULT_PRODUCT_EXPLORER_FILTERS,
   buildMarketplaceAnalytics,
@@ -138,10 +138,14 @@ import {
   validateAcademyDistributionMockOnly,
   getAIAgentById,
   getComputeAccessById,
+  getEnterpriseProductBySlug,
   getMCPPackageById,
   getWorkflowSystemById,
+  listEnterpriseOperationsSummary,
+  listEnterpriseProducts,
   resolveACSDistributionContext,
   resolveACSDistributionOverview,
+  validateEnterpriseMarketplaceMockOnly,
   validateACSDistributionMockOnly,
   listRevenueSharingAuditEntriesByPolicy,
   listRevenueSharingPreviewConflicts,
@@ -162,6 +166,13 @@ import {
   resolveTenantTheme
 } from "../services/marketplaceService";
 import { instrumentMarketplaceError, traceMarketplaceLifecycle } from "../services/runtimeTelemetry";
+import {
+  EnterpriseBillingPreviewAdapter,
+  EnterpriseGovernanceGuardrailAdapter,
+  EnterpriseLicensePreviewAdapter,
+  EnterpriseProvisioningPreviewAdapter,
+  EnterpriseSubscriptionPreviewAdapter
+} from "../services/enterpriseMarketplaceAdapters";
 
 export function useProductFilters() {
   const [filters, setFilters] = useState<ProductFilters>(DEFAULT_PRODUCT_EXPLORER_FILTERS);
@@ -1237,6 +1248,53 @@ export function useACSDistributionValidation(targetId?: string) {
   return useQuery({
     queryKey: ["marketplace-acs-distribution-validation", targetId],
     queryFn: () => validateACSDistributionMockOnly(targetId)
+  });
+}
+
+export function useEnterpriseProducts(filters?: EnterpriseProductFilters) {
+  return useQuery({
+    queryKey: ["marketplace-enterprise-products", filters],
+    queryFn: () => {
+      const products = listEnterpriseProducts(filters);
+      traceMarketplaceLifecycle("marketplace-enterprise-products-query", "completed", { productCount: products.length });
+      return products;
+    }
+  });
+}
+
+export function useEnterpriseProduct(slugOrId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-enterprise-product", slugOrId],
+    enabled: Boolean(slugOrId),
+    queryFn: () => getEnterpriseProductBySlug(slugOrId ?? "")
+  });
+}
+
+export function useEnterpriseOperationsSummary() {
+  return useQuery({
+    queryKey: ["marketplace-enterprise-operations-summary"],
+    queryFn: () => listEnterpriseOperationsSummary()
+  });
+}
+
+export function useEnterpriseMarketplaceValidation(slugOrId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-enterprise-validation", slugOrId],
+    queryFn: () => validateEnterpriseMarketplaceMockOnly(slugOrId)
+  });
+}
+
+export function useEnterprisePreviewAdapters(slugOrId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-enterprise-preview-adapters", slugOrId],
+    enabled: Boolean(slugOrId),
+    queryFn: () => ({
+      subscription: EnterpriseSubscriptionPreviewAdapter.preview(slugOrId ?? ""),
+      license: EnterpriseLicensePreviewAdapter.preview(slugOrId ?? ""),
+      provisioning: EnterpriseProvisioningPreviewAdapter.preview(slugOrId ?? ""),
+      billing: EnterpriseBillingPreviewAdapter.preview(slugOrId ?? ""),
+      guardrail: EnterpriseGovernanceGuardrailAdapter.preview(slugOrId ?? "")
+    })
   });
 }
 

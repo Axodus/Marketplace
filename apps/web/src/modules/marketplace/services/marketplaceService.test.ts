@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  EnterpriseBillingPreviewAdapter,
+  EnterpriseGovernanceGuardrailAdapter,
+  EnterpriseProvisioningPreviewAdapter,
+  EnterpriseSubscriptionPreviewAdapter
+} from "./enterpriseMarketplaceAdapters";
+import {
   buildSellerProfileView,
   buildMarketplaceAnalytics,
   calculateCommissionModelShareTotalMock,
@@ -107,6 +113,8 @@ import {
   listAcademyLearningSubscriptions,
   listAIAgents,
   listComputeAccess,
+  listEnterpriseOperationsSummary,
+  listEnterpriseProducts,
   listMCPPackages,
   listWorkflowSystems,
   listCommissionModels,
@@ -172,6 +180,12 @@ import {
   resolveAcademyLearningEntitlementMock,
   resolveACSDistributionContext,
   resolveACSDistributionOverview,
+  getEnterpriseBillingPreviewByPlanId,
+  getEnterpriseLicenseByProductId,
+  getEnterprisePlansByProductId,
+  getEnterpriseProductBySlug,
+  getEnterpriseProvisioningProfileByProductId,
+  getEnterpriseTelemetryByProductId,
   resolveCommunityDistributionContext,
   resolveDataBoundary,
   resolveDistributionContext,
@@ -216,6 +230,7 @@ import {
   validateRecommendationPreviewMockOnly,
   validateAcademyDistributionMockOnly,
   validateACSDistributionMockOnly,
+  validateEnterpriseMarketplaceMockOnly,
   resolveRevenueTrustRiskIntelligence,
   resolveRiskTrustContext,
   validateParticipantSharesByCommissionModel,
@@ -1687,6 +1702,67 @@ describe("marketplaceService", () => {
     expect(validation.isNoProvisioning).toBe(true);
     expect(validation.isNoSecretAccess).toBe(true);
     expect(validation.isNoBilling).toBe(true);
+  });
+
+  it("resolves Enterprise Marketplace mock relationships from centralized data", () => {
+    const products = listEnterpriseProducts();
+    const acsProduct = getEnterpriseProductBySlug("institutional-acs-provisioning-package");
+
+    expect(products).toHaveLength(5);
+    expect(acsProduct?.plans).toHaveLength(1);
+    expect(acsProduct?.license?.id).toBe("enterprise-license-acs-institutional");
+    expect(acsProduct?.provisioningProfile?.id).toBe("enterprise-provisioning-acs-institutional");
+    expect(acsProduct?.billingPreviews[0].id).toBe("enterprise-billing-preview-acs");
+    expect(acsProduct?.telemetrySnapshot?.id).toBe("enterprise-telemetry-acs-institutional");
+    expect(acsProduct?.product.canDeployACS).toBe(false);
+    expect(acsProduct?.provisioningProfile?.canDeployACS).toBe(false);
+    expect(acsProduct?.billingPreviews[0].canRouteTreasury).toBe(false);
+  });
+
+  it("returns safe empty or null Enterprise Marketplace records for missing ids", () => {
+    expect(getEnterpriseProductBySlug("missing-enterprise")).toBeNull();
+    expect(getEnterprisePlansByProductId("missing-enterprise")).toEqual([]);
+    expect(getEnterpriseLicenseByProductId("missing-enterprise")).toBeNull();
+    expect(getEnterpriseProvisioningProfileByProductId("missing-enterprise")).toBeNull();
+    expect(getEnterpriseBillingPreviewByPlanId("missing-plan")).toBeNull();
+    expect(getEnterpriseTelemetryByProductId("missing-enterprise")).toBeNull();
+  });
+
+  it("validates Enterprise Marketplace billing, treasury and ACS boundaries as preview-only", () => {
+    const validation = validateEnterpriseMarketplaceMockOnly();
+    const summary = listEnterpriseOperationsSummary();
+
+    expect(validation.isMockOnly).toBe(true);
+    expect(validation.isBillingPreviewOnly).toBe(true);
+    expect(validation.isACSProvisioningBounded).toBe(true);
+    expect(validation.isGovernanceGuarded).toBe(true);
+    expect(validation.isNoCrossEnterpriseContamination).toBe(true);
+    expect(summary.totalProducts).toBe(5);
+    expect(summary.canActivateSubscriptions).toBe(false);
+    expect(summary.canExecuteBilling).toBe(false);
+    expect(summary.canRouteTreasury).toBe(false);
+    expect(summary.canDeployACS).toBe(false);
+    expect(summary.reviewQueue.length).toBeGreaterThan(0);
+    expect(summary.blockingIssues.length).toBeGreaterThan(0);
+  });
+
+  it("applies Enterprise governance guardrails to preview adapters without execution", () => {
+    const allowed = EnterpriseSubscriptionPreviewAdapter.preview("starter-operations-subscription");
+    const blocked = EnterpriseSubscriptionPreviewAdapter.preview("restricted-enterprise-package");
+    const acsProvisioning = EnterpriseProvisioningPreviewAdapter.preview("institutional-acs-provisioning-package");
+    const billing = EnterpriseBillingPreviewAdapter.preview("growth-dao-operations-package");
+    const guardrail = EnterpriseGovernanceGuardrailAdapter.preview("restricted-enterprise-package");
+
+    expect(allowed.status).toBe("preview-only");
+    expect(allowed.canExecute).toBe(false);
+    expect(blocked.status).toBe("blocked");
+    expect(blocked.canExecute).toBe(false);
+    expect(blocked.warnings.join(" ")).toContain("blocks subscribe preview");
+    expect(acsProvisioning.status).toBe("review-required");
+    expect(acsProvisioning.target?.canDeployACS).toBe(false);
+    expect(billing.target?.canExecutePayment).toBe(false);
+    expect(billing.target?.canRouteTreasury).toBe(false);
+    expect(guardrail.target?.canRunSubscribePreview).toBe(false);
   });
 
   it("issues mock purchase records without settlement", () => {

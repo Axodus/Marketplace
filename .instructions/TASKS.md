@@ -1,5 +1,29 @@
 # Marketplace Roadmap
 
+# Phase 10 - Enterprise Marketplace
+
+Status: COMPLETED - MOCK-FIRST ENTERPRISE MARKETPLACE VALIDATED
+
+Closure artifact:
+- `docs/PHASE_10_ENTERPRISE_MARKETPLACE_CLOSURE.md`
+
+Delivered:
+- Enterprise Marketplace routes at `/marketplace/enterprise`, `/marketplace/enterprise/operations`, `/marketplace/enterprise/:slug`, `/marketplace/enterprise/:slug/subscribe-preview`, `/marketplace/enterprise/:slug/license`, `/marketplace/enterprise/:slug/provisioning`, `/marketplace/enterprise/:slug/billing` and `/marketplace/enterprise/:slug/telemetry`
+- Enterprise Products, Enterprise Subscription Plans, Enterprise Licenses, Enterprise Provisioning Profiles, Enterprise Billing Previews and Enterprise Telemetry Snapshots from centralized mock data
+- preview-only adapters for enterprise subscription, license, provisioning, billing and governance guardrails
+- governance guardrails for allowed-mock, pending-review, treasury-review-required, restricted and blocked states
+- operations summary for product counts, governance states, plan statuses, provisioning statuses, billing preview statuses, blocking issues and review queue
+- tests for mock relationships, missing-record safety, blocked/review guardrails and non-execution boundaries
+
+Constraints:
+- Phase 10 keeps `isSimulated=true`
+- `canActivateSubscription`, `canExecuteBilling`, `canRouteTreasury`, `canSettle`, `canDeployACS`, `canProvisionTenant`, `canWriteContracts`, `canExecutePayment`, `canInvoice`, `canAccount`, `canAllocateCompute`, `canAccessSecrets`, `canStartRuntime`, `usesLiveTelemetry`, `usesExternalAnalytics` and `canTriggerAutomation` remain false
+- no live subscription activation, billing provider, invoice, accounting, settlement, treasury routing, wallet signature, contract write, tenant provisioning, ACS deployment, compute allocation, backend, API, database, bridge or external onboarding was introduced
+- Existing NFT Marketplace behavior remains intact and stays available at `/marketplace/explore`, product detail, collection, seller, listing, purchase preview and asset registry routes
+- Phase 11 - Sovereign Commerce Network remains future work
+
+---
+
 # Phase 09 - ACS Distribution
 
 Status: COMPLETED - MOCK/CONFIG-FIRST ACS DISTRIBUTION VALIDATED
@@ -21,7 +45,7 @@ Constraints:
 - Phase 09 keeps `isSimulated=true`
 - `canExecute`, `canCallTools`, `canDeploy`, `canInstall`, `canConnectServer`, `canExposeTools`, `canRunWorkflow`, `canScheduleWorkflow`, `canAllocateCompute`, `canScaleCompute`, `canStartRuntime`, `canProvision`, `canAccessSecrets`, `canBill`, `canSettle` and `canTriggerPayout` remain false
 - no ACS runtime, agent execution, MCP deployment, workflow execution, compute allocation, provisioning, secret access, external integration, billing, settlement, payout, backend, API or database was introduced
-- Phase 10 - Enterprise Marketplace remains future work
+- Phase 10 - Enterprise Marketplace is now completed as mock-first preview work
 
 ---
 

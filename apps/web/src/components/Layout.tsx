@@ -16,6 +16,7 @@ const links = [
   { to: "/marketplace/intelligence", label: "Intelligence", icon: BarChart3 },
   { to: "/marketplace/academy", label: "Academy", icon: GraduationCap },
   { to: "/marketplace/acs", label: "ACS", icon: Bot },
+  { to: "/marketplace/enterprise", label: "Enterprise", icon: Building2 },
   { to: "/marketplace/create", label: "Create/Sell", icon: FilePlus2 },
   { to: "/marketplace/tenants", label: "Tenants", icon: Building2 },
   { to: "/marketplace/governance", label: "Governance", icon: ShieldCheck },
@@ -65,7 +66,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <NavLink
                 key={link.to}
                 to={link.to}
-                className={({ isActive }) =>
+                className={({ isActive }: { isActive: boolean }) =>
                   `flex items-center gap-2 rounded px-3 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${
                     isActive ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
                   }`

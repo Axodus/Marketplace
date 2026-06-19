@@ -543,7 +543,7 @@ Closure:
 
 # Phase 10 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Enterprise Marketplace
 
-Status: FUTURE
+Status: COMPLETED - MOCK-FIRST ENTERPRISE MARKETPLACE VALIDATED
 
 Objectives:
 - distribute enterprise offers, operational subscriptions, DAO service packages, dedicated ACS deployments and licensing models through Marketplace infrastructure
@@ -556,8 +556,17 @@ Deliverables:
 - enterprise licensing and subscription readiness
 
 Implementation boundary:
-- Phase 10 is future work
-- no enterprise billing, settlement, tenant provisioning, contract execution or external onboarding is introduced by Phase 00
+- Phase 10 is implemented as mock-first Enterprise Marketplace preview infrastructure
+- no live subscription activation, enterprise billing provider, invoice, accounting, settlement, tenant provisioning, contract execution, wallet signature, ACS deployment, compute allocation, treasury routing, backend, API, database or external onboarding is introduced
+
+Closure:
+- Phase 10 is documented in `docs/PHASE_10_ENTERPRISE_MARKETPLACE_CLOSURE.md`
+- Enterprise navigation is available at `/marketplace/enterprise`
+- Enterprise operations are available at `/marketplace/enterprise/operations`
+- Enterprise detail, subscribe preview, license, provisioning, billing and telemetry routes render from centralized mock data under `/marketplace/enterprise/:slug`
+- Enterprise plans, licenses, provisioning profiles, billing previews and telemetry snapshots are visible as preview-only records
+- Governance guardrails block or warn for pending-review, treasury-review-required, restricted and blocked states
+- Billing and treasury behavior remains preview-only; ACS provisioning remains bounded and non-executing
 
 ---
 

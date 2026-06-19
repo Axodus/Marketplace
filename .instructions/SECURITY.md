@@ -97,6 +97,12 @@ Enterprise systems must:
 
 Cross-enterprise contamination is forbidden.
 
+Phase 10 Enterprise Marketplace implements enterprise isolation as mock/config-first read models. Enterprise product views resolve plans, licenses, provisioning profiles, billing previews and telemetry snapshots by product id only. Enterprise telemetry is static mock data and must not imply live event collection, external analytics, BI, automation or cross-enterprise data sharing.
+
+Phase 10 guardrails must keep blocked products from running subscribe preview confirmation and must show pending governance, treasury or ACS review before any future activation can be considered.
+
+Phase 10 does not activate live subscriptions, billing providers, settlement, treasury routing, wallet signatures, contract writes, tenant provisioning, ACS deployment, compute allocation, backend, API, database or external onboarding.
+
 ---
 
 # ACS Security

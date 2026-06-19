@@ -33,6 +33,12 @@ import {
   marketplaceDistributionNetworks,
   marketplaceDistributionPlacements,
   marketplaceDistributionProfiles,
+  marketplaceEnterpriseBillingPreviews,
+  marketplaceEnterpriseLicenses,
+  marketplaceEnterpriseProducts,
+  marketplaceEnterpriseProvisioningProfiles,
+  marketplaceEnterpriseSubscriptionPlans,
+  marketplaceEnterpriseTelemetrySnapshots,
   marketplaceFederationProviders,
   marketplaceFeaturedCatalogs,
   marketplaceCourseModules,
@@ -134,6 +140,19 @@ import type {
   DistributionPlacement,
   DistributionProfile,
   DistributionSourceSplitMapping,
+  EnterpriseBillingCadence,
+  EnterpriseBillingPreview,
+  EnterpriseGovernanceStatus,
+  EnterpriseLicense,
+  EnterpriseLifecycleStatus,
+  EnterpriseOperationsSummary,
+  EnterpriseProduct,
+  EnterpriseProductCategory,
+  EnterpriseProvisioningProfile,
+  EnterpriseProvisioningType,
+  EnterpriseSubscriptionPlan,
+  EnterpriseTelemetrySnapshot,
+  EnterpriseTier,
   DataBoundary,
   ExternalCollectionStatistics,
   ExternalContractReference,
@@ -329,6 +348,12 @@ const acsProvisioningBoundaries = marketplaceACSProvisioningBoundaries as ACSPro
 const acsCapabilityDataBoundaries = marketplaceACSCapabilityDataBoundaries as ACSCapabilityDataBoundary[];
 const acsDistributionContexts = marketplaceACSDistributionContexts as ACSDistributionContext[];
 const acsIntelligenceSummaries = marketplaceACSIntelligenceSummaries as ACSIntelligenceSummary[];
+const enterpriseProducts = marketplaceEnterpriseProducts as EnterpriseProduct[];
+const enterpriseSubscriptionPlans = marketplaceEnterpriseSubscriptionPlans as EnterpriseSubscriptionPlan[];
+const enterpriseLicenses = marketplaceEnterpriseLicenses as EnterpriseLicense[];
+const enterpriseProvisioningProfiles = marketplaceEnterpriseProvisioningProfiles as EnterpriseProvisioningProfile[];
+const enterpriseBillingPreviews = marketplaceEnterpriseBillingPreviews as EnterpriseBillingPreview[];
+const enterpriseTelemetrySnapshots = marketplaceEnterpriseTelemetrySnapshots as EnterpriseTelemetrySnapshot[];
 
 function normalizeSearch(value?: string) {
   return value?.trim().toLowerCase() ?? "";
@@ -767,6 +792,52 @@ export interface ACSDistributionOverview {
   contexts: ACSDistributionContext[];
   intelligenceSummaries: ACSIntelligenceSummary[];
   boundaryNotes: string[];
+}
+
+export interface EnterpriseProductFilters {
+  tier?: EnterpriseTier | "all";
+  category?: EnterpriseProductCategory | "all";
+  governanceStatus?: EnterpriseGovernanceStatus | "all";
+  supportedChain?: Chain | "all";
+  provisioningType?: EnterpriseProvisioningType | "all";
+  billingCadence?: EnterpriseBillingCadence | "all";
+}
+
+export const DEFAULT_ENTERPRISE_PRODUCT_FILTERS: EnterpriseProductFilters = {
+  tier: "all",
+  category: "all",
+  governanceStatus: "all",
+  supportedChain: "all",
+  provisioningType: "all",
+  billingCadence: "all"
+};
+
+export interface EnterpriseProductView {
+  product: EnterpriseProduct;
+  plans: EnterpriseSubscriptionPlan[];
+  license: EnterpriseLicense | null;
+  provisioningProfile: EnterpriseProvisioningProfile | null;
+  billingPreviews: EnterpriseBillingPreview[];
+  telemetrySnapshot: EnterpriseTelemetrySnapshot | null;
+  tenant: Tenant | null;
+  curatedCatalog: CuratedCatalog | null;
+  distributionChannel: DistributionChannel | null;
+  revenuePolicy: RevenueSharingPolicyView | null;
+  intelligenceSnapshot: IntelligenceSnapshotView | null;
+  guardrail: EnterpriseGuardrailResult;
+  boundaryNotes: string[];
+}
+
+export interface EnterpriseGuardrailResult {
+  productId: string;
+  governanceStatus: EnterpriseGovernanceStatus;
+  canRunSubscribePreview: boolean;
+  canRunProvisioningPreview: boolean;
+  canPreviewBilling: boolean;
+  statusLabel: string;
+  requiredReviews: string[];
+  warnings: string[];
+  disclaimers: string[];
 }
 
 export interface WalletDiscoveryView {
@@ -5742,6 +5813,164 @@ export function validateACSDistributionMockOnly(targetId?: string) {
     isNoSecretAccess: provisioningBoundaries.every((entry) => !entry.canAccessSecrets) && dataBoundaries.every((entry) => !entry.usesSecrets),
     isNoBilling: selectedCompute.every((entry) => !entry.computeAccess.canBill) && provisioningBoundaries.every((entry) => !entry.canBill),
     boundaryCount: executionBoundaries.length + provisioningBoundaries.length + dataBoundaries.length
+  };
+}
+
+function enterpriseBoundaryNotes(recordWarnings: string[] = [], recordDisclaimers: string[] = []) {
+  return Array.from(
+    new Set([
+      ...recordWarnings,
+      ...recordDisclaimers,
+      "Enterprise Marketplace is mock-first, governance-aware, treasury-compatible and preview-only.",
+      "No live subscription activation, billing provider call, invoice, settlement, treasury routing, wallet signature, contract write, tenant provisioning, ACS deployment, compute allocation, backend, API, database or external onboarding is active."
+    ])
+  );
+}
+
+function resolveEnterpriseGuardrail(product: EnterpriseProduct, profile?: EnterpriseProvisioningProfile | null): EnterpriseGuardrailResult {
+  const requiredReviews = [
+    ...(product.governanceStatus === "pending-review" || product.governanceStatus === "restricted" || product.governanceStatus === "blocked" ? ["Governance review"] : []),
+    ...(product.governanceStatus === "treasury-review-required" || product.settlementMode === "treasury-review-required" ? ["Treasury review"] : []),
+    ...(product.provisioningType === "acs-review-required" ? ["ACS provisioning review"] : []),
+    ...(product.governanceStatus === "allowed-mock" ? [] : profile?.requiredApprovals ?? [])
+  ];
+  const blocked = product.governanceStatus === "blocked" || product.lifecycleStatus === "blocked";
+  const restricted = product.governanceStatus === "restricted";
+  const canRunPreview = !blocked && !restricted;
+
+  return {
+    productId: product.id,
+    governanceStatus: product.governanceStatus,
+    canRunSubscribePreview: canRunPreview,
+    canRunProvisioningPreview: canRunPreview && product.provisioningType !== "blocked",
+    canPreviewBilling: !blocked,
+    statusLabel: blocked ? "blocked by governance" : restricted ? "restricted by governance" : requiredReviews.length ? "review required" : "allowed mock preview",
+    requiredReviews: Array.from(new Set(requiredReviews)),
+    warnings: [
+      ...product.guardrails,
+      ...product.warnings,
+      ...(blocked ? ["Blocked products cannot run subscribe preview confirmation or provisioning preview."] : []),
+      ...(product.settlementMode === "treasury-review-required" ? ["Treasury review required; treasury routing remains disabled."] : []),
+      ...(product.provisioningType === "acs-review-required" ? ["ACS provisioning pending review; deployment remains disabled."] : [])
+    ],
+    disclaimers: enterpriseBoundaryNotes(product.warnings, product.disclaimers)
+  };
+}
+
+function buildEnterpriseProductView(product: EnterpriseProduct): EnterpriseProductView {
+  const plans = getEnterprisePlansByProductId(product.id);
+  const license = getEnterpriseLicenseByProductId(product.id);
+  const provisioningProfile = getEnterpriseProvisioningProfileByProductId(product.id);
+  const guardrail = resolveEnterpriseGuardrail(product, provisioningProfile);
+  return {
+    product,
+    plans,
+    license,
+    provisioningProfile,
+    billingPreviews: plans.map((plan) => getEnterpriseBillingPreviewByPlanId(plan.id)).filter((entry): entry is EnterpriseBillingPreview => Boolean(entry)),
+    telemetrySnapshot: getEnterpriseTelemetryByProductId(product.id),
+    tenant: product.tenantId ? getTenantById(product.tenantId) ?? null : null,
+    curatedCatalog: product.curatedCatalogId ? curatedCatalogs.find((entry) => entry.id === product.curatedCatalogId) ?? null : null,
+    distributionChannel: product.distributionChannelId ? distributionChannels.find((entry) => entry.id === product.distributionChannelId) ?? null : null,
+    revenuePolicy: product.revenueSharingPolicyId ? getRevenueSharingPolicyById(product.revenueSharingPolicyId) : null,
+    intelligenceSnapshot: product.intelligenceSnapshotId ? getIntelligenceSnapshotById(product.intelligenceSnapshotId) : null,
+    guardrail,
+    boundaryNotes: Array.from(
+      new Set([
+        ...enterpriseBoundaryNotes(product.warnings, product.disclaimers),
+        ...plans.flatMap((plan) => enterpriseBoundaryNotes(plan.warnings, plan.disclaimers)),
+        ...(license ? enterpriseBoundaryNotes(license.warnings, license.disclaimers) : ["Enterprise license missing; review required."]),
+        ...(provisioningProfile ? enterpriseBoundaryNotes(provisioningProfile.warnings, provisioningProfile.disclaimers) : ["Enterprise provisioning profile missing; review required."]),
+        ...guardrail.warnings,
+        ...guardrail.disclaimers
+      ])
+    )
+  };
+}
+
+export function listEnterpriseProducts(filters: EnterpriseProductFilters = DEFAULT_ENTERPRISE_PRODUCT_FILTERS) {
+  return enterpriseProducts
+    .filter((product) => !filters.tier || filters.tier === "all" || product.tier === filters.tier)
+    .filter((product) => !filters.category || filters.category === "all" || product.category === filters.category)
+    .filter((product) => !filters.governanceStatus || filters.governanceStatus === "all" || product.governanceStatus === filters.governanceStatus)
+    .filter((product) => !filters.supportedChain || filters.supportedChain === "all" || product.supportedChains.includes(filters.supportedChain))
+    .filter((product) => !filters.provisioningType || filters.provisioningType === "all" || product.provisioningType === filters.provisioningType)
+    .filter((product) => !filters.billingCadence || filters.billingCadence === "all" || product.billingCadence === filters.billingCadence)
+    .map(buildEnterpriseProductView);
+}
+
+export function getEnterpriseProductBySlug(slugOrId: string) {
+  const key = slugOrId.toLowerCase();
+  const product = enterpriseProducts.find((entry) => entry.slug.toLowerCase() === key || entry.id.toLowerCase() === key);
+  return product ? buildEnterpriseProductView(product) : null;
+}
+
+export function getEnterprisePlansByProductId(productId: string) {
+  return enterpriseSubscriptionPlans.filter((plan) => plan.productId === productId);
+}
+
+export function getEnterpriseLicenseByProductId(productId: string) {
+  return enterpriseLicenses.find((license) => license.productId === productId) ?? null;
+}
+
+export function getEnterpriseProvisioningProfileByProductId(productId: string) {
+  return enterpriseProvisioningProfiles.find((profile) => profile.productId === productId) ?? null;
+}
+
+export function getEnterpriseBillingPreviewByPlanId(planId: string) {
+  return enterpriseBillingPreviews.find((preview) => preview.planId === planId) ?? null;
+}
+
+export function getEnterpriseTelemetryByProductId(productId: string) {
+  return enterpriseTelemetrySnapshots.find((snapshot) => snapshot.productId === productId) ?? null;
+}
+
+function countBy<T extends string>(items: T[]) {
+  return items.reduce<Record<T, number>>((counts, item) => {
+    counts[item] = (counts[item] ?? 0) + 1;
+    return counts;
+  }, {} as Record<T, number>);
+}
+
+export function listEnterpriseOperationsSummary(): EnterpriseOperationsSummary {
+  const productViews = listEnterpriseProducts();
+  return {
+    totalProducts: productViews.length,
+    governanceCounts: countBy(enterpriseProducts.map((product) => product.governanceStatus)),
+    planStatusCounts: countBy(enterpriseSubscriptionPlans.map((plan) => plan.status)),
+    provisioningStatusCounts: countBy(enterpriseProvisioningProfiles.map((profile) => profile.mockProvisioningStatus)),
+    billingPreviewCounts: countBy(enterpriseBillingPreviews.map((preview) => preview.invoicePreviewStatus)),
+    licenseStatusCounts: countBy(enterpriseLicenses.map((license) => license.status)),
+    blockingIssues: productViews.flatMap((view) => (view.telemetrySnapshot?.blockingIssues ?? []).map((issue) => ({ productId: view.product.id, label: view.product.displayName, issue }))),
+    reviewQueue: productViews
+      .filter((view) => view.guardrail.requiredReviews.length > 0 || view.product.lifecycleStatus === "review-required")
+      .map((view) => ({ productId: view.product.id, label: view.product.displayName, reason: view.guardrail.requiredReviews.join(", ") || view.product.lifecycleStatus })),
+    isSimulated: true,
+    canActivateSubscriptions: false,
+    canExecuteBilling: false,
+    canRouteTreasury: false,
+    canDeployACS: false,
+    warnings: ["Enterprise Operations Dashboard is visibility-only and grants no operational authority."],
+    disclaimers: ["No live subscription, billing, treasury routing, ACS deployment, tenant provisioning, backend, API, database, external integration or cross-enterprise data sharing is active."]
+  };
+}
+
+export function validateEnterpriseMarketplaceMockOnly(slugOrId?: string) {
+  const views = slugOrId ? [getEnterpriseProductBySlug(slugOrId)].filter((entry): entry is EnterpriseProductView => Boolean(entry)) : listEnterpriseProducts();
+  return {
+    isMockOnly:
+      views.every((view) => view.product.isSimulated && !view.product.canActivateSubscription && !view.product.canExecuteBilling && !view.product.canRouteTreasury && !view.product.canSettle && !view.product.canDeployACS && !view.product.canProvisionTenant && !view.product.canWriteContracts) &&
+      views.every((view) => view.plans.every((plan) => plan.isSimulated && !plan.canActivateSubscription && !plan.canExecuteBilling && !plan.canRouteTreasury && !plan.canSettle)) &&
+      views.every((view) => !view.license || (view.license.isSimulated && !view.license.canEscalatePermissions && !view.license.canIssueLiveLicense)) &&
+      views.every((view) => !view.provisioningProfile || (view.provisioningProfile.isSimulated && !view.provisioningProfile.canProvisionTenant && !view.provisioningProfile.canDeployACS && !view.provisioningProfile.canAllocateCompute && !view.provisioningProfile.canAccessSecrets && !view.provisioningProfile.canStartRuntime)) &&
+      views.every((view) => view.billingPreviews.every((preview) => preview.isSimulated && !preview.canExecutePayment && !preview.canRouteTreasury && !preview.canInvoice && !preview.canAccount && !preview.canSettle)) &&
+      views.every((view) => !view.telemetrySnapshot || (view.telemetrySnapshot.isSimulated && !view.telemetrySnapshot.usesLiveTelemetry && !view.telemetrySnapshot.usesExternalAnalytics && !view.telemetrySnapshot.canTriggerAutomation)),
+    isBillingPreviewOnly: views.every((view) => view.billingPreviews.every((preview) => !preview.canExecutePayment && !preview.canRouteTreasury && !preview.canInvoice && !preview.canAccount && !preview.canSettle)),
+    isACSProvisioningBounded: views.every((view) => !view.provisioningProfile || (!view.provisioningProfile.canDeployACS && !view.provisioningProfile.canAllocateCompute && !view.provisioningProfile.canAccessSecrets && !view.provisioningProfile.canStartRuntime)),
+    isGovernanceGuarded: views.some((view) => view.product.governanceStatus === "blocked" && !view.guardrail.canRunSubscribePreview) && views.some((view) => view.guardrail.requiredReviews.length > 0),
+    isNoCrossEnterpriseContamination: views.every((view) => view.product.tenantId !== undefined && view.telemetrySnapshot?.productId === view.product.id),
+    productCount: views.length,
+    boundaryNotes: enterpriseBoundaryNotes(["Enterprise Marketplace validation confirms preview-only behavior."], ["No production billing, settlement, treasury routing, ACS deployment, backend, API, database, wallet signature or contract write is active."])
   };
 }
 

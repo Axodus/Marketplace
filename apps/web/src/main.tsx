@@ -19,6 +19,14 @@ const RevenueSharingPage = lazy(() => import("./modules/marketplace/pages/Revenu
 const MarketplaceIntelligencePage = lazy(() => import("./modules/marketplace/pages/MarketplaceIntelligencePage").then((module) => ({ default: module.MarketplaceIntelligencePage })));
 const AcademyDistributionPage = lazy(() => import("./modules/marketplace/pages/AcademyDistributionPage").then((module) => ({ default: module.AcademyDistributionPage })));
 const ACSDistributionPage = lazy(() => import("./modules/marketplace/pages/ACSDistributionPage").then((module) => ({ default: module.ACSDistributionPage })));
+const EnterpriseMarketplacePage = lazy(() => import("./modules/marketplace/pages/EnterpriseMarketplacePage").then((module) => ({ default: module.EnterpriseMarketplacePage })));
+const EnterpriseProductDetailPage = lazy(() => import("./modules/marketplace/pages/EnterpriseProductDetailPage").then((module) => ({ default: module.EnterpriseProductDetailPage })));
+const EnterpriseSubscribePreviewPage = lazy(() => import("./modules/marketplace/pages/EnterpriseSubscribePreviewPage").then((module) => ({ default: module.EnterpriseSubscribePreviewPage })));
+const EnterpriseLicensePage = lazy(() => import("./modules/marketplace/pages/EnterpriseLicensePage").then((module) => ({ default: module.EnterpriseLicensePage })));
+const EnterpriseProvisioningPage = lazy(() => import("./modules/marketplace/pages/EnterpriseProvisioningPage").then((module) => ({ default: module.EnterpriseProvisioningPage })));
+const EnterpriseBillingPage = lazy(() => import("./modules/marketplace/pages/EnterpriseBillingPage").then((module) => ({ default: module.EnterpriseBillingPage })));
+const EnterpriseTelemetryPage = lazy(() => import("./modules/marketplace/pages/EnterpriseTelemetryPage").then((module) => ({ default: module.EnterpriseTelemetryPage })));
+const EnterpriseOperationsPage = lazy(() => import("./modules/marketplace/pages/EnterpriseOperationsPage").then((module) => ({ default: module.EnterpriseOperationsPage })));
 const CreateSellPage = lazy(() => import("./modules/marketplace/pages/CreateSellPage").then((module) => ({ default: module.CreateSellPage })));
 const ProductDetailPage = lazy(() => import("./modules/marketplace/pages/ProductDetailPage").then((module) => ({ default: module.ProductDetailPage })));
 const SellerProfilePage = lazy(() => import("./modules/marketplace/pages/SellerProfilePage").then((module) => ({ default: module.SellerProfilePage })));
@@ -91,6 +99,14 @@ const router = createBrowserRouter([
       { path: "marketplace/academy/:academySlug", element: routeElement(<AcademyDistributionPage />) },
       { path: "marketplace/acs", element: routeElement(<ACSDistributionPage />) },
       { path: "marketplace/acs/:acsSlug", element: routeElement(<ACSDistributionPage />) },
+      { path: "marketplace/enterprise", element: routeElement(<EnterpriseMarketplacePage />) },
+      { path: "marketplace/enterprise/operations", element: routeElement(<EnterpriseOperationsPage />) },
+      { path: "marketplace/enterprise/:slug", element: routeElement(<EnterpriseProductDetailPage />) },
+      { path: "marketplace/enterprise/:slug/subscribe-preview", element: routeElement(<EnterpriseSubscribePreviewPage />) },
+      { path: "marketplace/enterprise/:slug/license", element: routeElement(<EnterpriseLicensePage />) },
+      { path: "marketplace/enterprise/:slug/provisioning", element: routeElement(<EnterpriseProvisioningPage />) },
+      { path: "marketplace/enterprise/:slug/billing", element: routeElement(<EnterpriseBillingPage />) },
+      { path: "marketplace/enterprise/:slug/telemetry", element: routeElement(<EnterpriseTelemetryPage />) },
       { path: "marketplace/distribution/profiles", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/profiles/:profileSlug", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/:channelId", element: routeElement(<DistributionNetworkPage />) },

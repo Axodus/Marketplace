@@ -1450,6 +1450,36 @@ CONFIRMED
 
 ---
 
+# Phase 10 Enterprise Marketplace Preview Layer
+
+Decision:
+Marketplace implements Enterprise Marketplace as a mock-first, governance-aware and treasury-compatible preview layer.
+
+Approved:
+- Enterprise Product records
+- Enterprise Subscription Plan records
+- Enterprise License records
+- Enterprise Provisioning Profile records
+- Enterprise Billing Preview records
+- Enterprise Telemetry Snapshot records
+- Enterprise preview adapters for subscription, license, provisioning, billing and governance guardrails
+- Enterprise routes for explorer, operations, detail, subscribe preview, license, provisioning, billing and telemetry
+
+Deferred:
+- live subscription activation
+- production billing provider calls
+- invoices and accounting entries
+- settlement and treasury routing
+- wallet signatures and contract writes
+- tenant provisioning
+- ACS deployment and compute allocation
+- backend, API, database and external onboarding
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation
@@ -1460,13 +1490,6 @@ PENDING
 ---
 
 ## ACS Provider Monetization
-
-Status:
-PENDING
-
----
-
-## Enterprise Licensing Model
 
 Status:
 PENDING

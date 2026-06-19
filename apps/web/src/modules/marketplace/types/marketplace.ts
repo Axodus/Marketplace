@@ -439,6 +439,14 @@ export type ACSBoundaryStatus =
   | "restricted"
   | "blocked"
   | "review-required";
+export type EnterpriseTier = "starter" | "growth" | "institutional" | "sovereign" | "restricted";
+export type EnterpriseProductCategory = "enterprise-subscription" | "dao-operations" | "acs-provisioning" | "dedicated-orchestration" | "restricted-package";
+export type EnterpriseLifecycleStatus = "draft" | "preview-only" | "active-mock" | "review-required" | "restricted" | "blocked" | "archived";
+export type EnterpriseSettlementMode = "preview-only" | "treasury-review-required" | "settlement-disabled" | "billing-disabled";
+export type EnterpriseProvisioningType = "manual-review" | "operator-assisted" | "mock-automated" | "acs-review-required" | "blocked";
+export type EnterpriseGovernanceStatus = "allowed-mock" | "pending-review" | "treasury-review-required" | "restricted" | "blocked";
+export type EnterpriseBillingCadence = "monthly" | "quarterly" | "annual" | "usage-preview" | "manual-review";
+export type EnterpriseTelemetryStatus = "nominal-mock" | "review-required" | "restricted" | "blocked" | "not-configured";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -2623,6 +2631,176 @@ export interface ACSIntelligenceSummary {
   usesAgentScoring: boolean;
   usesAutomation: boolean;
   usesExternalAnalytics: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseProduct {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  tier: EnterpriseTier;
+  category: EnterpriseProductCategory;
+  lifecycleStatus: EnterpriseLifecycleStatus;
+  governanceStatus: EnterpriseGovernanceStatus;
+  settlementMode: EnterpriseSettlementMode;
+  provisioningType: EnterpriseProvisioningType;
+  billingCadence: EnterpriseBillingCadence;
+  supportedChains: Chain[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  planIds: string[];
+  licenseId: string;
+  provisioningProfileId: string;
+  telemetrySnapshotId: string;
+  operationalScope: string[];
+  guardrails: string[];
+  isSimulated: boolean;
+  canActivateSubscription: boolean;
+  canExecuteBilling: boolean;
+  canRouteTreasury: boolean;
+  canSettle: boolean;
+  canDeployACS: boolean;
+  canProvisionTenant: boolean;
+  canWriteContracts: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EnterpriseSubscriptionPlan {
+  id: string;
+  productId: string;
+  slug: string;
+  name: string;
+  description: string;
+  tier: EnterpriseTier;
+  status: EnterpriseLifecycleStatus;
+  billingCadence: EnterpriseBillingCadence;
+  currency: string;
+  recurringAmountMock: number;
+  setupAmountMock: number;
+  usageEstimateMock: string;
+  seatLimitMock?: number;
+  operatorLimitMock?: number;
+  settlementMode: EnterpriseSettlementMode;
+  requiresGovernanceApproval: boolean;
+  requiresTreasuryReview: boolean;
+  isSimulated: boolean;
+  canActivateSubscription: boolean;
+  canExecuteBilling: boolean;
+  canRouteTreasury: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseLicense {
+  id: string;
+  productId: string;
+  name: string;
+  status: EnterpriseLifecycleStatus;
+  rightsGranted: string[];
+  restrictions: string[];
+  permittedOperators: string[];
+  permittedWorkspaces: string[];
+  renewalPolicy: string;
+  expiryPolicy: string;
+  auditRequirements: string[];
+  governanceCompatibility: EnterpriseGovernanceStatus;
+  isSimulated: boolean;
+  canEscalatePermissions: boolean;
+  canIssueLiveLicense: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseProvisioningProfile {
+  id: string;
+  productId: string;
+  name: string;
+  status: EnterpriseLifecycleStatus;
+  provisioningType: EnterpriseProvisioningType;
+  acsComponentIds: string[];
+  orchestrationComponentIds: string[];
+  computeEnvelope: string;
+  deploymentIsolation: string;
+  accessControlModel: string;
+  requiredApprovals: string[];
+  telemetryHooks: string[];
+  mockProvisioningStatus: "preview-only" | "pending-review" | "operator-assisted" | "blocked";
+  isSimulated: boolean;
+  canProvisionTenant: boolean;
+  canDeployACS: boolean;
+  canAllocateCompute: boolean;
+  canAccessSecrets: boolean;
+  canStartRuntime: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseBillingPreview {
+  id: string;
+  planId: string;
+  productId: string;
+  currency: string;
+  recurringAmountMock: number;
+  setupAmountMock: number;
+  usageEstimateMock: string;
+  treasuryDestinationPreview: string;
+  accountingNotes: string[];
+  invoicePreviewStatus: "preview-only" | "review-required" | "blocked";
+  reconciliationStatus: "preview-only" | "review-required" | "blocked";
+  settlementMode: EnterpriseSettlementMode;
+  isSimulated: boolean;
+  canExecutePayment: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseTelemetrySnapshot {
+  id: string;
+  productId: string;
+  provisioningStatus: EnterpriseTelemetryStatus;
+  accessStatus: EnterpriseTelemetryStatus;
+  billingStatus: EnterpriseTelemetryStatus;
+  licenseStatus: EnterpriseTelemetryStatus;
+  governanceStatus: EnterpriseGovernanceStatus;
+  lastUpdatedAt: string;
+  signals: string[];
+  blockingIssues: string[];
+  warnings: string[];
+  disclaimers: string[];
+  isSimulated: boolean;
+  usesLiveTelemetry: boolean;
+  usesExternalAnalytics: boolean;
+  canTriggerAutomation: boolean;
+}
+
+export interface EnterpriseOperationsSummary {
+  totalProducts: number;
+  governanceCounts: Record<EnterpriseGovernanceStatus, number>;
+  planStatusCounts: Record<EnterpriseLifecycleStatus, number>;
+  provisioningStatusCounts: Record<string, number>;
+  billingPreviewCounts: Record<string, number>;
+  licenseStatusCounts: Record<EnterpriseLifecycleStatus, number>;
+  blockingIssues: Array<{ productId: string; label: string; issue: string }>;
+  reviewQueue: Array<{ productId: string; label: string; reason: string }>;
+  isSimulated: boolean;
+  canActivateSubscriptions: boolean;
+  canExecuteBilling: boolean;
+  canRouteTreasury: boolean;
+  canDeployACS: boolean;
   warnings: string[];
   disclaimers: string[];
 }
