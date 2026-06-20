@@ -312,6 +312,20 @@ Enterprise Products must preserve ACS boundaries: no agent execution, no MCP dep
 
 ---
 
+## Sovereign Commerce Products
+- Sovereign Commerce Nodes
+- Sovereign Commerce Links
+- Sovereign Governance Boundaries
+- Sovereign Isolation Boundaries
+- Sovereign Observability Snapshots
+- Sovereign Commerce Network Summary
+
+Sovereign Commerce Products compose prior Marketplace product domains into read-only ecosystem commerce visibility.
+
+They must preserve no commerce execution, no order routing, no settlement, no treasury routing, no billing execution, no governance execution, no cross-tenant write, no ACS provisioning, no external onboarding, no tracking real, no BI and no automation.
+
+---
+
 ## Tenant Catalog Products
 - DAO storefront catalogs
 - tenant-scoped product bundles

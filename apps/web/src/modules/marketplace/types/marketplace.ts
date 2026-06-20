@@ -447,6 +447,29 @@ export type EnterpriseProvisioningType = "manual-review" | "operator-assisted" |
 export type EnterpriseGovernanceStatus = "allowed-mock" | "pending-review" | "treasury-review-required" | "restricted" | "blocked";
 export type EnterpriseBillingCadence = "monthly" | "quarterly" | "annual" | "usage-preview" | "manual-review";
 export type EnterpriseTelemetryStatus = "nominal-mock" | "review-required" | "restricted" | "blocked" | "not-configured";
+export type SovereignCommerceNodeType =
+  | "cross-tenant-distribution"
+  | "marketplace-federation"
+  | "dao-commercial-participation"
+  | "ecosystem-intelligence"
+  | "revenue-sharing-visibility"
+  | "attribution-traceability"
+  | "federated-governance"
+  | "operational-isolation"
+  | "commercial-observability";
+export type SovereignCommerceStatus = "configured-mock" | "preview-only" | "review-required" | "restricted" | "blocked";
+export type SovereignCommerceBoundaryStatus =
+  | "mock-only"
+  | "read-only"
+  | "no-settlement"
+  | "no-treasury-routing"
+  | "no-billing-execution"
+  | "no-cross-tenant-write"
+  | "no-governance-execution"
+  | "no-acs-provisioning"
+  | "no-external-onboarding"
+  | "review-required"
+  | "blocked";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -2801,6 +2824,130 @@ export interface EnterpriseOperationsSummary {
   canExecuteBilling: boolean;
   canRouteTreasury: boolean;
   canDeployACS: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignCommerceNode {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  nodeType: SovereignCommerceNodeType;
+  status: SovereignCommerceStatus;
+  tenantIds: string[];
+  curatedCatalogIds: string[];
+  distributionChannelIds: string[];
+  communityDistributionIds: string[];
+  revenueSharingPolicyIds: string[];
+  attributionSourceIds: string[];
+  intelligenceSnapshotIds: string[];
+  enterpriseProductIds: string[];
+  acsCapabilityProductIds: string[];
+  academyProductIds: string[];
+  federationProviderIds: string[];
+  governanceBoundaryId: string;
+  isolationBoundaryId: string;
+  observabilitySnapshotId: string;
+  isSimulated: boolean;
+  canExecuteCommerce: boolean;
+  canSettle: boolean;
+  canRouteTreasury: boolean;
+  canExecuteBilling: boolean;
+  canWriteCrossTenant: boolean;
+  canExecuteGovernance: boolean;
+  canProvisionACS: boolean;
+  canOnboardExternalMarketplaces: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SovereignCommerceLink {
+  id: string;
+  sourceNodeId: string;
+  targetNodeId: string;
+  linkType: "distribution" | "federation" | "revenue" | "attribution" | "governance" | "isolation" | "observability";
+  label: string;
+  status: SovereignCommerceStatus;
+  isSimulated: boolean;
+  canSyncData: boolean;
+  canTransferValue: boolean;
+  canRouteOrders: boolean;
+  canPropagateGovernance: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignGovernanceBoundary {
+  id: string;
+  scopeId: string;
+  status: SovereignCommerceBoundaryStatus;
+  boundaryLabel: string;
+  reviewRequirements: string[];
+  isSimulated: boolean;
+  canExecuteGovernance: boolean;
+  canBypassPolicy: boolean;
+  canApproveSettlement: boolean;
+  canDelegateAuthority: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignIsolationBoundary {
+  id: string;
+  scopeId: string;
+  status: SovereignCommerceBoundaryStatus;
+  boundaryLabel: string;
+  isolationNotes: string[];
+  isSimulated: boolean;
+  canWriteCrossTenant: boolean;
+  canSharePrivateData: boolean;
+  canEscalateAccess: boolean;
+  canProvisionTenant: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignObservabilitySnapshot {
+  id: string;
+  scopeId: string;
+  status: SovereignCommerceStatus;
+  title: string;
+  signals: string[];
+  revenueVisibilityNotes: string[];
+  attributionTraceabilityNotes: string[];
+  governanceNotes: string[];
+  isolationNotes: string[];
+  lastUpdatedAt: string;
+  isSimulated: boolean;
+  usesLiveTelemetry: boolean;
+  usesTracking: boolean;
+  usesBI: boolean;
+  canTriggerAutomation: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignCommerceNetworkSummary {
+  id: string;
+  name: string;
+  status: SovereignCommerceStatus;
+  nodeIds: string[];
+  linkIds: string[];
+  governanceBoundaryIds: string[];
+  isolationBoundaryIds: string[];
+  observabilitySnapshotIds: string[];
+  isSimulated: boolean;
+  canExecuteCommerce: boolean;
+  canSettle: boolean;
+  canRouteTreasury: boolean;
+  canExecuteBilling: boolean;
+  canWriteCrossTenant: boolean;
+  canExecuteGovernance: boolean;
+  canProvisionACS: boolean;
+  canOnboardExternalMarketplaces: boolean;
   warnings: string[];
   disclaimers: string[];
 }

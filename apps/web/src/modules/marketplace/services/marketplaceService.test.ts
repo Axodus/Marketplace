@@ -115,6 +115,7 @@ import {
   listComputeAccess,
   listEnterpriseOperationsSummary,
   listEnterpriseProducts,
+  listSovereignCommerceNodes,
   listMCPPackages,
   listWorkflowSystems,
   listCommissionModels,
@@ -180,6 +181,7 @@ import {
   resolveAcademyLearningEntitlementMock,
   resolveACSDistributionContext,
   resolveACSDistributionOverview,
+  getSovereignCommerceNodeBySlug,
   getEnterpriseBillingPreviewByPlanId,
   getEnterpriseLicenseByProductId,
   getEnterprisePlansByProductId,
@@ -187,6 +189,7 @@ import {
   getEnterpriseProvisioningProfileByProductId,
   getEnterpriseTelemetryByProductId,
   resolveCommunityDistributionContext,
+  resolveSovereignCommerceNetwork,
   resolveDataBoundary,
   resolveDistributionContext,
   resolveDistributionProfileContext,
@@ -231,6 +234,7 @@ import {
   validateAcademyDistributionMockOnly,
   validateACSDistributionMockOnly,
   validateEnterpriseMarketplaceMockOnly,
+  validateSovereignCommerceNetworkMockOnly,
   resolveRevenueTrustRiskIntelligence,
   resolveRiskTrustContext,
   validateParticipantSharesByCommissionModel,
@@ -1763,6 +1767,56 @@ describe("marketplaceService", () => {
     expect(billing.target?.canExecutePayment).toBe(false);
     expect(billing.target?.canRouteTreasury).toBe(false);
     expect(guardrail.target?.canRunSubscribePreview).toBe(false);
+  });
+
+  it("resolves Sovereign Commerce Network across prior Marketplace phases", () => {
+    const network = resolveSovereignCommerceNetwork();
+    const nodes = listSovereignCommerceNodes();
+    const crossTenant = getSovereignCommerceNodeBySlug("cross-tenant-distribution");
+    const observability = getSovereignCommerceNodeBySlug("commercial-observability");
+
+    expect(network.summary.name).toBe("Axodus Sovereign Commerce Network");
+    expect(nodes.length).toBeGreaterThanOrEqual(7);
+    expect(network.coverage.crossTenantDistribution).toBe(true);
+    expect(network.coverage.marketplaceFederation).toBe(true);
+    expect(network.coverage.daoCommercialParticipation).toBe(true);
+    expect(network.coverage.ecosystemIntelligence).toBe(true);
+    expect(network.coverage.revenueSharingVisibility).toBe(true);
+    expect(network.coverage.attributionTraceability).toBe(true);
+    expect(network.coverage.federatedGovernance).toBe(true);
+    expect(network.coverage.operationalIsolation).toBe(true);
+    expect(network.coverage.commercialObservability).toBe(true);
+    expect(crossTenant?.tenants.length).toBeGreaterThan(1);
+    expect(crossTenant?.distributionChannels.length).toBeGreaterThan(1);
+    expect(crossTenant?.revenuePolicies.length).toBeGreaterThan(0);
+    expect(crossTenant?.attributionSources.length).toBeGreaterThan(0);
+    expect(observability?.enterpriseProducts.length).toBeGreaterThan(0);
+    expect(observability?.acsCapabilityProducts.length).toBeGreaterThan(0);
+    expect(observability?.academyProducts.length).toBeGreaterThan(0);
+  });
+
+  it("validates Sovereign Commerce Network as mock/config-first and non-executing", () => {
+    const validation = validateSovereignCommerceNetworkMockOnly();
+    const node = getSovereignCommerceNodeBySlug("federated-governance-isolation");
+
+    expect(validation.isMockOnly).toBe(true);
+    expect(validation.hasCrossTenantDistribution).toBe(true);
+    expect(validation.hasMarketplaceFederation).toBe(true);
+    expect(validation.hasDaoCommercialParticipation).toBe(true);
+    expect(validation.hasEcosystemIntelligence).toBe(true);
+    expect(validation.hasRevenueSharingVisibility).toBe(true);
+    expect(validation.hasAttributionTraceability).toBe(true);
+    expect(validation.hasFederatedGovernance).toBe(true);
+    expect(validation.hasOperationalIsolation).toBe(true);
+    expect(validation.hasCommercialObservability).toBe(true);
+    expect(node?.node.canExecuteCommerce).toBe(false);
+    expect(node?.node.canSettle).toBe(false);
+    expect(node?.node.canRouteTreasury).toBe(false);
+    expect(node?.node.canExecuteBilling).toBe(false);
+    expect(node?.node.canWriteCrossTenant).toBe(false);
+    expect(node?.node.canExecuteGovernance).toBe(false);
+    expect(node?.node.canProvisionACS).toBe(false);
+    expect(node?.node.canOnboardExternalMarketplaces).toBe(false);
   });
 
   it("issues mock purchase records without settlement", () => {

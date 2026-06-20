@@ -139,13 +139,17 @@ import {
   getAIAgentById,
   getComputeAccessById,
   getEnterpriseProductBySlug,
+  getSovereignCommerceNodeBySlug,
   getMCPPackageById,
   getWorkflowSystemById,
   listEnterpriseOperationsSummary,
   listEnterpriseProducts,
+  listSovereignCommerceNodes,
+  resolveSovereignCommerceNetwork,
   resolveACSDistributionContext,
   resolveACSDistributionOverview,
   validateEnterpriseMarketplaceMockOnly,
+  validateSovereignCommerceNetworkMockOnly,
   validateACSDistributionMockOnly,
   listRevenueSharingAuditEntriesByPolicy,
   listRevenueSharingPreviewConflicts,
@@ -1295,6 +1299,39 @@ export function useEnterprisePreviewAdapters(slugOrId?: string) {
       billing: EnterpriseBillingPreviewAdapter.preview(slugOrId ?? ""),
       guardrail: EnterpriseGovernanceGuardrailAdapter.preview(slugOrId ?? "")
     })
+  });
+}
+
+export function useSovereignCommerceNetwork() {
+  return useQuery({
+    queryKey: ["marketplace-sovereign-commerce-network"],
+    queryFn: () => {
+      const network = resolveSovereignCommerceNetwork();
+      traceMarketplaceLifecycle("marketplace-sovereign-commerce-network-query", "completed", { nodeCount: network.nodes.length, linkCount: network.links.length });
+      return network;
+    }
+  });
+}
+
+export function useSovereignCommerceNodes() {
+  return useQuery({
+    queryKey: ["marketplace-sovereign-commerce-nodes"],
+    queryFn: () => listSovereignCommerceNodes()
+  });
+}
+
+export function useSovereignCommerceNode(slugOrId?: string) {
+  return useQuery({
+    queryKey: ["marketplace-sovereign-commerce-node", slugOrId],
+    enabled: Boolean(slugOrId),
+    queryFn: () => getSovereignCommerceNodeBySlug(slugOrId ?? "")
+  });
+}
+
+export function useSovereignCommerceValidation() {
+  return useQuery({
+    queryKey: ["marketplace-sovereign-commerce-validation"],
+    queryFn: () => validateSovereignCommerceNetworkMockOnly()
   });
 }
 

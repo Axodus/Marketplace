@@ -1,5 +1,28 @@
 # Marketplace Roadmap
 
+# Phase 11 - Sovereign Commerce Network
+
+Status: COMPLETED - MOCK/CONFIG-FIRST SOVEREIGN COMMERCE NETWORK VALIDATED
+
+Closure artifact:
+- `docs/PHASE_11_SOVEREIGN_COMMERCE_NETWORK_CLOSURE.md`
+
+Delivered:
+- Sovereign Commerce Network route at `/marketplace/sovereign` and node detail route at `/marketplace/sovereign/:nodeSlug`
+- Sovereign Commerce Nodes for cross-tenant distribution, marketplace federation, DAO commercial participation, ecosystem commercial intelligence, revenue/attribution visibility, federated governance/isolation and commercial observability
+- Sovereign Commerce Links between distribution, revenue, federation, governance, intelligence and observability nodes
+- Sovereign Governance Boundaries, Isolation Boundaries and Observability Snapshots
+- Service helpers and hooks for network resolution, node lookup and mock-only validation
+- Tests proving Phase 11 composes prior Marketplace phases and remains non-executing
+
+Constraints:
+- Phase 11 keeps `isSimulated=true`
+- `canExecuteCommerce`, `canSettle`, `canRouteTreasury`, `canExecuteBilling`, `canWriteCrossTenant`, `canExecuteGovernance`, `canProvisionACS`, `canOnboardExternalMarketplaces`, `canSyncData`, `canTransferValue`, `canRouteOrders`, `canPropagateGovernance`, `usesLiveTelemetry`, `usesTracking`, `usesBI` and `canTriggerAutomation` remain false
+- no commerce execution, order routing, settlement, treasury routing, billing execution, governance execution, cross-tenant write, private data sharing, ACS provisioning, external onboarding, tracking real, BI, automation, backend, API or database was introduced
+- Existing NFT Marketplace, tenant, distribution, revenue sharing, intelligence, Academy, ACS and Enterprise behavior remains intact
+
+---
+
 # Phase 10 - Enterprise Marketplace
 
 Status: COMPLETED - MOCK-FIRST ENTERPRISE MARKETPLACE VALIDATED
@@ -20,7 +43,7 @@ Constraints:
 - `canActivateSubscription`, `canExecuteBilling`, `canRouteTreasury`, `canSettle`, `canDeployACS`, `canProvisionTenant`, `canWriteContracts`, `canExecutePayment`, `canInvoice`, `canAccount`, `canAllocateCompute`, `canAccessSecrets`, `canStartRuntime`, `usesLiveTelemetry`, `usesExternalAnalytics` and `canTriggerAutomation` remain false
 - no live subscription activation, billing provider, invoice, accounting, settlement, treasury routing, wallet signature, contract write, tenant provisioning, ACS deployment, compute allocation, backend, API, database, bridge or external onboarding was introduced
 - Existing NFT Marketplace behavior remains intact and stays available at `/marketplace/explore`, product detail, collection, seller, listing, purchase preview and asset registry routes
-- Phase 11 - Sovereign Commerce Network remains future work
+- Phase 11 - Sovereign Commerce Network is now completed as mock/config-first sovereign commerce visibility work
 
 ---
 

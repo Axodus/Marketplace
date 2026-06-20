@@ -103,6 +103,8 @@ Phase 10 guardrails must keep blocked products from running subscribe preview co
 
 Phase 10 does not activate live subscriptions, billing providers, settlement, treasury routing, wallet signatures, contract writes, tenant provisioning, ACS deployment, compute allocation, backend, API, database or external onboarding.
 
+Phase 11 Sovereign Commerce Network composes cross-domain commerce visibility without execution authority. It must not create cross-tenant writes, private data sharing, governance execution, order routing, value transfer, settlement, treasury routing, billing execution, ACS provisioning, external onboarding, tracking, BI, automation, backend APIs or database persistence.
+
 ---
 
 # ACS Security

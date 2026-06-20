@@ -27,6 +27,7 @@ const EnterpriseProvisioningPage = lazy(() => import("./modules/marketplace/page
 const EnterpriseBillingPage = lazy(() => import("./modules/marketplace/pages/EnterpriseBillingPage").then((module) => ({ default: module.EnterpriseBillingPage })));
 const EnterpriseTelemetryPage = lazy(() => import("./modules/marketplace/pages/EnterpriseTelemetryPage").then((module) => ({ default: module.EnterpriseTelemetryPage })));
 const EnterpriseOperationsPage = lazy(() => import("./modules/marketplace/pages/EnterpriseOperationsPage").then((module) => ({ default: module.EnterpriseOperationsPage })));
+const SovereignCommercePage = lazy(() => import("./modules/marketplace/pages/SovereignCommercePage").then((module) => ({ default: module.SovereignCommercePage })));
 const CreateSellPage = lazy(() => import("./modules/marketplace/pages/CreateSellPage").then((module) => ({ default: module.CreateSellPage })));
 const ProductDetailPage = lazy(() => import("./modules/marketplace/pages/ProductDetailPage").then((module) => ({ default: module.ProductDetailPage })));
 const SellerProfilePage = lazy(() => import("./modules/marketplace/pages/SellerProfilePage").then((module) => ({ default: module.SellerProfilePage })));
@@ -107,6 +108,8 @@ const router = createBrowserRouter([
       { path: "marketplace/enterprise/:slug/provisioning", element: routeElement(<EnterpriseProvisioningPage />) },
       { path: "marketplace/enterprise/:slug/billing", element: routeElement(<EnterpriseBillingPage />) },
       { path: "marketplace/enterprise/:slug/telemetry", element: routeElement(<EnterpriseTelemetryPage />) },
+      { path: "marketplace/sovereign", element: routeElement(<SovereignCommercePage />) },
+      { path: "marketplace/sovereign/:nodeSlug", element: routeElement(<SovereignCommercePage />) },
       { path: "marketplace/distribution/profiles", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/profiles/:profileSlug", element: routeElement(<DistributionProfilesPage />) },
       { path: "marketplace/distribution/:channelId", element: routeElement(<DistributionNetworkPage />) },

@@ -39,6 +39,12 @@ import {
   marketplaceEnterpriseProvisioningProfiles,
   marketplaceEnterpriseSubscriptionPlans,
   marketplaceEnterpriseTelemetrySnapshots,
+  marketplaceSovereignCommerceLinks,
+  marketplaceSovereignCommerceNetworkSummary,
+  marketplaceSovereignCommerceNodes,
+  marketplaceSovereignGovernanceBoundaries,
+  marketplaceSovereignIsolationBoundaries,
+  marketplaceSovereignObservabilitySnapshots,
   marketplaceFederationProviders,
   marketplaceFeaturedCatalogs,
   marketplaceCourseModules,
@@ -206,6 +212,12 @@ import type {
   Seller,
   SettlementBoundary,
   SettlementBoundaryInsight,
+  SovereignCommerceLink,
+  SovereignCommerceNetworkSummary,
+  SovereignCommerceNode,
+  SovereignGovernanceBoundary,
+  SovereignIsolationBoundary,
+  SovereignObservabilitySnapshot,
   RiskTrustInsight,
   Tenant,
   TenantBranding,
@@ -354,6 +366,12 @@ const enterpriseLicenses = marketplaceEnterpriseLicenses as EnterpriseLicense[];
 const enterpriseProvisioningProfiles = marketplaceEnterpriseProvisioningProfiles as EnterpriseProvisioningProfile[];
 const enterpriseBillingPreviews = marketplaceEnterpriseBillingPreviews as EnterpriseBillingPreview[];
 const enterpriseTelemetrySnapshots = marketplaceEnterpriseTelemetrySnapshots as EnterpriseTelemetrySnapshot[];
+const sovereignCommerceNodes = marketplaceSovereignCommerceNodes as SovereignCommerceNode[];
+const sovereignCommerceLinks = marketplaceSovereignCommerceLinks as SovereignCommerceLink[];
+const sovereignGovernanceBoundaries = marketplaceSovereignGovernanceBoundaries as SovereignGovernanceBoundary[];
+const sovereignIsolationBoundaries = marketplaceSovereignIsolationBoundaries as SovereignIsolationBoundary[];
+const sovereignObservabilitySnapshots = marketplaceSovereignObservabilitySnapshots as SovereignObservabilitySnapshot[];
+const sovereignCommerceNetworkSummary = marketplaceSovereignCommerceNetworkSummary as SovereignCommerceNetworkSummary;
 
 function normalizeSearch(value?: string) {
   return value?.trim().toLowerCase() ?? "";
@@ -838,6 +856,48 @@ export interface EnterpriseGuardrailResult {
   requiredReviews: string[];
   warnings: string[];
   disclaimers: string[];
+}
+
+export interface SovereignCommerceNodeView {
+  node: SovereignCommerceNode;
+  tenants: Tenant[];
+  curatedCatalogs: CuratedCatalog[];
+  distributionChannels: DistributionChannel[];
+  communityDistributions: CommunityDistributionView[];
+  revenuePolicies: RevenueSharingPolicyView[];
+  attributionSources: AttributionSourceView[];
+  intelligenceSnapshots: IntelligenceSnapshotView[];
+  enterpriseProducts: EnterpriseProductView[];
+  acsCapabilityProducts: ACSCapabilityProduct[];
+  academyProducts: AcademyProduct[];
+  federationProviders: FederationProviderDescriptor[];
+  governanceBoundary: SovereignGovernanceBoundary | null;
+  isolationBoundary: SovereignIsolationBoundary | null;
+  observabilitySnapshot: SovereignObservabilitySnapshot | null;
+  inboundLinks: SovereignCommerceLink[];
+  outboundLinks: SovereignCommerceLink[];
+  boundaryNotes: string[];
+}
+
+export interface SovereignCommerceNetworkView {
+  summary: SovereignCommerceNetworkSummary;
+  nodes: SovereignCommerceNodeView[];
+  links: SovereignCommerceLink[];
+  governanceBoundaries: SovereignGovernanceBoundary[];
+  isolationBoundaries: SovereignIsolationBoundary[];
+  observabilitySnapshots: SovereignObservabilitySnapshot[];
+  coverage: {
+    crossTenantDistribution: boolean;
+    marketplaceFederation: boolean;
+    daoCommercialParticipation: boolean;
+    ecosystemIntelligence: boolean;
+    revenueSharingVisibility: boolean;
+    attributionTraceability: boolean;
+    federatedGovernance: boolean;
+    operationalIsolation: boolean;
+    commercialObservability: boolean;
+  };
+  boundaryNotes: string[];
 }
 
 export interface WalletDiscoveryView {
@@ -5971,6 +6031,135 @@ export function validateEnterpriseMarketplaceMockOnly(slugOrId?: string) {
     isNoCrossEnterpriseContamination: views.every((view) => view.product.tenantId !== undefined && view.telemetrySnapshot?.productId === view.product.id),
     productCount: views.length,
     boundaryNotes: enterpriseBoundaryNotes(["Enterprise Marketplace validation confirms preview-only behavior."], ["No production billing, settlement, treasury routing, ACS deployment, backend, API, database, wallet signature or contract write is active."])
+  };
+}
+
+function sovereignBoundaryNotes(recordWarnings: string[] = [], recordDisclaimers: string[] = []) {
+  return Array.from(
+    new Set([
+      ...recordWarnings,
+      ...recordDisclaimers,
+      "Sovereign Commerce Network is mock/config-first and read-only.",
+      "No commerce execution, order routing, settlement, treasury routing, billing execution, governance execution, cross-tenant write, ACS provisioning, external onboarding, backend, API, database, tracking, BI or automation is active."
+    ])
+  );
+}
+
+function buildSovereignCommerceNodeView(node: SovereignCommerceNode): SovereignCommerceNodeView {
+  const governanceBoundary = sovereignGovernanceBoundaries.find((boundary) => boundary.id === node.governanceBoundaryId) ?? null;
+  const isolationBoundary = sovereignIsolationBoundaries.find((boundary) => boundary.id === node.isolationBoundaryId) ?? null;
+  const observabilitySnapshot = sovereignObservabilitySnapshots.find((snapshot) => snapshot.id === node.observabilitySnapshotId) ?? null;
+
+  return {
+    node,
+    tenants: node.tenantIds.map((tenantId) => getTenantById(tenantId)).filter((tenant): tenant is Tenant => Boolean(tenant)),
+    curatedCatalogs: node.curatedCatalogIds.map((catalogId) => curatedCatalogs.find((catalog) => catalog.id === catalogId)).filter((catalog): catalog is CuratedCatalog => Boolean(catalog)),
+    distributionChannels: node.distributionChannelIds.map((channelId) => distributionChannels.find((channel) => channel.id === channelId)).filter((channel): channel is DistributionChannel => Boolean(channel)),
+    communityDistributions: node.communityDistributionIds.map((distributionId) => getCommunityMarketplaceDistributionById(distributionId)).filter((distribution): distribution is CommunityDistributionView => Boolean(distribution)),
+    revenuePolicies: node.revenueSharingPolicyIds.map((policyId) => getRevenueSharingPolicyById(policyId)).filter((policy): policy is RevenueSharingPolicyView => Boolean(policy)),
+    attributionSources: node.attributionSourceIds.map((sourceId) => getAttributionSourceById(sourceId)).filter((source): source is AttributionSourceView => Boolean(source)),
+    intelligenceSnapshots: node.intelligenceSnapshotIds.map((snapshotId) => getIntelligenceSnapshotById(snapshotId)).filter((snapshot): snapshot is IntelligenceSnapshotView => Boolean(snapshot)),
+    enterpriseProducts: node.enterpriseProductIds.map((productId) => getEnterpriseProductBySlug(productId)).filter((product): product is EnterpriseProductView => Boolean(product)),
+    acsCapabilityProducts: node.acsCapabilityProductIds.map((productId) => acsCapabilityProducts.find((product) => product.id === productId)).filter((product): product is ACSCapabilityProduct => Boolean(product)),
+    academyProducts: node.academyProductIds.map((productId) => academyProducts.find((product) => product.id === productId)).filter((product): product is AcademyProduct => Boolean(product)),
+    federationProviders: node.federationProviderIds.map((providerId) => federationProviders.find((provider) => provider.id === providerId)).filter((provider): provider is FederationProviderDescriptor => Boolean(provider)),
+    governanceBoundary,
+    isolationBoundary,
+    observabilitySnapshot,
+    inboundLinks: sovereignCommerceLinks.filter((link) => link.targetNodeId === node.id),
+    outboundLinks: sovereignCommerceLinks.filter((link) => link.sourceNodeId === node.id),
+    boundaryNotes: Array.from(
+      new Set([
+        ...sovereignBoundaryNotes(node.warnings, node.disclaimers),
+        ...(governanceBoundary ? sovereignBoundaryNotes(governanceBoundary.warnings, governanceBoundary.disclaimers) : ["Sovereign governance boundary missing; review required."]),
+        ...(isolationBoundary ? sovereignBoundaryNotes(isolationBoundary.warnings, isolationBoundary.disclaimers) : ["Sovereign isolation boundary missing; review required."]),
+        ...(observabilitySnapshot ? sovereignBoundaryNotes(observabilitySnapshot.warnings, observabilitySnapshot.disclaimers) : ["Sovereign observability snapshot missing; review required."])
+      ])
+    )
+  };
+}
+
+export function listSovereignCommerceNodes() {
+  return sovereignCommerceNodes.map(buildSovereignCommerceNodeView);
+}
+
+export function getSovereignCommerceNodeBySlug(slugOrId: string) {
+  const key = slugOrId.toLowerCase();
+  const node = sovereignCommerceNodes.find((entry) => entry.id.toLowerCase() === key || entry.slug.toLowerCase() === key);
+  return node ? buildSovereignCommerceNodeView(node) : null;
+}
+
+export function listSovereignCommerceLinks() {
+  return sovereignCommerceLinks;
+}
+
+export function listSovereignGovernanceBoundaries() {
+  return sovereignGovernanceBoundaries;
+}
+
+export function listSovereignIsolationBoundaries() {
+  return sovereignIsolationBoundaries;
+}
+
+export function listSovereignObservabilitySnapshots() {
+  return sovereignObservabilitySnapshots;
+}
+
+export function resolveSovereignCommerceNetwork(): SovereignCommerceNetworkView {
+  const nodes = listSovereignCommerceNodes();
+  const nodeTypes = new Set(nodes.map((view) => view.node.nodeType));
+  return {
+    summary: sovereignCommerceNetworkSummary,
+    nodes,
+    links: sovereignCommerceLinks,
+    governanceBoundaries: sovereignGovernanceBoundaries,
+    isolationBoundaries: sovereignIsolationBoundaries,
+    observabilitySnapshots: sovereignObservabilitySnapshots,
+    coverage: {
+      crossTenantDistribution: nodeTypes.has("cross-tenant-distribution"),
+      marketplaceFederation: nodeTypes.has("marketplace-federation"),
+      daoCommercialParticipation: nodeTypes.has("dao-commercial-participation"),
+      ecosystemIntelligence: nodeTypes.has("ecosystem-intelligence"),
+      revenueSharingVisibility: nodeTypes.has("revenue-sharing-visibility"),
+      attributionTraceability: nodes.some((view) => view.attributionSources.length > 0),
+      federatedGovernance: nodeTypes.has("federated-governance"),
+      operationalIsolation: nodes.every((view) => Boolean(view.isolationBoundary)),
+      commercialObservability: nodeTypes.has("commercial-observability") && nodes.every((view) => Boolean(view.observabilitySnapshot))
+    },
+    boundaryNotes: sovereignBoundaryNotes(sovereignCommerceNetworkSummary.warnings, sovereignCommerceNetworkSummary.disclaimers)
+  };
+}
+
+export function validateSovereignCommerceNetworkMockOnly() {
+  const network = resolveSovereignCommerceNetwork();
+  return {
+    isMockOnly:
+      network.summary.isSimulated &&
+      !network.summary.canExecuteCommerce &&
+      !network.summary.canSettle &&
+      !network.summary.canRouteTreasury &&
+      !network.summary.canExecuteBilling &&
+      !network.summary.canWriteCrossTenant &&
+      !network.summary.canExecuteGovernance &&
+      !network.summary.canProvisionACS &&
+      !network.summary.canOnboardExternalMarketplaces &&
+      network.nodes.every((view) => view.node.isSimulated && !view.node.canExecuteCommerce && !view.node.canSettle && !view.node.canRouteTreasury && !view.node.canExecuteBilling && !view.node.canWriteCrossTenant && !view.node.canExecuteGovernance && !view.node.canProvisionACS && !view.node.canOnboardExternalMarketplaces) &&
+      network.links.every((link) => link.isSimulated && !link.canSyncData && !link.canTransferValue && !link.canRouteOrders && !link.canPropagateGovernance) &&
+      network.governanceBoundaries.every((boundary) => boundary.isSimulated && !boundary.canExecuteGovernance && !boundary.canBypassPolicy && !boundary.canApproveSettlement && !boundary.canDelegateAuthority) &&
+      network.isolationBoundaries.every((boundary) => boundary.isSimulated && !boundary.canWriteCrossTenant && !boundary.canSharePrivateData && !boundary.canEscalateAccess && !boundary.canProvisionTenant) &&
+      network.observabilitySnapshots.every((snapshot) => snapshot.isSimulated && !snapshot.usesLiveTelemetry && !snapshot.usesTracking && !snapshot.usesBI && !snapshot.canTriggerAutomation),
+    hasCrossTenantDistribution: network.coverage.crossTenantDistribution,
+    hasMarketplaceFederation: network.coverage.marketplaceFederation,
+    hasDaoCommercialParticipation: network.coverage.daoCommercialParticipation,
+    hasEcosystemIntelligence: network.coverage.ecosystemIntelligence,
+    hasRevenueSharingVisibility: network.coverage.revenueSharingVisibility,
+    hasAttributionTraceability: network.coverage.attributionTraceability,
+    hasFederatedGovernance: network.coverage.federatedGovernance,
+    hasOperationalIsolation: network.coverage.operationalIsolation,
+    hasCommercialObservability: network.coverage.commercialObservability,
+    nodeCount: network.nodes.length,
+    linkCount: network.links.length,
+    boundaryNotes: network.boundaryNotes
   };
 }
 

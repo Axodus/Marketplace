@@ -1480,6 +1480,38 @@ CONFIRMED
 
 ---
 
+# Phase 11 Sovereign Commerce Network
+
+Decision:
+Marketplace implements the Axodus Sovereign Commerce Network as a mock/config-first read model that composes prior Marketplace phases into one sovereign commerce visibility layer.
+
+Approved:
+- Sovereign Commerce Nodes
+- Sovereign Commerce Links
+- Sovereign Governance Boundaries
+- Sovereign Isolation Boundaries
+- Sovereign Observability Snapshots
+- Sovereign Commerce route and node detail route
+- non-executing validation for cross-tenant distribution, marketplace federation, DAO commercial participation, intelligence, revenue visibility, attribution traceability, governance, isolation and observability
+
+Deferred:
+- commerce execution
+- order routing
+- value transfer
+- settlement and treasury routing
+- billing execution
+- governance execution
+- cross-tenant writes
+- ACS provisioning
+- external marketplace onboarding
+- tracking, BI and automation
+- backend, API and database
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation

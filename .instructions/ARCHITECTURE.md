@@ -751,6 +751,24 @@ Phase 10 does not introduce live subscription activation, production billing pro
 
 ---
 
+# Sovereign Commerce Network Layer
+
+Phase 11 adds the Sovereign Commerce Network as a mock/config-first read model that composes Marketplace Federation, Marketplace-as-a-Service, Distribution Network, Revenue Sharing, Marketplace Intelligence, Academy Distribution, ACS Distribution and Enterprise Marketplace.
+
+Sovereign Commerce owns:
+- Sovereign Commerce Nodes
+- Sovereign Commerce Links
+- Sovereign Governance Boundaries
+- Sovereign Isolation Boundaries
+- Sovereign Observability Snapshots
+- Sovereign Commerce Network Summary
+
+The layer represents cross-tenant distribution, marketplace federation, DAO commercial participation, ecosystem commercial intelligence, revenue sharing visibility, attribution traceability, federated governance, operational isolation and commercial observability.
+
+Sovereign Commerce is not commerce execution. It does not route orders, transfer value, settle, bill, route treasury, execute governance, write cross-tenant data, provision ACS, onboard external marketplaces, track users, run BI, trigger automation, create backend APIs or persist database records.
+
+---
+
 # ACS Services Layer
 
 ACS service distribution includes:

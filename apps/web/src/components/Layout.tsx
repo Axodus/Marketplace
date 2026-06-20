@@ -17,6 +17,7 @@ const links = [
   { to: "/marketplace/academy", label: "Academy", icon: GraduationCap },
   { to: "/marketplace/acs", label: "ACS", icon: Bot },
   { to: "/marketplace/enterprise", label: "Enterprise", icon: Building2 },
+  { to: "/marketplace/sovereign", label: "Sovereign", icon: Globe2 },
   { to: "/marketplace/create", label: "Create/Sell", icon: FilePlus2 },
   { to: "/marketplace/tenants", label: "Tenants", icon: Building2 },
   { to: "/marketplace/governance", label: "Governance", icon: ShieldCheck },
