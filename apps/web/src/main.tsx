@@ -10,6 +10,24 @@ const MarketplaceHomePage = lazy(() => import("./modules/marketplace/pages/Marke
 const ProductExplorerPage = lazy(() => import("./modules/marketplace/pages/ProductExplorerPage").then((module) => ({ default: module.ProductExplorerPage })));
 const CollectionsPage = lazy(() => import("./modules/marketplace/pages/CollectionsPage").then((module) => ({ default: module.CollectionsPage })));
 const CollectionDetailPage = lazy(() => import("./modules/marketplace/pages/CollectionDetailPage").then((module) => ({ default: module.CollectionDetailPage })));
+const CuratedCatalogsPage = lazy(() => import("./modules/marketplace/pages/CuratedCatalogsPage").then((module) => ({ default: module.CuratedCatalogsPage })));
+const DistributionNetworkPage = lazy(() => import("./modules/marketplace/pages/DistributionNetworkPage").then((module) => ({ default: module.DistributionNetworkPage })));
+const DistributionProfilesPage = lazy(() => import("./modules/marketplace/pages/DistributionProfilesPage").then((module) => ({ default: module.DistributionProfilesPage })));
+const AttributionSourcesPage = lazy(() => import("./modules/marketplace/pages/AttributionSourcesPage").then((module) => ({ default: module.AttributionSourcesPage })));
+const CommunityDistributionsPage = lazy(() => import("./modules/marketplace/pages/CommunityDistributionsPage").then((module) => ({ default: module.CommunityDistributionsPage })));
+const RevenueSharingPage = lazy(() => import("./modules/marketplace/pages/RevenueSharingPage").then((module) => ({ default: module.RevenueSharingPage })));
+const MarketplaceIntelligencePage = lazy(() => import("./modules/marketplace/pages/MarketplaceIntelligencePage").then((module) => ({ default: module.MarketplaceIntelligencePage })));
+const AcademyDistributionPage = lazy(() => import("./modules/marketplace/pages/AcademyDistributionPage").then((module) => ({ default: module.AcademyDistributionPage })));
+const ACSDistributionPage = lazy(() => import("./modules/marketplace/pages/ACSDistributionPage").then((module) => ({ default: module.ACSDistributionPage })));
+const EnterpriseMarketplacePage = lazy(() => import("./modules/marketplace/pages/EnterpriseMarketplacePage").then((module) => ({ default: module.EnterpriseMarketplacePage })));
+const EnterpriseProductDetailPage = lazy(() => import("./modules/marketplace/pages/EnterpriseProductDetailPage").then((module) => ({ default: module.EnterpriseProductDetailPage })));
+const EnterpriseSubscribePreviewPage = lazy(() => import("./modules/marketplace/pages/EnterpriseSubscribePreviewPage").then((module) => ({ default: module.EnterpriseSubscribePreviewPage })));
+const EnterpriseLicensePage = lazy(() => import("./modules/marketplace/pages/EnterpriseLicensePage").then((module) => ({ default: module.EnterpriseLicensePage })));
+const EnterpriseProvisioningPage = lazy(() => import("./modules/marketplace/pages/EnterpriseProvisioningPage").then((module) => ({ default: module.EnterpriseProvisioningPage })));
+const EnterpriseBillingPage = lazy(() => import("./modules/marketplace/pages/EnterpriseBillingPage").then((module) => ({ default: module.EnterpriseBillingPage })));
+const EnterpriseTelemetryPage = lazy(() => import("./modules/marketplace/pages/EnterpriseTelemetryPage").then((module) => ({ default: module.EnterpriseTelemetryPage })));
+const EnterpriseOperationsPage = lazy(() => import("./modules/marketplace/pages/EnterpriseOperationsPage").then((module) => ({ default: module.EnterpriseOperationsPage })));
+const SovereignCommercePage = lazy(() => import("./modules/marketplace/pages/SovereignCommercePage").then((module) => ({ default: module.SovereignCommercePage })));
 const CreateSellPage = lazy(() => import("./modules/marketplace/pages/CreateSellPage").then((module) => ({ default: module.CreateSellPage })));
 const ProductDetailPage = lazy(() => import("./modules/marketplace/pages/ProductDetailPage").then((module) => ({ default: module.ProductDetailPage })));
 const SellerProfilePage = lazy(() => import("./modules/marketplace/pages/SellerProfilePage").then((module) => ({ default: module.SellerProfilePage })));
@@ -67,6 +85,34 @@ const router = createBrowserRouter([
       { path: "marketplace/explore", element: routeElement(<ProductExplorerPage />) },
       { path: "marketplace/collections", element: routeElement(<CollectionsPage />) },
       { path: "marketplace/collections/:slug", element: routeElement(<CollectionDetailPage />) },
+      { path: "marketplace/curated", element: routeElement(<CuratedCatalogsPage />) },
+      { path: "marketplace/curated/:catalogId", element: routeElement(<CuratedCatalogsPage />) },
+      { path: "marketplace/distribution", element: routeElement(<DistributionNetworkPage />) },
+      { path: "marketplace/distribution/attribution", element: routeElement(<AttributionSourcesPage />) },
+      { path: "marketplace/distribution/attribution/:sourceSlug", element: routeElement(<AttributionSourcesPage />) },
+      { path: "marketplace/distribution/communities", element: routeElement(<CommunityDistributionsPage />) },
+      { path: "marketplace/distribution/communities/:communitySlug", element: routeElement(<CommunityDistributionsPage />) },
+      { path: "marketplace/revenue-sharing", element: routeElement(<RevenueSharingPage />) },
+      { path: "marketplace/revenue-sharing/:policySlug", element: routeElement(<RevenueSharingPage />) },
+      { path: "marketplace/intelligence", element: routeElement(<MarketplaceIntelligencePage />) },
+      { path: "marketplace/intelligence/:insightSlug", element: routeElement(<MarketplaceIntelligencePage />) },
+      { path: "marketplace/academy", element: routeElement(<AcademyDistributionPage />) },
+      { path: "marketplace/academy/:academySlug", element: routeElement(<AcademyDistributionPage />) },
+      { path: "marketplace/acs", element: routeElement(<ACSDistributionPage />) },
+      { path: "marketplace/acs/:acsSlug", element: routeElement(<ACSDistributionPage />) },
+      { path: "marketplace/enterprise", element: routeElement(<EnterpriseMarketplacePage />) },
+      { path: "marketplace/enterprise/operations", element: routeElement(<EnterpriseOperationsPage />) },
+      { path: "marketplace/enterprise/:slug", element: routeElement(<EnterpriseProductDetailPage />) },
+      { path: "marketplace/enterprise/:slug/subscribe-preview", element: routeElement(<EnterpriseSubscribePreviewPage />) },
+      { path: "marketplace/enterprise/:slug/license", element: routeElement(<EnterpriseLicensePage />) },
+      { path: "marketplace/enterprise/:slug/provisioning", element: routeElement(<EnterpriseProvisioningPage />) },
+      { path: "marketplace/enterprise/:slug/billing", element: routeElement(<EnterpriseBillingPage />) },
+      { path: "marketplace/enterprise/:slug/telemetry", element: routeElement(<EnterpriseTelemetryPage />) },
+      { path: "marketplace/sovereign", element: routeElement(<SovereignCommercePage />) },
+      { path: "marketplace/sovereign/:nodeSlug", element: routeElement(<SovereignCommercePage />) },
+      { path: "marketplace/distribution/profiles", element: routeElement(<DistributionProfilesPage />) },
+      { path: "marketplace/distribution/profiles/:profileSlug", element: routeElement(<DistributionProfilesPage />) },
+      { path: "marketplace/distribution/:channelId", element: routeElement(<DistributionNetworkPage />) },
       { path: "marketplace/create", element: routeElement(<CreateSellPage />) },
       { path: "marketplace/sell", element: routeElement(<CreateSellPage />) },
       { path: "marketplace/products/:slug", element: routeElement(<ProductDetailPage />) },

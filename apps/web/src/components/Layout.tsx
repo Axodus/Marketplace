@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Box, Building2, FileCode2, FileSearch, FilePlus2, Gavel, LayoutDashboard, Layers3, RadioTower, ReceiptText, ShieldCheck, Tags, WalletCards } from "lucide-react";
+import { BarChart3, BookMarked, Bot, Box, Building2, CircleDollarSign, FileCode2, FileSearch, FilePlus2, Gavel, Globe2, GraduationCap, Handshake, LayoutDashboard, Layers3, MousePointerClick, RadioTower, ReceiptText, Share2, ShieldCheck, Tags, WalletCards } from "lucide-react";
 import { useWallet } from "../hooks/useWallet";
 import { resolveTenantBranding } from "../modules/marketplace/services/marketplaceService";
 
@@ -7,6 +7,17 @@ const links = [
   { to: "/marketplace", label: "Home", icon: Box },
   { to: "/marketplace/explore", label: "Explore", icon: Tags },
   { to: "/marketplace/collections", label: "Collections", icon: Layers3 },
+  { to: "/marketplace/curated", label: "Curated", icon: BookMarked },
+  { to: "/marketplace/distribution", label: "Distribution", icon: Share2 },
+  { to: "/marketplace/distribution/attribution", label: "Attribution", icon: MousePointerClick },
+  { to: "/marketplace/distribution/communities", label: "Communities", icon: Globe2 },
+  { to: "/marketplace/distribution/profiles", label: "Partners", icon: Handshake },
+  { to: "/marketplace/revenue-sharing", label: "Revenue", icon: CircleDollarSign },
+  { to: "/marketplace/intelligence", label: "Intelligence", icon: BarChart3 },
+  { to: "/marketplace/academy", label: "Academy", icon: GraduationCap },
+  { to: "/marketplace/acs", label: "ACS", icon: Bot },
+  { to: "/marketplace/enterprise", label: "Enterprise", icon: Building2 },
+  { to: "/marketplace/sovereign", label: "Sovereign", icon: Globe2 },
   { to: "/marketplace/create", label: "Create/Sell", icon: FilePlus2 },
   { to: "/marketplace/tenants", label: "Tenants", icon: Building2 },
   { to: "/marketplace/governance", label: "Governance", icon: ShieldCheck },
@@ -56,7 +67,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <NavLink
                 key={link.to}
                 to={link.to}
-                className={({ isActive }) =>
+                className={({ isActive }: { isActive: boolean }) =>
                   `flex items-center gap-2 rounded px-3 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 ${
                     isActive ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
                   }`

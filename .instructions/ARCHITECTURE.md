@@ -724,6 +724,51 @@ Subscription systems must expose accounting visibility.
 
 ---
 
+# Enterprise Marketplace Preview Layer
+
+Phase 10 adds Enterprise Marketplace as a mock-first preview layer inside the Marketplace web module.
+
+Enterprise Marketplace owns:
+- Enterprise Product records
+- Enterprise Subscription Plan records
+- Enterprise License records
+- Enterprise Provisioning Profile records
+- Enterprise Billing Preview records
+- Enterprise Telemetry Snapshot records
+- Enterprise preview adapters
+- Enterprise governance guardrails
+- Enterprise Operations Dashboard visibility
+
+Enterprise Marketplace composes tenant, curated catalog, distribution, revenue sharing, Marketplace Intelligence and ACS Distribution context without creating production authority.
+
+Enterprise preview adapters are deterministic read-model adapters. They may return preview-only, review-required, restricted, blocked or not-found results, but they must not mutate data or call external systems.
+
+Enterprise governance guardrails must block or warn for pending-review, treasury-review-required, restricted and blocked states. Blocked products cannot run subscribe preview confirmation.
+
+Enterprise billing and treasury behavior remains preview-only. Enterprise ACS provisioning remains bounded and non-executing.
+
+Phase 10 does not introduce live subscription activation, production billing providers, invoices, accounting, settlement, treasury routing, wallet signatures, contract writes, tenant provisioning, ACS deployment, compute allocation, backend, API, database, bridge or external onboarding.
+
+---
+
+# Sovereign Commerce Network Layer
+
+Phase 11 adds the Sovereign Commerce Network as a mock/config-first read model that composes Marketplace Federation, Marketplace-as-a-Service, Distribution Network, Revenue Sharing, Marketplace Intelligence, Academy Distribution, ACS Distribution and Enterprise Marketplace.
+
+Sovereign Commerce owns:
+- Sovereign Commerce Nodes
+- Sovereign Commerce Links
+- Sovereign Governance Boundaries
+- Sovereign Isolation Boundaries
+- Sovereign Observability Snapshots
+- Sovereign Commerce Network Summary
+
+The layer represents cross-tenant distribution, marketplace federation, DAO commercial participation, ecosystem commercial intelligence, revenue sharing visibility, attribution traceability, federated governance, operational isolation and commercial observability.
+
+Sovereign Commerce is not commerce execution. It does not route orders, transfer value, settle, bill, route treasury, execute governance, write cross-tenant data, provision ACS, onboard external marketplaces, track users, run BI, trigger automation, create backend APIs or persist database records.
+
+---
+
 # ACS Services Layer
 
 ACS service distribution includes:

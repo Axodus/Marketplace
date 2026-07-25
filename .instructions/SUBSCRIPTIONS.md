@@ -58,3 +58,23 @@ Subscriptions coordinate:
 - no hidden subscriptions
 - no opaque access control
 - no unauthorized provisioning
+
+---
+
+# Phase 10 Enterprise Subscription Preview
+
+Enterprise subscription plans are mock-first subscription previews for Enterprise Marketplace routes.
+
+Phase 10 subscription previews may show:
+- selected plan
+- billing cadence
+- lifecycle status
+- access rules
+- required approvals
+- treasury compatibility notes
+- settlement-disabled warnings
+- deterministic mock confirmation result
+
+Phase 10 subscription previews do not create live subscriptions, access grants, billing records, invoices, payment intents, settlement records, treasury routes or ACS provisioning.
+
+All Phase 10 enterprise plans keep `canActivateSubscription=false`, `canExecuteBilling=false`, `canRouteTreasury=false` and `canSettle=false`.

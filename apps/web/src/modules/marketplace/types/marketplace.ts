@@ -40,6 +40,436 @@ export type TenantDomainVerificationStatus =
   | "not-verified";
 export type TenantDomainResolutionStatus = "resolved" | "global-fallback" | "not-found" | "restricted" | "disabled" | "conflict" | "invalid";
 export type TenantDomainInputType = "slug" | "alias" | "hostname" | "route" | "global";
+export type TenantCatalogStatus = "configured-mock" | "active-mock" | "draft" | "review-required" | "restricted" | "disabled" | "empty" | "conflict";
+export type TenantCatalogScope = "global" | "tenant" | "curated" | "federated" | "mixed";
+export type TenantCatalogRuleType =
+  | "allow-product"
+  | "block-product"
+  | "allow-collection"
+  | "block-collection"
+  | "allow-category"
+  | "block-category"
+  | "allow-external-collection"
+  | "block-external-collection"
+  | "feature-product"
+  | "feature-collection"
+  | "inherit-global"
+  | "allow-federated-assets"
+  | "block-federated-assets"
+  | "allow-native-products"
+  | "block-native-products";
+export type TenantCatalogRuleEffect = "include" | "exclude" | "feature" | "inherit" | "restrict" | "warn";
+export type TenantCatalogRuleTargetType = "product" | "collection" | "external-collection" | "category" | "catalog" | "asset-origin";
+export type TenantCatalogSource =
+  | "global catalog inheritance"
+  | "tenant explicit allow rule"
+  | "tenant featured rule"
+  | "collection allow rule"
+  | "category allow rule"
+  | "federated catalog rule"
+  | "external collection rule"
+  | "global catalog";
+export type CuratedCatalogStatus = "draft" | "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled" | "archived";
+export type CuratedCatalogType = "curated" | "editorial" | "featured" | "segment" | "federated" | "mixed";
+export type CuratedCatalogVisibility = "public-mock" | "tenant-preview" | "private-preview" | "restricted";
+export type CuratedCatalogGovernanceStatus = "governance-aligned" | "governance-review" | "restricted" | "disabled";
+export type CuratedCatalogOwnerScope = "global" | "tenant" | "community" | "academy" | "acs" | "dao" | "enterprise";
+export type CuratedCatalogSectionType = "hero" | "featured" | "segment" | "editorial" | "federated" | "mixed";
+export type CuratedCatalogItemType = "product" | "collection" | "external-collection";
+export type CuratedCatalogRuleType =
+  | "allow-product"
+  | "block-product"
+  | "allow-collection"
+  | "block-collection"
+  | "allow-category"
+  | "block-category"
+  | "allow-external-collection"
+  | "block-external-collection"
+  | "feature-product"
+  | "feature-collection"
+  | "require-governance-review"
+  | "preserve-federation-boundary";
+export type CuratedCatalogRuleEffect = "include" | "exclude" | "feature" | "warn" | "restrict";
+export type CuratedCatalogRuleTargetType = "product" | "collection" | "external-collection" | "category" | "catalog" | "asset-origin";
+export type CuratedCatalogItemSource =
+  | "curated catalog rule"
+  | "curated featured rule"
+  | "curated section rule"
+  | "editorial mock rule"
+  | "federated catalog rule"
+  | "tenant catalog reference"
+  | "global catalog reference";
+export type EditorialRuleType = "include" | "exclude" | "feature" | "restrict" | "warn" | "review-required" | "governance-review";
+export type CurationReviewStatus =
+  | "not-reviewed"
+  | "editorial-review-mock"
+  | "governance-review-mock"
+  | "approved-mock"
+  | "restricted"
+  | "blocked"
+  | "needs-update";
+export type CurationWorkflowState = "draft-mock" | "editorial-review-mock" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
+export type CurationDecision = "include" | "exclude" | "feature" | "restrict" | "warn" | "needs-review";
+export type CurationReason = "inclusion reason" | "exclusion reason" | "governance reason" | "review reason" | "restriction reason";
+export type CatalogSegmentStatus = "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
+export type FeaturedCatalogStatus = "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
+export type CatalogSegmentType = "academy" | "acs" | "enterprise" | "community" | "creator" | "dao" | "federated" | "seasonal" | "demo";
+export type FeaturedCatalogPlacement = "hero" | "section" | "tenant-preview" | "segment-highlight" | "federated-feature";
+export type TenantCuratedCatalogRuleType =
+  | "inherit-global-curated"
+  | "allow-curated-catalog"
+  | "block-curated-catalog"
+  | "feature-curated-catalog"
+  | "allow-segment"
+  | "block-segment"
+  | "allow-federated-curated"
+  | "block-federated-curated";
+export type TenantCuratedCatalogRuleEffect = "include" | "exclude" | "feature" | "inherit" | "restrict" | "warn";
+export type TenantCuratedCatalogRuleTargetType = "curated-catalog" | "catalog-segment" | "federated-curated-catalog" | "global-curated-catalogs";
+export type DistributionChannelType =
+  | "tenant"
+  | "partner"
+  | "distributor"
+  | "agency"
+  | "affiliate"
+  | "community"
+  | "academy"
+  | "acs"
+  | "enterprise"
+  | "creator"
+  | "dao"
+  | "demo";
+export type DistributionStatus = "draft" | "configured-mock" | "active-mock" | "review-required" | "governance-review" | "restricted" | "disabled" | "archived";
+export type DistributionVisibility = "public-mock" | "private-mock" | "tenant-only" | "restricted" | "hidden";
+export type DistributionScope = "global" | "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "community" | "demo";
+export type DistributionGovernanceStatus = "governance-aligned" | "governance-review" | "restricted" | "disabled";
+export type DistributionPlacementType = "storefront" | "catalog-section" | "featured-slot" | "campaign-mock" | "community-shelf" | "demo-preview";
+export type DistributionPlacementTargetType = "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "external-collection";
+export type DistributionSourceType = "tenant-storefront" | "curated-catalog" | "catalog-segment" | "referral-mock" | "campaign-mock" | "placement-mock" | "community-mock";
+export type AttributionSourceType =
+  | DistributionSourceType
+  | "distribution-channel"
+  | "partner-profile"
+  | "affiliate-profile"
+  | "tenant-route"
+  | "community-marketplace"
+  | "manual-source-mock"
+  | "demo";
+export type CommercialOriginType = "tenant" | "partner" | "distributor" | "agency" | "affiliate" | "community" | "curated-catalog" | "campaign-mock" | "manual-mock" | "demo";
+export type AttributionStatus = "not-tracked" | "simulated-only" | "configured-mock" | "active-mock" | "review-required" | "restricted" | "disabled";
+export type TrackingMode = "none" | "simulated-only" | "manual-mock" | "referral-code-mock" | "campaign-label-mock" | "placement-mock";
+export type AttributionScope = "global" | "tenant" | "channel" | "profile" | "catalog" | "curated-catalog" | "segment" | "placement" | "community" | "demo";
+export type AttributionNoteType = "boundary" | "referral" | "campaign" | "placement" | "commercial-origin" | "distribution-source" | "risk";
+export type AttributionNoteSeverity = "info" | "warning" | "restricted";
+export type DistributionProfileType =
+  | "distributor"
+  | "partner"
+  | "agency"
+  | "affiliate"
+  | "community-marketplace"
+  | "tenant-operator"
+  | "creator-network"
+  | "academy-network"
+  | "acs-network"
+  | "enterprise-network"
+  | "dao-network"
+  | "demo";
+export type DistributionProfileStatus =
+  | "draft"
+  | "configured-mock"
+  | "active-mock"
+  | "review-required"
+  | "governance-review"
+  | "restricted"
+  | "disabled"
+  | "archived";
+export type DistributionProfileVisibility = "public-mock" | "private-mock" | "tenant-only" | "restricted" | "hidden";
+export type DistributionProfileGovernanceStatus = "not-reviewed" | "review-required" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
+export type DistributionProfileRelationshipType = "operates-channel" | "represents-tenant" | "features-curated-catalog" | "covers-segment" | "community-context";
+export type DistributionProfileRelationshipTargetType = "distribution-channel" | "tenant" | "curated-catalog" | "catalog-segment" | "community";
+export type CommunityDistributionStatus = "draft" | "configured-mock" | "active-mock" | "review-required" | "governance-review" | "restricted" | "disabled" | "archived" | "empty";
+export type CommunityDistributionVisibility = "public-mock" | "private-mock" | "community-only" | "tenant-only" | "restricted" | "hidden";
+export type CommunityDistributionGovernanceStatus = "not-reviewed" | "review-required" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
+export type CommunityDistributionScope = "global" | "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "mixed" | "demo";
+export type CommunityType =
+  | "creator-community"
+  | "academy-community"
+  | "acs-community"
+  | "dao-community"
+  | "enterprise-community"
+  | "partner-community"
+  | "local-community"
+  | "federated-community"
+  | "demo-community";
+export type CommunityDistributionRuleType =
+  | "allow-tenant"
+  | "block-tenant"
+  | "allow-curated-catalog"
+  | "block-curated-catalog"
+  | "allow-segment"
+  | "block-segment"
+  | "allow-product"
+  | "block-product"
+  | "allow-collection"
+  | "block-collection"
+  | "allow-federated-assets"
+  | "block-federated-assets"
+  | "feature-catalog"
+  | "feature-product"
+  | "feature-collection"
+  | "warn"
+  | "restrict";
+export type CommunityDistributionRuleEffect = "include" | "exclude" | "feature" | "warn" | "restrict";
+export type CommunityDistributionRuleTargetType = "tenant" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "external-collection" | "federated-assets";
+export type CommunityDistributionItemType = "tenant" | "curated-catalog" | "featured-catalog" | "catalog-segment" | "product" | "collection" | "external-collection";
+export type TenantDistributionRuleType =
+  | "allow-channel"
+  | "block-channel"
+  | "feature-channel"
+  | "allow-profile"
+  | "block-profile"
+  | "allow-community-distribution"
+  | "block-community-distribution"
+  | "allow-attribution-source"
+  | "block-attribution-source"
+  | "allow-curated-catalog"
+  | "block-curated-catalog"
+  | "allow-segment"
+  | "block-segment"
+  | "allow-federated-assets"
+  | "block-federated-assets"
+  | "inherit-global-distribution"
+  | "warn"
+  | "restrict";
+export type CuratedCatalogDistributionRuleType =
+  | "allow-channel"
+  | "block-channel"
+  | "feature-channel"
+  | "allow-profile"
+  | "block-profile"
+  | "allow-community-distribution"
+  | "block-community-distribution"
+  | "allow-attribution-source"
+  | "block-attribution-source"
+  | "allow-tenant"
+  | "block-tenant"
+  | "allow-segment"
+  | "block-segment"
+  | "allow-federated-assets"
+  | "block-federated-assets"
+  | "inherit-global-distribution"
+  | "warn"
+  | "restrict";
+export type DistributionIntegrationRuleEffect = "include" | "exclude" | "feature" | "inherit" | "warn" | "restrict";
+export type DistributionIntegrationRuleTargetType =
+  | "distribution-channel"
+  | "distribution-profile"
+  | "community-distribution"
+  | "attribution-source"
+  | "curated-catalog"
+  | "tenant"
+  | "catalog-segment"
+  | "federated-assets"
+  | "global-distribution";
+export type DistributionIntegrationStatus =
+  | "configured-mock"
+  | "active-mock"
+  | "review-required"
+  | "governance-review"
+  | "restricted"
+  | "disabled"
+  | "archived"
+  | "empty"
+  | "conflict";
+export type DistributionIntegrationScope =
+  | "tenant"
+  | "curated-catalog"
+  | "featured-catalog"
+  | "catalog-segment"
+  | "community-distribution"
+  | "mixed"
+  | "demo";
+export type DistributionIntegratedContextType = "tenant" | "curated-catalog";
+export type RevenueSharingStatus =
+  | "draft"
+  | "configured-mock"
+  | "active-mock"
+  | "preview-only"
+  | "review-required"
+  | "governance-review"
+  | "restricted"
+  | "disabled"
+  | "archived"
+  | "conflict";
+export type RevenueSharingScope = "global" | "tenant" | "distribution-channel" | "distribution-profile" | "community-distribution" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "demo";
+export type RevenueParticipantType =
+  | "platform"
+  | "tenant"
+  | "creator"
+  | "seller"
+  | "distributor"
+  | "partner"
+  | "agency"
+  | "affiliate"
+  | "community"
+  | "academy"
+  | "acs"
+  | "enterprise"
+  | "dao"
+  | "curator"
+  | "provider"
+  | "demo";
+export type RevenueGovernanceStatus = "not-reviewed" | "review-required" | "governance-review-mock" | "approved-mock" | "restricted" | "blocked";
+export type RevenueSplitRuleType =
+  | "fixed-percentage-mock"
+  | "weighted-percentage-mock"
+  | "flat-amount-mock"
+  | "tiered-mock"
+  | "attribution-based-mock"
+  | "catalog-based-mock"
+  | "tenant-based-mock"
+  | "distribution-based-mock"
+  | "community-based-mock"
+  | "manual-mock"
+  | "demo";
+export type RevenueSplitTargetType = "tenant" | "distribution-channel" | "distribution-profile" | "community-distribution" | "curated-catalog" | "catalog-segment" | "product" | "collection" | "global" | "demo";
+export type ParticipantShareType = "percentage-mock" | "weighted-percentage-mock" | "flat-amount-mock" | "tiered-mock" | "manual-mock" | "demo";
+export type CommissionModelStatus = "valid-mock" | "warning-mock" | "conflict-mock" | "incomplete" | "restricted" | "disabled";
+export type ParticipantShareValidationStatus = CommissionModelStatus;
+export type AttributionToSplitStatus = "configured-mock" | "simulated-only" | "preview-only" | "review-required" | "blocked" | "disabled";
+export type RevenueSharingPreviewStatus = "preview-only" | "configured-mock" | "warning-mock" | "conflict-mock" | "blocked" | "disabled";
+export type RevenueSharingAuditEventType =
+  | "preview-generated-mock"
+  | "rule-applied-mock"
+  | "rule-blocked-mock"
+  | "participant-share-explained-mock"
+  | "conflict-warning-mock"
+  | "payout-preview-mock"
+  | "settlement-preview-mock"
+  | "boundary-note-mock";
+export type RevenueSplitConflictPolicy = "warn-only" | "block-preview" | "review-required" | "manual-resolution";
+export type SettlementBoundaryStatus = "no-settlement" | "preview-only" | "blocked" | "review-required" | "restricted" | "disabled" | "not-configured";
+export type InsightStatus = "configured-mock" | "active-mock" | "preview-only" | "review-required" | "restricted" | "blocked" | "disabled" | "archived";
+export type InsightScope =
+  | "marketplace"
+  | "tenant"
+  | "curated-catalog"
+  | "distribution-channel"
+  | "distribution-profile"
+  | "community-distribution"
+  | "attribution-source"
+  | "revenue-sharing-policy"
+  | "product"
+  | "collection"
+  | "seller"
+  | "demo";
+export type SnapshotStatus = InsightStatus;
+export type SnapshotScope = InsightScope;
+export type InsightType =
+  | "marketplace-summary"
+  | "tenant-summary"
+  | "catalog-summary"
+  | "distribution-summary"
+  | "revenue-summary-mock"
+  | "risk-summary-mock"
+  | "trust-summary-mock"
+  | "federation-summary"
+  | "curation-summary"
+  | "opportunity-note-mock"
+  | "warning-note-mock"
+  | "recommendation-preview"
+  | "ranking-explanation"
+  | "demo";
+export type SignalType =
+  | "catalog-composition-mock"
+  | "tenant-coverage-mock"
+  | "distribution-coverage-mock"
+  | "attribution-coverage-mock"
+  | "revenue-preview-mock"
+  | "federation-risk-mock"
+  | "trust-boundary-mock"
+  | "editorial-rule-mock"
+  | "community-exposure-mock"
+  | "product-availability-mock"
+  | "collection-coverage-mock"
+  | "demo";
+export type ConfidenceLabel = "informational-mock" | "low-confidence-mock" | "medium-confidence-mock" | "high-confidence-mock" | "manual-review-required" | "not-applicable" | "demo";
+export type DataBoundaryStatus = "mock-only" | "static-only" | "no-tracking" | "no-bi" | "no-scoring" | "no-ml" | "no-automated-decisioning" | "restricted" | "blocked" | "review-required";
+export type RecommendationPreviewStatus = "preview-only" | "editorial-mock" | "manual-review-required" | "restricted" | "disabled" | "not-configured";
+export type RankingExplanationType = "editorial-mock" | "manual-mock" | "static-mock" | "curated-catalog-order" | "tenant-config-order" | "distribution-placement-order" | "demo";
+export type MockFitLabel = "strong-fit-mock" | "good-fit-mock" | "context-fit-mock" | "manual-review-fit" | "restricted-fit" | "not-applicable";
+export type MockOpportunityLabel = "discovery-opportunity-mock" | "catalog-gap-mock" | "tenant-alignment-mock" | "distribution-context-mock" | "community-exposure-mock" | "manual-review-opportunity" | "restricted";
+export type EditorialRankingNote = string;
+export type DiscoveryNote = string;
+export type RiskLabelMock = "low-risk-mock" | "medium-risk-mock" | "high-risk-mock" | "unknown-external" | "manual-review-required" | "restricted";
+export type TrustLabelMock = "native-trust-mock" | "provider-reported-mock" | "manual-review-trust" | "restricted-trust" | "untrusted-mock";
+export type AcademyProductType = "course" | "certification" | "learning-path" | "learning-subscription" | "course-bundle" | "certification-bundle" | "academy-pass" | "demo";
+export type CourseType = "self-paced-mock" | "cohort-mock" | "workshop-mock" | "masterclass-mock" | "learning-path-mock" | "micro-course-mock" | "demo";
+export type CourseStatus = "draft" | "configured-mock" | "preview-only" | "active-mock" | "review-required" | "restricted" | "disabled" | "archived";
+export type CertificationStatus = "draft" | "configured-mock" | "preview-only" | "eligibility-preview" | "issuer-review" | "restricted" | "disabled" | "archived";
+export type LearningSubscriptionStatus = "draft" | "configured-mock" | "preview-only" | "active-mock" | "restricted" | "disabled" | "archived";
+export type AccessPreviewStatus = "preview-only" | "not-enrollable" | "restricted" | "disabled" | "requires-manual-review" | "not-configured";
+export type AcademyDataBoundaryStatus =
+  | "mock-only"
+  | "static-only"
+  | "no-lms"
+  | "no-progress-tracking"
+  | "no-learning-analytics"
+  | "no-credential-issuance"
+  | "no-credential-verification"
+  | "no-billing"
+  | "no-entitlement"
+  | "restricted"
+  | "blocked"
+  | "review-required";
+export type ACSCapabilityType = "ai-agent" | "agent-capability" | "mcp-package" | "workflow-system" | "workflow-template" | "workflow-bundle" | "compute-access" | "demo";
+export type ACSCapabilityStatus = "draft" | "configured-mock" | "preview-only" | "active-mock" | "review-required" | "restricted" | "disabled" | "archived";
+export type ACSAccessPreviewStatus = "preview-only" | "not-provisionable" | "restricted" | "disabled" | "requires-manual-review" | "not-configured";
+export type ACSBoundaryStatus =
+  | "mock-only"
+  | "static-only"
+  | "no-agent-execution"
+  | "no-mcp-deployment"
+  | "no-workflow-run"
+  | "no-compute-allocation"
+  | "no-provisioning"
+  | "no-secret-access"
+  | "no-external-integration"
+  | "no-billing"
+  | "restricted"
+  | "blocked"
+  | "review-required";
+export type EnterpriseTier = "starter" | "growth" | "institutional" | "sovereign" | "restricted";
+export type EnterpriseProductCategory = "enterprise-subscription" | "dao-operations" | "acs-provisioning" | "dedicated-orchestration" | "restricted-package";
+export type EnterpriseLifecycleStatus = "draft" | "preview-only" | "active-mock" | "review-required" | "restricted" | "blocked" | "archived";
+export type EnterpriseSettlementMode = "preview-only" | "treasury-review-required" | "settlement-disabled" | "billing-disabled";
+export type EnterpriseProvisioningType = "manual-review" | "operator-assisted" | "mock-automated" | "acs-review-required" | "blocked";
+export type EnterpriseGovernanceStatus = "allowed-mock" | "pending-review" | "treasury-review-required" | "restricted" | "blocked";
+export type EnterpriseBillingCadence = "monthly" | "quarterly" | "annual" | "usage-preview" | "manual-review";
+export type EnterpriseTelemetryStatus = "nominal-mock" | "review-required" | "restricted" | "blocked" | "not-configured";
+export type SovereignCommerceNodeType =
+  | "cross-tenant-distribution"
+  | "marketplace-federation"
+  | "dao-commercial-participation"
+  | "ecosystem-intelligence"
+  | "revenue-sharing-visibility"
+  | "attribution-traceability"
+  | "federated-governance"
+  | "operational-isolation"
+  | "commercial-observability";
+export type SovereignCommerceStatus = "configured-mock" | "preview-only" | "review-required" | "restricted" | "blocked";
+export type SovereignCommerceBoundaryStatus =
+  | "mock-only"
+  | "read-only"
+  | "no-settlement"
+  | "no-treasury-routing"
+  | "no-billing-execution"
+  | "no-cross-tenant-write"
+  | "no-governance-execution"
+  | "no-acs-provisioning"
+  | "no-external-onboarding"
+  | "review-required"
+  | "blocked";
 export type LicenseType =
   | "Personal Use"
   | "DAO License"
@@ -132,6 +562,54 @@ export interface TenantConfiguration {
   isCommunityMarketplace: boolean;
   isFederatedCatalogEnabled: boolean;
   isTenantCatalogEnabled: boolean;
+}
+
+export interface TenantCatalogRule {
+  id: string;
+  tenantId: string;
+  ruleType: TenantCatalogRuleType;
+  targetType: TenantCatalogRuleTargetType;
+  targetId: string;
+  effect: TenantCatalogRuleEffect;
+  reason: string;
+  priority: number;
+  status: TenantCatalogStatus;
+  source: TenantCatalogSource | "tenant catalog rule";
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantExposureRule extends TenantCatalogRule {
+  exposureLabel: string;
+}
+
+export interface TenantCatalog {
+  id: string;
+  tenantId: string;
+  name: string;
+  description: string;
+  status: TenantCatalogStatus;
+  scope: TenantCatalogScope;
+  inheritsGlobalCatalog: boolean;
+  allowsFederatedAssets: boolean;
+  allowsExternalCollections: boolean;
+  allowsNativeProducts: boolean;
+  featuredProductIds: string[];
+  featuredCollectionIds: string[];
+  allowedProductIds: string[];
+  blockedProductIds: string[];
+  allowedCollectionIds: string[];
+  blockedCollectionIds: string[];
+  allowedExternalCollectionIds: string[];
+  blockedExternalCollectionIds: string[];
+  allowedCategoryIds: ProductCategory[];
+  blockedCategoryIds: ProductCategory[];
+  exposureRules: TenantExposureRule[];
+  rules: TenantCatalogRule[];
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface TenantTheme {
@@ -244,6 +722,2528 @@ export interface TenantRoutingContext {
   disclaimers: string[];
 }
 
+export interface TenantCatalogItem {
+  productId?: string;
+  collectionId?: string;
+  tenantId: string;
+  source: TenantCatalogSource;
+  inclusionReason: string;
+  exclusionReason?: string;
+  isFeatured: boolean;
+  isFederated: boolean;
+  isExternal: boolean;
+  isNative: boolean;
+  canDisplay: boolean;
+  canTrade: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCatalogResolution {
+  tenantId: string;
+  resolvedAt: string;
+  includedProductIds: string[];
+  excludedProductIds: string[];
+  includedCollectionIds: string[];
+  excludedCollectionIds: string[];
+  includedExternalCollectionIds: string[];
+  excludedExternalCollectionIds: string[];
+  featuredProductIds: string[];
+  featuredCollectionIds: string[];
+  appliedRules: TenantCatalogRule[];
+  blockedRules: TenantCatalogRule[];
+  productItems: TenantCatalogItem[];
+  collectionItems: TenantCatalogItem[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCuratedCatalogRule {
+  id: string;
+  tenantId: string;
+  ruleType: TenantCuratedCatalogRuleType;
+  targetType: TenantCuratedCatalogRuleTargetType;
+  targetId: string;
+  effect: TenantCuratedCatalogRuleEffect;
+  reason: string;
+  priority: number;
+  status: TenantCatalogStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCuratedCatalogConfig {
+  tenantId: string;
+  inheritsGlobalCuratedCatalogs: boolean;
+  allowedCuratedCatalogIds: string[];
+  blockedCuratedCatalogIds: string[];
+  featuredCuratedCatalogIds: string[];
+  allowedSegmentIds: string[];
+  blockedSegmentIds: string[];
+  allowsFederatedCuratedCatalogs: boolean;
+  rules: TenantCuratedCatalogRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCuratedCatalogItem {
+  itemId: string;
+  catalogId: string;
+  tenantId: string;
+  itemType: CuratedCatalogItemType;
+  productId?: string;
+  collectionId?: string;
+  externalCollectionId?: string;
+  inclusionReason?: string;
+  exclusionReason?: string;
+  canDisplay: boolean;
+  isFeatured: boolean;
+  isFederated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantCuratedCatalogResolution {
+  tenantId: string;
+  resolvedAt: string;
+  includedCatalogIds: string[];
+  excludedCatalogIds: string[];
+  featuredCatalogIds: string[];
+  appliedRules: TenantCuratedCatalogRule[];
+  includedItems: TenantCuratedCatalogItem[];
+  excludedItems: TenantCuratedCatalogItem[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommercialOrigin {
+  originType: CommercialOriginType;
+  originLabel: string;
+  channelId: string;
+  tenantId?: string;
+  partnerId?: string;
+  distributorId?: string;
+  sourceLabel: string;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AttributionSource {
+  id: string;
+  sourceType: DistributionSourceType;
+  sourceLabel: string;
+  channelId: string;
+  tenantId?: string;
+  catalogId?: string;
+  placementId?: string;
+  campaignLabel?: string;
+  referralCodeMock?: string;
+  trackingMode: TrackingMode;
+  status: AttributionStatus;
+  isSimulated: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionSource {
+  id: string;
+  sourceType: DistributionSourceType;
+  sourceLabel: string;
+  channelId: string;
+  tenantId?: string;
+  catalogId?: string;
+  placementId?: string;
+  status: DistributionStatus | AttributionStatus;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionPlacement {
+  id: string;
+  channelId: string;
+  placementType: DistributionPlacementType;
+  placementLabel: string;
+  targetType: DistributionPlacementTargetType;
+  targetId: string;
+  catalogId?: string;
+  curatedCatalogId?: string;
+  tenantId?: string;
+  position: number;
+  status: DistributionStatus;
+  visibility: DistributionVisibility;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionChannel {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  channelType: DistributionChannelType;
+  status: DistributionStatus;
+  visibility: DistributionVisibility;
+  governanceStatus: DistributionGovernanceStatus;
+  scope: DistributionScope;
+  operatorType: string;
+  operatorId: string;
+  tenantId?: string;
+  partnerId?: string;
+  distributorId?: string;
+  communityId?: string;
+  allowedCatalogIds: string[];
+  allowedCuratedCatalogIds: string[];
+  allowedSegmentIds: string[];
+  allowedProductIds: string[];
+  allowedCollectionIds: string[];
+  blockedCatalogIds: string[];
+  blockedProductIds: string[];
+  blockedCollectionIds: string[];
+  allowsFederatedAssets: boolean;
+  commercialOrigin: CommercialOrigin;
+  attributionSource: AttributionSource;
+  distributionSource: DistributionSource;
+  placementIds: string[];
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DistributionNetwork {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  status: DistributionStatus;
+  visibility: DistributionVisibility;
+  governanceStatus: DistributionGovernanceStatus;
+  channelIds: string[];
+  defaultChannelId: string;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DistributionProfileRelationship {
+  id: string;
+  profileId: string;
+  relationshipType: DistributionProfileRelationshipType;
+  targetType: DistributionProfileRelationshipTargetType;
+  targetId: string;
+  status: DistributionProfileStatus;
+  visibility: DistributionProfileVisibility;
+  governanceStatus: DistributionProfileGovernanceStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionProfile {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  profileType: DistributionProfileType;
+  status: DistributionProfileStatus;
+  visibility: DistributionProfileVisibility;
+  governanceStatus: DistributionProfileGovernanceStatus;
+  operatorType: string;
+  operatorLabel: string;
+  trustLabel: string;
+  commercialLabel: string;
+  tenantIds: string[];
+  channelIds: string[];
+  curatedCatalogIds: string[];
+  catalogSegmentIds: string[];
+  communityId?: string;
+  contactLabel?: string;
+  websiteLabel?: string;
+  regionLabel?: string;
+  capabilityLabels: string[];
+  limitationLabels: string[];
+  relationships: DistributionProfileRelationship[];
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttributionNote {
+  id: string;
+  sourceId: string;
+  noteType: AttributionNoteType;
+  title: string;
+  description: string;
+  severity: AttributionNoteSeverity;
+  status: AttributionStatus;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttributionSourceRecord {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  sourceType: AttributionSourceType;
+  status: AttributionStatus | "governance-review" | "archived";
+  scope: AttributionScope;
+  trackingMode: TrackingMode;
+  channelId?: string;
+  profileId?: string;
+  tenantId?: string;
+  catalogId?: string;
+  curatedCatalogId?: string;
+  segmentId?: string;
+  placementId?: string;
+  campaignLabel?: string;
+  referralCodeMock?: string;
+  sourceLabel: string;
+  commercialOrigin: CommercialOrigin;
+  distributionSource: DistributionSource;
+  attributionNotes: AttributionNote[];
+  isSimulated: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttributionContext {
+  sourceId: string;
+  resolvedAt: string;
+  sourceType: AttributionSourceType;
+  trackingMode: TrackingMode;
+  channelId?: string;
+  profileId?: string;
+  tenantId?: string;
+  catalogId?: string;
+  curatedCatalogId?: string;
+  segmentId?: string;
+  placementId?: string;
+  commercialOriginLabel: string;
+  isSimulated: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AttributionToSplitRule {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: AttributionToSplitStatus;
+  attributionSourceId: string;
+  distributionSourceId: string;
+  commercialOriginId: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  targetPolicyId: string;
+  targetCommissionModelId: string;
+  targetParticipantId: string;
+  suggestedShareType: ParticipantShareType;
+  suggestedShareValue: number;
+  priority: number;
+  reason: string;
+  isSimulated: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AttributionSplitMapping {
+  ruleId: string;
+  attributionSourceId: string;
+  participantShareIds: string[];
+  targetPolicyId: string;
+  targetCommissionModelId: string;
+  targetParticipantId: string;
+  suggestedShareType: ParticipantShareType;
+  suggestedShareValue: number;
+  isSimulated: boolean;
+  boundaryNotes: string[];
+}
+
+export interface CommercialOriginSplitMapping {
+  commercialOriginId: string;
+  originLabel: string;
+  appliedRuleIds: string[];
+  targetPolicyIds: string[];
+  isSimulated: boolean;
+  boundaryNotes: string[];
+}
+
+export interface DistributionSourceSplitMapping {
+  distributionSourceId: string;
+  sourceLabel: string;
+  appliedRuleIds: string[];
+  targetPolicyIds: string[];
+  targetCommissionModelIds: string[];
+  isSimulated: boolean;
+  boundaryNotes: string[];
+}
+
+export interface AttributionSplitResolution {
+  attributionSourceId: string;
+  resolvedAt: string;
+  policyId?: string;
+  commissionModelId?: string;
+  participantShareIds: string[];
+  appliedRuleIds: string[];
+  blockedRuleIds: string[];
+  warnings: string[];
+  disclaimers: string[];
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+}
+
+export interface AttributionSplitExplanation {
+  ruleId: string;
+  ruleName: string;
+  reason: string;
+  attributionSourceId: string;
+  distributionSourceId: string;
+  commercialOriginId: string;
+  targetPolicyId: string;
+  targetCommissionModelId: string;
+  targetParticipantId: string;
+  participantShareIds: string[];
+  suggestedShareLabel: string;
+  status: AttributionToSplitStatus;
+  priority: number;
+  boundaryNotes: string[];
+}
+
+export interface PayoutPreviewMock {
+  id: string;
+  previewId: string;
+  policyId: string;
+  status: "preview-only" | "blocked" | "disabled";
+  payoutLabelMock: string;
+  participantShareIds: string[];
+  canTriggerPayout: boolean;
+  canReceivePayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SettlementPreviewMock {
+  id: string;
+  previewId: string;
+  policyId: string;
+  status: "preview-only" | "blocked" | "disabled";
+  settlementLabelMock: string;
+  settlementBoundaryId: string;
+  canSettle: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingPreview {
+  id: string;
+  policyId: string;
+  commissionModelId: string;
+  generatedAt: string;
+  previewStatus: RevenueSharingPreviewStatus;
+  participantShareIds: string[];
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  appliedRuleIds: string[];
+  blockedRuleIds: string[];
+  conflictIds: string[];
+  totalShareValueMock: number;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingAuditEntry {
+  id: string;
+  policyId: string;
+  eventType: RevenueSharingAuditEventType;
+  eventLabel: string;
+  targetType: "policy" | "commission-model" | "split-rule" | "participant-share" | "attribution-source" | "payout-preview" | "settlement-preview" | "boundary";
+  targetId: string;
+  ruleId?: string;
+  participantId?: string;
+  attributionSourceId?: string;
+  reason: string;
+  severity: "info" | "warning" | "conflict" | "blocked";
+  createdAt: string;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ParticipantSplitExplanation {
+  participantId: string;
+  participantLabel: string;
+  participantType: RevenueParticipantType;
+  participantShareId: string;
+  sourceRuleId: string;
+  shareLabel: string;
+  attributionSourceId?: string;
+  commercialOriginId?: string;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canReceivePayout: boolean;
+  boundaryNotes: string[];
+}
+
+export interface CommunityDistributionRule {
+  id: string;
+  communityDistributionId: string;
+  ruleType: CommunityDistributionRuleType;
+  targetType: CommunityDistributionRuleTargetType;
+  targetId: string;
+  effect: CommunityDistributionRuleEffect;
+  reason: string;
+  priority: number;
+  status: CommunityDistributionStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommunityDistributionItem {
+  id: string;
+  communityDistributionId: string;
+  itemType: CommunityDistributionItemType;
+  targetId: string;
+  tenantId?: string;
+  catalogId?: string;
+  curatedCatalogId?: string;
+  segmentId?: string;
+  productId?: string;
+  collectionId?: string;
+  source: string;
+  inclusionReason: string;
+  exclusionReason?: string;
+  isFeatured: boolean;
+  isFederated: boolean;
+  isExternal: boolean;
+  isNative: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommunityDistributionContext {
+  communityDistributionId: string;
+  resolvedAt: string;
+  profileId: string;
+  channelId: string;
+  tenantIds: string[];
+  curatedCatalogIds: string[];
+  featuredCatalogIds: string[];
+  segmentIds: string[];
+  includedProductIds: string[];
+  excludedProductIds: string[];
+  includedCollectionIds: string[];
+  excludedCollectionIds: string[];
+  attributionSourceId: string;
+  commercialOriginLabel: string;
+  isSimulated: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommunityMarketplaceDistribution {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  communityType: CommunityType;
+  status: CommunityDistributionStatus;
+  visibility: CommunityDistributionVisibility;
+  governanceStatus: CommunityDistributionGovernanceStatus;
+  scope: CommunityDistributionScope;
+  profileId: string;
+  channelId: string;
+  tenantIds: string[];
+  curatedCatalogIds: string[];
+  featuredCatalogIds: string[];
+  segmentIds: string[];
+  productIds: string[];
+  collectionIds: string[];
+  allowedProductIds: string[];
+  blockedProductIds: string[];
+  allowedCollectionIds: string[];
+  blockedCollectionIds: string[];
+  allowsFederatedAssets: boolean;
+  attributionSourceId: string;
+  commercialOriginId: string;
+  distributionSourceId: string;
+  featuredReason?: string;
+  rules: CommunityDistributionRule[];
+  items: CommunityDistributionItem[];
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TenantDistributionRule {
+  id: string;
+  tenantId: string;
+  ruleType: TenantDistributionRuleType;
+  targetType: DistributionIntegrationRuleTargetType;
+  targetId: string;
+  effect: DistributionIntegrationRuleEffect;
+  reason: string;
+  priority: number;
+  status: DistributionIntegrationStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogDistributionRule {
+  id: string;
+  curatedCatalogId: string;
+  ruleType: CuratedCatalogDistributionRuleType;
+  targetType: DistributionIntegrationRuleTargetType;
+  targetId: string;
+  effect: DistributionIntegrationRuleEffect;
+  reason: string;
+  priority: number;
+  status: DistributionIntegrationStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantDistributionConfig {
+  tenantId: string;
+  status: DistributionIntegrationStatus;
+  scope: DistributionIntegrationScope;
+  inheritsGlobalDistributionChannels: boolean;
+  allowedDistributionChannelIds: string[];
+  blockedDistributionChannelIds: string[];
+  featuredDistributionChannelIds: string[];
+  allowedDistributionProfileIds: string[];
+  blockedDistributionProfileIds: string[];
+  allowedCommunityDistributionIds: string[];
+  blockedCommunityDistributionIds: string[];
+  allowedAttributionSourceIds: string[];
+  blockedAttributionSourceIds: string[];
+  allowedCuratedCatalogIds: string[];
+  blockedCuratedCatalogIds: string[];
+  allowedSegmentIds: string[];
+  blockedSegmentIds: string[];
+  allowsFederatedAssets: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  rules: TenantDistributionRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogDistributionConfig {
+  curatedCatalogId: string;
+  status: DistributionIntegrationStatus;
+  scope: DistributionIntegrationScope;
+  inheritsGlobalDistributionChannels: boolean;
+  allowedDistributionChannelIds: string[];
+  blockedDistributionChannelIds: string[];
+  featuredDistributionChannelIds: string[];
+  allowedDistributionProfileIds: string[];
+  blockedDistributionProfileIds: string[];
+  allowedCommunityDistributionIds: string[];
+  blockedCommunityDistributionIds: string[];
+  allowedAttributionSourceIds: string[];
+  blockedAttributionSourceIds: string[];
+  allowedTenantIds: string[];
+  blockedTenantIds: string[];
+  allowedSegmentIds: string[];
+  blockedSegmentIds: string[];
+  allowsFederatedAssets: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  rules: CuratedCatalogDistributionRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantDistributionResolution {
+  tenantId: string;
+  resolvedAt: string;
+  includedChannelIds: string[];
+  excludedChannelIds: string[];
+  featuredChannelIds: string[];
+  includedProfileIds: string[];
+  excludedProfileIds: string[];
+  includedCommunityDistributionIds: string[];
+  excludedCommunityDistributionIds: string[];
+  includedAttributionSourceIds: string[];
+  excludedAttributionSourceIds: string[];
+  includedCuratedCatalogIds: string[];
+  excludedCuratedCatalogIds: string[];
+  includedSegmentIds: string[];
+  excludedSegmentIds: string[];
+  appliedRules: TenantDistributionRule[];
+  blockedRules: TenantDistributionRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogDistributionResolution {
+  curatedCatalogId: string;
+  resolvedAt: string;
+  includedChannelIds: string[];
+  excludedChannelIds: string[];
+  featuredChannelIds: string[];
+  includedProfileIds: string[];
+  excludedProfileIds: string[];
+  includedCommunityDistributionIds: string[];
+  excludedCommunityDistributionIds: string[];
+  includedAttributionSourceIds: string[];
+  excludedAttributionSourceIds: string[];
+  includedTenantIds: string[];
+  excludedTenantIds: string[];
+  includedSegmentIds: string[];
+  excludedSegmentIds: string[];
+  appliedRules: CuratedCatalogDistributionRule[];
+  blockedRules: CuratedCatalogDistributionRule[];
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface TenantRevenueSharingConfig {
+  tenantId: string;
+  policyIds: string[];
+  defaultPolicyId: string;
+  allowedDistributionPolicyIds: string[];
+  blockedDistributionPolicyIds: string[];
+  allowedCuratedCatalogPolicyIds: string[];
+  blockedCuratedCatalogPolicyIds: string[];
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionRevenueSharingConfig {
+  distributionChannelId: string;
+  profileId?: string;
+  communityDistributionId?: string;
+  policyIds: string[];
+  defaultPolicyId: string;
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogRevenueSharingConfig {
+  curatedCatalogId: string;
+  policyIds: string[];
+  defaultPolicyId: string;
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommunityRevenueSharingConfig {
+  communityDistributionId: string;
+  policyIds: string[];
+  defaultPolicyId: string;
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingIntegratedContext {
+  contextType: "tenant" | "distribution-channel" | "distribution-profile" | "community-distribution" | "curated-catalog";
+  tenantId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  curatedCatalogId?: string;
+  policyId?: string;
+  commissionModelId?: string;
+  previewId?: string;
+  settlementBoundaryId?: string;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingResolution {
+  contextType: RevenueSharingIntegratedContext["contextType"];
+  contextId: string;
+  resolvedAt: string;
+  policyIds: string[];
+  defaultPolicyId?: string;
+  commissionModelIds: string[];
+  previewIds: string[];
+  settlementBoundaryIds: string[];
+  attributionSourceIds: string[];
+  appliedAttributionRuleIds: string[];
+  blockedAttributionRuleIds: string[];
+  warnings: string[];
+  disclaimers: string[];
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+}
+
+export interface DistributionIntegratedContext {
+  contextId: string;
+  contextType: DistributionIntegratedContextType;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  channelId?: string;
+  profileId?: string;
+  communityDistributionId?: string;
+  attributionSourceId?: string;
+  commercialOriginLabel: string;
+  distributionSourceLabel: string;
+  routingMode: string;
+  isSimulated: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DistributionIntegratedItem {
+  id: string;
+  contextId: string;
+  contextType: DistributionIntegratedContextType;
+  targetType: DistributionIntegrationRuleTargetType;
+  targetId: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  channelId?: string;
+  profileId?: string;
+  communityDistributionId?: string;
+  attributionSourceId?: string;
+  source: string;
+  inclusionReason?: string;
+  exclusionReason?: string;
+  isFeatured: boolean;
+  isFederated: boolean;
+  isExternal: boolean;
+  isNative: boolean;
+  canDisplay: boolean;
+  canTrack: boolean;
+  canAttributeRevenue: boolean;
+  canTriggerPayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueParticipant {
+  id: string;
+  participantType: RevenueParticipantType;
+  participantRefId: string;
+  displayName: string;
+  status: RevenueSharingStatus;
+  governanceStatus: RevenueGovernanceStatus;
+  walletLabelMock: string;
+  payoutLabelMock: string;
+  canReceivePayout: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSplitRule {
+  id: string;
+  policyId: string;
+  ruleType: RevenueSplitRuleType;
+  scope: RevenueSharingScope;
+  targetType: RevenueSplitTargetType;
+  targetId: string;
+  participantType: RevenueParticipantType;
+  participantId: string;
+  shareType: ParticipantShareType;
+  shareValue: number;
+  priority: number;
+  status: RevenueSharingStatus;
+  capValueMock?: number;
+  floorValueMock?: number;
+  conflictPolicy: RevenueSplitConflictPolicy;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ParticipantShare {
+  id: string;
+  policyId: string;
+  commissionModelId?: string;
+  participantId: string;
+  participantType: RevenueParticipantType;
+  participantRefId: string;
+  shareType: ParticipantShareType;
+  shareValue: number;
+  sourceRuleId: string;
+  attributionSourceId?: string;
+  commercialOriginId?: string;
+  capValueMock?: number;
+  floorValueMock?: number;
+  isSimulated: boolean;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canReceivePayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CommissionModelRule {
+  id: string;
+  commissionModelId: string;
+  sourceRuleId: string;
+  participantShareId: string;
+  participantType: RevenueParticipantType;
+  shareType: ParticipantShareType;
+  shareValue: number;
+  capValueMock?: number;
+  floorValueMock?: number;
+  validationStatus: ParticipantShareValidationStatus;
+  conflictStatus: ParticipantShareValidationStatus;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ParticipantShareConflict {
+  id: string;
+  commissionModelId: string;
+  participantShareId?: string;
+  severity: "info" | "warning" | "conflict";
+  conflictType: "share-total" | "cap" | "floor" | "missing-participant" | "boundary";
+  message: string;
+  isBlocking: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ParticipantShareValidation {
+  commissionModelId: string;
+  policyId: string;
+  totalShareValueMock: number;
+  validationStatus: ParticipantShareValidationStatus;
+  conflictStatus: ParticipantShareValidationStatus;
+  capWarnings: string[];
+  floorWarnings: string[];
+  conflictWarnings: string[];
+  boundaryNotes: string[];
+  conflicts: ParticipantShareConflict[];
+}
+
+export interface CommissionModel {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  scope: RevenueSharingScope;
+  status: CommissionModelStatus;
+  policyId: string;
+  participantShareIds: string[];
+  ruleIds: string[];
+  shareType: ParticipantShareType;
+  totalShareValueMock: number;
+  validationStatus: ParticipantShareValidationStatus;
+  conflictStatus: ParticipantShareValidationStatus;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SettlementBoundary {
+  id: string;
+  scope: RevenueSharingScope;
+  scopeId: string;
+  status: SettlementBoundaryStatus;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  boundaryLabel: string;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenueSharingPolicy {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  scope: RevenueSharingScope;
+  status: RevenueSharingStatus;
+  governanceStatus: RevenueGovernanceStatus;
+  tenantId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  productId?: string;
+  collectionId?: string;
+  participantIds: string[];
+  ruleIds: string[];
+  commissionModelIds?: string[];
+  attributionSourceIds: string[];
+  commercialOriginId?: string;
+  settlementBoundaryId: string;
+  allowsFederatedAssets: boolean;
+  canCalculatePreview: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MarketplaceInsight {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  insightType: InsightType;
+  scope: InsightScope;
+  status: InsightStatus;
+  confidenceLabel: ConfidenceLabel;
+  sourceType: string;
+  sourceRefId: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  revenueSharingPolicyId?: string;
+  productId?: string;
+  collectionId?: string;
+  signalIds: string[];
+  snapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesRealTracking: boolean;
+  usesPersonalData: boolean;
+  usesBehavioralData: boolean;
+  usesWalletProfiling: boolean;
+  usesAutomatedDecisioning: boolean;
+  canRecommendAutomatically: boolean;
+  canRankAutomatically: boolean;
+  canTriggerCommercialAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InsightSignal {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  signalType: SignalType;
+  scope: InsightScope;
+  status: InsightStatus;
+  sourceType: string;
+  sourceRefId: string;
+  weightMock: number;
+  confidenceLabel: ConfidenceLabel;
+  isSimulated: boolean;
+  isDerivedFromMockData: boolean;
+  usesRealEvents: boolean;
+  usesRealTracking: boolean;
+  usesAnalyticsPipeline: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IntelligenceSnapshot {
+  id: string;
+  slug: string;
+  snapshotType: SnapshotScope;
+  scope: SnapshotScope;
+  scopeId: string;
+  title: string;
+  generatedAt: string;
+  status: SnapshotStatus;
+  summary: string;
+  signalIds: string[];
+  insightIds: string[];
+  dataBoundaryId: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  revenueSharingPolicyId?: string;
+  collectionId?: string;
+  isSimulated: boolean;
+  isStaticMock: boolean;
+  isDerivedFromMockData: boolean;
+  usesRealTracking: boolean;
+  usesBI: boolean;
+  usesMLModel: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface DataBoundary {
+  id: string;
+  scope: InsightScope;
+  scopeId: string;
+  status: DataBoundaryStatus;
+  boundaryLabel: string;
+  allowedDataSources: string[];
+  blockedDataSources: string[];
+  usesRealTracking: boolean;
+  usesAnalyticsPipeline: boolean;
+  usesPersonalData: boolean;
+  usesBehavioralData: boolean;
+  usesWalletProfiling: boolean;
+  usesBI: boolean;
+  usesMLModel: boolean;
+  usesAutomatedDecisioning: boolean;
+  canExportData: boolean;
+  canTriggerAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface IntelligenceAuditNote {
+  id: string;
+  insightId: string;
+  noteType: "boundary" | "explanation" | "warning" | "data-source" | "trust";
+  label: string;
+  description: string;
+  severity: "info" | "warning" | "restricted";
+  isSimulated: boolean;
+  createdAt: string;
+}
+
+export interface RecommendationPreview {
+  id: string;
+  slug: string;
+  scope: InsightScope;
+  scopeId: string;
+  status: RecommendationPreviewStatus;
+  targetType: "product" | "collection" | "curated-catalog" | "tenant" | "distribution-channel" | "community-distribution" | "demo";
+  targetId: string;
+  title: string;
+  reason: string;
+  discoveryNote: DiscoveryNote;
+  fitLabel: MockFitLabel;
+  opportunityLabel: MockOpportunityLabel;
+  confidenceLabel: ConfidenceLabel;
+  rankingExplanationId: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  isPersonalized: boolean;
+  usesBehavioralData: boolean;
+  usesWalletProfiling: boolean;
+  usesAutomatedRanking: boolean;
+  usesRecommendationEngine: boolean;
+  canTriggerAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RankingExplanation {
+  id: string;
+  slug: string;
+  scope: InsightScope;
+  scopeId: string;
+  rankingType: RankingExplanationType;
+  status: RecommendationPreviewStatus;
+  title: string;
+  reason: string;
+  editorialReason: string;
+  editorialRankingNote: EditorialRankingNote;
+  mockSignalIds: string[];
+  confidenceLabel: ConfidenceLabel;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  isAlgorithmic: boolean;
+  usesBehavioralData: boolean;
+  usesPersonalization: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RevenueIntelligenceSummary {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  policyId: string;
+  previewId: string;
+  settlementBoundaryId: string;
+  revenuePreviewInsightId: string;
+  settlementBoundaryInsightId: string;
+  confidenceLabel: ConfidenceLabel;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesFinancialBI: boolean;
+  usesAccounting: boolean;
+  usesTax: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AcademyProduct {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  academyProductType: AcademyProductType;
+  status: CourseStatus | CertificationStatus | LearningSubscriptionStatus;
+  visibility: "public-mock" | "tenant-preview" | "private-preview" | "restricted";
+  tenantId?: string;
+  providerId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceInsightIds: string[];
+  dataBoundaryId: string;
+  accessPreviewId?: string;
+  isSimulated: boolean;
+  canEnroll: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canIssueCredential: boolean;
+  canVerifyCredential: boolean;
+  canBill: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Course {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  courseType: CourseType;
+  status: CourseStatus;
+  level: string;
+  durationLabel: string;
+  languageLabel: string;
+  providerLabel: string;
+  instructorLabel: string;
+  moduleIds: string[];
+  lessonIds: string[];
+  learningPathIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  accessPreviewId: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  hasRealPlayer: boolean;
+  canEnroll: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canRecordCompletion: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CourseModule {
+  id: string;
+  courseId: string;
+  title: string;
+  description: string;
+  order: number;
+  lessonIds: string[];
+  durationLabel: string;
+  isSimulated: boolean;
+  hasRealPlayer: boolean;
+  canTrackProgress: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface Lesson {
+  id: string;
+  courseId: string;
+  moduleId: string;
+  title: string;
+  description: string;
+  lessonType: "video-mock" | "reading-mock" | "workshop-mock" | "assessment-preview-mock" | "demo";
+  durationLabel: string;
+  order: number;
+  previewLabel: string;
+  isSimulated: boolean;
+  hasRealPlayer: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canRecordCompletion: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningPath {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  courseIds: string[];
+  certificationIds: string[];
+  status: CourseStatus;
+  level: string;
+  providerLabel: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  accessPreviewId: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  canEnroll: boolean;
+  canTrackProgress: boolean;
+  canRecordCompletion: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface Certification {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  certificationType: "certificate-mock" | "badge-mock" | "academy-credential-preview" | "demo";
+  status: CertificationStatus;
+  issuerLabel: string;
+  validityLabel: string;
+  requirementIds: string[];
+  credentialPreviewId: string;
+  certificateBadgeMockId: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  canIssueCredential: boolean;
+  canVerifyCredential: boolean;
+  canMintOnChain: boolean;
+  canSignCredential: boolean;
+  canRecordAssessment: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CertificationRequirement {
+  id: string;
+  certificationId: string;
+  requirementType: "course-completion-preview" | "manual-review-preview" | "assessment-preview" | "demo";
+  title: string;
+  description: string;
+  status: "configured-mock" | "preview-only" | "restricted" | "disabled";
+  isSimulated: boolean;
+  canRecordAssessment: boolean;
+  canVerifyCompletion: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CredentialPreview {
+  id: string;
+  certificationId: string;
+  credentialLabel: string;
+  issuerLabel: string;
+  validityLabel: string;
+  verificationLabel: string;
+  status: CertificationStatus;
+  isSimulated: boolean;
+  canIssueCredential: boolean;
+  canVerifyCredential: boolean;
+  canMintOnChain: boolean;
+  canSignCredential: boolean;
+  externalRegistryId?: string;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CertificateBadgeMock {
+  id: string;
+  certificationId: string;
+  badgeLabel: string;
+  certificateLabel: string;
+  displayStatus: "preview-only" | "configured-mock" | "restricted" | "disabled";
+  isSimulated: boolean;
+  isVerifiable: boolean;
+  canMintOnChain: boolean;
+  canSignCredential: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningSubscription {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: LearningSubscriptionStatus;
+  tierIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  includedCourseIds: string[];
+  includedCertificationIds: string[];
+  accessPreviewId: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  canBill: boolean;
+  canInvoice: boolean;
+  canChargePayment: boolean;
+  canGrantEntitlement: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningSubscriptionTier {
+  id: string;
+  subscriptionId: string;
+  name: string;
+  description: string;
+  tierLevel: string;
+  includedCourseIds: string[];
+  includedCertificationIds: string[];
+  accessPreviewId: string;
+  isSimulated: boolean;
+  canBill: boolean;
+  canGrantEntitlement: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningAccessPreview {
+  id: string;
+  scope: "academy-product" | "course" | "certification" | "learning-path" | "learning-subscription";
+  scopeId: string;
+  status: AccessPreviewStatus;
+  accessLabel: string;
+  includedCourseIds: string[];
+  includedCertificationIds: string[];
+  includedLearningPathIds: string[];
+  isSimulated: boolean;
+  canGrantAccess: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canRecordCompletion: boolean;
+  canIssueCredential: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface LearningEntitlementMock {
+  id: string;
+  scope: "academy-product" | "course" | "certification" | "learning-path" | "learning-subscription";
+  scopeId: string;
+  accessPreviewId: string;
+  entitlementLabel: string;
+  status: "preview-only" | "not-configured" | "blocked" | "disabled";
+  isSimulated: boolean;
+  canGrantEntitlement: boolean;
+  canRevokeEntitlement: boolean;
+  canStartLearning: boolean;
+  canTrackProgress: boolean;
+  canBill: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AcademyDistributionContext {
+  id: string;
+  contextType: "course" | "certification" | "learning-subscription" | "tenant" | "curated-catalog" | "distribution";
+  academyProductId?: string;
+  courseId?: string;
+  certificationId?: string;
+  learningSubscriptionId?: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  communityDistributionId?: string;
+  attributionSourceId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  federationProviderId?: string;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AcademyDataBoundary {
+  id: string;
+  scope: LearningAccessPreview["scope"] | AcademyDistributionContext["contextType"];
+  scopeId: string;
+  status: AcademyDataBoundaryStatus;
+  boundaryLabel: string;
+  isSimulated: boolean;
+  usesLms: boolean;
+  usesRealPlayer: boolean;
+  usesProgressTracking: boolean;
+  usesLearningAnalytics: boolean;
+  usesAssessment: boolean;
+  usesCredentialIssuance: boolean;
+  usesCredentialVerification: boolean;
+  usesBilling: boolean;
+  usesEntitlement: boolean;
+  usesExternalEducationPlatform: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AcademyIntelligenceSummary {
+  id: string;
+  scope: "academy-product" | "course" | "certification" | "learning-subscription" | "tenant" | "curated-catalog" | "distribution";
+  scopeId: string;
+  title: string;
+  summary: string;
+  insightSignalIds: string[];
+  intelligenceSnapshotId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesLearningAnalytics: boolean;
+  usesPersonalization: boolean;
+  usesProfiling: boolean;
+  usesRecommendationEngine: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSCapabilityProduct {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  capabilityType: ACSCapabilityType;
+  status: ACSCapabilityStatus;
+  visibility: "public-mock" | "tenant-preview" | "private-preview" | "restricted";
+  tenantId?: string;
+  productId?: string;
+  providerId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  attributionSourceId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceInsightIds: string[];
+  accessPreviewId?: string;
+  executionBoundaryId: string;
+  provisioningBoundaryId: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  canExecuteAgent: boolean;
+  canDeployMcp: boolean;
+  canRunWorkflow: boolean;
+  canAllocateCompute: boolean;
+  canProvisionAccess: boolean;
+  canAccessSecrets: boolean;
+  canBill: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AIAgent {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  agentType: "assistant-mock" | "operator-mock" | "workflow-agent-mock" | "research-agent-mock" | "demo";
+  status: ACSCapabilityStatus;
+  capabilityIds: string[];
+  mcpPackageIds: string[];
+  workflowTemplateIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  accessPreviewId: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  executionBoundaryId: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  canExecute: boolean;
+  canCallTools: boolean;
+  canAccessSecrets: boolean;
+  canUseExternalModels: boolean;
+  canWriteMemory: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface AgentCapability {
+  id: string;
+  agentId: string;
+  name: string;
+  description: string;
+  capabilityType: "tool-call-preview" | "retrieval-preview" | "workflow-orchestration-preview" | "analysis-preview" | "demo";
+  status: ACSCapabilityStatus;
+  isSimulated: boolean;
+  canExecute: boolean;
+  canCallExternalTool: boolean;
+  canReadSecrets: boolean;
+  canMutateData: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface MCPPackage {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  versionIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  accessPreviewId: string;
+  provisioningBoundaryId: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  canDeploy: boolean;
+  canInstall: boolean;
+  canConnectServer: boolean;
+  canExposeTools: boolean;
+  canAccessSecrets: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface MCPVersion {
+  id: string;
+  packageId: string;
+  version: string;
+  releaseLabel: string;
+  status: ACSCapabilityStatus;
+  compatibilityLabel: string;
+  isSimulated: boolean;
+  canDeploy: boolean;
+  canUpgrade: boolean;
+  canRollback: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface WorkflowSystem {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  templateIds: string[];
+  bundleIds: string[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  accessPreviewId: string;
+  executionBoundaryId: string;
+  isSimulated: boolean;
+  canRunWorkflow: boolean;
+  canScheduleWorkflow: boolean;
+  canCallAgents: boolean;
+  canMutateExternalSystems: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface WorkflowTemplate {
+  id: string;
+  systemId: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  stepLabels: string[];
+  isSimulated: boolean;
+  canRun: boolean;
+  canSchedule: boolean;
+  canCallExternalSystems: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface WorkflowBundle {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  workflowSystemId: string;
+  templateIds: string[];
+  agentIds: string[];
+  mcpPackageIds: string[];
+  accessPreviewId: string;
+  isSimulated: boolean;
+  canProvisionBundle: boolean;
+  canRunBundle: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ComputeAccess {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  status: ACSCapabilityStatus;
+  tierIds: string[];
+  tenantId?: string;
+  accessPreviewId: string;
+  provisioningBoundaryId: string;
+  isSimulated: boolean;
+  canAllocateCompute: boolean;
+  canScaleCompute: boolean;
+  canStartRuntime: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ComputeTier {
+  id: string;
+  computeAccessId: string;
+  name: string;
+  description: string;
+  tierLabel: string;
+  status: ACSCapabilityStatus;
+  isSimulated: boolean;
+  canAllocate: boolean;
+  canScale: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSAccessPreview {
+  id: string;
+  scope: ACSCapabilityType;
+  scopeId: string;
+  status: ACSAccessPreviewStatus;
+  accessLabel: string;
+  includedAgentIds: string[];
+  includedMcpPackageIds: string[];
+  includedWorkflowSystemIds: string[];
+  includedComputeAccessIds: string[];
+  isSimulated: boolean;
+  canGrantAccess: boolean;
+  canProvision: boolean;
+  canExecuteAgent: boolean;
+  canDeployMcp: boolean;
+  canRunWorkflow: boolean;
+  canAllocateCompute: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSExecutionBoundary {
+  id: string;
+  scope: ACSCapabilityType;
+  scopeId: string;
+  status: ACSBoundaryStatus;
+  boundaryLabel: string;
+  isSimulated: boolean;
+  canExecuteAgent: boolean;
+  canCallTools: boolean;
+  canRunWorkflow: boolean;
+  canMutateData: boolean;
+  canUseExternalModels: boolean;
+  canWriteMemory: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSProvisioningBoundary {
+  id: string;
+  scope: ACSCapabilityType;
+  scopeId: string;
+  status: ACSBoundaryStatus;
+  boundaryLabel: string;
+  isSimulated: boolean;
+  canProvision: boolean;
+  canDeployMcp: boolean;
+  canInstallPackage: boolean;
+  canAllocateCompute: boolean;
+  canStartRuntime: boolean;
+  canAccessSecrets: boolean;
+  canBill: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSCapabilityDataBoundary {
+  id: string;
+  scope: ACSCapabilityType;
+  scopeId: string;
+  status: ACSBoundaryStatus;
+  boundaryLabel: string;
+  isSimulated: boolean;
+  usesProductionData: boolean;
+  usesSecrets: boolean;
+  usesExternalIntegration: boolean;
+  usesTracking: boolean;
+  usesAnalytics: boolean;
+  canExportData: boolean;
+  canTrainModel: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSDistributionContext {
+  id: string;
+  contextType: ACSCapabilityType | "tenant" | "curated-catalog" | "distribution";
+  acsCapabilityProductId?: string;
+  agentId?: string;
+  mcpPackageId?: string;
+  workflowSystemId?: string;
+  workflowBundleId?: string;
+  computeAccessId?: string;
+  tenantId?: string;
+  curatedCatalogId?: string;
+  catalogSegmentId?: string;
+  distributionChannelId?: string;
+  distributionProfileId?: string;
+  attributionSourceId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  executionBoundaryId: string;
+  provisioningBoundaryId: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ACSIntelligenceSummary {
+  id: string;
+  scope: ACSCapabilityType | "tenant" | "curated-catalog" | "distribution";
+  scopeId: string;
+  title: string;
+  summary: string;
+  insightSignalIds: string[];
+  intelligenceSnapshotId?: string;
+  capabilityDataBoundaryId: string;
+  isSimulated: boolean;
+  usesRuntimeTelemetry: boolean;
+  usesAgentScoring: boolean;
+  usesAutomation: boolean;
+  usesExternalAnalytics: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseProduct {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  tier: EnterpriseTier;
+  category: EnterpriseProductCategory;
+  lifecycleStatus: EnterpriseLifecycleStatus;
+  governanceStatus: EnterpriseGovernanceStatus;
+  settlementMode: EnterpriseSettlementMode;
+  provisioningType: EnterpriseProvisioningType;
+  billingCadence: EnterpriseBillingCadence;
+  supportedChains: Chain[];
+  tenantId?: string;
+  curatedCatalogId?: string;
+  distributionChannelId?: string;
+  revenueSharingPolicyId?: string;
+  intelligenceSnapshotId?: string;
+  planIds: string[];
+  licenseId: string;
+  provisioningProfileId: string;
+  telemetrySnapshotId: string;
+  operationalScope: string[];
+  guardrails: string[];
+  isSimulated: boolean;
+  canActivateSubscription: boolean;
+  canExecuteBilling: boolean;
+  canRouteTreasury: boolean;
+  canSettle: boolean;
+  canDeployACS: boolean;
+  canProvisionTenant: boolean;
+  canWriteContracts: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EnterpriseSubscriptionPlan {
+  id: string;
+  productId: string;
+  slug: string;
+  name: string;
+  description: string;
+  tier: EnterpriseTier;
+  status: EnterpriseLifecycleStatus;
+  billingCadence: EnterpriseBillingCadence;
+  currency: string;
+  recurringAmountMock: number;
+  setupAmountMock: number;
+  usageEstimateMock: string;
+  seatLimitMock?: number;
+  operatorLimitMock?: number;
+  settlementMode: EnterpriseSettlementMode;
+  requiresGovernanceApproval: boolean;
+  requiresTreasuryReview: boolean;
+  isSimulated: boolean;
+  canActivateSubscription: boolean;
+  canExecuteBilling: boolean;
+  canRouteTreasury: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseLicense {
+  id: string;
+  productId: string;
+  name: string;
+  status: EnterpriseLifecycleStatus;
+  rightsGranted: string[];
+  restrictions: string[];
+  permittedOperators: string[];
+  permittedWorkspaces: string[];
+  renewalPolicy: string;
+  expiryPolicy: string;
+  auditRequirements: string[];
+  governanceCompatibility: EnterpriseGovernanceStatus;
+  isSimulated: boolean;
+  canEscalatePermissions: boolean;
+  canIssueLiveLicense: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseProvisioningProfile {
+  id: string;
+  productId: string;
+  name: string;
+  status: EnterpriseLifecycleStatus;
+  provisioningType: EnterpriseProvisioningType;
+  acsComponentIds: string[];
+  orchestrationComponentIds: string[];
+  computeEnvelope: string;
+  deploymentIsolation: string;
+  accessControlModel: string;
+  requiredApprovals: string[];
+  telemetryHooks: string[];
+  mockProvisioningStatus: "preview-only" | "pending-review" | "operator-assisted" | "blocked";
+  isSimulated: boolean;
+  canProvisionTenant: boolean;
+  canDeployACS: boolean;
+  canAllocateCompute: boolean;
+  canAccessSecrets: boolean;
+  canStartRuntime: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseBillingPreview {
+  id: string;
+  planId: string;
+  productId: string;
+  currency: string;
+  recurringAmountMock: number;
+  setupAmountMock: number;
+  usageEstimateMock: string;
+  treasuryDestinationPreview: string;
+  accountingNotes: string[];
+  invoicePreviewStatus: "preview-only" | "review-required" | "blocked";
+  reconciliationStatus: "preview-only" | "review-required" | "blocked";
+  settlementMode: EnterpriseSettlementMode;
+  isSimulated: boolean;
+  canExecutePayment: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EnterpriseTelemetrySnapshot {
+  id: string;
+  productId: string;
+  provisioningStatus: EnterpriseTelemetryStatus;
+  accessStatus: EnterpriseTelemetryStatus;
+  billingStatus: EnterpriseTelemetryStatus;
+  licenseStatus: EnterpriseTelemetryStatus;
+  governanceStatus: EnterpriseGovernanceStatus;
+  lastUpdatedAt: string;
+  signals: string[];
+  blockingIssues: string[];
+  warnings: string[];
+  disclaimers: string[];
+  isSimulated: boolean;
+  usesLiveTelemetry: boolean;
+  usesExternalAnalytics: boolean;
+  canTriggerAutomation: boolean;
+}
+
+export interface EnterpriseOperationsSummary {
+  totalProducts: number;
+  governanceCounts: Record<EnterpriseGovernanceStatus, number>;
+  planStatusCounts: Record<EnterpriseLifecycleStatus, number>;
+  provisioningStatusCounts: Record<string, number>;
+  billingPreviewCounts: Record<string, number>;
+  licenseStatusCounts: Record<EnterpriseLifecycleStatus, number>;
+  blockingIssues: Array<{ productId: string; label: string; issue: string }>;
+  reviewQueue: Array<{ productId: string; label: string; reason: string }>;
+  isSimulated: boolean;
+  canActivateSubscriptions: boolean;
+  canExecuteBilling: boolean;
+  canRouteTreasury: boolean;
+  canDeployACS: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignCommerceNode {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  nodeType: SovereignCommerceNodeType;
+  status: SovereignCommerceStatus;
+  tenantIds: string[];
+  curatedCatalogIds: string[];
+  distributionChannelIds: string[];
+  communityDistributionIds: string[];
+  revenueSharingPolicyIds: string[];
+  attributionSourceIds: string[];
+  intelligenceSnapshotIds: string[];
+  enterpriseProductIds: string[];
+  acsCapabilityProductIds: string[];
+  academyProductIds: string[];
+  federationProviderIds: string[];
+  governanceBoundaryId: string;
+  isolationBoundaryId: string;
+  observabilitySnapshotId: string;
+  isSimulated: boolean;
+  canExecuteCommerce: boolean;
+  canSettle: boolean;
+  canRouteTreasury: boolean;
+  canExecuteBilling: boolean;
+  canWriteCrossTenant: boolean;
+  canExecuteGovernance: boolean;
+  canProvisionACS: boolean;
+  canOnboardExternalMarketplaces: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SovereignCommerceLink {
+  id: string;
+  sourceNodeId: string;
+  targetNodeId: string;
+  linkType: "distribution" | "federation" | "revenue" | "attribution" | "governance" | "isolation" | "observability";
+  label: string;
+  status: SovereignCommerceStatus;
+  isSimulated: boolean;
+  canSyncData: boolean;
+  canTransferValue: boolean;
+  canRouteOrders: boolean;
+  canPropagateGovernance: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignGovernanceBoundary {
+  id: string;
+  scopeId: string;
+  status: SovereignCommerceBoundaryStatus;
+  boundaryLabel: string;
+  reviewRequirements: string[];
+  isSimulated: boolean;
+  canExecuteGovernance: boolean;
+  canBypassPolicy: boolean;
+  canApproveSettlement: boolean;
+  canDelegateAuthority: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignIsolationBoundary {
+  id: string;
+  scopeId: string;
+  status: SovereignCommerceBoundaryStatus;
+  boundaryLabel: string;
+  isolationNotes: string[];
+  isSimulated: boolean;
+  canWriteCrossTenant: boolean;
+  canSharePrivateData: boolean;
+  canEscalateAccess: boolean;
+  canProvisionTenant: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignObservabilitySnapshot {
+  id: string;
+  scopeId: string;
+  status: SovereignCommerceStatus;
+  title: string;
+  signals: string[];
+  revenueVisibilityNotes: string[];
+  attributionTraceabilityNotes: string[];
+  governanceNotes: string[];
+  isolationNotes: string[];
+  lastUpdatedAt: string;
+  isSimulated: boolean;
+  usesLiveTelemetry: boolean;
+  usesTracking: boolean;
+  usesBI: boolean;
+  canTriggerAutomation: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SovereignCommerceNetworkSummary {
+  id: string;
+  name: string;
+  status: SovereignCommerceStatus;
+  nodeIds: string[];
+  linkIds: string[];
+  governanceBoundaryIds: string[];
+  isolationBoundaryIds: string[];
+  observabilitySnapshotIds: string[];
+  isSimulated: boolean;
+  canExecuteCommerce: boolean;
+  canSettle: boolean;
+  canRouteTreasury: boolean;
+  canExecuteBilling: boolean;
+  canWriteCrossTenant: boolean;
+  canExecuteGovernance: boolean;
+  canProvisionACS: boolean;
+  canOnboardExternalMarketplaces: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RevenuePreviewInsight {
+  id: string;
+  slug: string;
+  policyId: string;
+  previewId: string;
+  settlementBoundaryId: string;
+  title: string;
+  summary: string;
+  confidenceLabel: ConfidenceLabel;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesFinancialBI: boolean;
+  usesAccounting: boolean;
+  usesTax: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface SettlementBoundaryInsight {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  settlementBoundaryId: string;
+  policyId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  canSettle: boolean;
+  canTriggerPayout: boolean;
+  canRouteTreasury: boolean;
+  canInvoice: boolean;
+  canAccount: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface RiskTrustInsight {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  scope: InsightScope;
+  scopeId: string;
+  riskLabelMock: RiskLabelMock;
+  trustLabelMock: TrustLabelMock;
+  confidenceLabel: ConfidenceLabel;
+  sourceType: "revenue-preview" | "settlement-boundary" | "federated-asset" | "provider" | "distribution-attribution" | "community-trust" | "provenance" | "demo";
+  sourceRefId: string;
+  providerId?: string;
+  assetId?: string;
+  collectionId?: string;
+  revenueSharingPolicyId?: string;
+  distributionChannelId?: string;
+  attributionSourceId?: string;
+  dataBoundaryId: string;
+  isSimulated: boolean;
+  usesRiskScoring: boolean;
+  usesTrustScoring: boolean;
+  usesAutomatedDecisioning: boolean;
+  canBlockAutomatically: boolean;
+  canApproveAutomatically: boolean;
+  canTriggerCommercialAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProviderValidationInsight {
+  id: string;
+  providerId: string;
+  validationLabel: string;
+  trustLabelMock: TrustLabelMock;
+  confidenceLabel: ConfidenceLabel;
+  isSimulated: boolean;
+  usesTrustScoring: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface ProvenanceInsight {
+  id: string;
+  collectionId: string;
+  providerId: string;
+  provenanceLabel: string;
+  riskLabelMock: RiskLabelMock;
+  confidenceLabel: ConfidenceLabel;
+  isSimulated: boolean;
+  usesRiskScoring: boolean;
+  usesAutomatedDecisioning: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface FederationIntelligenceContext {
+  id: string;
+  collectionId: string;
+  providerId: string;
+  riskTrustInsightId: string;
+  providerValidationInsightId: string;
+  provenanceInsightId: string;
+  dataBoundaryId: string;
+  origin: string;
+  provider: string;
+  validationStatus: FederationValidationStatus;
+  provenance: string;
+  riskClassification: FederationRiskClassification;
+  trustBoundaryLabel: string;
+  isSimulated: boolean;
+  canTrade: boolean;
+  canSettle: boolean;
+  canBlockAutomatically: boolean;
+  canApproveAutomatically: boolean;
+  canTriggerCommercialAction: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogRule {
+  id: string;
+  catalogId: string;
+  sectionId?: string;
+  ruleType: CuratedCatalogRuleType;
+  targetType: CuratedCatalogRuleTargetType;
+  targetId: string;
+  effect: CuratedCatalogRuleEffect;
+  priority: number;
+  reason: string;
+  status: CuratedCatalogStatus;
+  source: CuratedCatalogItemSource;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface EditorialRule {
+  id: string;
+  catalogId: string;
+  sectionId?: string;
+  targetType: CuratedCatalogRuleTargetType;
+  targetId: string;
+  ruleType: EditorialRuleType;
+  effect: CuratedCatalogRuleEffect;
+  reason: string;
+  editorialNote: string;
+  reviewStatus: CurationReviewStatus;
+  governanceLabel: string;
+  priority: number;
+  status: CuratedCatalogStatus;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CurationNote {
+  id: string;
+  targetType: CuratedCatalogRuleTargetType;
+  targetId: string;
+  noteType: CurationReason;
+  note: string;
+  reviewStatus: CurationReviewStatus;
+  governanceLabel: string;
+  createdAt: string;
+}
+
+export interface CatalogSegment {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  segmentType: CatalogSegmentType;
+  status: CatalogSegmentStatus;
+  visibility: CuratedCatalogVisibility;
+  featuredCatalogIds: string[];
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FeaturedCatalog {
+  id: string;
+  catalogId: string;
+  segmentId: string;
+  placement: FeaturedCatalogPlacement;
+  position: number;
+  featuredReason: string;
+  editorialStatus: CurationReviewStatus;
+  governanceStatus: CuratedCatalogGovernanceStatus;
+  status: FeaturedCatalogStatus;
+  visibility: CuratedCatalogVisibility;
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CuratedCatalogSection {
+  id: string;
+  catalogId: string;
+  title: string;
+  description: string;
+  sectionType: CuratedCatalogSectionType;
+  position: number;
+  featuredProductIds: string[];
+  featuredCollectionIds: string[];
+  itemIds: string[];
+  ruleIds: string[];
+  visibility: CuratedCatalogVisibility;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalogItem {
+  id: string;
+  catalogId: string;
+  sectionId: string;
+  itemType: CuratedCatalogItemType;
+  productId?: string;
+  collectionId?: string;
+  externalCollectionId?: string;
+  source: CuratedCatalogItemSource;
+  inclusionReason: string;
+  exclusionReason?: string;
+  editorialNote: string;
+  editorialStatus: CurationReviewStatus;
+  governanceLabel: string;
+  reviewState: CurationWorkflowState;
+  isFeatured: boolean;
+  isFederated: boolean;
+  isExternal: boolean;
+  isNative: boolean;
+  canDisplay: boolean;
+  canTrade: boolean;
+  canSettle: boolean;
+  warnings: string[];
+  disclaimers: string[];
+}
+
+export interface CuratedCatalog {
+  id: string;
+  slug: string;
+  name: string;
+  displayName: string;
+  description: string;
+  catalogType: CuratedCatalogType;
+  status: CuratedCatalogStatus;
+  visibility: CuratedCatalogVisibility;
+  governanceStatus: CuratedCatalogGovernanceStatus;
+  ownerScope: CuratedCatalogOwnerScope;
+  tenantId?: string;
+  segmentIds: string[];
+  sectionIds: string[];
+  featuredProductIds: string[];
+  featuredCollectionIds: string[];
+  allowedProductIds: string[];
+  blockedProductIds: string[];
+  allowedCollectionIds: string[];
+  blockedCollectionIds: string[];
+  allowedCategoryIds: ProductCategory[];
+  blockedCategoryIds: ProductCategory[];
+  allowedExternalCollectionIds: string[];
+  blockedExternalCollectionIds: string[];
+  allowsFederatedAssets: boolean;
+  inheritsGlobalCatalog: boolean;
+  inheritsTenantCatalog: boolean;
+  curationNotes: string[];
+  sections: CuratedCatalogSection[];
+  items: CuratedCatalogItem[];
+  rules: CuratedCatalogRule[];
+  editorialRules: EditorialRule[];
+  curationWorkflow: {
+    state: CurationWorkflowState;
+    decision: CurationDecision;
+    reviewStatus: CurationReviewStatus;
+    governanceLabel: string;
+    notes: CurationNote[];
+    warnings: string[];
+    disclaimers: string[];
+  };
+  warnings: string[];
+  disclaimers: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Tenant {
   id: string;
   slug: string;
@@ -259,6 +3259,8 @@ export interface Tenant {
   branding?: TenantBranding;
   domains?: TenantDomain[];
   domainAliases?: TenantDomainAlias[];
+  catalog?: TenantCatalog;
+  curatedCatalogConfig?: TenantCuratedCatalogConfig;
   createdAt: string;
   updatedAt: string;
   warnings: string[];

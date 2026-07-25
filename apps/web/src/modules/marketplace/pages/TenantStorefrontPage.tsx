@@ -1,9 +1,13 @@
 import { Link, useParams } from "react-router-dom";
-import { Building2, Globe2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { BookMarked, Building2, Globe2, Share2, ShieldAlert, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import type { CSSProperties } from "react";
 import { ProductCard } from "../components/ProductCard";
-import type { Tenant, TenantBranding, TenantDomain, TenantDomainAlias } from "../types/marketplace";
-import { useTenant, useTenants } from "../hooks/useMarketplace";
+import { MarketplaceIntelligencePanel } from "../components/MarketplaceIntelligencePanel";
+import { RecommendationPreviewPanel } from "../components/RecommendationPreviewPanel";
+import { RevenueSharingIntegrationPanel } from "../components/RevenueSharingIntegrationPanel";
+import type { Tenant, TenantBranding, TenantCatalog, TenantCatalogResolution, TenantDomain, TenantDomainAlias } from "../types/marketplace";
+import type { TenantCuratedCatalogView, TenantDistributionView } from "../services/marketplaceService";
+import { useRecommendationPreviewsByScope, useTenant, useTenantDistribution, useTenantIntelligenceSnapshot, useTenantRevenueSharing, useTenants } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 
 export function TenantStorefrontPage() {
@@ -43,12 +47,20 @@ function TenantRegistrySurface() {
 
 function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
   const { data } = useTenant(tenantIdOrSlug);
+  const tenantDistributionQuery = useTenantDistribution(tenantIdOrSlug);
+  const tenantRevenueSharingQuery = useTenantRevenueSharing(tenantIdOrSlug);
+  const tenantIntelligenceQuery = useTenantIntelligenceSnapshot(data?.tenant.id);
+  const recommendationPreviewsQuery = useRecommendationPreviewsByScope("tenant", data?.tenant.id);
 
   if (!data) return null;
 
   const {
     tenant,
     routingContext,
+    catalog,
+    catalogResolution,
+    curatedCatalogResolution,
+    tenantCuratedCatalogs,
     isGlobalMarketplace,
     branding,
     theme,
@@ -58,6 +70,8 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
     enabledSections,
     executionBoundaries
   } = data;
+  const tenantDistribution = tenantDistributionQuery.data;
+  const tenantRevenueSharing = tenantRevenueSharingQuery.data;
 
   return (
     <div className="space-y-6">
@@ -88,6 +102,18 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
           <Stat label="Routing mode" value={routingContext.resolution.routingMode} />
         </div>
       </section>
+
+      <MarketplaceIntelligencePanel
+        title="Tenant Intelligence Panel"
+        description="Tenant Intelligence Panel summarizes tenant catalog, curated catalog, distribution and revenue-sharing mock context without tenant profiling, tracking real, BI real, scoring real or automated decisioning."
+        snapshot={tenantIntelligenceQuery.data}
+      />
+
+      <RecommendationPreviewPanel
+        title="Tenant Recommendation Preview"
+        description="Tenant Recommendation Preview shows static editorial/mock fit and opportunity labels for this tenant context only. It does not personalize, profile users, use behavioral tracking, rank automatically or trigger commercial action."
+        previews={recommendationPreviewsQuery.data}
+      />
 
       <section className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded border border-slate-200 bg-white p-5 shadow-sm">
@@ -158,6 +184,19 @@ function TenantDetailSurface({ tenantIdOrSlug }: { tenantIdOrSlug: string }) {
       </section>
 
       <TenantDomainsPanel tenant={tenant} activeDomain={routingContext.domain} />
+
+      <TenantCatalogPanel catalog={catalog} resolution={catalogResolution} />
+
+      <TenantCuratedCatalogPanel catalogs={tenantCuratedCatalogs} included={curatedCatalogResolution.includedCatalogIds.length} excluded={curatedCatalogResolution.excludedCatalogIds.length} />
+
+      {tenantDistribution ? <TenantDistributionPanel view={tenantDistribution} /> : null}
+      {tenantRevenueSharing ? (
+        <RevenueSharingIntegrationPanel
+          title="Tenant Revenue Sharing Config"
+          description="Tenant Revenue Sharing Config binds this tenant to preview-only policies, commission models, participant shares and attribution-to-split context without enabling payout, settlement, billing or treasury routing."
+          view={tenantRevenueSharing}
+        />
+      ) : null}
 
       <section className="grid gap-4 lg:grid-cols-2">
         <BoundaryPanel title="Warnings" tone="amber" items={[...tenant.warnings, ...branding.warnings]} />
@@ -292,6 +331,323 @@ function TenantDomainsPanel({ tenant, activeDomain }: { tenant: Tenant; activeDo
         </p>
       </div>
     </section>
+  );
+}
+
+function TenantCatalogPanel({ catalog, resolution }: { catalog: TenantCatalog; resolution: TenantCatalogResolution }) {
+  return (
+    <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold">Tenant Catalog</h2>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Tenant Isolation is mock/config-first isolation. This catalog is derived by Tenant Catalog Rule and Tenant Exposure Rule records,
+            without duplicating product truth or creating financial isolation, settlement isolation, RBAC enforcement or isolated database.
+          </p>
+        </div>
+        <span className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
+          {catalog.status} / {catalog.scope}
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <Stat label="tenant visible products" value={resolution.includedProductIds.length} />
+        <Stat label="tenant visible collections" value={resolution.includedCollectionIds.length + resolution.includedExternalCollectionIds.length} />
+        <Stat label="applied rules" value={resolution.appliedRules.length} />
+        <Stat label="blocked rules" value={resolution.blockedRules.length} />
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded border border-slate-200 bg-slate-50 p-4">
+          <h3 className="font-semibold">Catalog resolution</h3>
+          <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+            <Row label="isolated configuration" value={catalog.name} />
+            <Row label="isolated catalog" value={catalog.scope} />
+            <Row label="global catalog inheritance" value={catalog.inheritsGlobalCatalog ? "enabled mock" : "disabled"} />
+            <Row label="federated catalog rule" value={catalog.allowsFederatedAssets ? "allowed mock" : "blocked"} />
+            <Row label="external collections" value={catalog.allowsExternalCollections ? "allowed mock" : "blocked"} />
+            <Row label="native products" value={catalog.allowsNativeProducts ? "allowed mock" : "blocked"} />
+          </dl>
+        </div>
+
+        <div className="rounded border border-slate-200 bg-slate-50 p-4">
+          <h3 className="font-semibold">Featured catalog</h3>
+          <p className="mt-2 text-sm text-slate-600">Featured products: {resolution.featuredProductIds.join(", ") || "none"}</p>
+          <p className="mt-2 text-sm text-slate-600">Featured collections: {resolution.featuredCollectionIds.join(", ") || "none"}</p>
+          <p className="mt-3 rounded border border-slate-200 bg-white p-3 text-xs font-semibold text-slate-600">
+            no financial isolation / no settlement isolation / no RBAC enforcement / no isolated database
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <RuleList title="Applied rules" rules={resolution.appliedRules} />
+        <RuleList title="Blocked or restrictive rules" rules={resolution.blockedRules} />
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <CatalogItems title="Product catalog items" items={resolution.productItems} />
+        <CatalogItems title="Collection catalog items" items={resolution.collectionItems} />
+      </div>
+
+      <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="font-semibold">Isolation boundary</p>
+        <p className="mt-1">
+          mock isolation and config-first isolation only. Tenant settlement, tenant billing, tenant treasury routing, tenant revenue sharing,
+          RBAC enforcement, isolated database, production data isolation and real tenant permissions remain disabled.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function TenantCuratedCatalogPanel({
+  catalogs,
+  included,
+  excluded
+}: {
+  catalogs: TenantCuratedCatalogView[];
+  included: number;
+  excluded: number;
+}) {
+  return (
+    <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <BookMarked size={20} /> Tenant Curated Catalogs
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Tenant Curated Catalog resolution layers Curated Catalogs over Tenant Catalog isolation. It can inherit global curated catalogs,
+            feature tenant curated catalogs, block curated catalogs and filter items through tenant catalog isolation.
+          </p>
+        </div>
+        <span className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
+          {included} included / {excluded} excluded
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        {catalogs.length ? (
+          catalogs.map((view) => (
+            <article key={view.catalog.catalog.id} className="rounded border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    {view.isTenantOwned ? "Tenant curated catalog" : view.isInherited ? "inherits global curated catalogs" : "tenant curated catalog resolution"}
+                  </p>
+                  <Link to={`/marketplace/curated/${view.catalog.catalog.slug}`} className="mt-1 block text-lg font-semibold text-slate-950 hover:text-teal-700">
+                    {view.catalog.catalog.displayName}
+                  </Link>
+                  <p className="mt-2 text-sm text-slate-600">{view.inclusionReason}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {view.isFeatured ? <span className="rounded border border-teal-200 bg-teal-50 px-2 py-1 text-xs font-semibold text-teal-800">featured curated catalogs</span> : null}
+                  {view.catalog.catalog.allowsFederatedAssets ? <span className="rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-800">federated boundary</span> : null}
+                </div>
+              </div>
+              <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                <Stat label="visible items" value={view.visibleItems.length} />
+                <Stat label="excluded items" value={view.excludedItems.length} />
+                <Stat label="applied rules" value={view.appliedRules.length} />
+              </div>
+              <div className="mt-4 grid gap-3">
+                {view.visibleItems.map((item) => (
+                  <div key={item.itemId} className="rounded border border-slate-200 bg-white p-3 text-sm">
+                    <p className="font-semibold">{item.productId ?? item.collectionId ?? item.externalCollectionId ?? item.itemId}</p>
+                    <p className="mt-1 text-slate-600">{item.inclusionReason}</p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      tenant catalog isolation / {item.isFederated ? "federated" : "native"} / canDisplay={String(item.canDisplay)}
+                    </p>
+                  </div>
+                ))}
+                {view.excludedItems.length ? (
+                  <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                    <p className="font-semibold">Excluded by tenant curated catalog resolution</p>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-xs">
+                      {view.excludedItems.map((item) => (
+                        <li key={item.itemId}>
+                          {item.productId ?? item.collectionId ?? item.externalCollectionId ?? item.itemId}: {item.exclusionReason}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </div>
+              <p className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
+                {view.boundaryNotes[view.boundaryNotes.length - 1]}
+              </p>
+            </article>
+          ))
+        ) : (
+          <p className="rounded border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+            No Tenant Curated Catalogs are visible for this tenant. The tenant may be restricted, may block curated catalogs or may have no
+            curated catalog config.
+          </p>
+        )}
+      </div>
+
+      <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="font-semibold">Tenant curated boundary</p>
+        <p className="mt-1">
+          mock curation and config-first curation only. no revenue sharing, no settlement, no billing, no marketplace intelligence, no
+          distribution network, no ranking real and no recommendation engine are active.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function TenantDistributionPanel({ view }: { view: TenantDistributionView }) {
+  const { config, resolution, context } = view;
+
+  return (
+    <section className="rounded border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <Share2 size={20} /> Tenant Distribution Integration
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Tenant Distribution Config integrates tenant storefronts, curated catalogs, community distributions and attribution sources in
+            mock/config-first mode while preserving tenant catalog isolation, branding/theme and simulated domain routing.
+          </p>
+        </div>
+        <span className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
+          {config.status} / {config.scope}
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <Stat label="included channels" value={resolution.includedChannelIds.length} />
+        <Stat label="featured channels" value={resolution.featuredChannelIds.length} />
+        <Stat label="blocked channels" value={resolution.excludedChannelIds.length} />
+        <Stat label="attribution sources" value={resolution.includedAttributionSourceIds.length} />
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <DistributionList title="Included distribution channels" items={view.channels.map((item) => item.channel.displayName)} empty="No included channels." />
+        <DistributionList title="Blocked distribution channels" items={view.excludedChannels.map((item) => item.channel.displayName)} empty="No blocked channels." />
+        <DistributionList title="Associated profiles" items={view.profiles.map((item) => item.profile.displayName)} empty="No profiles associated." />
+        <DistributionList title="Community distributions" items={view.communityDistributions.map((item) => item.distribution.displayName)} empty="No community distributions associated." />
+        <DistributionList title="Attribution sources" items={view.attributionSources.map((item) => item.source.displayName)} empty="No attribution sources associated." />
+        <DistributionList title="Curated catalogs by channel" items={view.curatedCatalogs.map((item) => item.catalog.displayName)} empty="No curated catalogs associated." />
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <DistributionRuleList title="Applied tenant distribution rules" rules={resolution.appliedRules} />
+        <DistributionRuleList title="Blocked tenant distribution rules" rules={resolution.blockedRules} />
+      </div>
+
+      <div className="mt-5 rounded border border-slate-200 bg-slate-50 p-4 text-sm">
+        <h3 className="font-semibold">Distribution Integrated Context</h3>
+        <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Row label="Routing mode" value={context.routingMode} />
+          <Row label="Commercial origin" value={context.commercialOriginLabel} />
+          <Row label="Distribution source" value={context.distributionSourceLabel} />
+          <Row label="Can track" value={String(context.canTrack)} />
+          <Row label="Can attribute revenue" value={String(context.canAttributeRevenue)} />
+          <Row label="Can trigger payout" value={String(context.canTriggerPayout)} />
+          <Row label="Can settle" value={String(context.canSettle)} />
+          <Row label="Simulated" value={String(context.isSimulated)} />
+        </dl>
+      </div>
+
+      <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="font-semibold">Distribution integration boundary</p>
+        <p className="mt-1">
+          mock distribution integration and config-first distribution integration only. Tenant catalog isolation, branding/theme and
+          simulated domains are preserved. No revenue sharing, no commission, no payout, no settlement, no billing, no tracking real and no
+          marketplace intelligence are active.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function DistributionList({ title, items, empty }: { title: string; items: string[]; empty: string }) {
+  return (
+    <div className="rounded border border-slate-200 bg-slate-50 p-4">
+      <h3 className="font-semibold">{title}</h3>
+      {items.length ? (
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
+          {items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-sm text-slate-600">{empty}</p>
+      )}
+    </div>
+  );
+}
+
+function DistributionRuleList({ title, rules }: { title: string; rules: TenantDistributionView["resolution"]["appliedRules"] }) {
+  return (
+    <div className="rounded border border-slate-200 bg-white p-4">
+      <h3 className="font-semibold">{title}</h3>
+      <div className="mt-3 space-y-3">
+        {rules.length ? (
+          rules.map((rule) => (
+            <div key={rule.id} className="rounded border border-slate-200 bg-slate-50 p-3 text-sm">
+              <p className="font-semibold">{rule.ruleType}</p>
+              <p className="mt-1 text-slate-600">
+                {rule.effect} {rule.targetType} {rule.targetId}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">{rule.reason}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-slate-600">No rules in this group.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RuleList({ title, rules }: { title: string; rules: TenantCatalog["rules"] }) {
+  return (
+    <div className="rounded border border-slate-200 bg-white p-4">
+      <h3 className="font-semibold">{title}</h3>
+      <div className="mt-3 space-y-3">
+        {rules.length ? (
+          rules.map((rule) => (
+            <div key={rule.id} className="rounded border border-slate-200 bg-slate-50 p-3 text-sm">
+              <p className="font-semibold">{rule.ruleType}</p>
+              <p className="mt-1 text-slate-600">
+                {rule.effect} {rule.targetType} {rule.targetId}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">{rule.source} / {rule.reason}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-slate-600">No rules in this group.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CatalogItems({ title, items }: { title: string; items: TenantCatalogResolution["productItems"] }) {
+  return (
+    <div className="rounded border border-slate-200 bg-white p-4">
+      <h3 className="font-semibold">{title}</h3>
+      <div className="mt-3 space-y-3">
+        {items.length ? (
+          items.map((item) => (
+            <div key={item.productId ?? item.collectionId} className="rounded border border-slate-200 bg-slate-50 p-3 text-sm">
+              <p className="font-semibold">{item.productId ?? item.collectionId}</p>
+              <p className="mt-1 text-slate-600">{item.inclusionReason}</p>
+              <p className="mt-1 text-xs text-slate-500">
+                {item.source} / {item.isExternal ? "external" : "native"} / canSettle={String(item.canSettle)}
+              </p>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-slate-600">No visible items for this tenant catalog.</p>
+        )}
+      </div>
+    </div>
   );
 }
 

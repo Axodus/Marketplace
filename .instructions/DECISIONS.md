@@ -1450,6 +1450,68 @@ CONFIRMED
 
 ---
 
+# Phase 10 Enterprise Marketplace Preview Layer
+
+Decision:
+Marketplace implements Enterprise Marketplace as a mock-first, governance-aware and treasury-compatible preview layer.
+
+Approved:
+- Enterprise Product records
+- Enterprise Subscription Plan records
+- Enterprise License records
+- Enterprise Provisioning Profile records
+- Enterprise Billing Preview records
+- Enterprise Telemetry Snapshot records
+- Enterprise preview adapters for subscription, license, provisioning, billing and governance guardrails
+- Enterprise routes for explorer, operations, detail, subscribe preview, license, provisioning, billing and telemetry
+
+Deferred:
+- live subscription activation
+- production billing provider calls
+- invoices and accounting entries
+- settlement and treasury routing
+- wallet signatures and contract writes
+- tenant provisioning
+- ACS deployment and compute allocation
+- backend, API, database and external onboarding
+
+Status:
+CONFIRMED
+
+---
+
+# Phase 11 Sovereign Commerce Network
+
+Decision:
+Marketplace implements the Axodus Sovereign Commerce Network as a mock/config-first read model that composes prior Marketplace phases into one sovereign commerce visibility layer.
+
+Approved:
+- Sovereign Commerce Nodes
+- Sovereign Commerce Links
+- Sovereign Governance Boundaries
+- Sovereign Isolation Boundaries
+- Sovereign Observability Snapshots
+- Sovereign Commerce route and node detail route
+- non-executing validation for cross-tenant distribution, marketplace federation, DAO commercial participation, intelligence, revenue visibility, attribution traceability, governance, isolation and observability
+
+Deferred:
+- commerce execution
+- order routing
+- value transfer
+- settlement and treasury routing
+- billing execution
+- governance execution
+- cross-tenant writes
+- ACS provisioning
+- external marketplace onboarding
+- tracking, BI and automation
+- backend, API and database
+
+Status:
+CONFIRMED
+
+---
+
 # Pending Decisions
 
 ## DAO Marketplace Federation
@@ -1460,13 +1522,6 @@ PENDING
 ---
 
 ## ACS Provider Monetization
-
-Status:
-PENDING
-
----
-
-## Enterprise Licensing Model
 
 Status:
 PENDING

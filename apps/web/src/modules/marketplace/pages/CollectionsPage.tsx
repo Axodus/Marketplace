@@ -1,10 +1,13 @@
 import { CollectionCard } from "../components/CollectionCard";
-import { useCollections } from "../hooks/useMarketplace";
+import { RevenueTrustRiskIntelligencePanel } from "../components/RevenueTrustRiskIntelligencePanel";
+import { useCollections, useFederationIntelligenceContext } from "../hooks/useMarketplace";
 import { useMarketplaceTelemetry } from "../hooks/useMarketplaceTelemetry";
 
 export function CollectionsPage() {
   const { data, error, isLoading } = useCollections();
   const collections = data ?? [];
+  const primaryFederatedCollection = collections.find((view) => view.collection.isFederated)?.collection;
+  const federationIntelligenceQuery = useFederationIntelligenceContext(primaryFederatedCollection?.id);
   useMarketplaceTelemetry("collections-page", { collectionCount: collections.length });
 
   if (isLoading) {
@@ -35,6 +38,12 @@ export function CollectionsPage() {
           provider-reported mock data only and do not use live providers, indexers, floor-price APIs or on-chain reads.
         </p>
       </div>
+
+      <RevenueTrustRiskIntelligencePanel
+        title="Federation Intelligence Context"
+        description="Federation Intelligence Context preserves origin, provider, validation status, provenance, risk classification and trust boundaries for federated collections. It does not score risk, score trust, approve, block, settle, payout or monetize automatically."
+        view={federationIntelligenceQuery.data}
+      />
 
       {collections.length ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

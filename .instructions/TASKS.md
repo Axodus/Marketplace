@@ -1,19 +1,530 @@
 # Marketplace Roadmap
 
+# Phase 11 - Sovereign Commerce Network
+
+Status: COMPLETED - MOCK/CONFIG-FIRST SOVEREIGN COMMERCE NETWORK VALIDATED
+
+Closure artifact:
+- `docs/PHASE_11_SOVEREIGN_COMMERCE_NETWORK_CLOSURE.md`
+
+Delivered:
+- Sovereign Commerce Network route at `/marketplace/sovereign` and node detail route at `/marketplace/sovereign/:nodeSlug`
+- Sovereign Commerce Nodes for cross-tenant distribution, marketplace federation, DAO commercial participation, ecosystem commercial intelligence, revenue/attribution visibility, federated governance/isolation and commercial observability
+- Sovereign Commerce Links between distribution, revenue, federation, governance, intelligence and observability nodes
+- Sovereign Governance Boundaries, Isolation Boundaries and Observability Snapshots
+- Service helpers and hooks for network resolution, node lookup and mock-only validation
+- Tests proving Phase 11 composes prior Marketplace phases and remains non-executing
+
+Constraints:
+- Phase 11 keeps `isSimulated=true`
+- `canExecuteCommerce`, `canSettle`, `canRouteTreasury`, `canExecuteBilling`, `canWriteCrossTenant`, `canExecuteGovernance`, `canProvisionACS`, `canOnboardExternalMarketplaces`, `canSyncData`, `canTransferValue`, `canRouteOrders`, `canPropagateGovernance`, `usesLiveTelemetry`, `usesTracking`, `usesBI` and `canTriggerAutomation` remain false
+- no commerce execution, order routing, settlement, treasury routing, billing execution, governance execution, cross-tenant write, private data sharing, ACS provisioning, external onboarding, tracking real, BI, automation, backend, API or database was introduced
+- Existing NFT Marketplace, tenant, distribution, revenue sharing, intelligence, Academy, ACS and Enterprise behavior remains intact
+
+---
+
+# Phase 10 - Enterprise Marketplace
+
+Status: COMPLETED - MOCK-FIRST ENTERPRISE MARKETPLACE VALIDATED
+
+Closure artifact:
+- `docs/PHASE_10_ENTERPRISE_MARKETPLACE_CLOSURE.md`
+
+Delivered:
+- Enterprise Marketplace routes at `/marketplace/enterprise`, `/marketplace/enterprise/operations`, `/marketplace/enterprise/:slug`, `/marketplace/enterprise/:slug/subscribe-preview`, `/marketplace/enterprise/:slug/license`, `/marketplace/enterprise/:slug/provisioning`, `/marketplace/enterprise/:slug/billing` and `/marketplace/enterprise/:slug/telemetry`
+- Enterprise Products, Enterprise Subscription Plans, Enterprise Licenses, Enterprise Provisioning Profiles, Enterprise Billing Previews and Enterprise Telemetry Snapshots from centralized mock data
+- preview-only adapters for enterprise subscription, license, provisioning, billing and governance guardrails
+- governance guardrails for allowed-mock, pending-review, treasury-review-required, restricted and blocked states
+- operations summary for product counts, governance states, plan statuses, provisioning statuses, billing preview statuses, blocking issues and review queue
+- tests for mock relationships, missing-record safety, blocked/review guardrails and non-execution boundaries
+
+Constraints:
+- Phase 10 keeps `isSimulated=true`
+- `canActivateSubscription`, `canExecuteBilling`, `canRouteTreasury`, `canSettle`, `canDeployACS`, `canProvisionTenant`, `canWriteContracts`, `canExecutePayment`, `canInvoice`, `canAccount`, `canAllocateCompute`, `canAccessSecrets`, `canStartRuntime`, `usesLiveTelemetry`, `usesExternalAnalytics` and `canTriggerAutomation` remain false
+- no live subscription activation, billing provider, invoice, accounting, settlement, treasury routing, wallet signature, contract write, tenant provisioning, ACS deployment, compute allocation, backend, API, database, bridge or external onboarding was introduced
+- Existing NFT Marketplace behavior remains intact and stays available at `/marketplace/explore`, product detail, collection, seller, listing, purchase preview and asset registry routes
+- Phase 11 - Sovereign Commerce Network is now completed as mock/config-first sovereign commerce visibility work
+
+---
+
+# Phase 09 - ACS Distribution
+
+Status: COMPLETED - MOCK/CONFIG-FIRST ACS DISTRIBUTION VALIDATED
+
+Closure artifact:
+- `docs/PHASE_09_CLOSURE_REPORT.md`
+
+Delivered:
+- AI Agents and Agent Capabilities in mock/config-first mode
+- MCP Packages and MCP Versions in review-required/preview-only mode
+- Workflow Systems, Workflow Templates and Workflow Bundles in preview-only mode
+- Compute Access and Compute Tiers with no allocation, no runtime start and no billing
+- ACS Access Previews with no access grant, no provisioning, no execution, no deployment, no workflow run and no compute allocation
+- Execution Boundaries, Provisioning Boundaries and Capability Data Boundaries validating no agent execution, no MCP deployment, no workflow run, no compute allocation, no provisioning, no secret access, no tracking, no analytics and no data export
+- ACS Distribution Context linked to tenant, curated catalog, catalog segment, distribution, attribution, revenue sharing and intelligence context
+- ACS navigation at `/marketplace/acs`
+
+Constraints:
+- Phase 09 keeps `isSimulated=true`
+- `canExecute`, `canCallTools`, `canDeploy`, `canInstall`, `canConnectServer`, `canExposeTools`, `canRunWorkflow`, `canScheduleWorkflow`, `canAllocateCompute`, `canScaleCompute`, `canStartRuntime`, `canProvision`, `canAccessSecrets`, `canBill`, `canSettle` and `canTriggerPayout` remain false
+- no ACS runtime, agent execution, MCP deployment, workflow execution, compute allocation, provisioning, secret access, external integration, billing, settlement, payout, backend, API or database was introduced
+- Phase 10 - Enterprise Marketplace is now completed as mock-first preview work
+
+---
+
+# Phase 08 - Academy Distribution
+
+Status: COMPLETED - MOCK/CONFIG-FIRST ACADEMY DISTRIBUTION VALIDATED
+
+Planning artifact:
+- `docs/PHASE_08_ACADEMY_DISTRIBUTION_AUDIT.md`
+
+Recommended implementation sequence:
+- MEP-08A - Academy Distribution Planning and Learning Commerce Boundary Audit - COMPLETED
+- MEP-REQ-080 - Courses - COMPLETED
+- MEP-REQ-081 - Certifications - COMPLETED
+- MEP-REQ-082 - Learning Subscriptions - COMPLETED
+- MEP-PHASE-08-CLOSURE - QA, navigation and Academy Distribution boundary validation - COMPLETED
+
+MEP-08A delivered:
+- mapped the current post-Phase 07 Marketplace runtime and documentation state for Academy Distribution planning
+- identified existing tenant, curated catalog, featured catalog, catalog segment, distribution, attribution, revenue sharing preview, Marketplace Intelligence, data boundary and federation trust contexts that can carry future academy context
+- differentiated Academy Distribution from LMS real, credentialing real, subscription billing real and enterprise provisioning
+- defined conceptual models for Academy Product, Course, Course Module, Lesson, Learning Path, Certification, Certification Requirement, Credential Preview mock, Certificate/Badge mock, Learning Subscription, Learning Subscription Tier, Learning Access Preview, Academy Distribution Context, Academy Data Boundary and Academy Intelligence Summary
+- recommended academy product types, course types, course statuses, certification statuses, learning subscription statuses, access preview statuses and academy data boundary statuses
+- mapped future entry points across navigation, marketplace home, explorer, tenant storefronts, curated catalogs, featured catalogs, catalog segments, distribution channels, profiles, community distributions, attribution sources, revenue sharing, Marketplace Intelligence, product details, collections, sellers, asset registry, create/sell preview, buy-now, bid and dashboard surfaces
+- defined learning commerce, LMS, credential, assessment, access/entitlement, subscription/billing, tracking/analytics, revenue sharing, intelligence, federation and trust boundaries
+- preserved no LMS real, no course player, no enrollment real, no paid access, no entitlement productive, no progress tracking, no learning analytics, no assessment, no exam, no grade, no credential issuance, no credential verification, no certificate mint, no wallet signature, no billing, no invoice, no accounting, no tax, no payment gateway, no payout, no settlement, no treasury routing, no enterprise provisioning, no backend, no API, no database and no external education integration boundaries
+
+Constraints:
+- MEP-08A is documentation/audit planning only and does not implement Academy Distribution runtime
+- future Phase 08 work must keep `isSimulated=true`
+- `hasRealPlayer`, `canTrackProgress`, `canRecordCompletion`, `canIssueCredential`, `canVerifyCredential`, `canMintOnChain`, `canSignCredential`, `canRecordAssessment`, `canBill`, `canInvoice`, `canChargePayment`, `canGrantEntitlement`, `canSettle` and `canTriggerPayout` must remain false during Phase 08
+- Phase 09 - ACS Distribution and Phase 10 - Enterprise Marketplace remain future work
+
+MEP-PHASE-08-CLOSURE delivered:
+- Academy Products, Courses, Course Modules, Lessons and Learning Paths in mock/config-first mode
+- Certifications, Certification Requirements, Credential Preview and Certificate/Badge mock in preview-only mode
+- Learning Subscriptions, Learning Access Preview and Learning Entitlement mock with no billing and no productive entitlement
+- Academy Distribution Context linked to tenant, curated catalog, distribution, attribution, revenue sharing, intelligence and federation context
+- Academy Data Boundary validation with no LMS, no progress tracking, no learning analytics, no credential issuance, no credential verification, no billing, no entitlement productive, no settlement and no payout
+- Academy navigation at `/marketplace/academy`
+- Closure report: `docs/PHASE_08_CLOSURE_REPORT.md`
+
+---
+
+# Phase 07 - Marketplace Intelligence
+
+Status: COMPLETED - MARKETPLACE INTELLIGENCE VALIDATED MOCK/CONFIG-FIRST
+
+Planning artifact:
+- `docs/PHASE_07_MARKETPLACE_INTELLIGENCE_AUDIT.md`
+
+Closure artifact:
+- `docs/PHASE_07_CLOSURE_REPORT.md`
+
+Recommended implementation sequence:
+- MEP-07A - Marketplace Intelligence Planning and Data Boundary Audit - COMPLETED
+- MEP-REQ-070 - Marketplace Intelligence Model - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-071 - Insight Signals and Intelligence Snapshots - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-072 - Catalog, Tenant and Distribution Intelligence Panels - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-073 - Recommendation Preview and Ranking Explanation - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-074 - Revenue, Trust and Risk Intelligence Integration - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-PHASE-07-CLOSURE - QA, navigation and Marketplace Intelligence boundary validation - COMPLETED
+
+MEP-07A delivered:
+- mapped the current post-Phase 06 Marketplace runtime and documentation state for intelligence planning
+- identified existing mock data, tenant contexts, curated contexts, distribution contexts, revenue-sharing contexts and federation trust contexts that can feed future intelligence summaries
+- differentiated intelligence mock, analytics real, BI real, scoring real, recommendation engine real, ranking real and automated decisioning
+- defined conceptual models for Marketplace Insight, Insight Signal, Intelligence Snapshot, Recommendation Preview, Ranking Explanation, Risk/Trust Insight and Data Boundary
+- recommended insight types, signal types, confidence labels, data boundary statuses, recommendation preview statuses and ranking explanation types
+- mapped future entry points across marketplace home, explorer, tenant storefronts, curated catalogs, segments, distribution channels, profiles, attribution sources, community distributions, revenue sharing surfaces, products, collections, sellers and dashboard surfaces
+- defined governance, privacy, tracking, analytics, BI, scoring, recommendation, automation, decision and trust boundaries
+- preserved no tracking real, no analytics real, no BI, no scoring real, no recommendation engine, no ranking algorithm, no personalization, no profiling, no data export, no ML/AI runtime, no backend, no API and no database boundaries
+
+MEP-REQ-070 delivered:
+- added Marketplace Insight, Insight Signal, Intelligence Snapshot, Data Boundary and Intelligence Audit Note mock/config-first models
+- added mock Marketplace Insight records for global Marketplace readiness, Academy tenant readiness and revenue/trust boundary intelligence
+- added mock Insight Signal, Intelligence Snapshot, Data Boundary and audit note records with all tracking, analytics, BI, scoring, ML, automation, export and commercial action flags disabled
+- added helpers to list Marketplace Insights, resolve an insight by id or slug, list Insight Signals, resolve Data Boundaries, validate mock-only intelligence and explain Marketplace Intelligence boundaries
+- added hooks for Marketplace Insights, Insight detail, Insight Signals, Data Boundary resolution and mock-only validation
+- added `/marketplace/intelligence` and `/marketplace/intelligence/:insightSlug` UI surfaces with mock-only/no-tracking/no-BI/no-scoring/no-automated-decisioning boundary labels
+- added navigation exposure for Marketplace Intelligence
+- added service tests for insight listing, signal resolution, Data Boundary resolution and disabled execution/intelligence flags
+- preserved no tracking real, no analytics real, no BI, no scoring real, no risk scoring real, no trust scoring real, no recommendation engine real, no ranking algorithm real, no personalization, no profiling, no wallet tracking, no behavioral tracking, no event pipeline, no data warehouse, no ML model, no AI runtime, no automated decisioning, no automated commercial action, no retargeting, no data export, no backend, no API and no database boundaries
+
+MEP-REQ-071 delivered:
+- expanded Insight Signal mock records for catalog editorial, distribution coverage, community federated exposure and federation provider risk contexts
+- expanded Intelligence Snapshot mock records for Marketplace, Tenant, Catalog, Distribution Channel, Distribution Profile, Revenue, Community and Federation scopes
+- added slug, title and scoped references to Intelligence Snapshot records while preserving the generic snapshot model
+- added Data Boundary records for catalog, distribution, community and federation intelligence scopes
+- added helpers to list all Insight Signals, resolve signal by id or slug, list Intelligence Snapshots, resolve snapshot by id or slug, list snapshots by scope and resolve specialized snapshots by marketplace, tenant, catalog, distribution, revenue, community and federation context
+- added snapshot mock-only validation and snapshot boundary explanation helpers
+- added hooks for all signals, signal detail, snapshots, snapshot detail, snapshots by scope, specialized snapshot resolution and snapshot validation
+- expanded Marketplace Intelligence UI to display static mock snapshots by scope with mock-only/static-only/no-tracking/no-BI/no-ML/no-automated-decisioning labels
+- added service tests for specialized signals, snapshots by scope, specialized snapshot resolvers and static mock boundary validation
+- preserved no events real, no tracking real, no analytics pipeline, no data warehouse, no BI, no ML model, no scoring, no recommendation engine, no behavioral collection, no wallet tracking, no automated decisioning, no backend, no API and no database boundaries
+
+MEP-REQ-072 delivered:
+- added reusable Marketplace Intelligence Panel component with Insight Summary Card, Snapshot Summary Card, Boundary Warning Card, Data Boundary Badge and mock-only/no-tracking/no-BI/no-scoring/no-recommendation-engine/no-automated-decisioning labels
+- integrated Marketplace Intelligence Panel into the Marketplace Intelligence surface
+- integrated Tenant Intelligence Panel into Tenant Storefront detail
+- integrated Catalog Intelligence Panel into Curated Catalog detail
+- integrated Distribution Intelligence Panel into Distribution Channel and Distribution Profile detail
+- integrated Community Intelligence Panel into Community Marketplace Distribution detail
+- integrated Attribution Intelligence Panel into Attribution Source detail by reusing the related Distribution static mock snapshot
+- added service panel resolvers for marketplace, tenant, catalog, distribution, community and attribution contexts
+- added hooks for marketplace, tenant, catalog, distribution, community and attribution intelligence panels
+- added service tests for panel resolution, badge coverage and disabled analytics/tracking/BI/scoring/recommendation/automated-decision/data-export flags
+- preserved no dashboard BI real, no analytics real, no tracking real, no scoring, no recommendation engine, no automated decisioning, no personalization real, no data export, no behavioral collection, no backend, no API and no database boundaries
+
+MEP-REQ-073 delivered:
+- added Recommendation Preview and Ranking Explanation mock/config-first models for marketplace, tenant, curated catalog, distribution channel and community distribution contexts
+- added mock fit labels, mock opportunity labels, editorial ranking notes, discovery notes, data boundary references and disabled recommendation/ranking automation flags
+- added helpers to list Recommendation Previews, resolve previews by id or slug, list previews by scope, list Ranking Explanations, resolve explanations by id or slug, explain recommendation ranking and validate mock-only boundaries
+- added hooks for recommendation preview listing, scoped preview listing, ranking explanations, ranking explanation notes and mock-only validation
+- added reusable Recommendation Preview Panel with preview-only, editorial mock, no recommendation engine, no automated ranking, no personalization, no profiling, no behavioral tracking, no wallet profiling, no automated decisioning and no commercial action labels
+- integrated Recommendation Preview Panel into Marketplace Intelligence, Tenant Storefront, Curated Catalog, Distribution Channel and Community Distribution surfaces
+- added service tests for recommendation preview scope resolution, ranking explanation resolution, mock signal linkage, Data Boundary linkage and disabled personalization/profiling/recommendation/ranking/action flags
+- preserved no recommendation engine real, no ranking algorithm real, no personalization, no profiling, no behavioral tracking, no wallet profiling, no automated decisioning, no retargeting, no automated commercial action, no backend, no API and no database boundaries
+
+MEP-REQ-074 delivered:
+- added Revenue Intelligence Summary, Revenue Preview Insight, Settlement Boundary Insight, Risk Trust Insight, Federation Intelligence Context, Provider Validation Insight and Provenance Insight mock/config-first models
+- added mock revenue/trust/risk records linked to revenue sharing previews, settlement boundaries, attribution sources, distribution context and federated collections
+- added helpers to resolve revenue intelligence by policy, revenue preview insight, settlement boundary insight, risk/trust insights by scope, revenue policy and attribution source, federation intelligence context and mock-only validations
+- added hooks for revenue/trust/risk summaries, scoped risk/trust insights, federation intelligence context and validation helpers
+- added reusable Revenue Trust Risk Intelligence Panel with no risk scoring, no trust scoring, no financial BI, no accounting, no tax, no settlement, no payout, no automated decisioning, no automated blocking, no automated approval and no automated monetization labels
+- integrated Revenue Trust Risk Intelligence Panel into Revenue Sharing, Marketplace Intelligence, Distribution Channel, Community Distribution and Collections surfaces
+- added service tests for Revenue Intelligence Summary, Revenue Preview Insight, Settlement Boundary Insight, Risk Trust Insight, Federation Intelligence Context, Provider Validation Insight and Provenance Insight
+- preserved origin, provider, validation status, provenance, risk classification and trust boundaries for federated assets without altering federated asset status
+- preserved no risk scoring real, no trust scoring real, no financial BI, no accounting, no tax, no settlement, no payout, no billing, no automated blocking, no automated approval, no automated monetization, no backend, no API and no database boundaries
+
+MEP-PHASE-07-CLOSURE delivered:
+- created `docs/PHASE_07_CLOSURE_REPORT.md` as the closure validation artifact
+- validated Marketplace Insight, Insight Signal, Intelligence Snapshot, Tenant/Catalog/Distribution/Revenue/Community/Federation Snapshot, Data Boundary and Intelligence Audit Note coverage
+- validated Marketplace, Tenant, Catalog, Distribution, Attribution, Community, Revenue/Trust/Risk and Collection intelligence surfaces in code and tests
+- validated Recommendation Preview and Ranking Explanation as editorial/mock preview-only records with no recommendation engine, ranking algorithm, personalization, profiling, behavioral tracking, wallet profiling, automated decisioning, retargeting or automated commercial action
+- validated Revenue/Trust/Risk Intelligence as explanatory mock records with no risk scoring real, trust scoring real, financial BI, accounting, tax, settlement, payout, billing, automated blocking, automated approval, automated monetization, backend, API or database
+- preserved Phase 07 as mock/config-first, non-tracking and non-automated after lint, test, build, diff and boundary validation
+
+Constraints:
+- Phase 07 work must remain mock/config-first and non-tracking until explicit implementation requests authorize bounded runtime changes
+- MEP-07A is documentation/audit planning only; it does not modify, extend, activate or validate Marketplace Intelligence runtime
+- MEP-REQ-070 implements only local mock/config-first Marketplace Intelligence read models, helpers, hooks and UI surfaces
+- MEP-REQ-071 implements only static mock Insight Signals and Intelligence Snapshots derived from local mock data/configuration
+- MEP-REQ-072 implements only static visual panels over existing mock Intelligence Snapshots and Data Boundaries
+- MEP-REQ-073 implements only editorial/static/mock Recommendation Preview and Ranking Explanation records; it does not implement a recommendation engine, algorithmic ranking, personalization, profiling, behavioral tracking, wallet profiling, automated decisioning, retargeting or commercial action automation
+- MEP-REQ-074 implements only explanatory revenue/trust/risk intelligence records; it does not implement risk scoring real, trust scoring real, financial BI, accounting, tax, settlement, payout, billing, automated blocking, automated approval, automated monetization, backend, API or database
+- `isSimulated` must remain true for future Phase 07 read models
+- `usesRealTracking`, `usesPersonalData`, `usesBehavioralData`, `usesWalletProfiling`, `usesAnalyticsPipeline`, `usesBI`, `usesMLModel`, `usesAutomatedDecisioning`, `canRecommendAutomatically`, `canRankAutomatically`, `canTriggerCommercialAction` and `canExportData` must remain false during Phase 07
+
+---
+
+# Phase 06 - Revenue Sharing
+
+Status: COMPLETED - REVENUE SHARING VALIDATED MOCK/CONFIG-FIRST
+
+Planning artifact:
+- `docs/PHASE_06_REVENUE_SHARING_AUDIT.md`
+
+Closure artifact:
+- `docs/PHASE_06_CLOSURE_REPORT.md`
+
+Recommended implementation sequence:
+- MEP-06A - Revenue Sharing Planning and Settlement Boundary Audit - COMPLETED
+- MEP-REQ-060 - Revenue Sharing Model - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-061 - Commission Models and Participant Shares - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-062 - Attribution-to-Split Rules - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-063 - Revenue Sharing Preview and Audit Trail - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-064 - Tenant/Distribution Revenue Sharing Integration - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-PHASE-06-CLOSURE - QA, navigation and Revenue Sharing boundary validation - COMPLETED
+
+MEP-06A delivered:
+- mapped the current post-Phase 05 Marketplace runtime and documentation state
+- differentiated Attribution Source, Commercial Origin, Commission Model, Revenue Share, Revenue Split Rule, Participant Share, Payout, Billing and Settlement boundaries
+- defined conceptual models for Revenue Sharing Policy, Revenue Split Rule, Commission Model, Revenue Participant, Participant Share, Revenue Attribution Snapshot, Revenue Sharing Preview, Settlement Boundary, Payout Preview mock, Revenue Sharing Audit Entry, Tenant Revenue Sharing Config and Distribution Revenue Sharing Config
+- recommended participant types, revenue sharing statuses, split rule types and settlement boundary statuses
+- mapped future entry points across navigation, tenant storefronts, curated catalogs, distribution channels, profiles, community distribution, attribution sources, products, collections, sellers, dashboards, asset registry and commerce preview modals
+- defined governance, financial execution, settlement, treasury, attribution-to-split and trust boundaries
+- preserved no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend, no API, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
+
+Constraints:
+- Phase 06 work must remain mock/config-first until explicit implementation requests authorize bounded runtime changes
+- MEP-06A is documentation/audit planning only; it may reference existing bounded runtime artifacts as prior context, but it does not modify, extend, activate or validate them as Phase 06 Revenue Sharing runtime
+- `canCalculatePreview` may be true only for simulation
+- `canSettle`, `canTriggerPayout`, `canRouteTreasury`, `canInvoice`, `canAccount` and `canReceivePayout` must remain false during Phase 06
+
+MEP-REQ-060 delivered:
+- added Revenue Sharing Policy, Revenue Split Rule, Revenue Participant, Participant Share, Settlement Boundary, status, scope, participant type and governance status models
+- added mock/config-first Revenue Sharing Policies for Academy tenant, Community Marketplace Distribution and Governance product contexts
+- added helpers to list policies, resolve a policy by id or slug, list participants, list split rules, list participant shares and resolve Settlement Boundary
+- added policy filters by tenant, distribution channel and curated catalog
+- added hooks for policies, detail, participants, rules, shares, settlement boundary and boundary notes
+- added `/marketplace/revenue-sharing` and `/marketplace/revenue-sharing/:policySlug` UI surfaces with preview-only/no-payout/no-settlement boundary labels
+- added tests for policy resolution, participant and rule references, share totals and disabled payout/settlement/billing/treasury execution flags
+- preserved no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend API, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
+
+MEP-REQ-061 delivered:
+- added Commission Model, Commission Model Rule, Participant Share Validation and Participant Share Conflict models
+- expanded Participant Share records with commission model, participant type/ref, cap/floor mock and disabled payout/settlement flags
+- added mock/config-first Commission Models for Academy tenant, Community distribution and Governance product contexts
+- represented Platform Share, Tenant Share, Distributor Share, Partner Share, Affiliate Share, Agency Share, Creator Share and Community Share as simulated participant shares
+- added helpers to list commission models, resolve a model by id or slug, filter by policy, list participant shares by model, calculate mock share totals and detect cap/floor/share-total conflicts
+- added hooks and Revenue Sharing UI sections for Commission Model validation, Participant Share details, cap/floor warnings and conflict-mock status
+- added tests for valid-mock, warning-mock and conflict-mock commission models, share totals, cap warnings and disabled payout/settlement/receive-payout flags
+- preserved no commission real, no obligation financial, no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no split on-chain, no payment gateway, no backend, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
+
+MEP-REQ-062 delivered:
+- added Attribution-to-Split Rule, Attribution Split Mapping, Commercial Origin Split Mapping, Distribution Source Split Mapping, Attribution Split Resolution and Attribution Split Explanation models
+- added mock/config-first attribution-to-split rules for placement, campaign, referral and community distribution contexts
+- connected Attribution Source, Distribution Source and Commercial Origin records to simulated target policies, commission models, participants and participant shares
+- added helpers to list rules by attribution source, distribution channel, distribution profile and community distribution
+- added helpers to resolve simulated split suggestions, mapping records and rule application explanations
+- added hooks and Attribution Sources UI sections for Attribution-to-Split mappings, applied/blocked rules and boundary notes
+- added tests for campaign split suggestion, affiliate referral blocked mapping, commercial origin mapping, distribution source mapping and disabled execution flags
+- preserved no tracking real, no commission tracking, no attribution financeira real, no payout, no settlement, no billing, no analytics tracking, no BI, no Marketplace Intelligence, no backend, no API and no database boundaries
+
+MEP-REQ-063 delivered:
+- added Revenue Sharing Preview, Payout Preview mock, Settlement Preview mock, Revenue Sharing Audit Entry, preview status and audit event type models
+- added mock/config-first preview records for Academy tenant, Community distribution and Governance product policies
+- added Payout Preview mock and Settlement Preview mock records that remain non-executing
+- added Revenue Sharing Audit Trail mock entries for preview generation, rule application, boundary notes, conflict warnings and settlement preview blocking
+- added helpers to resolve preview by policy, list audit entries by policy, explain participant splits, explain rule application and list conflict warnings
+- added hooks and Revenue Sharing UI sections for preview, payout preview mock, settlement preview mock, participant split explanation, rule application explanation, conflict warnings and audit trail
+- added tests for preview status, participant split explanation, applied/blocked rules, payout/settlement preview boundaries, audit entries and disabled execution flags
+- preserved no payment, no payout, no settlement, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend, no database, no BI and no Marketplace Intelligence boundaries
+
+MEP-REQ-064 delivered:
+- added Tenant Revenue Sharing Config, Distribution Revenue Sharing Config, Curated Catalog Revenue Sharing Config and Community Revenue Sharing Config mock records
+- added Revenue Sharing Integrated Context and Revenue Sharing Resolution helpers for tenant, distribution channel, distribution profile, curated catalog and community distribution contexts
+- connected policies, commission models, participant shares, attribution-to-split mappings, previews, audit trail and settlement boundaries in preview-only mode
+- added hooks and UI panels across tenant storefront, distribution channel, distribution profile, curated catalog and community distribution detail surfaces
+- preserved tenant isolation, curated catalog editorial rules, distribution boundaries, attribution boundaries and federation trust boundaries
+- preserved no payout, no settlement, no billing, no invoice, no accounting, no tax, no treasury routing, no payment gateway, no wallet signature, no backend, no API, no database, no analytics tracking, no BI and no Marketplace Intelligence boundaries
+
+MEP-PHASE-06-CLOSURE delivered:
+- validated Revenue Sharing Policy, Revenue Split Rule, Commission Model, Revenue Participant, Participant Share, Attribution-to-Split, Preview mock, Audit Trail mock and integration surfaces across tenant, distribution, curated catalog and community contexts
+- added restricted policy coverage and empty-state handling for boundary-only revenue sharing routes
+- confirmed preview-only/no payout/no settlement/no billing/no invoice/no accounting/no tax/no treasury routing/no payment gateway/no wallet signature wording across Revenue Sharing surfaces
+- validated route availability in `main.tsx`, navigation exposure in `src/components/Layout.tsx` and integration panel rendering in Marketplace pages
+- executed lint, test, build, text boundary scans, diff checks and local rendered navigation checks against the built app
+- confirmed Phase 06 closes without payout, settlement, billing, invoice, accounting, tax, treasury routing, payment gateway, backend, API, database, contract, wallet signature, analytics tracking, BI or Marketplace Intelligence activation
+
+---
+
+# Phase 05 - Distribution Network Planning
+
+Status: COMPLETED - DISTRIBUTION NETWORK VALIDATED MOCK/CONFIG-FIRST
+
+Planning artifact:
+- `docs/PHASE_05_DISTRIBUTION_NETWORK_AUDIT.md`
+
+Closure artifact:
+- `docs/PHASE_05_CLOSURE_REPORT.md`
+
+Runtime surfaces:
+- `/marketplace/distribution`
+- `/marketplace/distribution/:channelId`
+- `/marketplace/distribution/profiles`
+- `/marketplace/distribution/profiles/:profileSlug`
+- `/marketplace/distribution/attribution`
+- `/marketplace/distribution/attribution/:sourceSlug`
+- `/marketplace/distribution/communities`
+- `/marketplace/distribution/communities/:communitySlug`
+- `/marketplace/tenants/:tenantId`
+- `/marketplace/t/:tenantSlug`
+- `/marketplace/curated/:catalogId`
+
+Recommended implementation sequence:
+- MEP-05A - Distribution Network Planning and Attribution Audit - COMPLETED
+- MEP-REQ-050 - Distribution Network Model - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-051 - Distributor and Partner Profiles - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-052 - Attribution and Distribution Sources - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-053 - Community Marketplace Distribution - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-054 - Tenant and Curated Catalog Distribution Integration - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-PHASE-05-CLOSURE - QA, navigation and Distribution Network boundary validation - COMPLETED
+
+MEP-05A delivered:
+- mapped the current post-Phase 04 Marketplace runtime and documentation state
+- differentiated Tenant Marketplace, Partner Marketplace, Distributor, Partner, Agency, Affiliate and Community Marketplace boundaries
+- defined planning models for Distribution Network, Distribution Channel, Distribution Placement, Distribution Source, Attribution Source and Commercial Origin
+- recommended distribution channel types, distribution statuses and attribution statuses
+- defined governance, attribution, commercial exposure and trust boundaries
+- mapped future gaps for MEP-REQ-050 through MEP-REQ-054 without implementing runtime
+- preserved no revenue sharing, no settlement, no billing, no payout, no commission, no tracking real, no Marketplace Intelligence, no backend, no API, no database, no analytics and no BI boundaries
+
+MEP-REQ-050 delivered:
+- added Distribution Network, Distribution Channel, Distribution Placement, Distribution Source, Commercial Origin and Attribution Source models
+- added mock/config-first Distribution Network, Distribution Channel and Distribution Placement data
+- added helpers to list networks and channels, resolve channel detail and resolve a basic Distribution Context with global fallback
+- added hooks for Distribution Networks, Distribution Channels and Distribution Context
+- added `/marketplace/distribution` and `/marketplace/distribution/:channelId` surfaces
+- displayed channel type, status, visibility, governance status, scope, commercial origin, attribution source, distribution source, allowed and blocked references, placements, warnings and disclaimers
+- differentiated Tenant Marketplace, Partner Channel, Distributor Channel, Agency Channel, Affiliate Channel, Community Channel and Demo Channel
+- preserved canTrack=false, canAttributeRevenue=false and canSettle=false on distribution channels and attribution sources
+- preserved no revenue sharing, no settlement, no billing, no payout, no commission, no tracking real, no Marketplace Intelligence, no backend, no API, no database, no analytics and no BI boundaries
+
+MEP-REQ-051 delivered:
+- added Distribution Profile and Distribution Profile Relationship models for Distributor Profile, Partner Profile, Agency Profile, Affiliate Profile, Community Marketplace Profile and Demo Profile
+- added mock/config-first Distribution Profile data linked to existing Distribution Channels, Tenants, Curated Catalogs and Catalog Segments by reference
+- added helpers to list profiles, resolve profile detail by id or slug, filter profiles by type or channel and resolve Distribution Profile Context with fallback
+- added hooks for Distribution Profiles, Distribution Profile detail, Distribution Profiles by type and Distribution Profile Context
+- added `/marketplace/distribution/profiles` and `/marketplace/distribution/profiles/:profileSlug` surfaces
+- displayed profile type, status, visibility, governance status, operator label, trust label, commercial label, associated channels, associated tenants, associated curated catalogs, associated segments, capabilities, limitations, relationships, warnings and disclaimers
+- differentiated Distribution Profile from Seller Profile, Tenant Identity and Federation Provider
+- preserved no KYC real, no onboarding real, no contract real, no payout, no commission, no revenue sharing, no settlement, no billing, no tracking real, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
+
+MEP-REQ-052 delivered:
+- added detailed Attribution Source, Attribution Note and Attribution Context models while preserving the basic channel-level Attribution Source model
+- added mock/config-first attribution records for Placement Source mock, Campaign Source mock, Referral Source mock, Community Marketplace source, Manual Source mock and Demo source
+- linked Attribution Sources to existing Distribution Channels, Distribution Profiles, Tenants, Curated Catalogs, Catalog Segments and Distribution Placements by reference
+- added helpers to list attribution sources, resolve source detail by id or slug, filter by channel/profile/tenant/curated catalog/segment/placement and resolve Attribution Context
+- added helpers to retrieve Commercial Origin and Distribution Source for an Attribution Source and explain attribution boundaries
+- added hooks for Attribution Sources, Attribution Source detail, Attribution Sources by channel/profile and Attribution Context
+- added `/marketplace/distribution/attribution` and `/marketplace/distribution/attribution/:sourceSlug` surfaces
+- displayed source type, tracking mode, commercial origin, distribution source, associated channel, associated profile, associated tenant, associated curated catalog, associated segment, associated placement, attribution notes, warnings and disclaimers
+- preserved canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false on detailed Attribution Sources
+- preserved no tracking real, no cookies, no analytics tracking, no commission tracking, no payout, no settlement, no billing, no revenue sharing, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
+
+MEP-REQ-053 delivered:
+- added Community Marketplace Distribution, Community Distribution Context, Community Distribution Item and Community Distribution Rule models
+- added mock/config-first community distribution data for a creator/federated community and an empty restricted demo community
+- linked community distributions to existing Community Marketplace Profile, Distribution Channel, Attribution Source, Tenants, Curated Catalogs, Featured Catalogs, Catalog Segments, Products and Collections by reference
+- added helpers to list community distributions, resolve detail by id or slug, resolve Community Distribution Context, retrieve tenants/catalogs/segments/items/attribution/commercial origin and explain inclusion/exclusion
+- added hooks for Community Marketplace Distributions, detail, context and items
+- added `/marketplace/distribution/communities` and `/marketplace/distribution/communities/:communitySlug` surfaces
+- displayed community type, status, visibility, governance status, associated profile, associated channel, attribution source, commercial origin, tenants, curated catalogs, featured catalogs, segments, products, collections, rules, visible items and excluded items
+- preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries for external community distribution items
+- preserved canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false for community distribution context and items
+- preserved no governance delegation real, no revenue sharing, no commission, no payout, no settlement, no billing, no tracking real, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
+
+MEP-REQ-054 delivered:
+- added Tenant Distribution Config, Curated Catalog Distribution Config, Tenant Distribution Rule, Curated Catalog Distribution Rule, Tenant Distribution Resolution, Curated Catalog Distribution Resolution, Distribution Integrated Context and Distribution Integrated Item models
+- added mock/config-first tenant distribution configs for Global, Academy, ACS Services and Community Demo tenants
+- added mock/config-first curated catalog distribution configs for Foundational NFT Access and Academy Onboarding catalogs
+- added helpers to resolve tenant distribution, curated catalog distribution, combined distribution context, included/excluded references and inclusion/exclusion explanations
+- added hooks for Tenant Distribution, Curated Catalog Distribution and distribution context by tenant/catalog
+- displayed Tenant Distribution Integration in Tenant Storefront with included/blocked/featured channels, profiles, community distributions, attribution sources, rules and boundary notes
+- displayed Curated Catalog Distribution Config in Curated Catalog detail with channels, profiles, community distributions, tenants, attribution sources, rules and boundary notes
+- preserved tenant catalog isolation, branding/theme, domain simulation, curated catalog editorial rules, featured/segment context and federated origin/provider/validation/provenance/risk/trust boundaries
+- preserved canTrack=false, canAttributeRevenue=false, canTriggerPayout=false and canSettle=false for distribution integration contexts and items
+- preserved no revenue sharing, no commission, no payout, no settlement, no billing, no tracking real, no Marketplace Intelligence, no backend, no API, no database and no BI boundaries
+
+MEP-PHASE-05-CLOSURE delivered:
+- created `docs/PHASE_05_CLOSURE_REPORT.md`
+- validated Distribution Network Model, Distribution Channels, Distribution Placements, Distribution Sources, Commercial Origin and Attribution Sources
+- validated Distributor Profile, Partner Profile, Agency Profile, Affiliate Profile and Community Marketplace Profile surfaces
+- validated Community Marketplace Distribution, Community Distribution Context, Community Distribution Items and Community Distribution Rules
+- validated Tenant Distribution Config, Curated Catalog Distribution Config, Tenant Distribution Resolution, Curated Catalog Distribution Resolution and Distribution Integrated Context
+- confirmed global, tenant-aware, curated catalog-aware, distribution-aware, community-aware and attribution-aware navigation surfaces
+- confirmed tenant catalog isolation, curated catalog editorial rules, branding/theme/domain simulation and federation boundaries remain preserved
+- confirmed Phase 05 did not activate revenue sharing, commission rules reais, payout, settlement, billing, treasury routing, financial attribution, tracking real, BI, Marketplace Intelligence, KYC, commercial contract real, backend, API, database, payments or contracts
+- positioned Phase 06 - Revenue Sharing as future work
+
+Constraints:
+- keep Phase 05 runtime mock/config-first until explicit implementation requests authorize broader changes
+- do not activate affiliate tracking, cookie tracking, analytics tracking, campaign tracking, referral tracking, commission engine, payout, billing, settlement, treasury routing, Revenue Sharing, Marketplace Intelligence, backend, API, GraphQL schema, database, payments, wallet signatures, contract writes, bridge, provider real or BI
+- distribution channels must preserve tenant catalog isolation, curated catalog editorial boundaries and federated origin/provider/validation/provenance/risk/trust metadata
+
+---
+
+# Phase 04 - Curated Catalogs Planning
+
+Status: COMPLETED - CURATED CATALOGS VALIDATED MOCK/CONFIG-FIRST
+
+Planning artifact:
+- `docs/PHASE_04_CURATED_CATALOGS_AUDIT.md`
+
+Closure artifact:
+- `docs/PHASE_04_CLOSURE_REPORT.md`
+
+Recommended implementation sequence:
+- MEP-04A - Curated Catalogs Planning and Governance Audit - COMPLETED
+- MEP-REQ-040 - Curated Catalog Model - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-041 - Editorial Rules - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-042 - Featured Catalogs - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-REQ-043 - Tenant Curated Catalog Integration - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-PHASE-04-CLOSURE - QA, governance and no-execution validation - COMPLETED
+
+MEP-04A delivered:
+- mapped current Phase 03 Tenant Catalog, Tenant Catalog Rule, Tenant Exposure Rule and Catalog Resolution foundations
+- differentiated Global Catalog, Tenant Catalog, Curated Catalog, Editorial Catalog and Federated Catalog
+- recommended conceptual models for Curated Catalog, Curated Catalog Section, Curated Catalog Rule, Editorial Rule, Featured Catalog and Catalog Segment
+- recommended catalog type, catalog status and editorial status taxonomies
+- defined governance, editorial and trust boundaries for curated catalog work
+- mapped gaps for MEP-REQ-040 through MEP-REQ-043 without implementing runtime
+- preserved no automated recommendation, no real ranking, no approval workflow, no Marketplace Intelligence, no Distribution Network, no Revenue Sharing, no billing and no settlement boundaries
+
+MEP-REQ-040 delivered:
+- added Curated Catalog, Curated Catalog Section, Curated Catalog Item and Curated Catalog Rule mock/config-first models
+- added curated catalog mock data for Foundational NFT Access and Academy Onboarding catalogs
+- added service helpers to list curated catalogs, resolve curated catalogs by id or slug and resolve curated catalog items
+- added hooks for curated catalog list, detail and items
+- added `/marketplace/curated` and `/marketplace/curated/:catalogId` runtime surfaces
+- displayed curation notes, sections, items, featured products, featured collections, warnings, disclaimers and boundary notes
+- preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries for external collections
+- preserved no ranking real, no recommendation engine, no marketplace intelligence, no revenue sharing, no settlement and no billing boundaries
+
+MEP-REQ-041 delivered:
+- added Editorial Rule, Curation Workflow, Curation Note, Curation Reason and mock review status models
+- added editorial rule mock data for inclusion, exclusion, feature, review-required and governance-review scenarios
+- added service helpers to list editorial rules and explain inclusion/exclusion reasons with boundary notes
+- added a hook for editorial rule explanations
+- displayed Curation Workflow state, curation notes, inclusion reasons, exclusion reasons, review statuses and governance labels in the Curated Catalog UI
+- preserved approved-mock as non-productive approval that does not imply compliance real, certification real or financial/commercial recommendation
+- preserved no productive approval workflow, no compliance real, no certification real, no ranking real, no recommendation engine, no Marketplace Intelligence, no billing, no settlement and no revenue sharing boundaries
+
+MEP-REQ-042 delivered:
+- added Featured Catalog and Catalog Segment mock/config-first models
+- added mock segments for Academy Catalogs, ACS Catalogs, Community Catalogs and Federated Featured Catalogs
+- added mock Featured Catalog placements for foundational, Academy and federated catalog visibility
+- added service helpers to list featured catalogs, list catalog segments and resolve catalogs by segment
+- added hooks for Featured Catalogs, Catalog Segments and catalogs by segment
+- displayed Featured Catalogs and Catalog Segments in the Curated Catalog UI
+- preserved Featured Catalog as manual editorial placement, not ranking real, performance real, recommendation engine, Marketplace Intelligence, analytics real, scoring real, distribution, revenue sharing, billing or settlement
+- preserved federated origin, provider, validation status, provenance, risk classification and trust boundaries through segment/featured views
+
+MEP-REQ-043 delivered:
+- added TenantCuratedCatalogConfig, TenantCuratedCatalogRule, TenantCuratedCatalogResolution and TenantCuratedCatalogItem models
+- added tenant curated catalog configs for Global, Academy, ACS Services and Community Demo tenants
+- added resolver for tenant curated catalogs with inheritance, tenant-owned catalogs, featured curated catalogs, blocked curated catalogs and federated curated catalog restrictions
+- applied Tenant Catalog isolation to Curated Catalog items before tenant display
+- added Tenant Storefront UI for Tenant Curated Catalogs with visible/excluded items and boundary notes
+- added service tests for global inheritance, tenant-owned curated catalogs, featured curated catalogs, blocked curated catalogs, tenant catalog isolation, branding/theme preservation and mock/read-only domain routing
+- preserved no revenue sharing, no settlement, no billing, no Marketplace Intelligence and no Distribution Network boundaries
+
+MEP-PHASE-04-CLOSURE delivered:
+- created `docs/PHASE_04_CLOSURE_REPORT.md`
+- validated Curated Catalog Model, Editorial Rules, Curation Workflow mock, Featured Catalogs, Catalog Segments and Tenant Curated Catalog Integration
+- confirmed global and tenant-aware navigation surfaces for `/marketplace/curated`, `/marketplace/curated/:catalogId`, `/marketplace/tenants/:tenantId` and `/marketplace/t/:tenantSlug`
+- confirmed federated assets preserve origin, provider, validation status, provenance, risk classification and trust boundaries
+- confirmed Phase 04 did not activate ranking real, recommendation engine, Marketplace Intelligence, scoring real, analytics real, tracking real, AI curation, productive approval workflow, compliance real, certification real, Distribution Network, Revenue Sharing, billing, settlement, treasury routing, backend, API, database, contracts, wallet signatures, payments, bridge or custody
+- positioned PHASE 05 - Distribution Network as future work
+
+Constraints:
+- keep Phase 04 planning and future runtime mock/config-first until explicit implementation requests authorize changes
+- do not activate AI curation, automated recommendation, real ranking, production approval workflow, tracking, BI, Marketplace Intelligence, Distribution Network, Revenue Sharing, billing, settlement, treasury routing, partner/affiliate logic, provider calls, indexers, APIs, databases, schemas or GraphQL
+- curated catalogs must preserve product truth, tenant boundaries and federated origin/provider/validation/provenance/risk/trust metadata
+
+---
+
 # Phase 03 - Tenant Infrastructure Planning
 
-Status: IN PROGRESS - TENANT DOMAINS IMPLEMENTED MOCK/READ-ONLY
+Status: COMPLETED - TENANT INFRASTRUCTURE VALIDATED MOCK/CONFIG-FIRST
 
 Planning artifact:
 - `docs/PHASE_03_TENANT_INFRASTRUCTURE_AUDIT.md`
+
+Closure artifact:
+- `docs/PHASE_03_CLOSURE_REPORT.md`
 
 Recommended implementation sequence:
 - MEP-03A - Tenant Infrastructure Planning and Isolation Audit - COMPLETED
 - MEP-REQ-030 - Multi-Tenant Foundation - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-031 - Marketplace Branding - IMPLEMENTED MOCK/CONFIG-FIRST
 - MEP-REQ-032 - Tenant Domains - IMPLEMENTED MOCK/READ-ONLY
-- MEP-REQ-033 - Tenant Isolation
-- MEP-PHASE-03-CLOSURE - QA, navigation and Marketplace-as-a-Service validation
+- MEP-REQ-033 - Tenant Isolation - IMPLEMENTED MOCK/CONFIG-FIRST
+- MEP-PHASE-03-CLOSURE - QA, navigation and Marketplace-as-a-Service validation - COMPLETED
 
 MEP-03A delivered:
 - mapped existing tenant-adjacent runtime surfaces after Phase 02, including DAO storefront previews, API tenant registry read models, product tenant ids and governance tenant projections
@@ -49,6 +560,23 @@ MEP-REQ-032 delivered:
 - added `/marketplace/t/:tenantSlug` as a mock tenant route without DNS, TLS, proxy, edge routing, backend routing or separate deploy behavior
 - displayed domains, aliases, routing mode, verification status mock, canRoute mock status and no DNS real boundary notes in Tenant Detail
 - preserved no custom DNS, real subdomain routing, TLS certificate, proxy routing, backend routing, tenant billing, tenant settlement, RBAC, isolated database or revenue sharing boundaries
+
+MEP-REQ-033 delivered:
+- added Tenant Catalog, Tenant Catalog Rule, Tenant Exposure Rule, Tenant Catalog Resolution and Tenant Catalog Item mock/config-first models
+- added catalog/rule mock data for global, Academy, ACS Services and Community Demo tenants
+- added service helpers for catalog resolution, rule application, tenant visible products, tenant visible collections, featured products/collections, inclusion/exclusion explanations and visibility checks
+- added hooks for tenant catalog, tenant catalog resolution, tenant visible products and tenant visible collections
+- displayed resolved Tenant Catalog, isolated configuration, isolated catalog, applied rules, blocked rules, visible products/collections and mock isolation boundary notes in Tenant Detail
+- preserved federated collection origin, provider, validation status, provenance, risk classification and trust boundaries by referencing existing global/federated records instead of duplicating product truth
+- preserved no financial isolation, no settlement isolation, no RBAC enforcement, no isolated database, no tenant billing, no treasury routing and no revenue sharing boundaries
+
+MEP-PHASE-03-CLOSURE delivered:
+- validated Tenant Registry, Tenant Identity, Tenant Configuration, Marketplace Branding, Tenant Themes, Tenant Domains, Tenant Isolation, Tenant Catalog and Tenant Exposure Rules
+- confirmed tenant-aware navigation through `/marketplace/tenants`, `/marketplace/tenants/:tenantId`, `/marketplace/t/:tenantSlug` and global fallback behavior
+- confirmed tenant catalogs derive visible products and collections through rules instead of duplicating product, collection or federated record truth
+- confirmed federated records inside tenant catalogs preserve origin, provider, validation status, provenance, risk classification and trust boundaries
+- confirmed no billing, settlement, revenue sharing, treasury routing, custom DNS real, subdomain real, TLS, proxy routing, edge routing, backend routing, RBAC, isolated database, tracking, BI, provider real, contract writes, wallet signatures, payments, bridge or custody was introduced
+- positioned Phase 04 - Curated Catalogs as future work
 
 Constraints:
 - keep Phase 03 mock-first/read-model oriented until explicit implementation requests authorize runtime changes

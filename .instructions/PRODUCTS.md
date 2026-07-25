@@ -295,6 +295,34 @@ Federated Products and Federated Assets must carry:
 - operational subscriptions
 - enterprise ACS deployments
 - dedicated orchestration
+- Enterprise Product records
+- Enterprise Subscription Plan records
+- Enterprise License records
+- Enterprise Provisioning Profile records
+- Enterprise Billing Preview records
+- Enterprise Telemetry Snapshot records
+- Enterprise governance guardrails
+- Enterprise Operations Dashboard visibility
+
+Phase 10 Enterprise Products are mock-first and preview-only. Enterprise products may be allowed-mock, pending-review, treasury-review-required, restricted or blocked. Blocked products remain visible for guardrail validation but cannot run subscribe preview confirmation.
+
+Enterprise Products must preserve billing and treasury boundaries: no live subscription activation, no payment, no invoice, no accounting, no settlement and no treasury routing.
+
+Enterprise Products must preserve ACS boundaries: no agent execution, no MCP deployment, no workflow run, no compute allocation, no secret access and no ACS provisioning.
+
+---
+
+## Sovereign Commerce Products
+- Sovereign Commerce Nodes
+- Sovereign Commerce Links
+- Sovereign Governance Boundaries
+- Sovereign Isolation Boundaries
+- Sovereign Observability Snapshots
+- Sovereign Commerce Network Summary
+
+Sovereign Commerce Products compose prior Marketplace product domains into read-only ecosystem commerce visibility.
+
+They must preserve no commerce execution, no order routing, no settlement, no treasury routing, no billing execution, no governance execution, no cross-tenant write, no ACS provisioning, no external onboarding, no tracking real, no BI and no automation.
 
 ---
 
