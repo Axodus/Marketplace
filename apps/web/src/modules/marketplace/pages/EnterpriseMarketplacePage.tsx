@@ -117,7 +117,7 @@ export function buildEnterpriseProductCardViewModel(view: EnterpriseProductView)
     listingMeta: plan ? `${plan.billingCadence} subscription preview` : view.product.provisioningType,
     indicators: [
       governanceRequiresReview
-        ? { label: view.product.governanceStatus.replaceAll("-", " "), tone: "warning" as const }
+        ? { label: view.product.governanceStatus.replace(/-/g, " "), tone: "warning" as const }
         : { label: "Enterprise access", tone: "neutral" as const },
       { label: "Subscription", tone: "neutral" as const }
     ]

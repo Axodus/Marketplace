@@ -166,11 +166,11 @@ function ProductMedia({ image, alt }: { image?: string; alt: string }) {
 
 function getGovernanceLabel(product: Product, enforcement?: GovernanceEnforcementRecord): ProductCardIndicator | undefined {
   if (enforcement && enforcement.visibility.effectiveState !== "visible") {
-    return { label: enforcement.visibility.effectiveState.replaceAll("-", " "), tone: "warning" };
+    return { label: enforcement.visibility.effectiveState.replace(/-/g, " "), tone: "warning" };
   }
   if (product.governanceStatus === "compliant") return undefined;
   if (product.governanceStatus === "under-review") return { label: "Review required", tone: "warning" };
-  return { label: product.governanceStatus.replaceAll("-", " "), tone: "warning" };
+  return { label: product.governanceStatus.replace(/-/g, " "), tone: "warning" };
 }
 
 function getListingLabel(product: Product) {

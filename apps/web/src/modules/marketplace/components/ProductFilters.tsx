@@ -220,5 +220,5 @@ function NumberFilter({ label, value, placeholder, onChange }: { label: string; 
 }
 
 function humanize(value: string) {
-  return value.replaceAll("-", " ").replace(/\b\w/g, (character) => character.toUpperCase());
+  return value.replace(/-/g, " ").replace(/\b\w/g, (character: string) => character.toUpperCase());
 }

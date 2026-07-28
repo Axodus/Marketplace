@@ -81,15 +81,15 @@ export function MarketplaceHomePage() {
           <Link to="/marketplace/curated" className="text-sm font-semibold text-marketplace-trusted hover:underline">Browse curated</Link>
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-3">
-          {curatedCatalogs.slice(0, 3).map((catalog) => (
+          {curatedCatalogs.slice(0, 3).map((view) => (
             <Link
-              key={catalog.id}
-              to={`/marketplace/curated/${catalog.slug}`}
+              key={view.catalog.id}
+              to={`/marketplace/curated/${view.catalog.slug}`}
               className="marketplace-panel p-5 transition-colors hover:border-marketplace-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-marketplace-focus"
             >
-              <p className="text-xs font-semibold uppercase tracking-wide text-marketplace-text-muted">{catalog.catalogType}</p>
-              <h3 className="mt-2 text-lg font-semibold text-marketplace-graphite">{catalog.name}</h3>
-              <p className="mt-2 line-clamp-2 text-sm leading-6 text-marketplace-text-muted">{catalog.description}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-marketplace-text-muted">{view.catalog.catalogType}</p>
+              <h3 className="mt-2 text-lg font-semibold text-marketplace-graphite">{view.catalog.name}</h3>
+              <p className="mt-2 line-clamp-2 text-sm leading-6 text-marketplace-text-muted">{view.catalog.description}</p>
             </Link>
           ))}
         </div>
