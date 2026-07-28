@@ -250,7 +250,7 @@ import { getDeliveryTelemetrySummary } from "./deliveryRuntime";
 
 export type ProductAssetTypeFilter = "all" | "nft" | "erc721" | "erc1155" | "offchain";
 export type ProductListingStatusFilter = Product["status"] | "auction-active" | "all";
-export type ProductSortOption = "relevance" | "price-asc" | "price-desc" | "recent" | "activity" | "name";
+export type ProductSortOption = "relevance" | "price-asc" | "price-desc" | "recent" | "ending-soon" | "activity" | "name";
 
 export interface ProductFilters {
   category?: ProductCategory | "all";
@@ -265,6 +265,9 @@ export interface ProductFilters {
   maturity?: string;
   daoOwned?: boolean;
   minSellerReputation?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  verifiedSeller?: boolean;
   sortBy?: ProductSortOption;
 }
 
@@ -440,6 +443,12 @@ function activityScore(product: Product) {
   return (product.auction?.bidCount ?? 0) + (product.signedUrlPreviewAvailable ? 1 : 0) + (product.nftBound ? 1 : 0);
 }
 
+function auctionEndingScore(product: Product) {
+  if (!product.auction) return Number.POSITIVE_INFINITY;
+  const ending = Date.parse(product.auction.endsAt);
+  return Number.isNaN(ending) ? Number.POSITIVE_INFINITY : ending;
+}
+
 function sortProducts(sourceProducts: Product[], filters: ProductFilters, sourceSellers: Seller[]) {
   const query = normalizeSearch(filters.search);
   const sortBy = filters.sortBy ?? "relevance";
@@ -450,7 +459,8 @@ function sortProducts(sourceProducts: Product[], filters: ProductFilters, source
 
     if (sortBy === "price-asc") return left.pricing.amount - right.pricing.amount || left.title.localeCompare(right.title);
     if (sortBy === "price-desc") return right.pricing.amount - left.pricing.amount || left.title.localeCompare(right.title);
-    if (sortBy === "recent") return Date.parse(right.updatedAt) - Date.parse(left.updatedAt) || left.title.localeCompare(right.title);
+    if (sortBy === "recent") return Date.parse(right.createdAt) - Date.parse(left.createdAt) || left.title.localeCompare(right.title);
+    if (sortBy === "ending-soon") return auctionEndingScore(left) - auctionEndingScore(right) || left.title.localeCompare(right.title);
     if (sortBy === "activity") return activityScore(right) - activityScore(left) || left.title.localeCompare(right.title);
     if (sortBy === "name") return left.title.localeCompare(right.title);
 
@@ -476,6 +486,9 @@ export function filterAndSortProducts(sourceProducts: Product[], filters: Produc
     if (filters.maturity && filters.maturity !== "all" && product.maturity !== filters.maturity) return false;
     if (filters.daoOwned && !seller?.registeredDAOs.length) return false;
     if (filters.minSellerReputation && (!seller || seller.reputation < filters.minSellerReputation)) return false;
+    if (typeof filters.minPrice === "number" && product.pricing.amount < filters.minPrice) return false;
+    if (typeof filters.maxPrice === "number" && product.pricing.amount > filters.maxPrice) return false;
+    if (filters.verifiedSeller && seller?.verificationStatus !== "verified" && seller?.verificationStatus !== "internal") return false;
 
     if (!query) return true;
     return getSearchFields(product, seller).join(" ").toLowerCase().includes(query);

@@ -286,6 +286,25 @@ describe("marketplaceService", () => {
     expect(listProducts().map((product) => product.id)).toEqual(originalOrder);
   });
 
+  it("filters by price and trusted seller without changing product contracts", () => {
+    const ranged = listProducts({ minPrice: 100, maxPrice: 250 });
+    const trusted = listProducts({ verifiedSeller: true });
+
+    expect(ranged.every((product) => product.pricing.amount >= 100 && product.pricing.amount <= 250)).toBe(true);
+    expect(trusted.map((product) => product.slug)).not.toContain("mcp-agent-template-license");
+    expect(trusted.length).toBeGreaterThan(0);
+  });
+
+  it("sorts active auction records by their ending timestamp", () => {
+    const endingSoon = listProducts({ sortBy: "ending-soon" });
+    const auctions = endingSoon.filter((product) => product.auction);
+
+    expect(auctions.map((product) => product.slug)).toEqual([
+      "strategy-license-dutch-auction",
+      "academy-certification-erc1155-bundle"
+    ]);
+  });
+
   it("lists ranked native and external mock collections with derived metrics", () => {
     const collections = listCollections();
 

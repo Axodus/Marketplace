@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { apiClient } from "../../../services/apiClient";
 import type { EnterpriseProductFilters, ProductFilters } from "../services/marketplaceService";
 import {
@@ -179,7 +180,13 @@ import {
 } from "../services/enterpriseMarketplaceAdapters";
 
 export function useProductFilters() {
-  const [filters, setFilters] = useState<ProductFilters>(DEFAULT_PRODUCT_EXPLORER_FILTERS);
+  const [searchParams] = useSearchParams();
+  const externalFilterKey = searchParams.toString();
+  const [filters, setFilters] = useState<ProductFilters>(() => productFiltersFromSearchParams(searchParams));
+
+  useEffect(() => {
+    setFilters((current) => ({ ...current, ...productFiltersFromSearchParams(new URLSearchParams(externalFilterKey)) }));
+  }, [externalFilterKey]);
   const fallbackProducts = useMemo(() => listProducts(filters), [filters]);
   const productsQuery = useQuery({
     queryKey: ["marketplace-products", filters],
@@ -191,6 +198,20 @@ export function useProductFilters() {
   const products = productsQuery.data?.items ?? fallbackProducts;
 
   return { filters, setFilters, products, governanceEnforcement: productsQuery.data?.enforcement, isLoading: productsQuery.isLoading, error: productsQuery.error };
+}
+
+export function productFiltersFromSearchParams(searchParams: URLSearchParams): ProductFilters {
+  const category = searchParams.get("category");
+  const assetType = searchParams.get("assetType");
+  const validCategories = new Set(["Education", "Governance", "Trading", "Business", "MCPs", "Digital Assets"]);
+  const validAssetTypes = new Set(["all", "nft", "erc721", "erc1155", "offchain"]);
+
+  return {
+    ...DEFAULT_PRODUCT_EXPLORER_FILTERS,
+    search: searchParams.get("q")?.trim() || undefined,
+    category: validCategories.has(category ?? "") ? (category as ProductFilters["category"]) : "all",
+    assetType: validAssetTypes.has(assetType ?? "") ? (assetType as ProductFilters["assetType"]) : "all"
+  };
 }
 
 export function useMarketplaceHome() {

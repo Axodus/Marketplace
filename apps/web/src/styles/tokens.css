@@ -1,8 +1,34 @@
-:root {
-  --axodus-ink: #111827;
-  --axodus-panel: #f8fafc;
-  --axodus-line: #d8dee8;
-  --axodus-gold: #b58b21;
-  --axodus-teal: #0f766e;
-  --axodus-red: #b91c1c;
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --marketplace-bg: #f3f0e9;
+  --marketplace-surface: #fcfbf8;
+  --marketplace-surface-muted: #ece9e2;
+  --marketplace-graphite: #20211f;
+  --marketplace-text: #272825;
+  --marketplace-text-muted: #6e706a;
+  --marketplace-border: #d8d5ce;
+  --marketplace-border-strong: #bebbb3;
+  --marketplace-trusted: #496b57;
+  --marketplace-accent-muted: #a98554;
+  --marketplace-accent-text: #6f5232;
+  --marketplace-danger: #9d3f3f;
+  --marketplace-focus: #496b57;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --marketplace-bg: #171815;
+  --marketplace-surface: #20211f;
+  --marketplace-surface-muted: #2a2b28;
+  --marketplace-graphite: #f5f2eb;
+  --marketplace-text: #eeeae2;
+  --marketplace-text-muted: #b1b0aa;
+  --marketplace-border: #3b3c38;
+  --marketplace-border-strong: #555650;
+  --marketplace-trusted: #7eaa8e;
+  --marketplace-accent-muted: #c39a65;
+  --marketplace-accent-text: #d5b07d;
+  --marketplace-danger: #df8b8b;
+  --marketplace-focus: #9fc5ac;
 }

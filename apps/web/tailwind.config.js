@@ -4,6 +4,21 @@ export default {
   theme: {
     extend: {
       colors: {
+        marketplace: {
+          bg: "var(--marketplace-bg)",
+          surface: "var(--marketplace-surface)",
+          muted: "var(--marketplace-surface-muted)",
+          graphite: "var(--marketplace-graphite)",
+          text: "var(--marketplace-text)",
+          "text-muted": "var(--marketplace-text-muted)",
+          border: "var(--marketplace-border)",
+          "border-strong": "var(--marketplace-border-strong)",
+          trusted: "var(--marketplace-trusted)",
+          accent: "var(--marketplace-accent-muted)",
+          "accent-text": "var(--marketplace-accent-text)",
+          danger: "var(--marketplace-danger)",
+          focus: "var(--marketplace-focus)"
+        },
         axodus: {
           ink: "#111827",
           panel: "#f8fafc",

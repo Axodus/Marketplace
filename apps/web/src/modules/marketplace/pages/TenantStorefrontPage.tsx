@@ -772,7 +772,7 @@ function BoundaryPanel({ title, tone, items }: { title: string; tone: "amber" | 
 function tenantBrandingStyle(branding: TenantBranding): CSSProperties {
   return {
     borderColor: branding.secondaryColor,
-    background: `linear-gradient(180deg, ${branding.backgroundHint} 0%, ${branding.surfaceHint} 42%)`
+    backgroundColor: branding.surfaceHint
   };
 }
 

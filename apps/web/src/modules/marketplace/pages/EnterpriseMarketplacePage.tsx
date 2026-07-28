@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { MarketplaceProductCard, type ProductCardViewModel } from "../components/ProductCard";
 import { useEnterpriseProducts } from "../hooks/useMarketplace";
 import type { EnterpriseProductFilters, EnterpriseProductView } from "../services/marketplaceService";
 
@@ -98,29 +99,29 @@ function EnterpriseFilterBar({ filters, onChange }: { filters: EnterpriseProduct
 }
 
 function EnterpriseProductCard({ view }: { view: EnterpriseProductView }) {
-  const tone = view.product.governanceStatus === "blocked" ? "border-rose-300 bg-rose-50" : view.guardrail.requiredReviews.length ? "border-amber-300 bg-amber-50" : "border-slate-200 bg-white";
-  return (
-    <article className={`rounded border p-5 shadow-sm ${tone}`}>
-      <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{view.product.tier} / {view.product.category}</p>
-      <h2 className="mt-2 text-lg font-semibold text-slate-950">{view.product.displayName}</h2>
-      <p className="mt-2 text-sm text-slate-700">{view.product.description}</p>
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <Metric label="Plans" value={view.plans.length} />
-        <Metric label="Governance" value={view.product.governanceStatus} />
-        <Metric label="Billing" value={view.product.settlementMode} />
-        <Metric label="ACS deploy" value={String(view.product.canDeployACS)} />
-      </div>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {view.telemetrySnapshot?.blockingIssues.map((issue) => <WarningBadge key={issue}>{issue}</WarningBadge>)}
-        {view.guardrail.requiredReviews.map((review) => <WarningBadge key={review}>{review}</WarningBadge>)}
-      </div>
-      <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
-        <Link to={`/marketplace/enterprise/${view.product.slug}`} className="text-teal-800">Detail</Link>
-        <Link to={`/marketplace/enterprise/${view.product.slug}/subscribe-preview`} className="text-teal-800">Subscribe preview</Link>
-        <Link to={`/marketplace/enterprise/${view.product.slug}/billing`} className="text-teal-800">Billing</Link>
-      </div>
-    </article>
-  );
+  return <MarketplaceProductCard view={buildEnterpriseProductCardViewModel(view)} />;
+}
+
+export function buildEnterpriseProductCardViewModel(view: EnterpriseProductView): ProductCardViewModel {
+  const plan = view.plans[0];
+  const governanceRequiresReview = view.product.governanceStatus !== "allowed-mock";
+  return {
+    slug: view.product.slug,
+    detailPath: `/marketplace/enterprise/${view.product.slug}`,
+    title: view.product.displayName,
+    category: `Enterprise · ${view.product.tier}`,
+    imageAlt: `${view.product.displayName} enterprise product preview`,
+    identityLabel: view.tenant?.identity.displayName ?? "Axodus Enterprise",
+    price: plan ? `${plan.recurringAmountMock.toLocaleString("en-US")} ${plan.currency}` : "Preview only",
+    network: view.product.supportedChains[0] ?? "Off-chain",
+    listingMeta: plan ? `${plan.billingCadence} subscription preview` : view.product.provisioningType,
+    indicators: [
+      governanceRequiresReview
+        ? { label: view.product.governanceStatus.replaceAll("-", " "), tone: "warning" as const }
+        : { label: "Enterprise access", tone: "neutral" as const },
+      { label: "Subscription", tone: "neutral" as const }
+    ]
+  };
 }
 
 export function EnterpriseNotFound({ slug }: { slug?: string }) {

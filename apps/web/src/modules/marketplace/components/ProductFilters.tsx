@@ -1,43 +1,30 @@
+import { ChevronDown, RotateCcw, SlidersHorizontal } from "lucide-react";
 import {
   DEFAULT_PRODUCT_EXPLORER_FILTERS,
   getProductExplorerFacets,
   type ProductAssetTypeFilter,
   type ProductFilters,
-  type ProductListingStatusFilter,
   type ProductSortOption
 } from "../services/marketplaceService";
 
-const standings = ["all", "compliant", "under-review", "restricted", "suspended", "deprecated"];
 const assetTypes: Array<{ value: ProductAssetTypeFilter; label: string }> = [
-  { value: "all", label: "All asset types" },
+  { value: "all", label: "All product types" },
   { value: "nft", label: "NFT-bound" },
   { value: "erc721", label: "ERC721" },
   { value: "erc1155", label: "ERC1155" },
-  { value: "offchain", label: "Offchain/license" }
-];
-const sortOptions: Array<{ value: ProductSortOption; label: string }> = [
-  { value: "relevance", label: "Relevance" },
-  { value: "price-asc", label: "Price: low to high" },
-  { value: "price-desc", label: "Price: high to low" },
-  { value: "recent", label: "Recently updated" },
-  { value: "activity", label: "Activity" },
-  { value: "name", label: "Name" }
+  { value: "offchain", label: "Off-chain / license" }
 ];
 
-export function ProductFiltersPanel({
-  filters,
-  setFilters
-}: {
-  filters: ProductFilters;
-  setFilters: React.Dispatch<React.SetStateAction<ProductFilters>>;
-}) {
-  const facets = getProductExplorerFacets();
-  const listingStatuses: Array<{ value: ProductListingStatusFilter; label: string }> = [
-    { value: "all", label: "All listing states" },
-    ...facets.listingStatuses.map((status) => ({ value: status as ProductListingStatusFilter, label: status })),
-    { value: "auction-active", label: "Active auction" }
-  ];
-  const hasActiveFilters =
+export const productSortOptions: Array<{ value: ProductSortOption; label: string }> = [
+  { value: "relevance", label: "Relevance" },
+  { value: "recent", label: "Recently added" },
+  { value: "price-asc", label: "Price: low to high" },
+  { value: "price-desc", label: "Price: high to low" },
+  { value: "ending-soon", label: "Ending soon" }
+];
+
+export function hasActiveProductFilters(filters: ProductFilters) {
+  return (
     Boolean(filters.search?.trim()) ||
     (filters.category ?? "all") !== "all" ||
     (filters.chain ?? "all") !== "all" ||
@@ -46,166 +33,192 @@ export function ProductFiltersPanel({
     (filters.listingStatus ?? "all") !== "all" ||
     (filters.listingType ?? "all") !== "all" ||
     (filters.sellerId ?? "all") !== "all" ||
-    (filters.sortBy ?? "relevance") !== "relevance";
+    typeof filters.minPrice === "number" ||
+    typeof filters.maxPrice === "number" ||
+    Boolean(filters.verifiedSeller)
+  );
+}
+export function ProductFiltersPanel({
+  filters,
+  setFilters,
+  headingId = "marketplace-filter-heading"
+}: {
+  filters: ProductFilters;
+  setFilters: React.Dispatch<React.SetStateAction<ProductFilters>>;
+  headingId?: string;
+}) {
+  const facets = getProductExplorerFacets();
+  const active = hasActiveProductFilters(filters);
 
   return (
-    <section className="rounded border border-slate-200 bg-white p-4 shadow-sm" aria-label="Marketplace product filters">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="font-semibold text-slate-950">Discovery controls</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Mock-first search, filters and sorting. No indexer, settlement or external provider is executed.
-          </p>
-        </div>
+    <div className="flex h-full flex-col">
+      <div className="flex items-center justify-between border-b border-marketplace-border p-4">
+        <h2 id={headingId} className="inline-flex items-center gap-2 text-base font-semibold text-marketplace-graphite">
+          <SlidersHorizontal size={17} aria-hidden="true" /> Filters
+        </h2>
         <button
           type="button"
           onClick={() => setFilters({ ...DEFAULT_PRODUCT_EXPLORER_FILTERS })}
-          disabled={!hasActiveFilters}
-          className="rounded border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!active}
+          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-marketplace-text-muted hover:bg-marketplace-muted hover:text-marketplace-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-marketplace-focus disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Clear filters
+          <RotateCcw size={13} aria-hidden="true" /> Clear all
         </button>
       </div>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Search</span>
-          <input
-            value={filters.search ?? ""}
-            onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))}
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-            placeholder="Name, seller, category, NFT"
-          />
-        </label>
-
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Category</span>
-          <select
+      <div className="flex-1 divide-y divide-marketplace-border">
+        <FilterGroup title="Category" defaultOpen>
+          <FilterSelect
+            label="Product category"
             value={filters.category ?? "all"}
-            onChange={(event) => setFilters((current) => ({ ...current, category: event.target.value as ProductFilters["category"] }))}
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-          >
-            <option value="all">All categories</option>
-            {facets.categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </label>
+            onChange={(value) => setFilters((current) => ({ ...current, category: value as ProductFilters["category"] }))}
+            options={[{ value: "all", label: "All categories" }, ...facets.categories.map((category) => ({ value: category, label: category }))]}
+          />
+        </FilterGroup>
 
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Asset type</span>
-          <select
-            value={filters.assetType ?? "all"}
-            onChange={(event) => setFilters((current) => ({ ...current, assetType: event.target.value as ProductFilters["assetType"] }))}
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-          >
-            {assetTypes.map((assetType) => (
-              <option key={assetType.value} value={assetType.value}>
-                {assetType.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <FilterGroup title="Price" defaultOpen>
+          <div className="grid grid-cols-2 gap-2">
+            <NumberFilter
+              label="Minimum price"
+              placeholder="Min"
+              value={filters.minPrice}
+              onChange={(minPrice) => setFilters((current) => ({ ...current, minPrice }))}
+            />
+            <NumberFilter
+              label="Maximum price"
+              placeholder="Max"
+              value={filters.maxPrice}
+              onChange={(maxPrice) => setFilters((current) => ({ ...current, maxPrice }))}
+            />
+          </div>
+          <p className="mt-2 text-[0.68rem] leading-4 text-marketplace-text-muted">Applied to the numeric amount in the current mock product price.</p>
+        </FilterGroup>
 
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Chain</span>
-          <select
+        <FilterGroup title="Network">
+          <FilterSelect
+            label="Network"
             value={filters.chain ?? "all"}
-            onChange={(event) => setFilters((current) => ({ ...current, chain: event.target.value as ProductFilters["chain"] }))}
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-          >
-            <option value="all">All chains</option>
-            {facets.chains.map((chain) => (
-              <option key={chain} value={chain}>
-                {chain}
-              </option>
-            ))}
-          </select>
-        </label>
+            onChange={(value) => setFilters((current) => ({ ...current, chain: value as ProductFilters["chain"] }))}
+            options={[{ value: "all", label: "All networks" }, ...facets.chains.map((chain) => ({ value: chain, label: chain }))]}
+          />
+        </FilterGroup>
 
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Governance</span>
-          <select
-            value={filters.governanceStatus ?? "all"}
-            onChange={(event) =>
-              setFilters((current) => ({ ...current, governanceStatus: event.target.value as ProductFilters["governanceStatus"] }))
-            }
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-          >
-            {standings.map((standing) => (
-              <option key={standing} value={standing}>
-                {standing === "all" ? "All governance states" : standing}
-              </option>
-            ))}
-          </select>
-        </label>
+        <FilterGroup title="Product type">
+          <FilterSelect
+            label="Product type"
+            value={filters.assetType ?? "all"}
+            onChange={(value) => setFilters((current) => ({ ...current, assetType: value as ProductFilters["assetType"] }))}
+            options={assetTypes}
+          />
+        </FilterGroup>
 
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Listing status</span>
-          <select
-            value={filters.listingStatus ?? "all"}
-            onChange={(event) =>
-              setFilters((current) => ({ ...current, listingStatus: event.target.value as ProductFilters["listingStatus"] }))
-            }
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-          >
-            {listingStatuses.map((status) => (
-              <option key={status.value} value={status.value}>
-                {status.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Listing type</span>
-          <select
+        <FilterGroup title="Listing type">
+          <FilterSelect
+            label="Listing type"
             value={filters.listingType ?? "all"}
-            onChange={(event) => setFilters((current) => ({ ...current, listingType: event.target.value as ProductFilters["listingType"] }))}
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-          >
-            <option value="all">All listing types</option>
-            {facets.listingTypes.map((listingType) => (
-              <option key={listingType} value={listingType}>
-                {listingType}
-              </option>
-            ))}
-          </select>
-        </label>
+            onChange={(value) => setFilters((current) => ({ ...current, listingType: value as ProductFilters["listingType"] }))}
+            options={[
+              { value: "all", label: "All listing types" },
+              ...facets.listingTypes.map((listingType) => ({ value: listingType, label: humanize(listingType) }))
+            ]}
+          />
+        </FilterGroup>
 
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Seller</span>
-          <select
-            value={filters.sellerId ?? "all"}
-            onChange={(event) => setFilters((current) => ({ ...current, sellerId: event.target.value }))}
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-          >
-            <option value="all">All sellers</option>
-            {facets.sellers.map((seller) => (
-              <option key={seller.id} value={seller.id}>
-                {seller.name}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Sort</span>
-          <select
-            value={filters.sortBy ?? "relevance"}
-            onChange={(event) => setFilters((current) => ({ ...current, sortBy: event.target.value as ProductSortOption }))}
-            className="w-full rounded border border-slate-300 px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <FilterGroup title="Validation">
+          <FilterSelect
+            label="Governance or validation state"
+            value={filters.governanceStatus ?? "all"}
+            onChange={(value) => setFilters((current) => ({ ...current, governanceStatus: value as ProductFilters["governanceStatus"] }))}
+            options={[
+              { value: "all", label: "All validation states" },
+              { value: "compliant", label: "Compliant" },
+              { value: "under-review", label: "Review required" },
+              { value: "restricted", label: "Restricted" },
+              { value: "suspended", label: "Suspended" },
+              { value: "deprecated", label: "Deprecated" }
+            ]}
+          />
+          <label className="mt-3 flex cursor-pointer items-start gap-2 text-sm text-marketplace-text">
+            <input
+              type="checkbox"
+              checked={Boolean(filters.verifiedSeller)}
+              onChange={(event) => setFilters((current) => ({ ...current, verifiedSeller: event.target.checked }))}
+              className="mt-0.5 h-4 w-4 accent-marketplace-trusted"
+            />
+            <span>
+              <span className="block font-medium">Verified sellers</span>
+              <span className="mt-0.5 block text-xs leading-4 text-marketplace-text-muted">Verified or internal Axodus publishers.</span>
+            </span>
+          </label>
+        </FilterGroup>
       </div>
-    </section>
+    </div>
   );
+}
+
+export function MarketplaceSort({ filters, setFilters }: { filters: ProductFilters; setFilters: React.Dispatch<React.SetStateAction<ProductFilters>> }) {
+  return (
+    <label className="flex items-center gap-2 text-sm">
+      <span className="sr-only">Sort marketplace products</span>
+      <select
+        value={filters.sortBy ?? "relevance"}
+        onChange={(event) => setFilters((current) => ({ ...current, sortBy: event.target.value as ProductSortOption }))}
+        className="marketplace-control min-w-44 text-sm font-medium"
+        aria-label="Sort marketplace products"
+      >
+        {productSortOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function FilterGroup({ title, defaultOpen = false, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
+  return (
+    <details className="group p-4" open={defaultOpen}>
+      <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold text-marketplace-graphite focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-marketplace-focus">
+        {title}
+        <ChevronDown size={16} className="transition-transform group-open:rotate-180" aria-hidden="true" />
+      </summary>
+      <div className="mt-3">{children}</div>
+    </details>
+  );
+}
+
+function FilterSelect({ label, value, options, onChange }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (value: string) => void }) {
+  return (
+    <label className="block">
+      <span className="sr-only">{label}</span>
+      <select value={value} onChange={(event) => onChange(event.target.value)} className="marketplace-control w-full text-sm" aria-label={label}>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function NumberFilter({ label, value, placeholder, onChange }: { label: string; value?: number; placeholder: string; onChange: (value?: number) => void }) {
+  return (
+    <label>
+      <span className="sr-only">{label}</span>
+      <input
+        type="number"
+        min="0"
+        inputMode="decimal"
+        value={value ?? ""}
+        onChange={(event) => onChange(event.target.value === "" ? undefined : Number(event.target.value))}
+        placeholder={placeholder}
+        className="marketplace-control w-full min-w-0 text-sm"
+        aria-label={label}
+      />
+    </label>
+  );
+}
+
+function humanize(value: string) {
+  return value.replaceAll("-", " ").replace(/\b\w/g, (character) => character.toUpperCase());
 }
