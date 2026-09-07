@@ -2,6 +2,8 @@
 
 Date: 2026-06-20
 
+> Historical assessment. For current development status and validation evidence as of 2026-09-06, see `.instructions/STATUS.md` and `.instructions/VALIDATION.md`.
+
 Workspace: Marketplace
 
 Repository: `D:\Rede\Github\Axodus\Marketplace`

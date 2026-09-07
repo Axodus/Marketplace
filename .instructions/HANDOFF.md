@@ -1,20 +1,26 @@
-# Marketplace Portfolio Handoff
+# Marketplace Development Handoff
 
-Date: 2026-06-08
+Date: 2026-09-06
 
-## Recommended Portfolio State
+## Recommended State
 
-State: ADVANCE_WITH_PAYMENT_AND_SETTLEMENT_GATES
+State: **HARDEN_AND_RECONCILE**
 
-Maturity: L4 candidate
+Maturity: **L4 Consolidated for local development**
 
-## Next Request
+The workspace has a file-persistent API runtime and a broad frontend surface. The latest lint and build passed, but the web test suite has one open regression. Production value-transfer capability is not approved: external payment, wallet execution, blockchain writes, external treasury movement and external bridge execution remain disabled.
 
-MARKETPLACE-REQ-02 - Payment and Settlement Governance Boundary Decision
+## Latest Evidence
 
-## Handoff Notes
+- lint passed for `apps/api` and `apps/web`;
+- API tests passed: 57/57;
+- web tests: 125/126 passed, with one ProductCard fallback mismatch;
+- API and web builds passed;
+- web build emitted a 782.72 kB entry-chunk warning;
+- current branch is `dev`, with no tracked source changes at review time.
 
-- Keep Marketplace local/mock or read-only for status purposes.
-- Do not enable real payment, wallet, minting, bridge, settlement or treasury behavior.
-- PORTFOLIO-REQ-02 validation passed.
-- Maturity decision: PROMOTE_TO_L4_CANDIDATE, without payment or settlement authority.
+## Next Task
+
+`MARKETPLACE-REQ-03 — Runtime Hardening and Status Reconciliation`
+
+First restore the web test suite to green. Then add application CI and independent `public/` validation, reduce the web entry bundle, and normalize the phase/sprint records around controlled local runtime terminology.

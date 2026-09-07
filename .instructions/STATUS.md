@@ -1,115 +1,72 @@
-# Marketplace Status
+# Marketplace Development Status
 
-Last updated: 2026-06-08
+Last updated: 2026-09-06
 
-## Portfolio Normalization
+## Current State
 
-Request: PORTFOLIO-REQ-01 - Portfolio Status Normalization
+**Development maturity: L4 Consolidated, with an open validation regression.**
 
-Normalization result: COMPLETE
+Production readiness: NO.
 
-## Current Maturity
+Review baseline: local commit `b841419` (2026-07-28). Remote state was not fetched or deployment-verified.
 
-Detected level: L3 - Local validation candidate
+Context: `.instructions/`, `docs/`, phase audit/closure artifacts, `TASKS.md`, `ROADMAP.md` and local source/history. No `.rag/` or separate `plans/` directory was found in this checkout; planning context comes from the roadmap, task register and phase audits.
 
-Maturity recommendation: DOCUMENTED_AS_L3_CANDIDATE
+Marketplace is a hybrid local-development nucleus:
 
-Rationale:
+- `apps/web` provides the Marketplace frontend, with 38 Marketplace page modules, 19 component-directory files (including 2 test files), 6 hook modules and centralized mock/config-first domain data.
+- `apps/api` provides a TypeScript HTTP runtime with file-backed local persistence at `apps/api/.runtime/marketplace-store.json`.
+- The API includes controlled local workflow records for settlement, royalty allocation, auction handling, treasury routing and cross-chain preparation. These records do not execute external transfers.
+- `public/` is a separate Next.js institutional website and is not included in the root PNPM workspace validation.
 
-- `.instructions` exists and documents architecture, products, subscriptions, billing, digital assets, security and workflow.
-- Product/package structure exists with workspace scripts and installed dependencies.
-- Existing portfolio evidence indicates Marketplace has contract/API/runtime work, but this normalization cycle did not fully rerun workspace validation before classification.
-- PORTFOLIO-REQ-01 reran `pnpm -r test` successfully: 11 files / 102 tests PASS.
-- Wallet transaction, blockchain write, external payment gateway, treasury movement, bridge and settlement remain blocked.
+Phase 00 through Phase 11 remain closed as documented. The separately numbered runtime sprints recorded in `TASKS.md` also have corresponding API source, including sprints 31–35. Their numbering does not establish that they occurred after Phase 11. No separate closure reports for those sprints were found in `docs/`; treat them as controlled local runtime work.
 
-Marketplace is not production-ready and cannot execute value transfer.
+July development added the institutional website, branding assets, a frontend navigation/theme/card/filter refactor (`394ff6f`) and build corrections (`b841419`).
 
-## Evidence Used
+## Execution Boundary
 
-- `.instructions/ARCHITECTURE.md`
-- `.instructions/BILLING.md`
-- `.instructions/DIGITAL_ASSETS.md`
-- `.instructions/PRODUCTS.md`
-- `.instructions/SUBSCRIPTIONS.md`
-- `.instructions/SECURITY.md`
-- `README.md`
-- `package.json`
-- `pnpm-workspace.yaml`
-- `docs/`
+The runtime explicitly keeps these capabilities disabled:
 
-## Missing Operational Files Before Normalization
+- external payment processing
+- wallet transaction execution
+- blockchain writes
+- external treasury movement
+- external bridge messaging and execution
+- production settlement
 
-- `.instructions/STATUS.md`
-- `.instructions/BLOCKER_REGISTER.md`
-- `.instructions/VALIDATION.md`
-- `.instructions/HANDOFF.md`
+The labels `confirmed`, `executed` and `bridged` in local records describe controlled in-process state transitions only. They do not evidence money movement, custody, settlement finality or on-chain execution.
 
-## Blockers
+## Validation Evidence — 2026-09-06
 
-- External payment gateway execution is not approved.
-- Wallet transactions and blockchain writes are blocked.
-- Marketplace minting/value-bearing asset transfer is blocked.
-- Treasury movement and settlement execution are blocked.
-- Current validation must be refreshed before maturity promotion.
+| Check | Result | Evidence |
+|---|---|---|
+| Root lint | PASS | `pnpm -r lint` passed for `apps/api` and `apps/web`. |
+| API tests | PASS | 2 files, 57 tests. |
+| Web tests | FAIL | 12 files passed; 1 test failed. Total: 125 passed, 1 failed. |
+| Root build | PASS | TypeScript API build and Vite web build passed. |
+| Build packaging | WARNING | Vite reports a 782.72 kB minified main JavaScript chunk. |
 
-## Dependencies
+The failing test is `apps/web/src/modules/marketplace/components/ProductCard.test.tsx`: the missing-seller case expects `Marketplace seller unavailable`, but a linked collection name is rendered first. This is a test/behavior mismatch that needs an explicit product-card fallback decision.
 
-- Payment/compliance approval.
-- Treasury and settlement policy.
-- Smart contract/audit approval if any value-bearing asset behavior is introduced.
-- AxodusAPP consumer contract review.
+## Current Constraints And Risks
 
-## Execution Policy
+- Automated checks do not yet pass completely because of the ProductCard test failure.
+- Root validation excludes the standalone Next.js site under `public/`.
+- The GitHub Actions workflow currently covers contracts only and targets `main` and `develop`, while this checkout is on `dev`.
+- Legacy entries in `TASKS.md` conflict with the phase-closure model and should be normalized before a new implementation cycle.
 
-Allowed:
+## Working Tree
 
-- local/mock marketplace surfaces;
-- read-only product/subscription documentation;
-- validation of API/contracts where safe.
+Branch: `dev` tracking `origin/dev`.
 
-Forbidden without explicit approval:
-
-- real payments;
-- wallet transaction flow;
-- minting;
-- bridge/LayerZero production behavior;
-- settlement;
-- treasury movement.
-
-## Production Status
-
-Production readiness: NO
-
-Production execution: DISABLED
+No tracked source changes were present at review time. `.codex/` is the only untracked local directory.
 
 ## Next Recommended Request
 
-MARKETPLACE-REQ-01 - Current Validation Evidence and Payment/Settlement Boundary Review
+`MARKETPLACE-REQ-03 — Runtime Hardening and Status Reconciliation`
 
-## PORTFOLIO-REQ-02 Validation Refresh
-
-Status: COMPLETE
-
-Validation result: PASS
-
-Commands:
-
-```bash
-pnpm -r test
-pnpm -r lint
-pnpm -r build
-```
-
-Evidence:
-
-- tests: PASS, 102 tests
-- lint: PASS
-- build: PASS
-
-Maturity decision: PROMOTE_TO_L4_CANDIDATE
-
-Rationale:
-
-- Marketplace API/web validation passed across tests, lint and build.
-- Payment, settlement, wallet, minting, bridge and treasury paths remain blocked unless separately approved.
-- Promotion is to L4 candidate only, not production or value-transfer approval.
+1. Resolve the ProductCard fallback expectation and restore a green test suite.
+2. Add route smoke coverage for the Marketplace surfaces and validate `public/` independently.
+3. Split or manually chunk the large web entry bundle.
+4. Reconcile `TASKS.md`, phase closures and runtime terminology so controlled local records cannot be read as production execution.
+5. Add CI coverage for the active branch and the application packages.

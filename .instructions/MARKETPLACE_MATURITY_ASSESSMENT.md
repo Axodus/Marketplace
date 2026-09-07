@@ -4,6 +4,8 @@ Date: 2026-06-20
 
 Current report: `docs/MARKETPLACE_DEVELOPMENT_MATURITY_REPORT.md`
 
+Current operational status and validation evidence: `.instructions/STATUS.md` and `.instructions/VALIDATION.md` (2026-09-06). This assessment preserves the 2026-06-20 maturity decision and is not the latest validation record.
+
 ## Assessment Result
 
 Maturity level: L4 Consolidated - mock/config-first functional integration maturity
