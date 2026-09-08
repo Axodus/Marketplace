@@ -1,6 +1,6 @@
 # Marketplace Development Status
 
-Last updated: 2026-09-06
+Last updated: 2026-09-08
 
 ## Current State
 
@@ -52,6 +52,7 @@ The failing test is `apps/web/src/modules/marketplace/components/ProductCard.tes
 
 - Automated checks do not yet pass completely because of the ProductCard test failure.
 - Root validation excludes the standalone Next.js site under `public/`.
+- The `dev` branch Vercel configuration builds `apps/web` from the repository root, publishes `apps/web/dist`, and rewrites client-side routes to `index.html`. The frontend remains mock-first when the local API proxy is unavailable.
 - The GitHub Actions workflow currently covers contracts only and targets `main` and `develop`, while this checkout is on `dev`.
 - Legacy entries in `TASKS.md` conflict with the phase-closure model and should be normalized before a new implementation cycle.
 

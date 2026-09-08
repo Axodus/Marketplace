@@ -1,6 +1,6 @@
 # Marketplace Validation
 
-Last updated: 2026-09-06
+Last updated: 2026-09-08
 
 ## Commands
 
@@ -31,6 +31,12 @@ The Vite build produces a 782.72 kB minified main JavaScript chunk and emits the
 ## Scope Gap
 
 The root PNPM workspace includes `apps/api` and `apps/web` as runnable packages. The standalone Next.js application under `public/` has its own `package.json` and must be validated separately.
+
+## Vercel Development Deployment
+
+The versioned `vercel.json` on `dev` keeps Vercel's Root Directory at `./`, uses PNPM 10.15.1 with the frozen lockfile, builds only `@axodus/marketplace-web`, and publishes `apps/web/dist`. Its rewrite sends browser-router paths to `index.html`. The development frontend falls back to local mock data when its local `/api/marketplace` proxy is absent.
+
+Validation on 2026-09-08: `pnpm install --frozen-lockfile` and `pnpm --filter @axodus/marketplace-web build` passed. The Vite output includes `apps/web/dist/index.html`. The existing 782.72 kB minified entry-chunk warning remains.
 
 ## Execution Boundary Verification
 
